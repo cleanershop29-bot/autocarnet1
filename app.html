@@ -880,6 +880,7 @@ async function saveEnt(){
   if(error)return toast('Erreur : '+error.message,'e');
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
+  g('e-id').value='';
   cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
 }
 async function delEnt(){
