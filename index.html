@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AutoCarnet — Carnet d'entretien digital</title>
+<meta name="description" content="Suivez l'entretien de vos véhicules simplement. Rappels automatiques, historique complet, export PDF. Gratuit.">
+<meta property="og:title" content="AutoCarnet — Carnet d'entretien digital">
+<meta property="og:description" content="Suivez l'entretien de vos véhicules simplement. Rappels automatiques, historique complet, export PDF.">
+<meta property="og:image" content="/icon-512.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0F1C3F;
+  --blue:#2563EB;
+  --blue-lt:#EFF6FF;
+  --green:#059669;
+  --txt:#0F172A;
+  --txm:#475569;
+  --txl:#94A3B8;
+  --border:#E2E8F0;
+  --bg:#F8FAFC;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--txt);background:#fff;overflow-x:hidden}
+h1,h2,h3{font-family:'Sora',sans-serif}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px}
+.nav-logo img{width:32px;height:32px;border-radius:8px}
+.nav-cta{background:var(--blue);color:#fff;padding:9px 20px;border-radius:8px;text-decoration:none;font-family:'Sora',sans-serif;font-size:.85rem;font-weight:600;transition:.15s}
+.nav-cta:hover{background:#1D4ED8}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 24px 60px;background:linear-gradient(160deg,#0F1C3F 0%,#1E3A8A 50%,#1D4ED8 100%);position:relative;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.3),transparent 70%)}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(5,150,105,.2),transparent 70%)}
+.hero-content{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:600;margin-bottom:28px;backdrop-filter:blur(8px)}
+h1{font-size:clamp(2.2rem,6vw,3.8rem);font-weight:800;color:#fff;line-height:1.15;margin-bottom:20px;letter-spacing:-.02em}
+h1 span{color:#60A5FA}
+.hero-sub{font-size:clamp(1rem,2.5vw,1.2rem);color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:36px;font-weight:400}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-hero{padding:14px 28px;border-radius:10px;font-family:'Sora',sans-serif;font-size:.95rem;font-weight:600;text-decoration:none;transition:.15s;display:inline-flex;align-items:center;gap:8px}
+.btn-hero:active{transform:scale(.97)}
+.btn-hero-p{background:#fff;color:var(--navy)}
+.btn-hero-p:hover{background:#F1F5F9}
+.btn-hero-s{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+.btn-hero-s:hover{background:rgba(255,255,255,.2)}
+.hero-note{font-size:.78rem;color:rgba(255,255,255,.5)}
+/* PWA install hints */
+.install-hints{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.install-hint{display:flex;align-items:center;gap:6px;font-size:.76rem;color:rgba(255,255,255,.6)}
+
+/* STATS */
+.stats{background:#fff;padding:48px 24px;border-bottom:1px solid var(--border)}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px;text-align:center}
+.stat-n{font-family:'Sora',sans-serif;font-size:2.2rem;font-weight:800;color:var(--blue);margin-bottom:4px}
+.stat-l{font-size:.85rem;color:var(--txm);font-weight:500}
+
+/* FEATURES */
+.features{padding:80px 24px;background:var(--bg)}
+.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:12px}
+.section-title{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:var(--navy);margin-bottom:16px;line-height:1.2;letter-spacing:-.02em}
+.section-sub{font-size:1rem;color:var(--txm);line-height:1.6;max-width:520px}
+.features-grid{max-width:1100px;margin:60px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.feat-card{background:#fff;border-radius:16px;padding:28px;border:1px solid var(--border);transition:.2s}
+.feat-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.07);transform:translateY(-2px)}
+.feat-ico{width:48px;height:48px;border-radius:12px;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px}
+.feat-ico.green{background:#ECFDF5}
+.feat-ico.orange{background:#FFF7ED}
+.feat-ico.purple{background:#F5F3FF}
+.feat-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.feat-desc{font-size:.88rem;color:var(--txm);line-height:1.6}
+
+/* HOW */
+.how{padding:80px 24px;background:#fff}
+.how-inner{max-width:800px;margin:0 auto}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative}
+.steps::before{content:'';position:absolute;left:23px;top:24px;bottom:24px;width:2px;background:var(--border)}
+.step{display:flex;gap:20px;align-items:flex-start;padding:0 0 40px}
+.step:last-child{padding-bottom:0}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step-body{padding-top:10px}
+.step-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.step-desc{font-size:.88rem;color:var(--txm);line-height:1.6}
+
+/* FOR WHO */
+.forwho{padding:80px 24px;background:var(--bg)}
+.forwho-grid{max-width:900px;margin:48px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.who-card{background:#fff;border-radius:14px;padding:24px;border:1px solid var(--border);text-align:center}
+.who-ico{font-size:2rem;margin-bottom:12px}
+.who-title{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.who-desc{font-size:.82rem;color:var(--txm);line-height:1.5}
+
+/* CTA */
+.cta-section{padding:80px 24px;background:linear-gradient(135deg,var(--navy),#1E3A8A);text-align:center}
+.cta-inner{max-width:600px;margin:0 auto}
+.cta-section h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:#fff;margin-bottom:16px;letter-spacing:-.02em}
+.cta-section p{font-size:1rem;color:rgba(255,255,255,.72);margin-bottom:36px;line-height:1.6}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* INSTALL */
+.install{padding:60px 24px;background:#fff;text-align:center}
+.install-steps{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.install-step{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:.83rem;color:var(--txm);display:flex;align-items:center;gap:8px;max-width:240px}
+.install-step-num{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* FOOTER */
+footer{background:var(--navy);color:rgba(255,255,255,.5);padding:32px 24px;text-align:center;font-size:.82rem}
+footer a{color:rgba(255,255,255,.7);text-decoration:none}
+footer a:hover{color:#fff}
+.footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+
+/* ANIMATIONS */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:600px){
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-hero{width:100%;max-width:280px;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <img src="icon-192.png" alt="AutoCarnet">
+    AutoCarnet
+  </div>
+  <a href="/app.html" class="nav-cta">Ouvrir l'app →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🚗 Application gratuite · PWA installable</div>
+    <h1>Le carnet d'entretien<br><span>qui simplifie</span> votre vie</h1>
+    <p class="hero-sub">Suivez tous vos véhicules, recevez des rappels avant chaque échéance, exportez votre historique en PDF. Simple, rapide, gratuit.</p>
+    <div class="hero-btns">
+      <a href="/app.html" class="btn-hero btn-hero-p">📱 Ouvrir l'application</a>
+      <a href="#features" class="btn-hero btn-hero-s">Découvrir les fonctionnalités</a>
+    </div>
+    <div class="hero-note">Gratuit · Sans publicité · Vos données restent privées</div>
+    <div class="install-hints">
+      <div class="install-hint">📱 iPhone : Safari → Partager → Sur l'écran d'accueil</div>
+      <div class="install-hint">🤖 Android : Menu → Installer l'application</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div><div class="stat-n">44</div><div class="stat-l">Types d'interventions</div></div>
+    <div><div class="stat-n">38+</div><div class="stat-l">Marques de véhicules</div></div>
+    <div><div class="stat-n">200+</div><div class="stat-l">Modèles référencés</div></div>
+    <div><div class="stat-n">100%</div><div class="stat-l">Gratuit</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-label">Fonctionnalités</div>
+    <h2 class="section-title">Tout ce qu'il vous faut<br>pour suivre vos véhicules</h2>
+    <p class="section-sub">AutoCarnet centralise l'historique de tous vos véhicules en un seul endroit, accessible partout.</p>
+    <div class="features-grid fade-up">
+      <div class="feat-card">
+        <div class="feat-ico">🔔</div>
+        <div class="feat-title">Rappels automatiques</div>
+        <div class="feat-desc">Recevez des notifications avant chaque échéance — contrôle technique, vidange, révision. Ne ratez plus jamais un entretien.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico green">📋</div>
+        <div class="feat-title">Historique complet</div>
+        <div class="feat-desc">Chaque intervention enregistrée avec date, kilométrage, garage et coût. Un historique clair et consultable à tout moment.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico orange">📄</div>
+        <div class="feat-title">Export PDF</div>
+        <div class="feat-desc">Générez un carnet d'entretien complet en PDF pour revente, garantie ou suivi professionnel en un clic.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico purple">👥</div>
+        <div class="feat-title">Mode famille & flotte</div>
+        <div class="feat-desc">Partagez vos véhicules avec votre famille ou vos collègues. Chacun peut consulter et ajouter des interventions.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">💶</div>
+        <div class="feat-title">Suivi des coûts</div>
+        <div class="feat-desc">Visualisez vos dépenses d'entretien par année avec un graphique clair. Anticipez votre budget auto.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico green">📱</div>
+        <div class="feat-title">Installable sur mobile</div>
+        <div class="feat-desc">AutoCarnet s'installe sur votre téléphone comme une vraie app native, sans passer par l'App Store. Fonctionne hors ligne.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div style="text-align:center;margin-bottom:0">
+      <div class="section-label">Comment ça marche</div>
+      <h2 class="section-title">Opérationnel en 2 minutes</h2>
+    </div>
+    <div class="steps fade-up">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Créez votre compte gratuit</div>
+          <div class="step-desc">Inscription en 30 secondes avec votre email. Aucune carte bancaire requise.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Ajoutez vos véhicules</div>
+          <div class="step-desc">Marque, modèle, immatriculation, kilométrage. Toutes les infos en un seul endroit.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Enregistrez vos entretiens</div>
+          <div class="step-desc">44 types d'interventions disponibles. Ajoutez des rappels date et kilométrage pour ne rien oublier.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Recevez vos rappels</div>
+          <div class="step-desc">Activez les notifications push. AutoCarnet vous prévient avant chaque échéance d'entretien.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHO -->
+<section class="forwho">
+  <div style="max-width:900px;margin:0 auto;text-align:center">
+    <div class="section-label">Pour qui ?</div>
+    <h2 class="section-title">Pour tous les propriétaires de véhicules</h2>
+    <div class="forwho-grid fade-up">
+      <div class="who-card">
+        <div class="who-ico">👨‍👩‍👧‍👦</div>
+        <div class="who-title">Particuliers</div>
+        <div class="who-desc">Suivez l'entretien de votre voiture familiale et ne ratez plus jamais un contrôle technique.</div>
+      </div>
+      <div class="who-card">
+        <div class="who-ico">🏢</div>
+        <div class="who-title">Petites entreprises</div>
+        <div class="who-desc">Gérez votre flotte de véhicules professionnels avec un suivi partagé entre collaborateurs.</div>
+      </div>
+      <div class="who-card">
+        <div class="who-ico">🔧</div>
+        <div class="who-title">Passionnés auto</div>
+        <div class="who-desc">Gardez un historique précis de toutes vos interventions pour valoriser votre véhicule à la revente.</div>
+      </div>
+      <div class="who-card">
+        <div class="who-ico">🛻</div>
+        <div class="who-title">Multi-véhicules</div>
+        <div class="who-desc">Voiture, moto, camping-car, utilitaire — gérez tous vos véhicules depuis une seule application.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section class="install">
+  <div style="max-width:700px;margin:0 auto">
+    <div class="section-label" style="text-align:center">Installation</div>
+    <h2 class="section-title" style="text-align:center">Installez l'app sur votre téléphone</h2>
+    <p style="text-align:center;color:var(--txm);margin-bottom:0">Pas besoin de l'App Store. AutoCarnet s'installe directement depuis votre navigateur.</p>
+    <div class="install-steps">
+      <div class="install-step"><div class="install-step-num">1</div>Ouvrez autocarnet.netlify.app dans Safari ou Chrome</div>
+      <div class="install-step"><div class="install-step-num">2</div>iPhone : appuyez sur Partager → "Sur l'écran d'accueil"</div>
+      <div class="install-step"><div class="install-step-num">3</div>Android : appuyez sur ⋮ → "Installer l'application"</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Commencez dès maintenant</h2>
+    <p>Gratuit, sans publicité, vos données restent privées. Aucune carte bancaire requise.</p>
+    <div class="cta-btns">
+      <a href="/app.html" class="btn-hero btn-hero-p">📱 Ouvrir AutoCarnet</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="/app.html">Application</a>
+    <a href="/app.html#cgu">CGU</a>
+    <a href="/app.html#rgpd">Confidentialité</a>
+    <a href="mailto:support@autocarnet.app">Contact</a>
+  </div>
+  <div>© 2025 AutoCarnet · Carnet d'entretien digital · Fait avec ❤️ en France</div>
+</footer>
+
+<script>
+// Sauvegarder le hash recovery si présent, puis rediriger
+(function(){
+  var h=window.location.hash,s=window.location.search;
+  if(h.includes('type=recovery')||h.includes('access_token')){
+    sessionStorage.setItem('ac_recovery_hash',h);
+    window.location.href='/app.html';
+    return;
+  }
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Redirection auto si session active
+(async () => {
+  try {
+    const sb = window.supabase.createClient(
+      'https://qhacwsklhlsfyfxwnjff.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY'
+    );
+    const { data } = await sb.auth.getSession();
+    if (data.session?.user) {
+      window.location.replace('/app.html');
+    }
+  } catch(e) {}
+})();
+
+// Animations au scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

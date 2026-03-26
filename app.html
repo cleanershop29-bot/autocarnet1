@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Auto Carnet</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2563EB">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AutoCarnet">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F1F5F9;
+  --surface:#FFFFFF;
+  --border:#E2E8F0;
+  --primary:#2563EB;
+  --primary-lt:#EFF6FF;
+  --primary-dk:#1D4ED8;
+  --ok:#059669;--ok-bg:#ECFDF5;
+  --warn:#D97706;--warn-bg:#FFFBEB;
+  --err:#DC2626;--err-bg:#FEF2F2;
+  --txt:#0F172A;--txm:#64748B;--txl:#94A3B8;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --sh-lg:0 8px 24px rgba(0,0,0,.09);
+  --r:14px;--r-sm:10px;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:15px;overscroll-behavior:none}
+.hidden{display:none!important}
+
+/* SPLASH */
+#ls{position:fixed;inset:0;background:linear-gradient(160deg,#1E40AF,#3B82F6);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
+.ls-logo{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-1px}
+.ls-logo span{opacity:.6}
+.ls-dot{width:8px;height:8px;background:rgba(255,255,255,.6);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.ls-msg{color:rgba(255,255,255,.65);font-size:.82rem}
+
+/* AUTH */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#1E40AF,#3B82F6)}
+.auth-card{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:380px;box-shadow:var(--sh-lg)}
+.auth-logo{font-size:1.5rem;font-weight:800;color:var(--primary);letter-spacing:-1px;margin-bottom:22px;text-align:center}
+.atabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:20px}
+.atab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:500;color:var(--txm);cursor:pointer;transition:.2s}
+.atab.on{background:#fff;color:var(--primary);font-weight:700;box-shadow:var(--sh)}
+
+/* FORM */
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:.75rem;font-weight:700;color:var(--txm);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fc{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.93rem;color:var(--txt);background:#fff;transition:.15s;outline:none;-webkit-appearance:none;appearance:none}
+.fc:focus{border-color:var(--primary);background:var(--primary-lt)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BUTTONS */
+.btn{padding:11px 18px;border:none;border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn:active{transform:scale(.96)}
+.btn-p{background:var(--primary);color:#fff}
+.btn-p:hover{background:var(--primary-dk)}
+.btn-p-full{background:var(--primary);color:#fff;width:100%}
+.btn-s{background:var(--surface);color:var(--txt);border:1.5px solid var(--border)}
+.btn-d{background:var(--err-bg);color:var(--err);border:1.5px solid #FECACA}
+.btn-sm{padding:7px 13px;font-size:.8rem}
+.btn-xs{padding:5px 10px;font-size:.75rem}
+.btn-w{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.btn-out{padding:6px 13px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s}
+.btn-out:hover{background:var(--err-bg);color:var(--err);border-color:#FECACA}
+
+/* APP SHELL */
+#app-screen{display:flex;flex-direction:column;min-height:100vh}
+.appbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:var(--sh)}
+.appbar-logo{font-size:1rem;font-weight:800;color:var(--primary);letter-spacing:-.5px}
+.content{flex:1;overflow-y:auto;padding:14px 14px 88px;-webkit-overflow-scrolling:touch}
+.tab{display:none}.tab.on{display:block}
+
+/* NAVBAR */
+.navbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:100;padding:2px 0 env(safe-area-inset-bottom,2px)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 5px;border:none;background:none;font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:500;color:var(--txm);cursor:pointer;position:relative}
+.nb.on{color:var(--primary)}
+.nb-ico{font-size:1.25rem;line-height:1}
+.rdot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--err);border-radius:50%;border:2px solid #fff}
+
+/* FAB */
+#fab{position:fixed;bottom:78px;right:14px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.45);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300}
+#fab.vis{display:flex}
+#fab:active{transform:scale(.92)}
+
+/* TOAST */
+#tc{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;width:92%;max-width:360px}
+.toast{padding:11px 15px;border-radius:var(--r-sm);font-size:.86rem;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:var(--sh-lg);animation:tdown .2s ease}
+.toast.s{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+.toast.e{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+.toast.i{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
+@keyframes tdown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.sec-ttl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txm)}
+.sec-lnk{font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
+.stat{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border)}
+.stat-v{font-size:1.5rem;font-weight:800}
+.stat-l{font-size:.68rem;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+
+/* VEHICLE CARD */
+.vc{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:.15s}
+.vc.ok{border-left-color:var(--ok)}
+.vc.warn{border-left-color:var(--warn)}
+.vc.danger{border-left-color:var(--err)}
+.vc-main{padding:14px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.vc-ico{font-size:2rem;flex-shrink:0}
+.vc-info{flex:1;min-width:0}
+.vc-name{font-size:.97rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vc-sub{font-size:.76rem;color:var(--txm);margin-top:2px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.vc-km{font-size:.82rem;font-weight:600;color:var(--txt)}
+.vc-chevron{color:var(--txl);font-size:1rem;transition:transform .2s;flex-shrink:0}
+.vc.expanded .vc-chevron{transform:rotate(90deg)}
+.vc-body{display:none;border-top:1px solid var(--border)}
+.vc.expanded .vc-body{display:block}
+.vc-stats-row{display:grid;grid-template-columns:repeat(3,1fr);padding:12px 14px;gap:8px;background:var(--bg)}
+.vs-v{display:block;font-size:.88rem;font-weight:700}
+.vs-l{display:block;font-size:.65rem;color:var(--txm);text-transform:uppercase;letter-spacing:.03em;margin-top:1px}
+.vc-acts{display:flex;gap:6px;padding:10px 14px;flex-wrap:wrap;border-top:1px solid var(--border)}
+.vc-ents{padding:0 14px 14px}
+.vc-ents-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 8px}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700}
+.badge-ok{background:var(--ok-bg);color:var(--ok)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-err{background:var(--err-bg);color:var(--err)}
+.badge-ct{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+.badge-ct-w{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+.badge-ct-e{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+
+/* ENTRETIEN */
+.ei{background:#fff;border-radius:var(--r);padding:13px;display:flex;align-items:flex-start;gap:11px;box-shadow:var(--sh);margin-bottom:8px;cursor:pointer;border:1px solid var(--border)}
+.ei:active{opacity:.85}
+.ei-ico{width:38px;height:38px;border-radius:9px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ei-inf{flex:1;min-width:0}
+.ei-ty{font-size:.88rem;font-weight:600}
+.ei-mt{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.ei-mt span{font-size:.72rem;color:var(--txm);background:var(--bg);padding:2px 7px;border-radius:4px}
+.ei-nt{font-size:.76rem;color:var(--txm);margin-top:4px;font-style:italic}
+.ei-rp{font-size:.72rem;color:var(--primary);font-weight:600;margin-top:4px;background:var(--primary-lt);padding:2px 8px;border-radius:4px;display:inline-block}
+.ei-ct{font-size:.88rem;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:2px}
+.ei-inline{background:var(--bg);border-radius:9px;padding:10px;display:flex;align-items:flex-start;gap:9px;margin-bottom:6px;cursor:pointer;border:1px solid var(--border)}
+.ei-inline:active{opacity:.85}
+
+/* VEHICLE PICKER */
+.vp{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.vp::-webkit-scrollbar{display:none}
+.vpi{flex-shrink:0;background:#fff;border:2px solid var(--border);border-radius:var(--r-sm);padding:9px 13px;cursor:pointer;transition:.15s;text-align:center;min-width:86px}
+.vpi.on{border-color:var(--primary);background:var(--primary-lt)}
+.vpi-i{font-size:1.3rem}
+.vpi-n{font-size:.73rem;font-weight:600;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px}
+
+/* RAPPELS */
+.ri{background:#fff;border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh);margin-bottom:8px;cursor:pointer;border:1px solid var(--border)}
+.ri.danger{border-left:3px solid var(--err);background:var(--err-bg)}
+.ri.warn{border-left:3px solid var(--warn);background:var(--warn-bg)}
+.ri-ico{font-size:1.3rem;flex-shrink:0}
+.ri-inf{flex:1;min-width:0}
+.ri-ti{font-size:.87rem;font-weight:600}
+.ri-mt{font-size:.73rem;color:var(--txm);margin-top:2px}
+.rbadge{font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.rbadge.danger{background:var(--err);color:#fff}
+.rbadge.warn{background:var(--warn);color:#fff}
+.rbadge.ok{background:var(--ok-bg);color:var(--ok)}
+
+/* GRAPHIQUE */
+.chart{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px}
+.chart-ttl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:72px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;background:var(--primary-lt);border-radius:4px 4px 0 0;min-height:4px;transition:.5s ease}
+.bar:hover,.bar.on{background:var(--primary)}
+.bar-val{font-size:.6rem;font-weight:700;color:var(--primary);white-space:nowrap}
+.bar-lbl{font-size:.6rem;color:var(--txm)}
+
+/* FAMILLE */
+.si{background:#fff;border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh);margin-bottom:8px;border:1px solid var(--border)}
+.sav{width:40px;height:40px;border-radius:50%;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.sinf{flex:1;min-width:0}
+.sem{font-size:.88rem;font-weight:600}
+.sst{font-size:.73rem;color:var(--txm);margin-top:2px}
+.sact{display:flex;gap:5px;flex-shrink:0}
+.info-box{background:var(--primary-lt);border-radius:var(--r-sm);padding:12px;font-size:.83rem;color:#1E40AF;margin-bottom:10px;line-height:1.55}
+
+/* FILTRES */
+.filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:11px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.flt{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
+.flt.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* MODALES */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:500;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.mo.open{opacity:1;pointer-events:all}
+.mo.open .modal{transform:translateY(0)}
+.modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1)}
+.modal-c{border-radius:20px;max-width:360px;margin:auto;align-self:center;transform:scale(.95);bottom:auto}
+.mo.open .modal-c{transform:scale(1)}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 11px;border-bottom:1px solid var(--border);flex-shrink:0}
+.mtit{font-size:.97rem;font-weight:700}
+.mcls{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)}
+.mbdy{flex:1;overflow-y:auto;padding:15px 18px;-webkit-overflow-scrolling:touch}
+.mft{padding:10px 18px 20px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
+.mft-l{flex:1}
+.ep{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
+.epb{width:38px;height:38px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:1rem;cursor:pointer;transition:.15s}
+.epb.on{border-color:var(--primary);background:var(--primary-lt)}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 16px;color:var(--txm)}
+.empty-i{font-size:2.8rem;display:block;margin-bottom:10px}
+.empty-t{font-size:.97rem;font-weight:700;color:var(--txt);margin-bottom:5px}
+.empty-d{font-size:.83rem;margin-bottom:16px;line-height:1.5}
+
+/* INSTALL BANNER */
+#install-banner{display:none;margin:10px 14px 0;padding:12px 14px;background:var(--primary-lt);border:1.5px solid #BFDBFE;border-radius:var(--r);gap:12px;align-items:center;animation:tdown .3s ease both}
+#install-banner.visible{display:flex}
+.install-copy strong{display:block;font-size:.85rem;font-weight:700;color:var(--primary)}
+.install-copy span{font-size:.75rem;color:var(--txm)}
+.btn-install-now{flex-shrink:0;padding:8px 14px;border-radius:var(--r-sm);border:none;background:var(--primary);color:#fff;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer}
+/* iOS hint */
+#ios-hint{display:none;margin:10px 14px 0;padding:12px 14px;background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:var(--r);font-size:.8rem;color:#92400E;line-height:1.5}
+#ios-hint.visible{display:block}
+
+/* PROFIL */
+.profil-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px}
+.profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;font-weight:700;margin:0 auto 16px;font-family:'Outfit',sans-serif}
+.profil-email{font-size:.82rem;color:var(--txm);text-align:center;margin-bottom:16px}
+/* STATS AVANCÉES */
+.stats-adv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-adv{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border)}
+.stat-adv-v{font-size:1.3rem;font-weight:800;color:var(--txt)}
+.stat-adv-l{font-size:.7rem;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+/* RECHERCHE */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-input{width:100%;padding:11px 14px 11px 40px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.93rem;outline:none;transition:.15s;background:#fff}
+.search-input:focus{border-color:var(--primary)}
+.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none}
+/* LIEN PUBLIC */
+.share-link-box{background:var(--primary-lt);border:1.5px solid #BFDBFE;border-radius:var(--r-sm);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-top:10px}
+.share-link-url{flex:1;font-size:.78rem;color:var(--primary);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* UTILS */
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
+.g6{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<!-- INSTALL BANNER -->
+<div id="install-banner">
+  <div style="font-size:1.5rem">📲</div>
+  <div class="install-copy" style="flex:1">
+    <strong>Installer AutoCarnet</strong>
+    <span>Accès rapide depuis votre écran d'accueil</span>
+  </div>
+  <button class="btn-install-now" id="btn-install-pwa">Installer</button>
+</div>
+<!-- iOS HINT -->
+<div id="ios-hint">
+  📱 <strong>iPhone :</strong> appuyez sur <strong>Partager</strong> (icône □↑) puis <strong>"Sur l'écran d'accueil"</strong>
+</div>
+
+<div id="ls">
+  <div class="ls-logo">🚗 Auto<span>Carnet</span></div>
+  <div class="ls-dot"></div>
+  <div class="ls-msg" id="ls-msg">Chargement…</div>
+</div>
+
+<div id="auth-screen" class="hidden">
+  <div class="auth-card">
+    <div class="auth-logo">🚗 AutoCarnet</div>
+    <div class="atabs" id="auth-tabs">
+      <button class="atab on" onclick="authTab('l')">Connexion</button>
+      <button class="atab" onclick="authTab('r')">Créer un compte</button>
+    </div>
+    <div id="pl">
+      <div class="fg"><label class="fl">Email</label><input class="fc" id="le" type="email" placeholder="vous@email.com" autocomplete="email"></div>
+      <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="lp" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-p-full" onclick="doLogin()" id="btn-login">Se connecter</button>
+      <div style="text-align:center;margin-top:12px"><button onclick="showReset()" style="background:none;border:none;color:#2563EB;font-family:Outfit,sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:underline">Mot de passe oublié ?</button></div>
+    </div>
+    <div id="pp" class="hidden">
+      <div style="text-align:center;margin-bottom:14px;font-size:.9rem;color:#64748B;line-height:1.5">Entrez votre email pour recevoir un lien de réinitialisation.</div>
+      <div class="fg"><label class="fl">Email</label><input class="fc" id="pe" type="email" placeholder="vous@email.com" autocomplete="email"></div>
+      <button class="btn btn-p-full" onclick="doReset()" id="btn-reset">Envoyer le lien</button>
+      <div style="text-align:center;margin-top:12px"><button onclick="authTab('l')" style="background:none;border:none;color:#64748B;font-family:Outfit,sans-serif;font-size:.85rem;cursor:pointer">← Retour à la connexion</button></div>
+    </div>
+    <div id="pr" class="hidden">
+      <div class="fg"><label class="fl">Prénom</label><input class="fc" id="rn" type="text" placeholder="Votre prénom"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fc" id="re" type="email" placeholder="vous@email.com"></div>
+      <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="rp" type="password" placeholder="8 caractères minimum"></div>
+      <div style="margin-bottom:14px;display:flex;align-items:flex-start;gap:8px">
+        <input type="checkbox" id="cgu-check" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer">
+        <label for="cgu-check" style="font-size:.8rem;color:#64748B;line-height:1.5;cursor:pointer">J'accepte les <span onclick="showCGU()" style="color:#2563EB;font-weight:600;text-decoration:underline;cursor:pointer">CGU</span> et la <span onclick="showRGPD()" style="color:#2563EB;font-weight:600;text-decoration:underline;cursor:pointer">politique de confidentialité</span></label>
+      </div>
+      <button class="btn btn-p-full" onclick="doReg()" id="btn-reg">Créer mon compte</button>
+    </div>
+  </div>
+</div>
+
+<div id="app-screen" class="hidden">
+  <div class="appbar">
+    <div class="appbar-logo">🚗 AutoCarnet</div>
+    <button class="btn-out" onclick="doOut()">Déconnexion</button>
+  </div>
+  <div class="content">
+    <div class="tab on" id="t-dash"><div id="d-ctn"></div></div>
+    <div class="tab" id="t-vehs"><div id="vh-ctn"></div></div>
+    <div class="tab" id="t-ent"><div id="en-ctn"></div></div>
+    <div class="tab" id="t-rap"><div id="rp-ctn"></div></div>
+    <div class="tab" id="t-fam"><div id="fm-ctn"></div></div>
+    <div class="tab" id="t-profil"><div id="pr-ctn"></div></div>
+  </div>
+  <nav class="navbar">
+    <button class="nb on" id="nb-dash" onclick="nav('dash')"><span class="nb-ico">🏠</span>Accueil</button>
+    <button class="nb" id="nb-vehs" onclick="nav('vehs')"><span class="nb-ico">🚗</span>Véhicules</button>
+    <button class="nb" id="nb-ent"  onclick="nav('ent')"><span class="nb-ico">🔧</span>Entretiens</button>
+    <button class="nb" id="nb-rap"  onclick="nav('rap')"><span class="nb-ico">🔔</span>Rappels<div class="rdot hidden" id="rdot"></div></button>
+    <button class="nb" id="nb-fam"  onclick="nav('fam')"><span class="nb-ico">👥</span>Famille</button>
+    <button class="nb" id="nb-profil" onclick="nav('profil')"><span class="nb-ico">👤</span>Profil</button>
+  </nav>
+</div>
+
+<button id="fab" onclick="handleFab()">+</button>
+<div id="tc"></div>
+
+<!-- Modal Véhicule -->
+<div class="mo" id="mo-veh" onclick="if(event.target===this)cm('veh')">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit" id="mt-veh">Ajouter un véhicule</div><button class="mcls" onclick="cm('veh')">✕</button></div>
+    <div class="mbdy">
+      <input type="hidden" id="v-id">
+      <div class="fr">
+        <div class="fg"><label class="fl">Marque *</label><input class="fc" id="v-mk" placeholder="Renault" list="dl-mk" autocomplete="off"><datalist id="dl-mk"></datalist></div>
+        <div class="fg"><label class="fl">Modèle *</label><input class="fc" id="v-mo" placeholder="Clio" list="dl-mo" autocomplete="off"><datalist id="dl-mo"></datalist></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Année</label><input class="fc" id="v-yr" type="number" inputmode="numeric" placeholder="2020" min="1950" max="2035"></div>
+        <div class="fg"><label class="fl">Carburant</label>
+          <select class="fc" id="v-cb">
+            <option value="essence">⛽ Essence</option><option value="diesel">🛢️ Diesel</option>
+            <option value="electrique">⚡ Électrique</option><option value="hybride">🔋 Hybride</option>
+            <option value="hybride_r">🔌 Hybride recharg.</option><option value="gpl">🟢 GPL</option><option value="gnv">🔵 GNV</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Immatriculation</label><input class="fc" id="v-im" placeholder="AB-123-CD" style="text-transform:uppercase"></div>
+        <div class="fg"><label class="fl">Km actuel</label><input class="fc" id="v-km" type="number" inputmode="numeric" placeholder="50000" min="0"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Date d'achat</label><input class="fc" id="v-da" type="date"></div>
+        <div class="fg"><label class="fl">Prochain CT</label><input class="fc" id="v-ct" type="date"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Couleur</label><input class="fc" id="v-cl" placeholder="Blanc nacré"></div>
+        <div class="fg"><label class="fl">Puissance (ch)</label><input class="fc" id="v-pw" type="number" inputmode="numeric" placeholder="90" min="0"></div>
+      </div>
+      <div class="fg"><label class="fl">Icône</label><div id="ep"></div><input type="hidden" id="v-em" value="🚗"></div>
+      <div class="fg"><label class="fl">VIN (optionnel)</label><input class="fc" id="v-vn" placeholder="Numéro de châssis"></div>
+    </div>
+    <div class="mft">
+      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-v" onclick="delVeh()">🗑 Supprimer</button></div>
+      <button class="btn btn-s btn-sm" onclick="cm('veh')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="saveVeh()" id="btn-sv">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Entretien -->
+<div class="mo" id="mo-ent" onclick="if(event.target===this)cm('ent')">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit" id="mt-ent">Ajouter un entretien</div><button class="mcls" onclick="cm('ent')">✕</button></div>
+    <div class="mbdy">
+      <input type="hidden" id="e-id">
+      <div class="fg"><label class="fl">Véhicule</label><select class="fc" id="e-vh"></select></div>
+      <div class="fg"><label class="fl">Type d'intervention</label><select class="fc" id="e-ty" onchange="onTyChange()"></select></div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Date</label><input class="fc" id="e-dt" type="date"></div>
+        <div class="fg"><label class="fl">Km</label><input class="fc" id="e-km" type="number" inputmode="numeric" placeholder="50000" min="0"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Garage / Lieu</label><input class="fc" id="e-gr" placeholder="Nom du garage"></div>
+        <div class="fg"><label class="fl">Coût (€)</label><input class="fc" id="e-ct" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01"></div>
+      </div>
+      <div class="fg"><label class="fl">Notes</label><input class="fc" id="e-nt" placeholder="Pièces changées, observations…"></div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Rappel date</label><input class="fc" id="e-rd" type="date"></div>
+        <div class="fg"><label class="fl">Rappel km</label><input class="fc" id="e-rk" type="number" inputmode="numeric" placeholder="60000" min="0"></div>
+      </div>
+    </div>
+    <div class="mft">
+      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-e" onclick="delEnt()">🗑 Supprimer</button></div>
+      <button class="btn btn-s btn-sm" onclick="cm('ent')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="saveEnt()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Km -->
+<div class="mo" id="mo-km" onclick="if(event.target===this)cm('km')">
+  <div class="modal modal-c">
+    <div class="mhdr"><div class="mtit">Mettre à jour le km</div><button class="mcls" onclick="cm('km')">✕</button></div>
+    <div class="mbdy">
+      <input type="hidden" id="km-vid">
+      <div class="fg"><label class="fl">Kilométrage actuel</label><input class="fc" id="km-v" type="number" inputmode="numeric" min="0"><div id="km-h" style="font-size:.76rem;color:var(--txm);margin-top:4px"></div></div>
+    </div>
+    <div class="mft"><button class="btn btn-s btn-sm" onclick="cm('km')">Annuler</button><button class="btn btn-p btn-sm" onclick="saveKm()">Enregistrer</button></div>
+  </div>
+</div>
+
+<!-- Modal Invitation -->
+<div class="mo" id="mo-inv" onclick="if(event.target===this)cm('inv')">
+  <div class="modal modal-c">
+    <div class="mhdr"><div class="mtit">Partager un véhicule</div><button class="mcls" onclick="cm('inv')">✕</button></div>
+    <div class="mbdy">
+      <div class="fg"><label class="fl">Véhicule</label><select class="fc" id="inv-v"></select></div>
+      <div class="fg"><label class="fl">Email du membre</label><input class="fc" id="inv-e" type="email" placeholder="famille@email.com"></div>
+    </div>
+    <div class="mft"><button class="btn btn-s btn-sm" onclick="cm('inv')">Annuler</button><button class="btn btn-p btn-sm" onclick="sendInv()">Envoyer</button></div>
+  </div>
+</div>
+
+<!-- Modal Nouveau mot de passe (reset) -->
+<div class="mo" id="mo-newpass" style="z-index:600">
+  <div class="modal modal-c">
+    <div class="mhdr"><div class="mtit">🔐 Nouveau mot de passe</div></div>
+    <div class="mbdy">
+      <p style="font-size:.85rem;color:var(--txm);margin-bottom:14px;line-height:1.5">Choisissez un nouveau mot de passe pour votre compte.</p>
+      <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fc" id="np-pass" type="password" placeholder="8 caractères minimum"></div>
+      <div class="fg"><label class="fl">Confirmer</label><input class="fc" id="np-pass2" type="password" placeholder="Répétez le mot de passe"></div>
+      <button class="btn btn-p" style="width:100%;margin-top:4px" onclick="saveNewPass()">Enregistrer le mot de passe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmation -->
+<div class="mo" id="mo-cfm" onclick="if(event.target===this)cm('cfm')">
+  <div class="modal modal-c">
+    <div class="mhdr"><div class="mtit" id="cfm-t">Confirmer</div><button class="mcls" onclick="cm('cfm')">✕</button></div>
+    <div class="mbdy">
+      <p id="cfm-m" style="color:var(--txm);font-size:.88rem;line-height:1.5"></p>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="cm('cfm')">Annuler</button>
+        <button class="btn btn-d btn-sm" style="flex:1" onclick="runCfm()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SB_URL='https://qhacwsklhlsfyfxwnjff.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY';
+
+const EMOJIS=['🚗','🚙','🏎️','🚕','🚐','🛻','🏍️','🛵','🚌','🚑','🚒','🚓','🚜','🚛','🛺'];
+
+const TYPES=[
+  {id:'vidange',label:'Vidange / Huile moteur',ico:'🛢️',ikm:10000,imo:12,cat:'Moteur'},
+  {id:'revision',label:'Révision complète',ico:'🔧',ikm:30000,imo:24,cat:'Moteur'},
+  {id:'filtre_huile',label:'Filtre à huile',ico:'🔘',ikm:10000,imo:12,cat:'Moteur'},
+  {id:'bougies',label:"Bougies d'allumage",ico:'⚡',ikm:30000,imo:36,cat:'Moteur'},
+  {id:'courroie',label:'Courroie de distribution',ico:'⚙️',ikm:80000,imo:60,cat:'Moteur'},
+  {id:'sangle_dist',label:'Sangle de distribution',ico:'🔗',ikm:80000,imo:60,cat:'Moteur'},
+  {id:'chaine_dist',label:'Chaîne de distribution',ico:'⛓️',ikm:120000,imo:null,cat:'Moteur'},
+  {id:'courroie_acc',label:'Courroie accessoires',ico:'🔄',ikm:60000,imo:48,cat:'Moteur'},
+  {id:'injecteurs',label:'Injecteurs',ico:'💉',ikm:100000,imo:null,cat:'Moteur'},
+  {id:'turbo',label:'Turbo',ico:'💨',ikm:150000,imo:null,cat:'Moteur'},
+  {id:'vanne_egr',label:'Vanne EGR',ico:'🔩',ikm:100000,imo:null,cat:'Moteur'},
+  {id:'fap',label:'FAP / DPF',ico:'💭',ikm:100000,imo:null,cat:'Moteur'},
+  {id:'filtre_air',label:'Filtre à air',ico:'💨',ikm:20000,imo:24,cat:'Filtres'},
+  {id:'filtre_hab',label:"Filtre d'habitacle / pollen",ico:'🌬️',ikm:15000,imo:12,cat:'Filtres'},
+  {id:'filtre_carb',label:'Filtre carburant',ico:'⛽',ikm:30000,imo:24,cat:'Filtres'},
+  {id:'freins',label:'Plaquettes de frein',ico:'🔴',ikm:30000,imo:36,cat:'Freinage'},
+  {id:'disques',label:'Disques de frein',ico:'⭕',ikm:60000,imo:null,cat:'Freinage'},
+  {id:'liq_frein',label:'Liquide de frein',ico:'🧴',ikm:null,imo:24,cat:'Freinage'},
+  {id:'frein_main',label:'Frein à main / parking',ico:'🅿️',ikm:null,imo:null,cat:'Freinage'},
+  {id:'pneus',label:'Pneumatiques',ico:'⚫',ikm:40000,imo:48,cat:'Pneus'},
+  {id:'pneus_sais',label:'Changement saisonnier',ico:'❄️',ikm:null,imo:6,cat:'Pneus'},
+  {id:'parallelisme',label:'Parallélisme / géométrie',ico:'📐',ikm:20000,imo:24,cat:'Pneus'},
+  {id:'equilibrage',label:'Équilibrage',ico:'⚖️',ikm:10000,imo:12,cat:'Pneus'},
+  {id:'embrayage',label:'Embrayage',ico:'🔄',ikm:100000,imo:null,cat:'Transmission'},
+  {id:'boite_vit',label:'Boîte de vitesses',ico:'⚙️',ikm:null,imo:null,cat:'Transmission'},
+  {id:'differentiel',label:'Différentiel',ico:'🔁',ikm:null,imo:null,cat:'Transmission'},
+  {id:'cardan',label:'Cardan / homocinétique',ico:'🔗',ikm:null,imo:null,cat:'Transmission'},
+  {id:'amortisseurs',label:'Amortisseurs',ico:'🔩',ikm:80000,imo:96,cat:'Suspension'},
+  {id:'roulement',label:'Roulement de roue',ico:'🔵',ikm:null,imo:null,cat:'Suspension'},
+  {id:'rotule',label:'Rotule / barre stab.',ico:'🔩',ikm:null,imo:null,cat:'Suspension'},
+  {id:'batterie',label:'Batterie',ico:'🔋',ikm:null,imo:60,cat:'Électrique'},
+  {id:'alternateur',label:'Alternateur',ico:'⚡',ikm:null,imo:null,cat:'Électrique'},
+  {id:'demarreur',label:'Démarreur',ico:'🔑',ikm:null,imo:null,cat:'Électrique'},
+  {id:'ampoules',label:'Ampoules / éclairage',ico:'💡',ikm:null,imo:null,cat:'Électrique'},
+  {id:'liq_refroid',label:'Liquide de refroidissement',ico:'🌡️',ikm:null,imo:48,cat:'Refroid.'},
+  {id:'radiateur',label:'Radiateur',ico:'♨️',ikm:null,imo:null,cat:'Refroid.'},
+  {id:'clim',label:'Climatisation / recharge',ico:'❄️',ikm:null,imo:24,cat:'Climatisation'},
+  {id:'ct',label:'Contrôle technique',ico:'✅',ikm:null,imo:24,cat:'Administratif'},
+  {id:'antipoll',label:'Contrôle antipollution',ico:'🌿',ikm:null,imo:24,cat:'Administratif'},
+  {id:'essuie_gl',label:'Essuie-glaces',ico:'🌧️',ikm:null,imo:12,cat:'Divers'},
+  {id:'vitres',label:'Vitres / pare-brise',ico:'🪟',ikm:null,imo:null,cat:'Divers'},
+  {id:'carrosserie',label:'Carrosserie / peinture',ico:'🎨',ikm:null,imo:null,cat:'Divers'},
+  {id:'autre',label:'Autre intervention',ico:'🔨',ikm:null,imo:null,cat:'Divers'},
+];
+
+const CAR_DB={
+  'Renault':['Clio','Mégane','Captur','Kadjar','Koleos','Twingo','Zoé','Austral','Arkana','Scénic','Laguna','Espace','Trafic','Master','Kangoo','Express'],
+  'Peugeot':['108','208','308','408','508','2008','3008','5008','Rifter','Partner','Expert','Boxer','e-208','e-2008','e-308'],
+  'Citroën':['C1','C3','C4','C5 X','C3 Aircross','C5 Aircross','Berlingo','SpaceTourer','Jumpy','Jumper','ë-C3'],
+  'Volkswagen':['Golf','Polo','Tiguan','Passat','T-Roc','T-Cross','Touareg','Caddy','Transporter','Crafter','ID.3','ID.4','ID.5','ID.Buzz','Taigo'],
+  'Toyota':['Yaris','Yaris Cross','Corolla','RAV4','C-HR','Prius','Aygo X','Camry','Land Cruiser','Proace','Hilux','GR Yaris','bZ4X'],
+  'Ford':['Fiesta','Focus','Puma','Kuga','Mustang Mach-E','Mondeo','Galaxy','Transit','Transit Custom','Ranger','Explorer'],
+  'Opel':['Corsa','Astra','Crossland','Grandland','Mokka','Zafira','Vivaro','Movano','Combo'],
+  'BMW':['Série 1','Série 2','Série 3','Série 4','Série 5','Série 7','X1','X2','X3','X4','X5','X6','iX','iX1','i4','i5'],
+  'Mercedes':['Classe A','Classe B','Classe C','Classe E','Classe S','CLA','GLA','GLB','GLC','GLE','GLS','EQA','EQB','EQC','EQS','Vito','Sprinter'],
+  'Audi':['A1','A3','A4','A5','A6','A7','A8','Q2','Q3','Q4 e-tron','Q5','Q7','Q8','TT','e-tron'],
+  'Dacia':['Sandero','Duster','Logan','Spring','Jogger','Bigster','Dokker','Lodgy'],
+  'Fiat':['500','500e','Panda','Tipo','500X','500L','Ducato','Doblo'],
+  'Hyundai':['i10','i20','i30','Tucson','Santa Fe','IONIQ 5','IONIQ 6','Kona','Kona Electric','Nexo'],
+  'Kia':['Picanto','Rio','Ceed','ProCeed','Sportage','Sorento','Stonic','Niro','EV6','EV9','Carnival'],
+  'Seat':['Ibiza','Leon','Arona','Ateca','Tarraco','Formentor'],
+  'Skoda':['Fabia','Octavia','Superb','Karoq','Kodiaq','Enyaq','Kamiq','Scala'],
+  'Nissan':['Micra','Juke','Qashqai','X-Trail','Leaf','Ariya','Navara','NV200','Townstar'],
+  'Tesla':['Model 3','Model S','Model X','Model Y','Cybertruck'],
+  'Volvo':['XC40','XC60','XC90','V60','S60','C40 Recharge','EX30','EX90'],
+  'Mazda':['Mazda2','Mazda3','Mazda6','CX-3','CX-5','CX-30','CX-60','MX-5','MX-30'],
+  'Suzuki':['Swift','Vitara','SX4 S-Cross','Jimny','Ignis','Across'],
+  'Mitsubishi':['ASX','Outlander','Eclipse Cross','Space Star','L200'],
+  'Jeep':['Renegade','Compass','Cherokee','Grand Cherokee','Wrangler','Avenger'],
+  'Land Rover':['Defender','Discovery','Discovery Sport','Range Rover','Range Rover Sport','Range Rover Evoque','Range Rover Velar'],
+  'Porsche':['911','Cayenne','Macan','Panamera','Taycan','718 Boxster','718 Cayman'],
+  'Alfa Romeo':['Giulia','Stelvio','Tonale','Giulietta'],
+  'Honda':['Jazz','Civic','CR-V','HR-V','ZR-V','e','e:Ny1','Accord'],
+  'Yamaha':['MT-07','MT-09','R1','R7','Tracer 9','Ténéré 700','XSR700','TMAX'],
+  'Kawasaki':['Z650','Z900','Ninja 400','Ninja 650','Versys 650'],
+  'Ducati':['Monster','Multistrada','Panigale','Scrambler','Diavel','DesertX'],
+  'BMW Moto':['R 1250 GS','R 1250 RT','S 1000 RR','F 850 GS','G 310 GS'],
+  'Lexus':['UX','NX','RX','ES','IS','LC','RZ'],
+  'DS':['DS3','DS4','DS7','DS9'],
+  'MINI':['Mini 3 portes','Mini 5 portes','Clubman','Countryman','Cabrio','Cooper E'],
+  'Alpine':['A110','A110 S','A110 GT'],
+  'Camping-car':['Profilé','Intégral','Capucine','Van aménagé'],
+  'Autre':[],
+};
+const BRANDS=Object.keys(CAR_DB);
+
+let sb;
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:''};
+
+const g=id=>document.getElementById(id);
+const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
+const fmtKm=n=>n!=null?Number(n).toLocaleString('fr')+' km':'— km';
+const fmtCout=n=>n?Number(n).toLocaleString('fr',{style:'currency',currency:'EUR'}):'—';
+const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
+const getType=id=>TYPES.find(t=>t.id===id)||{id:'autre',label:id,ico:'🔨',ikm:null,imo:null,cat:'Divers'};
+
+function toast(msg,type='i'){
+  const el=document.createElement('div');
+  el.className='toast '+type;
+  const icons={s:'✅',e:'❌',i:'ℹ️'};
+  el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${esc(msg)}</span>`;
+  g('tc').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},type==='e'?5000:3000);
+}
+
+function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
+function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();nav('dash');updateDot();}
+function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
+function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
+function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
+function initAutoComplete(){
+  const mk=g('v-mk'),mo=g('v-mo'),mkl=g('dl-mk'),mol=g('dl-mo');
+  if(!mk||!mkl)return;
+  mkl.innerHTML=BRANDS.map(b=>`<option value="${b}">`).join('');
+  mk.addEventListener('input',()=>{mol.innerHTML=(CAR_DB[mk.value]||[]).map(m=>`<option value="${m}">`).join('');if(CAR_DB[mk.value])mo.focus();});
+}
+
+/* INIT */
+async function init(){
+  sb=window.supabase.createClient(SB_URL,SB_KEY);
+  g('ls-msg').textContent='Connexion…';
+
+  // Détecter recovery depuis le hash direct OU depuis sessionStorage (après redirect landing)
+  const handled = await handleResetToken();
+  if(handled){
+    if('serviceWorker'in navigator)navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
+    return;
+  }
+
+  let session=null;
+  try{const{data}=await sb.auth.getSession();session=data.session;}catch(e){}
+
+  sb.auth.onAuthStateChange(async(ev,sess)=>{
+    if(ev==='SIGNED_IN'&&sess?.user&&!S.user){S.user=sess.user;await loadAll();showApp();}
+    else if(ev==='SIGNED_OUT'){resetState();showAuth();}
+  });
+
+  if(session?.user){S.user=session.user;await loadAll();showApp();}
+  else showAuth();
+
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
+}
+
+async function handleResetToken(){
+  // Vérifier hash direct ou sessionStorage (si redirect depuis landing)
+  let hash=window.location.hash;
+  if(!hash.includes('type=recovery')){
+    const stored=sessionStorage.getItem('ac_recovery_hash');
+    if(stored&&stored.includes('type=recovery')){
+      hash=stored;
+      sessionStorage.removeItem('ac_recovery_hash');
+    }
+  }
+  if(!hash.includes('type=recovery')) return false;
+
+  const params=new URLSearchParams(hash.replace('#',''));
+  const token=params.get('access_token');
+  if(!token) return false;
+
+  // Nettoyer l'URL
+  window.history.replaceState({},document.title,window.location.pathname);
+
+  // Stocker le token pour l'update
+  S._resetToken=token;
+
+  // Afficher le formulaire
+  g('ls').classList.add('hidden');
+  g('auth-screen').classList.add('hidden');
+  g('app-screen').classList.add('hidden');
+  om('newpass');
+  return true;
+}
+
+async function saveNewPass(){
+  const pass=g('np-pass').value;
+  const pass2=g('np-pass2').value;
+  if(!pass||pass.length<8) return toast('8 caractères minimum.','e');
+  if(pass!==pass2) return toast('Les mots de passe ne correspondent pas.','e');
+
+  try{
+    let error;
+    if(S._resetToken){
+      // Utiliser l'API directement avec le token de recovery
+      const r=await fetch(`${SB_URL}/auth/v1/user`,{
+        method:'PUT',
+        headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+S._resetToken},
+        body:JSON.stringify({password:pass})
+      });
+      const d=await r.json();
+      if(!r.ok) error={message:d.error_description||d.msg||'Erreur'};
+      delete S._resetToken;
+    } else {
+      ({error}=await sb.auth.updateUser({password:pass}));
+    }
+    if(error) return toast('Erreur : '+error.message,'e');
+    cm('newpass');
+    toast('Mot de passe mis à jour ! Connectez-vous.','s');
+    resetState();
+    showAuth();
+    try{await sb.auth.signOut();}catch(e){}
+  }catch(e){
+    toast('Erreur réseau : '+e.message,'e');
+  }
+}
+
+function resetState(){
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';
+  document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
+  document.body.style.overflow='';
+}
+
+async function doLogin(){
+  const email=g('le').value.trim(),pass=g('lp').value;
+  if(!email||!pass)return toast('Remplissez tous les champs.','e');
+  const btn=g('btn-login');btn.disabled=true;btn.textContent='Connexion…';
+  const{error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.disabled=false;btn.textContent='Se connecter';
+  if(error)toast(error.message==='Invalid login credentials'?'Email ou mot de passe incorrect.':error.message,'e');
+}
+async function doReg(){
+  const name=g('rn').value.trim(),email=g('re').value.trim(),pass=g('rp').value;
+  if(!name||!email||!pass)return toast('Remplissez tous les champs.','e');
+  if(pass.length<8)return toast('Mot de passe : 8 caractères minimum.','e');
+  if(!g('cgu-check').checked)return toast('Veuillez accepter les CGU pour continuer.','e');
+  const btn=g('btn-reg');btn.disabled=true;btn.textContent='Création…';
+  const{error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});
+  btn.disabled=false;btn.textContent='Créer mon compte';
+  if(error)toast(error.message,'e');else toast('Compte créé ! Vérifiez votre email.','s');
+}
+async function doOut(){const hadUser=!!S.user;resetState();showAuth();if(hadUser){try{await sb.auth.signOut();}catch(e){}}}
+
+function showReset(){
+  g('pl').classList.add('hidden');g('pr').classList.add('hidden');g('pp').classList.remove('hidden');
+  g('auth-tabs').style.opacity='.4';g('auth-tabs').style.pointerEvents='none';
+}
+function authTab(t){
+  g('pl').classList.toggle('hidden',t!=='l');
+  g('pr').classList.toggle('hidden',t!=='r');
+  g('pp').classList.add('hidden');
+  g('auth-tabs').style.opacity='1';g('auth-tabs').style.pointerEvents='';
+  document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));
+}
+async function doReset(){
+  const email=g('pe').value.trim();
+  if(!email)return toast('Entrez votre email.','e');
+  const btn=g('btn-reset');btn.disabled=true;btn.textContent='Envoi…';
+  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://autocarnet.netlify.app/'});
+  btn.disabled=false;btn.textContent='Envoyer le lien';
+  if(error)toast('Erreur : '+error.message,'e');
+  else toast('Email envoyé ! Vérifiez votre boîte mail.','s');
+}
+
+/* MODALES CGU / RGPD */
+function showCGU(){
+  const mo=document.createElement('div');
+  mo.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:flex-end;backdrop-filter:blur(3px)';
+  mo.innerHTML=`<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0;flex-shrink:0">
+      <div style="font-size:1rem;font-weight:700">Conditions Générales d'Utilisation</div>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1F5F9;cursor:pointer;font-size:1rem">✕</button>
+    </div>
+    <div style="padding:16px 20px;overflow-y:auto;font-size:.85rem;color:#334155;line-height:1.7">
+      <p style="font-weight:700;margin-bottom:8px">Dernière mise à jour : ${new Date().toLocaleDateString('fr-FR')}</p>
+      <p style="margin-bottom:12px"><strong>1. Objet</strong><br>AutoCarnet est une application de carnet d'entretien digital permettant aux utilisateurs de suivre l'entretien de leurs véhicules. L'utilisation de l'application implique l'acceptation des présentes CGU.</p>
+      <p style="margin-bottom:12px"><strong>2. Compte utilisateur</strong><br>L'accès aux services nécessite la création d'un compte avec une adresse email valide. L'utilisateur est responsable de la confidentialité de ses identifiants. Tout accès frauduleux devra être signalé immédiatement.</p>
+      <p style="margin-bottom:12px"><strong>3. Utilisation du service</strong><br>Le service est destiné à un usage personnel et professionnel licite. Il est interdit d'utiliser AutoCarnet à des fins illicites, de tenter d'accéder aux données d'autres utilisateurs, ou de perturber le fonctionnement de l'application.</p>
+      <p style="margin-bottom:12px"><strong>4. Données</strong><br>Les données saisies (véhicules, entretiens) appartiennent à l'utilisateur. AutoCarnet ne revendique aucun droit sur ces données. L'utilisateur peut supprimer son compte et ses données à tout moment.</p>
+      <p style="margin-bottom:12px"><strong>5. Disponibilité</strong><br>AutoCarnet s'efforce d'assurer une disponibilité maximale du service mais ne peut garantir une disponibilité ininterrompue. Des maintenances peuvent être effectuées sans préavis.</p>
+      <p style="margin-bottom:12px"><strong>6. Responsabilité</strong><br>AutoCarnet est un outil d'aide au suivi d'entretien. Les décisions techniques concernant vos véhicules restent sous votre entière responsabilité. AutoCarnet ne saurait être tenu responsable de dommages résultant d'une mauvaise interprétation des données.</p>
+      <p style="margin-bottom:12px"><strong>7. Modification des CGU</strong><br>Les présentes CGU peuvent être modifiées à tout moment. Les utilisateurs seront informés par email en cas de modification substantielle.</p>
+      <p><strong>8. Contact</strong><br>Pour toute question : support@autocarnet.app</p>
+    </div>
+  </div>`;
+  document.body.appendChild(mo);
+}
+
+function showRGPD(){
+  const mo=document.createElement('div');
+  mo.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:flex-end;backdrop-filter:blur(3px)';
+  mo.innerHTML=`<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0;flex-shrink:0">
+      <div style="font-size:1rem;font-weight:700">Politique de confidentialité</div>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1F5F9;cursor:pointer;font-size:1rem">✕</button>
+    </div>
+    <div style="padding:16px 20px;overflow-y:auto;font-size:.85rem;color:#334155;line-height:1.7">
+      <p style="font-weight:700;margin-bottom:8px">Dernière mise à jour : ${new Date().toLocaleDateString('fr-FR')}</p>
+      <p style="margin-bottom:12px"><strong>1. Responsable du traitement</strong><br>AutoCarnet est responsable du traitement de vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD).</p>
+      <p style="margin-bottom:12px"><strong>2. Données collectées</strong><br>• Données de compte : prénom, adresse email, mot de passe (chiffré)<br>• Données véhicules : marque, modèle, immatriculation, kilométrage, informations d'entretien<br>• Données techniques : logs de connexion, identifiant de session</p>
+      <p style="margin-bottom:12px"><strong>3. Finalité du traitement</strong><br>Vos données sont utilisées exclusivement pour : la fourniture du service AutoCarnet, l'envoi de notifications de rappel d'entretien (si activées), et le support utilisateur.</p>
+      <p style="margin-bottom:12px"><strong>4. Base légale</strong><br>Le traitement est fondé sur l'exécution du contrat (CGU) et votre consentement pour les notifications push.</p>
+      <p style="margin-bottom:12px"><strong>5. Conservation des données</strong><br>Vos données sont conservées pendant toute la durée d'utilisation du service, puis supprimées dans un délai de 30 jours après la suppression du compte.</p>
+      <p style="margin-bottom:12px"><strong>6. Hébergement</strong><br>Les données sont hébergées par Supabase (infrastructure AWS, région EU-West). Supabase est conforme au RGPD et au Privacy Shield.</p>
+      <p style="margin-bottom:12px"><strong>7. Vos droits</strong><br>Conformément au RGPD, vous disposez des droits d'accès, rectification, suppression, portabilité et opposition. Pour exercer ces droits : support@autocarnet.app</p>
+      <p style="margin-bottom:12px"><strong>8. Cookies</strong><br>AutoCarnet n'utilise pas de cookies publicitaires. Un cookie de session est utilisé pour maintenir votre connexion.</p>
+      <p><strong>9. Contact DPO</strong><br>Pour toute question relative à vos données : support@autocarnet.app</p>
+    </div>
+  </div>`;
+  document.body.appendChild(mo);
+}
+
+/* DATA */
+async function loadAll(){await Promise.all([loadVehs(),loadEnts(),loadPartages()]);}
+async function loadVehs(){
+  if(!S.user?.id)return;
+  try{
+    const{data:own,error:e1}=await sb.from('vehicles').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false});
+    if(e1){console.error(e1);return;}
+    const{data:shp}=await sb.from('partages').select('vehicle_id').eq('invited_user_id',S.user.id).eq('status','accepted');
+    let shared=[];
+    if(shp?.length){const{data}=await sb.from('vehicles').select('*').in('id',shp.map(p=>p.vehicle_id));shared=data||[];}
+    const all=[...(own||[]),...shared];
+    S.vehicles=all.filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  }catch(e){console.error(e);}
+}
+async function loadEnts(){
+  if(!S.vehicles.length){S.ents=[];return;}
+  const{data,error}=await sb.from('entretiens').select('*').in('vehicle_id',S.vehicles.map(v=>v.id)).order('date',{ascending:false});
+  if(error){console.error(error);return;}
+  S.ents=data||[];
+}
+async function loadPartages(){
+  if(!S.user?.id)return;
+  const uid=S.user.id,email=S.user.email;
+  const[{data:sent},{data:pend},{data:acc}]=await Promise.all([
+    sb.from('partages').select('*').eq('owner_id',uid),
+    sb.from('partages').select('*').eq('invited_email',email).eq('status','pending'),
+    sb.from('partages').select('*').eq('invited_user_id',uid),
+  ]);
+  S.partages=[...(sent||[]),...(acc||[])];S.pending=pend||[];
+}
+
+/* CT */
+function ctStatus(d){
+  if(!d)return null;
+  const days=Math.ceil((new Date(d)-new Date())/86400000);
+  if(days<0)return{cls:'badge-ct-e',label:`CT expiré (${Math.abs(days)}j)`};
+  if(days<=60)return{cls:'badge-ct-w',label:`CT dans ${days}j`};
+  return{cls:'badge-ct',label:`CT : ${fmtDate(d)}`};
+}
+
+/* VEHICLE CRUD */
+async function saveVeh(){
+  if(!S.user?.id){toast('Session expirée.','e');return doOut();}
+  const id=g('v-id').value.trim();
+  const marque=g('v-mk').value.trim(),modele=g('v-mo').value.trim();
+  if(!marque)return toast('La marque est requise.','e');
+  if(!modele)return toast('Le modèle est requis.','e');
+  const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
+  const payload={marque,modele,
+    annee:parseInt(g('v-yr').value)||null,
+    carburant:g('v-cb').value||'essence',
+    immatriculation:g('v-im').value.trim().toUpperCase()||null,
+    km_actuel:parseInt(g('v-km').value)||0,
+    date_achat:g('v-da').value||null,
+    ct_date:g('v-ct').value||null,
+    couleur:g('v-cl').value.trim()||null,
+    puissance:parseInt(g('v-pw').value)||null,
+    emoji:g('v-em').value||'🚗',
+    vin:g('v-vn').value.trim()||null,
+  };
+  let error;
+  try{
+    if(id){({error}=await sb.from('vehicles').update(payload).eq('id',id).eq('user_id',S.user.id));}
+    else{({error}=await sb.from('vehicles').insert({...payload,id:crypto.randomUUID(),user_id:S.user.id}));}
+  }catch(e){btn.disabled=false;btn.textContent='Enregistrer';return toast('Erreur réseau : '+e.message,'e');}
+  btn.disabled=false;btn.textContent='Enregistrer';
+  if(error){console.error(error);return toast('Erreur : '+(error.message||error.code),'e');}
+  toast(id?'Véhicule mis à jour !':'Véhicule ajouté !','s');
+  cm('veh');await loadVehs();await loadEnts();nav('vehs');
+}
+async function delVeh(){
+  const id=g('v-id').value;if(!id)return;
+  cfm('Supprimer ce véhicule ?','Supprime le véhicule et tout son historique. Irréversible.',async()=>{
+    const{error}=await sb.from('vehicles').delete().eq('id',id).eq('user_id',S.user.id);
+    if(error)return toast('Erreur : '+error.message,'e');
+    toast('Véhicule supprimé.','i');cm('veh');if(S.selVeh===id)S.selVeh=null;
+    await loadVehs();await loadEnts();nav('vehs');
+  });
+}
+function openKm(vid){
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  g('km-vid').value=vid;g('km-v').value=v.km_actuel||'';
+  g('km-h').textContent='Actuel : '+fmtKm(v.km_actuel);om('km');
+}
+async function saveKm(){
+  const vid=g('km-vid').value,km=parseInt(g('km-v').value);
+  if(isNaN(km)||km<0)return toast('Kilométrage invalide.','e');
+  const{error}=await sb.from('vehicles').update({km_actuel:km}).eq('id',vid).eq('user_id',S.user.id);
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast('Kilométrage mis à jour !','s');cm('km');await loadVehs();renderView();
+}
+
+/* ENTRETIEN CRUD */
+async function saveEnt(){
+  if(!S.user?.id)return toast('Session expirée.','e');
+  const id=g('e-id').value,vehicle_id=g('e-vh').value,type=g('e-ty').value,date=g('e-dt').value;
+  if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
+  if(!date)return toast('La date est requise.','e');
+  const km=parseInt(g('e-km').value)||null;
+  const p={user_id:S.user.id,vehicle_id,type,date,km,
+    garage:g('e-gr').value.trim()||null,
+    cout:parseFloat(g('e-ct').value)||null,
+    note:g('e-nt').value.trim()||null,
+    rappel_date:g('e-rd').value||null,
+    rappel_km:parseInt(g('e-rk').value)||null,
+  };
+  if(!id) p.id=crypto.randomUUID();
+  const{error}=id?await sb.from('entretiens').update(p).eq('id',id):await sb.from('entretiens').insert(p);
+  if(error)return toast('Erreur : '+error.message,'e');
+  if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
+  toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
+  cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
+}
+async function delEnt(){
+  const id=g('e-id').value;if(!id)return;
+  cfm('Supprimer cet entretien ?','Action irréversible.',async()=>{
+    const{error}=await sb.from('entretiens').delete().eq('id',id);
+    if(error)return toast('Erreur : '+error.message,'e');
+    toast('Entretien supprimé.','i');cm('ent');await loadEnts();renderView();
+  });
+}
+
+/* FAMILLE */
+async function sendInv(){
+  const vid=g('inv-v').value,email=g('inv-e').value.trim().toLowerCase();
+  if(!vid)return toast('Sélectionnez un véhicule.','e');
+  if(!email)return toast('Email requis.','e');
+  if(email===S.user.email)return toast('Vous ne pouvez pas vous inviter.','e');
+  const{error}=await sb.from('partages').insert({vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending'});
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast('Invitation envoyée !','s');cm('inv');await loadPartages();renderView();
+}
+async function acceptInv(pid){const{error}=await sb.from('partages').update({status:'accepted',invited_user_id:S.user.id}).eq('id',pid);if(error)return toast('Erreur.','e');toast('Acceptée !','s');await loadAll();renderView();}
+async function rejectInv(pid){await sb.from('partages').update({status:'rejected'}).eq('id',pid);toast('Refusée.','i');await loadPartages();renderView();}
+async function revokeP(pid){cfm('Révoquer ce partage ?',"Cette personne n'aura plus accès au véhicule.",async()=>{await sb.from('partages').delete().eq('id',pid);toast('Révoqué.','i');await loadPartages();renderView();});}
+
+/* RAPPELS */
+function getRappels(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const list=[];
+  S.ents.forEach(e=>{
+    const v=S.vehicles.find(x=>x.id===e.vehicle_id);if(!v)return;
+    const ti=getType(e.type);
+    if(e.rappel_date){
+      const rd=new Date(e.rappel_date);rd.setHours(0,0,0,0);
+      const days=Math.ceil((rd-today)/86400000);
+      const sev=days<0?'danger':days<=30?'warn':'ok';
+      list.push({id:'d'+e.id,v,e,ti,kind:'date',days,sev,label:days<0?`${Math.abs(days)}j de retard`:days===0?"Aujourd'hui":`Dans ${days}j`});
+    }
+    if(e.rappel_km&&v.km_actuel!=null){
+      const left=e.rappel_km-v.km_actuel;
+      const sev=left<=0?'danger':left<=1000?'warn':'ok';
+      list.push({id:'k'+e.id,v,e,ti,kind:'km',left,sev,label:left<=0?`${Math.abs(left).toLocaleString('fr')} km dépassé`:`Dans ${left.toLocaleString('fr')} km`});
+    }
+  });
+  S.vehicles.forEach(v=>{
+    if(!v.ct_date)return;
+    const days=Math.ceil((new Date(v.ct_date)-today)/86400000);
+    const sev=days<0?'danger':days<=60?'warn':'ok';
+    if(sev!=='ok')list.push({id:'ct'+v.id,v,e:null,ti:{ico:'✅',label:'Contrôle technique'},kind:'ct',days,sev,label:days<0?`Expiré (${Math.abs(days)}j)`:`Dans ${days}j`,isCT:true});
+  });
+  return list.sort((a,b)=>({danger:0,warn:1,ok:2}[a.sev]-{danger:0,warn:1,ok:2}[b.sev]));
+}
+function vStatus(vid){const r=getRappels().filter(x=>x.v.id===vid);if(r.some(x=>x.sev==='danger'))return'danger';if(r.some(x=>x.sev==='warn'))return'warn';return'ok';}
+function updateDot(){g('rdot').classList.toggle('hidden',!getRappels().some(x=>x.sev!=='ok'));}
+
+/* GRAPHIQUE */
+function getCostsByYear(vid){
+  const map={};
+  S.ents.filter(e=>e.vehicle_id===vid&&e.cout).forEach(e=>{const y=new Date(e.date).getFullYear();map[y]=(map[y]||0)+e.cout;});
+  return Object.keys(map).sort().slice(-5).map(y=>({year:y,total:map[y]}));
+}
+function chartHTML(vid){
+  const data=getCostsByYear(vid);if(!data.length)return'';
+  const max=Math.max(...data.map(d=>d.total),1);
+  return`<div class="chart"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${data.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
+}
+
+/* PDF */
+function exportPDF(vid){
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  const list=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const total=list.reduce((s,e)=>s+(e.cout||0),0);
+  const rows=list.map(e=>{const ti=getType(e.type);return`<tr><td>${fmtDate(e.date)}</td><td>${ti.ico} ${esc(ti.label)}</td><td>${e.km?fmtKm(e.km):'—'}</td><td>${esc(e.garage)||'—'}</td><td>${e.cout?fmtCout(e.cout):'—'}</td><td>${esc(e.note)||'—'}</td></tr>`;}).join('');
+  const html=`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>AutoCarnet — ${esc(v.marque)} ${esc(v.modele)}</title><style>body{font-family:Arial,sans-serif;color:#111;margin:32px 40px;font-size:13px}table{width:100%;border-collapse:collapse}th{background:#f4f4f4;padding:7px 10px;text-align:left;font-size:.68rem;text-transform:uppercase}td{padding:7px 10px;border-bottom:1px solid #eee;font-size:.79rem}</style></head><body><div style="display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:20px"><div><div style="font-size:1.3rem;font-weight:700">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}${v.annee?' ('+v.annee+')':''}</div><div style="font-family:monospace;font-size:.78rem">${esc(v.immatriculation)||'—'}</div><div style="font-size:.72rem;color:#666">${fmtKm(v.km_actuel)}</div></div><div style="text-align:right"><div style="font-size:1.2rem;font-weight:900">AUTOCARNET</div><div style="font-size:.7rem;color:#666">Exporté le ${fmtDate(new Date().toISOString())}</div></div></div><table><thead><tr><th>Date</th><th>Type</th><th>Km</th><th>Garage</th><th>Coût</th><th>Notes</th></tr></thead><tbody>${rows||'<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px">Aucun entretien</td></tr>'}</tbody></table><div style="margin-top:12px;text-align:right;font-weight:700">Total : ${fmtCout(total)}</div></body></html>`;
+  const win=window.open('','_blank');if(!win)return toast('Autorisez les popups.','e');
+  win.document.write(html);win.document.close();setTimeout(()=>win.print(),400);
+}
+
+/* RENDER */
+function renderView(){
+  const v=S.view;
+  if(v==='dash')renderDash();
+  else if(v==='vehs')renderVehs();
+  else if(v==='ent')renderEnt();
+  else if(v==='rap')renderRap();
+  else if(v==='fam')renderFam();
+  else if(v==='profil')renderProfil();
+  updateDot();
+}
+
+function renderDash(){
+  const el=g('d-ctn');
+  const raps=getRappels(),urgent=raps.filter(r=>r.sev!=='ok');
+  const total=S.ents.reduce((s,e)=>s+(e.cout||0),0);
+  if(!S.vehicles.length){
+    el.innerHTML=`<div class="empty"><span class="empty-i">🚗</span><div class="empty-t">Bienvenue dans AutoCarnet</div><p class="empty-d">Ajoutez votre premier véhicule pour commencer le suivi d'entretien.</p><button class="btn btn-p" onclick="openVeh()">+ Ajouter un véhicule</button></div>`;
+    return;
+  }
+  let h=`<div class="stats-row">
+    <div class="stat"><div class="stat-v">${S.vehicles.length}</div><div class="stat-l">Véhicule${S.vehicles.length>1?'s':''}</div></div>
+    <div class="stat"><div class="stat-v">${S.ents.length}</div><div class="stat-l">Entretiens</div></div>
+    <div class="stat"><div class="stat-v" style="font-size:1.1rem;color:var(--ok)">${fmtCout(total)}</div><div class="stat-l">Coût total</div></div>
+    <div class="stat"><div class="stat-v" style="color:${urgent.length?'var(--err)':'var(--ok)'}">${urgent.length}</div><div class="stat-l">Alerte${urgent.length>1?'s':''}</div></div>
+  </div>`;
+  if(urgent.length){
+    h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes actives</span><button class="sec-lnk" onclick="nav('rap')">Tout voir</button></div>`;
+    h+=urgent.slice(0,3).map(r=>riHTML(r)).join('');
+  }
+  h+=`<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><button class="sec-lnk" onclick="nav('vehs')">Tout voir</button></div>`;
+  h+=S.vehicles.map(v=>vcDashHTML(v)).join('');
+  const recent=S.ents.slice(0,4);
+  if(recent.length){
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Derniers entretiens</span><button class="sec-lnk" onclick="nav('ent')">Tout voir</button></div>`;
+    h+=recent.map(e=>eiHTML(e,S.vehicles.find(v=>v.id===e.vehicle_id))).join('');
+  }
+  el.innerHTML=h;
+}
+
+function vcDashHTML(v){
+  const st=vStatus(v.id);
+  const es=S.ents.filter(e=>e.vehicle_id===v.id);
+  const last=es[0];
+  const stColors={ok:'var(--ok)',warn:'var(--warn)',danger:'var(--err)'};
+  return`<div class="vc ${st}" style="cursor:pointer" onclick="nav('vehs');expandVeh('${v.id}')">
+    <div class="vc-main">
+      <div class="vc-ico">${v.emoji||'🚗'}</div>
+      <div class="vc-info">
+        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
+        <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
+          <span style="color:${stColors[st]};font-size:.72rem;font-weight:700">${{ok:'✓ À jour',warn:'⚠ Attention',danger:'✕ En retard'}[st]}</span>
+          ${last?`<span style="color:var(--txm);font-size:.72rem">Dernier : ${fmtDate(last.date)}</span>`:''}
+        </div>
+      </div>
+      <span style="color:var(--txl);font-size:.9rem">›</span>
+    </div>
+  </div>`;
+}
+
+function renderVehs(){
+  const el=g('vh-ctn');
+  if(!S.vehicles.length){
+    el.innerHTML=`<div class="empty"><span class="empty-i">🚗</span><div class="empty-t">Aucun véhicule</div><p class="empty-d">Appuyez sur + pour ajouter votre premier véhicule.</p></div>`;
+    return;
+  }
+  el.innerHTML=S.vehicles.map(v=>vcFullHTML(v)).join('');
+}
+
+function vcFullHTML(v){
+  const st=vStatus(v.id);
+  const es=S.ents.filter(e=>e.vehicle_id===v.id);
+  const total=es.reduce((s,e)=>s+(e.cout||0),0);
+  const isOwner=v.user_id===S.user.id;
+  const ct=ctStatus(v.ct_date);
+  const isExp=S.expandedVeh===v.id;
+  const badge={ok:'badge-ok',warn:'badge-warn',danger:'badge-err'}[st];
+  const badgeLbl={ok:'✓ À jour',warn:'⚠ Attention',danger:'✕ En retard'}[st];
+
+  let h=`<div class="vc ${st}${isExp?' expanded':''}" id="vc-${v.id}">
+    <div class="vc-main" onclick="toggleVeh('${v.id}')">
+      <div class="vc-ico">${v.emoji||'🚗'}</div>
+      <div class="vc-info">
+        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?` (${v.annee})`:''}</div>
+        <div class="vc-sub">
+          ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:3px;font-size:.72rem">${esc(v.immatriculation)}</span>`:''}
+          <span class="badge ${badge}">${badgeLbl}</span>
+          ${ct?`<span class="badge ${ct.cls}">${ct.label}</span>`:''}
+          ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
+        </div>
+      </div>
+      <span class="vc-chevron">›</span>
+    </div>
+    <div class="vc-body">
+      <div class="vc-stats-row">
+        <div><span class="vs-v">${fmtKm(v.km_actuel)}</span><span class="vs-l">Kilométrage</span></div>
+        <div><span class="vs-v">${es.length}</span><span class="vs-l">Entretiens</span></div>
+        <div><span class="vs-v" style="font-size:.82rem">${fmtCout(total)}</span><span class="vs-l">Coût total</span></div>
+      </div>`;
+
+  // Graphique coûts
+  const costData=getCostsByYear(v.id);
+  if(costData.length>1){
+    const max=Math.max(...costData.map(d=>d.total),1);
+    h+=`<div style="padding:0 14px 12px"><div class="chart-ttl" style="margin-bottom:8px">💶 Coûts par année</div><div class="chart-bars" style="height:60px">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div><div class="vc-acts" style="border-top:1px solid var(--border);padding-top:10px">`;
+  } else {
+    h+=`<div class="vc-acts">`;
+  }
+
+  h+=`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">📍 Km</button>
+      ${isOwner?`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVeh('${v.id}')">✏️ Modifier</button>`:''}
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();exportCSV('${v.id}')">📊 CSV</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();exportPDF('${v.id}')">📄 PDF</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();showShareLink('${v.id}')">🔗 Lien</button>
+    </div>`;
+
+  // Derniers entretiens inline
+  if(es.length){
+    h+=`<div class="vc-ents"><div class="vc-ents-title">Derniers entretiens</div>`;
+    h+=es.slice(0,3).map(e=>{
+      const ti=getType(e.type);
+      return`<div class="ei-inline" onclick="event.stopPropagation();openEnt('${e.id}')">
+        <div style="font-size:1.1rem">${ti.ico}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
+          <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?' · '+esc(e.garage):''}</div>
+        </div>
+        ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
+      </div>`;
+    }).join('');
+    if(es.length>3)h+=`<button class="btn btn-s btn-sm" style="width:100%;margin-top:4px" onclick="event.stopPropagation();S.selVeh='${v.id}';nav('ent')">Voir tous les entretiens (${es.length})</button>`;
+    h+=`</div>`;
+  }
+
+  h+=`</div></div>`;
+  return h;
+}
+
+function toggleVeh(vid){
+  S.expandedVeh=S.expandedVeh===vid?null:vid;
+  renderVehs();
+}
+function expandVeh(vid){S.expandedVeh=vid;renderVehs();}
+
+function renderEnt(){
+  const el=g('en-ctn');
+  if(!S.vehicles.length){
+    el.innerHTML=`<div class="empty"><span class="empty-i">🔧</span><div class="empty-t">Aucun véhicule</div><p class="empty-d">Ajoutez d'abord un véhicule.</p><button class="btn btn-p" onclick="nav('vehs')">Voir les véhicules</button></div>`;
+    return;
+  }
+  // Picker véhicule
+  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div class="vpi-i">${v.emoji||'🚗'}</div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
+  h+=`<div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="ent-search" placeholder="Rechercher un entretien…" oninput="S.searchEnt=this.value;renderEnt()" value="${esc(S.searchEnt||'')}"></div>`;
+
+  if(!S.selVeh){
+    h+=`<div class="empty" style="padding:32px 16px"><span class="empty-i" style="font-size:2.2rem">☝️</span><div class="empty-t">Sélectionnez un véhicule</div></div>`;
+    el.innerHTML=h;return;
+  }
+  const v=S.vehicles.find(x=>x.id===S.selVeh);
+  let ents=searchEnts(S.searchEnt||'');
+
+  // Filtres catégories
+  const cats=[...new Set(ents.map(e=>getType(e.type).cat))];
+  if(cats.length>1){
+    h+=`<div class="filters"><button class="flt ${S.filterEnt==='all'?'on':''}" onclick="setFilter('all')">Tous (${ents.length})</button>`;
+    cats.forEach(c=>{const cnt=ents.filter(e=>getType(e.type).cat===c).length;h+=`<button class="flt ${S.filterEnt===c?'on':''}" onclick="setFilter('${c}')">${c} (${cnt})</button>`;});
+    h+=`</div>`;
+  }
+  if(S.filterEnt!=='all')ents=ents.filter(e=>getType(e.type).cat===S.filterEnt);
+
+  const total=ents.reduce((s,e)=>s+(e.cout||0),0);
+  // Mini header véhicule sélectionné
+  h+=`<div style="background:var(--primary);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;color:#fff;display:flex;align-items:center;gap:10px">
+    <div style="font-size:1.8rem">${v.emoji||'🚗'}</div>
+    <div style="flex:1">
+      <div style="font-size:.95rem;font-weight:700">${esc(v.marque)} ${esc(v.modele)}</div>
+      <div style="font-size:.76rem;opacity:.8">${fmtKm(v.km_actuel)} · ${ents.length} entretien${ents.length>1?'s':''} · ${fmtCout(total)}</div>
+    </div>
+    <button class="btn btn-w btn-sm" onclick="openKm('${v.id}')">📍 Km</button>
+  </div>`;
+  h+=statsHTML(S.selVeh);
+  h+=`<div class="g6 mb8">
+    <button class="btn btn-s btn-sm" onclick="exportCSV('${S.selVeh}')">📊 CSV</button>
+    <button class="btn btn-s btn-sm" onclick="exportPDF('${S.selVeh}')">📄 PDF</button>
+    <button class="btn btn-s btn-sm" onclick="showShareLink('${S.selVeh}')">🔗 Partager</button>
+  </div>`;
+
+  if(!ents.length)h+=`<div class="empty" style="padding:28px"><span class="empty-i" style="font-size:2rem">📋</span><div class="empty-t">Aucun entretien</div><p class="empty-d">Appuyez sur + pour ajouter le premier.</p></div>`;
+  else h+=ents.map(e=>eiHTML(e,v)).join('');
+  el.innerHTML=h;
+}
+
+function setFilter(f){S.filterEnt=f;renderEnt();}
+function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';renderEnt();}
+
+function renderRap(){
+  const el=g('rp-ctn');
+  const raps=getRappels();
+  if(!raps.length){el.innerHTML=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucune alerte en cours.</p></div>`;return;}
+  const urgent=raps.filter(r=>r.sev!=='ok'),ok=raps.filter(r=>r.sev==='ok');
+  let h='';
+  if(urgent.length){h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes (${urgent.length})</span></div>`;h+=urgent.map(r=>riHTML(r)).join('');}
+  if(ok.length){h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ À venir</span></div>`;h+=ok.map(r=>riHTML(r)).join('');}
+  el.innerHTML=h;
+}
+
+function renderFam(){
+  const el=g('fm-ctn');
+  const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+  let h='';
+  if(S.pending.length){
+    h+=`<div class="sec-hdr"><span class="sec-ttl">📨 Invitations reçues</span></div>`;
+    h+=S.pending.map(p=>`<div class="si"><div class="sav">📩</div><div class="sinf"><div class="sem">Partage de véhicule</div><div class="sst">En attente de votre réponse</div></div><div class="sact"><button class="btn btn-p btn-xs" onclick="acceptInv('${p.id}')">Accepter</button><button class="btn btn-s btn-xs" onclick="rejectInv('${p.id}')">Refuser</button></div></div>`).join('');
+  }
+  if(myVehs.length){
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🤝 Partages envoyés</span><button class="sec-lnk" onclick="openInv()">+ Partager</button></div>`;
+    const sent=S.partages.filter(p=>p.owner_id===S.user.id);
+    if(!sent.length)h+=`<div class="info-box">Partagez vos véhicules avec votre famille. Ils pourront consulter et ajouter des entretiens.</div>`;
+    else h+=sent.map(p=>{
+      const v=S.vehicles.find(x=>x.id===p.vehicle_id);
+      const vname=v?`${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}`:'Véhicule inconnu';
+      const stCol=p.status==='pending'?'var(--warn)':p.status==='accepted'?'var(--ok)':'var(--err)';
+      const stLbl=p.status==='pending'?'En attente':p.status==='accepted'?'Accepté':'Refusé';
+      return`<div class="si"><div class="sav">${v?v.emoji||'🚗':'🚗'}</div><div class="sinf"><div class="sem">${vname}</div><div class="sst">→ ${esc(p.invited_email)} · <span style="color:${stCol}">${stLbl}</span></div></div><div class="sact">${p.status!=='rejected'?`<button class="btn btn-d btn-xs" onclick="revokeP('${p.id}')">Révoquer</button>`:''}</div></div>`;
+    }).join('');
+  }
+  const shared=S.vehicles.filter(v=>v.user_id!==S.user.id);
+  if(shared.length){
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🚗 Partagés avec moi</span></div>`;
+    h+=shared.map(v=>`<div class="si"><div class="sav">${v.emoji||'🚗'}</div><div class="sinf"><div class="sem">${esc(v.marque)} ${esc(v.modele)}</div><div class="sst">${esc(v.immatriculation)||'—'} · ${fmtKm(v.km_actuel)}</div></div></div>`).join('');
+  }
+  if(!h)h=`<div class="empty"><span class="empty-i">👥</span><div class="empty-t">Mode famille</div><p class="empty-d">Partagez vos véhicules avec votre famille.</p><button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button></div>`;
+  el.innerHTML=h;
+}
+
+function eiHTML(e,v){
+  const ti=getType(e.type);
+  const rappels=[];
+  if(e.rappel_date)rappels.push('📅 '+fmtDate(e.rappel_date));
+  if(e.rappel_km)rappels.push('📍 '+fmtKm(e.rappel_km));
+  return`<div class="ei" onclick="openEnt('${e.id}')">
+    <div class="ei-ico">${ti.ico}</div>
+    <div class="ei-inf">
+      <div class="ei-ty">${esc(ti.label)}</div>
+      <div class="ei-mt"><span>📅 ${fmtDate(e.date)}</span>${e.km?`<span>📍 ${fmtKm(e.km)}</span>`:''}${e.garage?`<span>🏠 ${esc(e.garage)}</span>`:''}${v?`<span>${v.emoji||'🚗'} ${esc(v.marque)}</span>`:''}</div>
+      ${e.note?`<div class="ei-nt">${esc(e.note)}</div>`:''}
+      ${rappels.length?`<div class="ei-rp">Rappel : ${rappels.join(' · ')}</div>`:''}
+    </div>
+    ${e.cout?`<div class="ei-ct">${fmtCout(e.cout)}</div>`:''}
+  </div>`;
+}
+
+function riHTML(r){
+  return`<div class="ri ${r.sev}" onclick="${r.isCT?`openVeh('${r.v.id}')`:`openEnt('${r.e.id}')`}">
+    <div class="ri-ico">${r.ti.ico}</div>
+    <div class="ri-inf"><div class="ri-ti">${esc(r.ti.label)}</div><div class="ri-mt">${r.v.emoji||'🚗'} ${esc(r.v.marque)} ${esc(r.v.modele)}</div></div>
+    <div class="rbadge ${r.sev}">${r.label}</div>
+  </div>`;
+}
+
+/* NAV - 5 onglets fixes, jamais de vue cachée */
+function nav(view){
+  S.view=view;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
+  const tabEl=g('t-'+view); if(tabEl) tabEl.classList.add('on');
+  const nbEl=g('nb-'+view); if(nbEl) nbEl.classList.add('on');
+  g('fab').classList.toggle('vis',['vehs','ent'].includes(view));
+  renderView();
+}
+
+function handleFab(){
+  if(S.view==='vehs')openVeh();
+  else if(S.view==='ent')openEnt();
+}
+
+/* MODALS */
+function om(id){const el=g('mo-'+id);if(el){el.classList.add('open');document.body.style.overflow='hidden';}}
+function cm(id){const el=g('mo-'+id);if(el){el.classList.remove('open');document.body.style.overflow='';}}
+function cfm(title,msg,cb){g('cfm-t').textContent=title;g('cfm-m').textContent=msg;S.cfmCb=cb;om('cfm');}
+function runCfm(){cm('cfm');if(S.cfmCb)S.cfmCb();S.cfmCb=null;}
+
+function openVeh(id){
+  g('v-id').value=id||'';
+  if(id){
+    const v=S.vehicles.find(x=>x.id===id);if(!v)return;
+    g('mt-veh').textContent='Modifier le véhicule';
+    g('v-mk').value=v.marque||'';g('v-mo').value=v.modele||'';g('v-yr').value=v.annee||'';
+    g('v-cb').value=v.carburant||'essence';g('v-im').value=v.immatriculation||'';
+    g('v-km').value=v.km_actuel||'';g('v-da').value=v.date_achat||'';
+    g('v-ct').value=v.ct_date||'';g('v-cl').value=v.couleur||'';
+    g('v-pw').value=v.puissance||'';g('v-em').value=v.emoji||'🚗';g('v-vn').value=v.vin||'';
+    g('btn-del-v').classList.remove('hidden');
+    document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===v.emoji));
+  }else{
+    g('mt-veh').textContent='Ajouter un véhicule';
+    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn'].forEach(x=>{if(g(x))g(x).value='';});
+    g('v-cb').value='essence';g('v-em').value='🚗';
+    g('btn-del-v').classList.add('hidden');
+    document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em==='🚗'));
+  }
+  om('veh');
+}
+
+function openEnt(id,forcedVid){
+  if(!S.vehicles.length)return toast("Ajoutez d'abord un véhicule.",'e');
+  const selV=g('e-vh');
+  selV.innerHTML=S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  const vid=forcedVid||S.selVeh;
+  if(vid)selV.value=vid;
+  // Types groupés
+  const cats=[...new Set(TYPES.map(t=>t.cat))];
+  g('e-ty').innerHTML=cats.map(cat=>{
+    const items=TYPES.filter(t=>t.cat===cat);
+    return`<optgroup label="${cat}">${items.map(t=>`<option value="${t.id}">${t.ico} ${esc(t.label)}</option>`).join('')}</optgroup>`;
+  }).join('');
+  g('e-id').value=id||'';
+  if(id){
+    const e=S.ents.find(x=>x.id===id);if(!e)return;
+    g('mt-ent').textContent="Modifier l'entretien";
+    selV.value=e.vehicle_id;g('e-ty').value=e.type;
+    g('e-dt').value=e.date||'';g('e-km').value=e.km||'';
+    g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';
+    g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
+    g('e-rk').value=e.rappel_km||'';
+    g('btn-del-e').classList.remove('hidden');
+  }else{
+    g('mt-ent').textContent='Ajouter un entretien';
+    g('e-dt').value=new Date().toISOString().split('T')[0];
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk'].forEach(x=>{if(g(x))g(x).value='';});
+    g('btn-del-e').classList.add('hidden');
+    const v=S.vehicles.find(x=>x.id===(forcedVid||S.selVeh));
+    if(v?.km_actuel)g('e-km').value=v.km_actuel;
+  }
+  om('ent');
+}
+
+function onTyChange(){
+  const ti=getType(g('e-ty').value);
+  const v=S.vehicles.find(x=>x.id===g('e-vh').value);
+  if(ti.imo&&!g('e-rd').value){const d=new Date();d.setMonth(d.getMonth()+ti.imo);g('e-rd').value=d.toISOString().split('T')[0];}
+  if(ti.ikm&&v?.km_actuel&&!g('e-rk').value)g('e-rk').value=v.km_actuel+ti.ikm;
+}
+
+function openInv(){
+  g('inv-v').innerHTML=S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  g('inv-e').value='';om('inv');
+}
+
+// PWA Install
+let _installPrompt = null;
+
+
+/* ══ PROFIL ══ */
+function renderProfil(){
+  const el=g('pr-ctn');
+  if(!S.user){el.innerHTML='';return;}
+  const name=S.user.user_metadata?.name||'';
+  const email=S.user.email||'';
+  const initial=(name||email||'?')[0].toUpperCase();
+  const totalVehs=S.vehicles.filter(v=>v.user_id===S.user.id).length;
+  const totalEnts=S.ents.length;
+  const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
+
+  el.innerHTML=`
+  <div class="profil-card" style="text-align:center">
+    <div class="profil-avatar">${initial}</div>
+    <div style="font-size:1rem;font-weight:700;margin-bottom:4px">${esc(name)||'Utilisateur'}</div>
+    <div class="profil-email">${esc(email)}</div>
+    <div class="stats-adv" style="margin-top:16px">
+      <div class="stat-adv"><div class="stat-adv-v">${totalVehs}</div><div class="stat-adv-l">Véhicules</div></div>
+      <div class="stat-adv"><div class="stat-adv-v">${totalEnts}</div><div class="stat-adv-l">Entretiens</div></div>
+      <div class="stat-adv"><div class="stat-adv-v" style="font-size:1rem">${fmtCout(totalCout)}</div><div class="stat-adv-l">Coût total</div></div>
+      <div class="stat-adv"><div class="stat-adv-v">${S.vehicles.length}</div><div class="stat-adv-l">Dont partagés</div></div>
+    </div>
+  </div>
+
+  <div class="profil-card">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Modifier le profil</div>
+    <div class="fg"><label class="fl">Prénom</label><input class="fc" id="prof-name" value="${esc(name)}" placeholder="Votre prénom"></div>
+    <div class="fg"><label class="fl">Email</label><input class="fc" id="prof-email" value="${esc(email)}" type="email"></div>
+    <div class="fg"><label class="fl">Nouveau mot de passe (laisser vide pour ne pas changer)</label><input class="fc" id="prof-pass" type="password" placeholder="Nouveau mot de passe"></div>
+    <button class="btn btn-p btn-sm" onclick="saveProfil()">Enregistrer</button>
+  </div>
+
+  <div class="profil-card">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Données</div>
+    <div class="g6">
+      <button class="btn btn-s btn-sm" onclick="exportAllCSV()">📊 Exporter tout en CSV</button>
+      <button class="btn btn-s btn-sm" onclick="exportAllPDF()">📄 Exporter tout en PDF</button>
+    </div>
+  </div>
+
+  <div class="profil-card">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--err);margin-bottom:12px">Zone danger</div>
+    <button class="btn btn-d btn-sm" onclick="deleteAccount()">🗑 Supprimer mon compte</button>
+  </div>`;
+}
+
+async function saveProfil(){
+  const name=g('prof-name').value.trim();
+  const email=g('prof-email').value.trim();
+  const pass=g('prof-pass').value;
+  const updates={};
+  if(email && email!==S.user.email) updates.email=email;
+  if(pass && pass.length>=8) updates.password=pass;
+  if(name) updates.data={name};
+  if(Object.keys(updates).length===0&&name===S.user.user_metadata?.name) return toast('Aucune modification.','i');
+  const{error}=await sb.auth.updateUser({...updates,data:{name}});
+  if(error) return toast('Erreur : '+error.message,'e');
+  S.user=( await sb.auth.getUser() ).data.user;
+  toast('Profil mis à jour !','s');
+  renderProfil();
+}
+
+async function deleteAccount(){
+  cfm('Supprimer votre compte ?','Toutes vos données (véhicules, entretiens) seront supprimées définitivement. Irréversible.',async()=>{
+    // Supprimer toutes les données
+    const vids=S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>v.id);
+    if(vids.length){
+      await sb.from('entretiens').delete().in('vehicle_id',vids);
+      await sb.from('partages').delete().in('vehicle_id',vids);
+      await sb.from('vehicles').delete().in('id',vids);
+    }
+    await sb.from('push_subscriptions').delete().eq('user_id',S.user.id);
+    toast('Compte supprimé.','i');
+    resetState();
+    showAuth();
+    try{await sb.auth.signOut();}catch(e){}
+  });
+}
+
+/* ══ EXPORT CSV ══ */
+function exportCSV(vid){
+  const v=S.vehicles.find(x=>x.id===vid); if(!v) return;
+  const list=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  let csv='Date,Type,Kilométrage,Garage,Coût (€),Notes,Rappel date,Rappel km\n';
+  list.forEach(e=>{
+    const ti=getType(e.type);
+    csv+=`"${e.date}","${ti.label}","${e.km||''}","${e.garage||''}","${e.cout||''}","${(e.note||'').replace(/"/g,'""')}","${e.rappel_date||''}","${e.rappel_km||''}"
+`;
+  });
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`autocarnet_${v.marque}_${v.modele}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('CSV exporté !','s');
+}
+
+function exportAllCSV(){
+  if(!S.ents.length) return toast('Aucun entretien à exporter.','i');
+  let csv='Véhicule,Date,Type,Kilométrage,Garage,Coût (€),Notes\n';
+  S.ents.forEach(e=>{
+    const v=S.vehicles.find(x=>x.id===e.vehicle_id);
+    const vname=v?`${v.marque} ${v.modele}`:'';
+    const ti=getType(e.type);
+    csv+=`"${vname}","${e.date}","${ti.label}","${e.km||''}","${e.garage||''}","${e.cout||''}","${(e.note||'').replace(/"/g,'""')}"
+`;
+  });
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='autocarnet_tous_vehicules.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('CSV exporté !','s');
+}
+
+function exportAllPDF(){
+  if(!S.vehicles.length) return toast('Aucun véhicule.','i');
+  S.vehicles.forEach(v=>exportPDF(v.id));
+}
+
+/* ══ RECHERCHE ENTRETIENS ══ */
+function searchEnts(query){
+  if(!query) return S.ents.filter(e=>!S.selVeh||e.vehicle_id===S.selVeh);
+  const q=query.toLowerCase();
+  return S.ents.filter(e=>{
+    if(S.selVeh && e.vehicle_id!==S.selVeh) return false;
+    const ti=getType(e.type);
+    return ti.label.toLowerCase().includes(q)||
+      (e.garage||'').toLowerCase().includes(q)||
+      (e.note||'').toLowerCase().includes(q)||
+      (e.date||'').includes(q);
+  });
+}
+
+/* ══ STATS AVANCÉES ══ */
+function getStatsAvancees(vid){
+  const ents=vid?S.ents.filter(e=>e.vehicle_id===vid):S.ents;
+  const withCout=ents.filter(e=>e.cout);
+  const totalCout=ents.reduce((s,e)=>s+(e.cout||0),0);
+  const v=vid?S.vehicles.find(x=>x.id===vid):null;
+  const coutParKm=v?.km_actuel&&totalCout?(totalCout/v.km_actuel).toFixed(2):null;
+  // Coût par type
+  const byType={};
+  ents.forEach(e=>{
+    if(!e.cout)return;
+    const ti=getType(e.type);
+    byType[ti.label]=(byType[ti.label]||0)+e.cout;
+  });
+  const topTypes=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  return{totalCout,nbEnts:ents.length,avgCout:withCout.length?totalCout/withCout.length:0,coutParKm,topTypes};
+}
+
+function statsHTML(vid){
+  const st=getStatsAvancees(vid);
+  if(!st.nbEnts) return '';
+  let h=`<div class="stats-adv">
+    <div class="stat-adv"><div class="stat-adv-v">${fmtCout(st.totalCout)}</div><div class="stat-adv-l">Coût total</div></div>
+    <div class="stat-adv"><div class="stat-adv-v">${fmtCout(st.avgCout)}</div><div class="stat-adv-l">Coût moyen</div></div>
+    ${st.coutParKm?`<div class="stat-adv"><div class="stat-adv-v">${st.coutParKm}€</div><div class="stat-adv-l">€ / km</div></div>`:''}
+    <div class="stat-adv"><div class="stat-adv-v">${st.nbEnts}</div><div class="stat-adv-l">Interventions</div></div>
+  </div>`;
+  if(st.topTypes.length){
+    h+=`<div style="background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px">
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:10px">Top interventions par coût</div>`;
+    const max=st.topTypes[0][1];
+    st.topTypes.forEach(([label,total])=>{
+      const pct=Math.round(total/max*100);
+      h+=`<div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span>${label}</span><span style="font-weight:700;color:var(--ok)">${fmtCout(total)}</span></div>
+        <div style="height:6px;background:var(--bg);border-radius:3px"><div style="height:6px;width:${pct}%;background:var(--primary);border-radius:3px;transition:.5s"></div></div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+  return h;
+}
+
+/* ══ LIEN PUBLIC ══ */
+function genShareLink(vid){
+  const token=btoa(vid+':'+Date.now());
+  const url=`${window.location.origin}/app.html?share=${encodeURIComponent(token)}&vid=${vid}`;
+  return url;
+}
+
+function showShareLink(vid){
+  const v=S.vehicles.find(x=>x.id===vid); if(!v) return;
+  const url=genShareLink(vid);
+  cfm(
+    `🔗 Lien de partage — ${v.marque} ${v.modele}`,
+    `Ce lien permet à un mécanicien ou acheteur de consulter l'historique sans se connecter. Copiez-le et partagez-le.`,
+    ()=>{}
+  );
+  // Remplacer le bouton confirm par copier
+  setTimeout(()=>{
+    const cfmBody=document.querySelector('#mo-cfm .mbdy');
+    if(!cfmBody) return;
+    cfmBody.innerHTML+=`<div class="share-link-box"><span class="share-link-url">${url}</span><button class="btn btn-p btn-xs" onclick="copyLink('${url}')">Copier</button></div>`;
+  },50);
+}
+
+function copyLink(url){
+  navigator.clipboard.writeText(url).then(()=>toast('Lien copié !','s')).catch(()=>{
+    const el=document.createElement('textarea');
+    el.value=url; document.body.appendChild(el); el.select();
+    document.execCommand('copy'); document.body.removeChild(el);
+    toast('Lien copié !','s');
+  });
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _installPrompt = e;
+  document.getElementById('install-banner')?.classList.add('visible');
+});
+
+window.addEventListener('appinstalled', () => {
+  _installPrompt = null;
+  document.getElementById('install-banner')?.classList.remove('visible');
+  toast('✅ AutoCarnet installé !', 's');
+});
+
+document.getElementById('btn-install-pwa')?.addEventListener('click', async () => {
+  if (!_installPrompt) return;
+  _installPrompt.prompt();
+  const { outcome } = await _installPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('install-banner')?.classList.remove('visible');
+  }
+  _installPrompt = null;
+});
+
+// iOS detection
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+if (isIOS && !isStandalone) {
+  document.getElementById('ios-hint')?.classList.add('visible');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

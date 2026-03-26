@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E40AF"/>
+      <stop offset="100%" style="stop-color:#2563EB"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+    </linearGradient>
+  </defs>
+  <!-- Fond arrondi -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Reflet -->
+  <rect width="512" height="256" rx="112" fill="url(#shine)"/>
+  <!-- Carnet / livre stylisé -->
+  <rect x="130" y="120" width="252" height="300" rx="18" fill="white" opacity="0.12"/>
+  <rect x="142" y="132" width="228" height="276" rx="14" fill="white" opacity="0.92"/>
+  <!-- Reliure -->
+  <rect x="142" y="132" width="28" height="276" rx="14" fill="#1D4ED8"/>
+  <!-- Lignes contenu -->
+  <rect x="192" y="176" width="148" height="10" rx="5" fill="#93C5FD"/>
+  <rect x="192" y="202" width="120" height="8" rx="4" fill="#BFDBFE"/>
+  <rect x="192" y="224" width="136" height="8" rx="4" fill="#BFDBFE"/>
+  <!-- Icône voiture -->
+  <g transform="translate(192, 255)">
+    <!-- Carrosserie -->
+    <path d="M8 28 L8 20 Q8 14 14 12 L24 8 Q28 6 36 6 Q44 6 48 8 L58 12 Q64 14 64 20 L64 28 Q64 32 60 32 L12 32 Q8 32 8 28Z" fill="#2563EB"/>
+    <!-- Toit -->
+    <path d="M20 12 L28 4 Q32 2 40 2 Q48 2 52 4 L60 12Z" fill="#1D4ED8"/>
+    <!-- Roues -->
+    <circle cx="22" cy="32" r="7" fill="#1E293B"/>
+    <circle cx="22" cy="32" r="3.5" fill="#94A3B8"/>
+    <circle cx="50" cy="32" r="7" fill="#1E293B"/>
+    <circle cx="50" cy="32" r="3.5" fill="#94A3B8"/>
+    <!-- Vitre -->
+    <path d="M26 12 L30 6 Q32 4 40 4 Q48 4 50 6 L54 12Z" fill="#93C5FD" opacity="0.8"/>
+  </g>
+  <!-- Lignes sous voiture -->
+  <rect x="192" y="316" width="100" height="8" rx="4" fill="#BFDBFE"/>
+  <rect x="192" y="336" width="76" height="8" rx="4" fill="#DBEAFE"/>
+  <!-- Check badge -->
+  <circle cx="370" cy="370" r="52" fill="#059669"/>
+  <polyline points="347,370 362,385 393,355" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
