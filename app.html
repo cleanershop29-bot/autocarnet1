@@ -770,7 +770,7 @@ function showRGPD(){
 }
 
 /* DATA */
-async function loadAll(){await Promise.all([loadVehs(),loadEnts(),loadPartages()]);}
+async function loadAll(){await loadVehs();await Promise.all([loadEnts(),loadPartages()]);}
 async function loadVehs(){
   if(!S.user?.id)return;
   try{
