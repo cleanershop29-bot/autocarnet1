@@ -1090,7 +1090,8 @@ async function sendInv(){
   const{error}=await sb.from('partages').insert({vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending'});
   if(error)return toast('Erreur : '+error.message,'e');
   cm('inv');await loadPartages();renderView();
-  // Afficher modal avec message à partager
+  // Délai pour laisser cm() fermer proprement avant d'ouvrir le nouveau modal
+  setTimeout(()=>{
   const v=S.vehicles.find(x=>x.id===vid);
   const vname=v?v.marque+' '+v.modele:'le véhicule';
   const appUrl=window.location.origin+'/app.html';
@@ -1103,6 +1104,7 @@ async function sendInv(){
 
 AutoCarnet — Carnet d'entretien numérique`;
   showInvModal(email, msg);
+  },150);
 }
 
 function showInvModal(email, msg){
