@@ -1126,6 +1126,13 @@ async function acceptInv(pid){
   await loadAll();renderView();
 }
 async function rejectInv(pid){await sb.from('partages').update({status:'rejected'}).eq('id',pid);toast('Refusée.','i');await loadPartages();renderView();}
+async function quitPartage(pid){
+  cfm('Quitter ce partage ?','Vous n\'aurez plus accès à ce véhicule.',async()=>{
+    await sb.from('partages').delete().eq('id',pid);
+    toast('Vous avez quitté le partage.','i');
+    await loadAll();renderView();
+  });
+}
 async function revokeP(pid){cfm('Révoquer ce partage ?',"Cette personne n'aura plus accès au véhicule.",async()=>{await sb.from('partages').delete().eq('id',pid);toast('Révoqué.','i');await loadPartages();renderView();});}
 
 /* RAPPELS */
@@ -1462,7 +1469,10 @@ function renderFam(){
   const shared=S.vehicles.filter(v=>v.user_id!==S.user.id);
   if(shared.length){
     h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🚗 Partagés avec moi</span></div>`;
-    h+=shared.map(v=>`<div class="si"><div class="sav">${v.emoji||'🚗'}</div><div class="sinf"><div class="sem">${esc(v.marque)} ${esc(v.modele)}</div><div class="sst">${esc(v.immatriculation)||'—'} · ${fmtKm(v.km_actuel)}</div></div></div>`).join('');
+    h+=shared.map(v=>{
+      const p=S.partages.find(x=>x.vehicle_id===v.id&&x.invited_user_id===S.user.id);
+      return`<div class="si"><div class="sav">${v.emoji||'🚗'}</div><div class="sinf"><div class="sem">${esc(v.marque)} ${esc(v.modele)}</div><div class="sst">${esc(v.immatriculation)||'—'} · ${fmtKm(v.km_actuel)}</div></div><div class="sact">${p?`<button class="btn btn-d btn-xs" onclick="quitPartage('${p.id}')">Quitter</button>`:''}</div></div>`;
+    }).join('');
   }
   if(!h)h=`<div class="empty"><span class="empty-i">👥</span><div class="empty-t">Mode famille</div><p class="empty-d">Partagez vos véhicules avec votre famille.</p><button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button></div>`;
   el.innerHTML=h;
