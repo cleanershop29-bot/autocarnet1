@@ -1087,69 +1087,39 @@ async function sendInv(){
   if(!vid)return toast('Sélectionnez un véhicule.','e');
   if(!email)return toast('Email requis.','e');
   if(email===S.user.email)return toast('Vous ne pouvez pas vous inviter.','e');
+  const v=S.vehicles.find(x=>x.id===vid);
+  const vname=v?(v.marque+' '+v.modele):'le véhicule';
+  const appUrl=window.location.origin+'/app.html';
+  const lines=[
+    'Bonjour !',
+    'Je t invite a rejoindre mon AutoCarnet pour '+vname+'.',
+    '',
+    '1. Va sur : '+appUrl,
+    '2. Cree un compte avec : '+email,
+    '3. Onglet Famille > accepte mon invitation',
+    '',
+    'AutoCarnet - Carnet entretien numerique'
+  ];
+  const msg=lines.join('
+');
   const{error}=await sb.from('partages').insert({vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending'});
   if(error)return toast('Erreur : '+error.message,'e');
-  cm('inv');await loadPartages();renderView();
-  // Délai pour laisser cm() fermer proprement avant d'ouvrir le nouveau modal
-  setTimeout(()=>{
-  const v=S.vehicles.find(x=>x.id===vid);
-  const vname=v?v.marque+' '+v.modele:'le véhicule';
-  const appUrl=window.location.origin+'/app.html';
-  const msg=`Bonjour ! Je t'invite à rejoindre mon espace AutoCarnet pour suivre l'entretien de ${vname}.
-
-1. Crée un compte sur : ${appUrl}
-2. Utilise l'email : ${email}
-3. Va dans l'onglet Famille → tu verras mon invitation en attente
-4. Accepte l'invitation
-
-AutoCarnet — Carnet d'entretien numérique`;
-  showInvModal(email, msg);
-  },150);
-}
-
-function showInvModal(email, msg){
-  const mo=document.createElement('div');
-  mo.className='mo open';
-  mo.style.zIndex='600';
-  mo.onclick=function(e){if(e.target===mo){mo.remove();document.body.style.overflow='';}};
-  mo.innerHTML=`<div class="modal modal-c" style="max-width:420px;margin:auto;align-self:center" onclick="event.stopPropagation()">
-    <div class="mhdr">
-      <div class="mtit">✅ Invitation créée</div>
-      <button class="mcls" onclick="this.closest('.mo').remove();document.body.style.overflow=''">✕</button>
-    </div>
-    <div class="mbdy">
-      <div style="background:var(--ok-bg);border:1px solid #A7F3D0;border-radius:var(--r-sm);padding:10px 13px;font-size:.82rem;color:#065F46;margin-bottom:14px;line-height:1.5">
-        L'invitation est enregistrée pour <strong>${email}</strong>.<br>
-        Cette personne doit avoir un compte AutoCarnet avec cet email pour la voir dans son onglet Famille.
-      </div>
-      <div style="font-size:.82rem;font-weight:700;color:var(--txm);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Message à envoyer</div>
-      <textarea id="inv-msg-txt" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--txt);resize:none;min-height:160px;line-height:1.5">${msg}</textarea>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn btn-p btn-sm" style="flex:1" onclick="copyInvMsg()">📋 Copier le message</button>
-        <button class="btn btn-s btn-sm" style="flex:1" onclick="shareInvMsg('${encodeURIComponent(msg)}')">📤 Partager</button>
-      </div>
-    </div>
-  </div>`;
-  document.body.appendChild(mo);
-  document.body.style.overflow='hidden';
-}
-
-function copyInvMsg(){
-  const txt=document.getElementById('inv-msg-txt');
-  if(!txt)return;
-  navigator.clipboard.writeText(txt.value).then(()=>toast('Message copié !','s')).catch(()=>{
-    txt.select();document.execCommand('copy');toast('Message copié !','s');
-  });
-}
-
-function shareInvMsg(encodedMsg){
-  const msg=decodeURIComponent(encodedMsg);
+  cm('inv');
+  await loadPartages();
+  renderView();
+  // Copier dans presse-papier + proposer partage natif
+  try{
+    await navigator.clipboard.writeText(msg);
+    toast('✅ Invitation créée ! Message copié — envoyez-le à '+email,'s');
+  }catch(e){
+    toast('✅ Invitation créée pour '+email+' — allez dans Famille pour voir','s');
+  }
+  // Partage natif si disponible
   if(navigator.share){
-    navigator.share({title:'Invitation AutoCarnet',text:msg}).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(msg).then(()=>toast('Message copié !','s'));
+    try{await navigator.share({title:'Invitation AutoCarnet',text:msg});}catch(e){}
   }
 }
+
 async function acceptInv(pid){
   const{error}=await sb.from('partages').update({status:'accepted',invited_user_id:S.user.id}).eq('id',pid);
   if(error)return toast('Erreur : '+error.message,'e');
