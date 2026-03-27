@@ -1548,6 +1548,10 @@ function openEnt(id,forcedVid){
     return`<optgroup label="${cat}">${items.map(t=>`<option value="${t.id}">${t.ico} ${esc(t.label)}</option>`).join('')}</optgroup>`;
   }).join('');
   g('e-id').value=id||'';
+  if(!id){
+    // Toujours vider l'id pour forcer un INSERT
+    g('e-id').value='';
+  }
   if(id){
     const e=S.ents.find(x=>x.id===id);if(!e)return;
     g('mt-ent').textContent="Modifier l'entretien";
