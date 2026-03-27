@@ -708,7 +708,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date'};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all'};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -1188,8 +1188,8 @@ function exportPDF(vid){
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   const list=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const total=list.reduce((s,e)=>s+(e.cout||0),0);
-  const rows=list.map(e=>{const ti=getType(e.type);return`<tr><td>${fmtDate(e.date)}</td><td>${ti.ico} ${esc(ti.label)}</td><td>${e.km?fmtKm(e.km):'—'}</td><td>${esc(e.garage)||'—'}</td><td>${e.cout?fmtCout(e.cout):'—'}</td><td>${esc(e.note)||'—'}</td></tr>`;}).join('');
-  const html=`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>AutoCarnet — ${esc(v.marque)} ${esc(v.modele)}</title><style>body{font-family:Arial,sans-serif;color:#111;margin:32px 40px;font-size:13px}table{width:100%;border-collapse:collapse}th{background:#f4f4f4;padding:7px 10px;text-align:left;font-size:.68rem;text-transform:uppercase}td{padding:7px 10px;border-bottom:1px solid #eee;font-size:.79rem}</style></head><body><div style="display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:20px"><div><div style="font-size:1.3rem;font-weight:700">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}${v.annee?' ('+v.annee+')':''}</div><div style="font-family:monospace;font-size:.78rem">${esc(v.immatriculation)||'—'}</div><div style="font-size:.72rem;color:#666">${fmtKm(v.km_actuel)}</div></div><div style="text-align:right"><div style="font-size:1.2rem;font-weight:900">AUTOCARNET</div><div style="font-size:.7rem;color:#666">Exporté le ${fmtDate(new Date().toISOString())}</div></div></div><table><thead><tr><th>Date</th><th>Type</th><th>Km</th><th>Garage</th><th>Coût</th><th>Notes</th></tr></thead><tbody>${rows||'<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px">Aucun entretien</td></tr>'}</tbody></table><div style="margin-top:12px;text-align:right;font-weight:700">Total : ${fmtCout(total)}</div></body></html>`;
+  const rows=list.map(e=>{const ti=getType(e.type);const extra=[e.pieces?'Pièces: '+e.pieces:'',e.technicien?'Tech: '+e.technicien:'',e.garantie_mois?'Garantie '+e.garantie_mois+'m':''].filter(Boolean).join(' | ');return`<tr><td>${fmtDate(e.date)}</td><td>${ti.ico} ${esc(ti.label)}</td><td>${e.km?fmtKm(e.km):'—'}</td><td>${esc(e.garage)||'—'}</td><td>${e.cout?fmtCout(e.cout):'—'}</td><td>${esc(e.note)||'—'}${extra?'<br><small style="color:#888">'+esc(extra)+'</small>':''}</td></tr>`;}).join('');
+  const html=`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>AutoCarnet — ${esc(v.marque)} ${esc(v.modele)}</title><style>body{font-family:Arial,sans-serif;color:#111;margin:32px 40px;font-size:13px}table{width:100%;border-collapse:collapse}th{background:#f4f4f4;padding:7px 10px;text-align:left;font-size:.68rem;text-transform:uppercase}td{padding:7px 10px;border-bottom:1px solid #eee;font-size:.79rem}</style></head><body><div style="display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:20px"><div><div style="font-size:1.3rem;font-weight:700">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}${v.annee?' ('+v.annee+')':''}</div><div style="font-family:monospace;font-size:.78rem">${esc(v.immatriculation)||'—'}</div><div style="font-size:.72rem;color:#666">${fmtKm(v.km_actuel)}${v.transmission?' · '+v.transmission:''}${v.carburant?' · '+v.carburant:''}</div>${v.assurance_echeance?'<div style="font-size:.7rem;color:#c00">Assurance : '+fmtDate(v.assurance_echeance)+'</div>':''}</div><div style="text-align:right"><div style="font-size:1.2rem;font-weight:900">AUTOCARNET</div><div style="font-size:.7rem;color:#666">Exporté le ${fmtDate(new Date().toISOString())}</div></div></div><table><thead><tr><th>Date</th><th>Type</th><th>Km</th><th>Garage</th><th>Coût</th><th>Notes</th></tr></thead><tbody>${rows||'<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px">Aucun entretien</td></tr>'}</tbody></table><div style="margin-top:12px;text-align:right;font-weight:700">Total : ${fmtCout(total)}</div></body></html>`;
   const win=window.open('','_blank');if(!win)return toast('Autorisez les popups.','e');
   win.document.write(html);win.document.close();setTimeout(()=>win.print(),400);
 }
@@ -1228,9 +1228,25 @@ function renderDash(){
     h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes actives</span><button class="sec-lnk" onclick="nav('rap')">Tout voir</button></div>`;
     h+=urgent.slice(0,3).map(r=>riHTML(r)).join('');
   }
-  h+=`<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><button class="sec-lnk" onclick="nav('vehs')">Tout voir</button></div>`;
+  // Graphique global coûts par année
+  const globalCosts={};
+  S.ents.forEach(e=>{if(e.cout){const y=new Date(e.date).getFullYear();globalCosts[y]=(globalCosts[y]||0)+e.cout;}});
+  const gcData=Object.keys(globalCosts).sort().slice(-5).map(y=>({year:y,total:globalCosts[y]}));
+  if(gcData.length>1){
+    const gcMax=Math.max(...gcData.map(d=>d.total),1);
+    h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts globaux par année</div><div class="chart-bars">${gcData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar on" style="height:${Math.max(Math.round(d.total/gcMax*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
+  }
+  // Véhicule le plus coûteux
+  const vehCosts=S.vehicles.map(v=>({v,total:S.ents.filter(e=>e.vehicle_id===v.id).reduce((s,e)=>s+(e.cout||0),0)})).sort((a,b)=>b.total-a.total);
+  if(vehCosts.length>1&&vehCosts[0].total>0){
+    h+=`<div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:9px 12px;margin-bottom:12px;font-size:.82rem;display:flex;align-items:center;gap:8px">
+      <span>🏆</span><span>Véhicule le plus coûteux : <strong>${esc(vehCosts[0].v.marque)} ${esc(vehCosts[0].v.modele)}</strong> — ${fmtCout(vehCosts[0].total)}</span>
+    </div>`;
+  }
+  // Raccourci rapide + entretien
+  h+=`<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><div style="display:flex;gap:6px"><button class="sec-lnk" onclick="openEnt()">+ Entretien</button><button class="sec-lnk" onclick="nav('vehs')">Tout voir</button></div></div>`;
   h+=S.vehicles.map(v=>vcDashHTML(v)).join('');
-  const recent=S.ents.slice(0,4);
+  const recent=[...S.ents].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
   if(recent.length){
     h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Derniers entretiens</span><button class="sec-lnk" onclick="nav('ent')">Tout voir</button></div>`;
     h+=recent.map(e=>eiHTML(e,S.vehicles.find(v=>v.id===e.vehicle_id))).join('');
@@ -1317,6 +1333,7 @@ function vcFullHTML(v){
         <div><span class="vs-v" style="font-size:.82rem">${fmtCout(total)}</span><span class="vs-l">Coût total</span></div>
         <div><span class="vs-v" style="font-size:.78rem;color:var(--ok)">${getNextRevision(v,es)}</span><span class="vs-l">Prochaine révision</span></div>
         ${total&&v.km_actuel?`<div><span class="vs-v" style="font-size:.78rem">${(total/v.km_actuel).toFixed(2)}€</span><span class="vs-l">€ / km</span></div>`:''}
+        ${v.valeur_achat&&v.annee?`<div><span class="vs-v" style="font-size:.78rem;color:var(--warn)">${fmtCout(Math.max(0,v.valeur_achat*(1-0.15*Math.min(new Date().getFullYear()-v.annee,8))))}</span><span class="vs-l">Valeur est.</span></div>`:v.valeur_actuelle?`<div><span class="vs-v" style="font-size:.78rem;color:var(--warn)">${fmtCout(v.valeur_actuelle)}</span><span class="vs-l">Valeur act.</span></div>`:''}
       </div>`;
 
   // Graphique coûts
@@ -1401,6 +1418,8 @@ function renderEnt(){
   if(S.sortEnt==='cout')ents=[...ents].sort((a,b)=>(b.cout||0)-(a.cout||0));
   else if(S.sortEnt==='km')ents=[...ents].sort((a,b)=>(b.km||0)-(a.km||0));
   else ents=[...ents].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  // Filtre année
+  if(S.filterYear&&S.filterYear!=='all')ents=ents.filter(e=>new Date(e.date).getFullYear()==S.filterYear);
 
   // Filtres catégories
   const cats=[...new Set(ents.map(e=>getType(e.type).cat))];
@@ -1440,11 +1459,41 @@ function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';renderEnt(
 function renderRap(){
   const el=g('rp-ctn');
   const raps=getRappels();
-  if(!raps.length){el.innerHTML=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucune alerte en cours.</p></div>`;return;}
   const urgent=raps.filter(r=>r.sev!=='ok'),ok=raps.filter(r=>r.sev==='ok');
   let h='';
-  if(urgent.length){h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes (${urgent.length})</span></div>`;h+=urgent.map(r=>riHTML(r)).join('');}
-  if(ok.length){h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ À venir</span></div>`;h+=ok.map(r=>riHTML(r)).join('');}
+  if(!raps.length){
+    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucune alerte en cours.</p></div>`;
+  } else {
+    if(urgent.length){h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes (${urgent.length})</span></div>`;h+=urgent.map(r=>riHTML(r)).join('');}
+    if(ok.length){h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ À venir</span></div>`;h+=ok.map(r=>riHTML(r)).join('');}
+  }
+  // Garanties actives
+  const now=new Date();
+  const garanties=S.ents.filter(e=>{
+    if(!e.garantie_mois||!e.date)return false;
+    const exp=new Date(e.date);exp.setMonth(exp.getMonth()+e.garantie_mois);
+    return exp>now;
+  }).map(e=>{
+    const v=S.vehicles.find(x=>x.id===e.vehicle_id);
+    const exp=new Date(e.date);exp.setMonth(exp.getMonth()+e.garantie_mois);
+    const days=Math.ceil((exp-now)/86400000);
+    return{e,v,exp,days};
+  }).sort((a,b)=>a.days-b.days);
+  if(garanties.length){
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🛡️ Garanties actives (${garanties.length})</span></div>`;
+    h+=garanties.map(({e,v,days})=>{
+      const ti=getType(e.type);
+      return`<div class="ri" onclick="openEnt('${e.id}')">
+        <div class="ri-ico">🛡️</div>
+        <div class="ri-inf">
+          <div class="ri-ti">${esc(ti.label)}${e.pieces?' — '+esc(e.pieces):''}</div>
+          <div class="ri-mt">${v?v.emoji+'  '+esc(v.marque)+' '+esc(v.modele):''} · expire ${fmtDate(new Date(e.date).setMonth(new Date(e.date).getMonth()+e.garantie_mois))}</div>
+        </div>
+        <div class="rbadge ok">Dans ${days}j</div>
+      </div>`;
+    }).join('');
+  }
+  // Filtre par année dans entretiens
   el.innerHTML=h;
 }
 
@@ -1632,8 +1681,7 @@ function openEnt(id,forcedVid){
     ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar'].forEach(x=>{if(g(x))g(x).value='';});
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
-    const v=S.vehicles.find(x=>x.id===(forcedVid||S.selVeh));
-    if(v?.km_actuel)g('e-km').value=v.km_actuel;
+    // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
   }
   om('ent');
 }
@@ -1783,12 +1831,14 @@ function exportAllPDF(){
 function searchEnts(query){
   if(!query) return S.ents.filter(e=>!S.selVeh||e.vehicle_id===S.selVeh);
   const q=query.toLowerCase();
+  // Si recherche active : chercher dans TOUS les véhicules
   return S.ents.filter(e=>{
-    if(S.selVeh && e.vehicle_id!==S.selVeh) return false;
     const ti=getType(e.type);
     return ti.label.toLowerCase().includes(q)||
       (e.garage||'').toLowerCase().includes(q)||
       (e.note||'').toLowerCase().includes(q)||
+      (e.pieces||'').toLowerCase().includes(q)||
+      (e.technicien||'').toLowerCase().includes(q)||
       (e.date||'').includes(q);
   });
 }
