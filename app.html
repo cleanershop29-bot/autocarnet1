@@ -1449,18 +1449,16 @@ function renderFam(){
     h+=`<div class="sec-hdr"><span class="sec-ttl">📨 Invitations reçues</span></div>`;
     h+=S.pending.map(p=>`<div class="si"><div class="sav">📩</div><div class="sinf"><div class="sem">Partage de véhicule</div><div class="sst">En attente de votre réponse</div></div><div class="sact"><button class="btn btn-p btn-xs" onclick="acceptInv('${p.id}')">Accepter</button><button class="btn btn-s btn-xs" onclick="rejectInv('${p.id}')">Refuser</button></div></div>`).join('');
   }
-  if(myVehs.length){
-    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🤝 Partages envoyés</span><button class="sec-lnk" onclick="openInv()">+ Partager</button></div>`;
-    const sent=S.partages.filter(p=>p.owner_id===S.user.id);
-    if(!sent.length)h+=`<div class="info-box">Partagez vos véhicules avec votre famille. Ils pourront consulter et ajouter des entretiens.</div>`;
-    else h+=sent.map(p=>{
+  h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🤝 Partages envoyés</span><button class="sec-lnk" onclick="openInv()">+ Partager</button></div>`;
+  const sent=S.partages.filter(p=>p.owner_id===S.user.id);
+  if(!sent.length)h+=`<div class="info-box">Partagez vos véhicules avec votre famille. Ils pourront consulter et ajouter des entretiens.</div>`;
+  else h+=sent.map(p=>{
       const v=S.vehicles.find(x=>x.id===p.vehicle_id);
       const vname=v?`${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}`:'Véhicule inconnu';
       const stCol=p.status==='pending'?'var(--warn)':p.status==='accepted'?'var(--ok)':'var(--err)';
       const stLbl=p.status==='pending'?'En attente':p.status==='accepted'?'Accepté':'Refusé';
       return`<div class="si"><div class="sav">${v?v.emoji||'🚗':'🚗'}</div><div class="sinf"><div class="sem">${vname}</div><div class="sst">→ ${esc(p.invited_email)} · <span style="color:${stCol}">${stLbl}</span></div></div><div class="sact">${p.status!=='rejected'?`<button class="btn btn-d btn-xs" onclick="revokeP('${p.id}')">Révoquer</button>`:''}</div></div>`;
     }).join('');
-  }
   const shared=S.vehicles.filter(v=>v.user_id!==S.user.id);
   if(shared.length){
     h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🚗 Partagés avec moi</span></div>`;
