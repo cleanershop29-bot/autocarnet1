@@ -1111,7 +1111,8 @@ function showInvModal(email, msg){
   const mo=document.createElement('div');
   mo.className='mo open';
   mo.style.zIndex='600';
-  mo.innerHTML=`<div class="modal modal-c" style="max-width:420px">
+  mo.onclick=function(e){if(e.target===mo){mo.remove();document.body.style.overflow='';}};
+  mo.innerHTML=`<div class="modal modal-c" style="max-width:420px;margin:auto;align-self:center" onclick="event.stopPropagation()">
     <div class="mhdr">
       <div class="mtit">✅ Invitation créée</div>
       <button class="mcls" onclick="this.closest('.mo').remove();document.body.style.overflow=''">✕</button>
