@@ -278,6 +278,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 /* DETAIL PILLS */
 .detail-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .detail-pill{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.72rem;font-weight:600;color:var(--txm);display:flex;align-items:center;gap:4px}
+/* CARBURANT */
+.carb-list{display:flex;flex-direction:column;gap:6px;padding:0 14px 12px}
+.carb-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;display:flex;align-items:center;gap:10px}
+.carb-item.best{border-color:var(--ok);background:var(--ok-bg)}
+.carb-prix{font-size:1rem;font-weight:800;color:var(--txt);flex-shrink:0;min-width:52px}
+.carb-item.best .carb-prix{color:var(--ok)}
+.carb-info{flex:1;min-width:0}
+.carb-nom{font-size:.82rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carb-adresse{font-size:.72rem;color:var(--txm);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carb-dist{font-size:.72rem;color:var(--txm);flex-shrink:0}
 /* SORT BAR */
 .sort-bar{display:flex;gap:5px;margin-bottom:8px;align-items:center}
 .sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
@@ -1367,7 +1377,9 @@ function vcFullHTML(v){
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();exportCSV('${v.id}')">CSV</button>
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();exportPDF('${v.id}')">PDF</button>
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();showShareLink('${v.id}')">Lien public</button>
-    </div>`;
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();showCarburant('${v.id}','${v.carburant||'essence'}')">⛽ Prix proches</button>
+    </div>
+    <div id="carb-${v.id}" class="hidden"></div>`;
 
   // Derniers entretiens inline
   if(es.length){
@@ -1406,6 +1418,103 @@ function vcFullHTML(v){
   }
   h+=`</div></div>`;
   return h;
+}
+
+/* ══ PRIX CARBURANT ══ */
+async function showCarburant(vid, carburant){
+  const el=document.getElementById('carb-'+vid);
+  if(!el)return;
+  if(!el.classList.contains('hidden')){el.classList.add('hidden');return;}
+  el.classList.remove('hidden');
+
+  const fuelKeyMap={diesel:'Gazole',essence:'SP95',hybride:'E10',hybride_r:'E10',gpl:'GPLc',gnv:null,electrique:null};
+  const fuelName=fuelKeyMap[carburant]||'SP95';
+
+  if(carburant==='electrique'||carburant==='gnv'){
+    el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm);padding:4px 0">&#x26A1; Consultez Chargemap pour les bornes électriques.</div></div>';
+    return;
+  }
+
+  el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm);padding:4px 0">&#x1F4CD; Localisation en cours...</div></div>';
+
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    const lat=pos.coords.latitude.toFixed(6);
+    const lon=pos.coords.longitude.toFixed(6);
+    el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm);padding:4px 0">&#x1F50D; Recherche des stations...</div></div>';
+    await fetchAndRenderStations(el, 'https://api.prix-carburants.2aaz.fr/stations/around/'+lat+','+lon+'/?m=15000', fuelName, carburant, vid);
+  }catch(err){
+    el.innerHTML='<div class="carb-list">'
+      +'<div style="font-size:.8rem;color:var(--txm);margin-bottom:8px">Géolocalisation indisponible. Entrez votre code postal :</div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<input id="carb-cp-'+vid+'" class="fc" placeholder="29150" style="flex:1;padding:7px 10px;font-size:.85rem" maxlength="5">'
+      +'<button class="btn btn-p btn-sm" data-vid="'+vid+'" data-fuel="'+fuelName+'" data-carb="'+carburant+'" onclick="var b=this;searchCarburantByCp(b.dataset.vid,b.dataset.fuel,b.dataset.carb)">OK</button>'
+      +'</div></div>';
+  }
+}
+
+async function searchCarburantByCp(vid, fuelName, carburant){
+  const cpEl=document.getElementById('carb-cp-'+vid);
+  const cp=(cpEl&&cpEl.value||'').trim();
+  if(!cp||cp.length<4)return toast('Code postal invalide','e');
+  const el=document.getElementById('carb-'+vid);
+  if(!el)return;
+  el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">&#x1F50D; Recherche...</div></div>';
+  let url='https://api.prix-carburants.2aaz.fr/stations/?postcode='+encodeURIComponent(cp);
+  await fetchAndRenderStations(el, url, fuelName, carburant, vid, cp);
+}
+
+async function fetchAndRenderStations(el, url, fuelName, carburant, vid, cp){
+  try{
+    const resp=await fetch(url);
+    if(!resp.ok)throw new Error('Erreur API ('+resp.status+')');
+    const stations=await resp.json();
+
+    if(!stations||!stations.length){
+      if(cp){
+        // Fallback département
+        const dept=cp.substring(0,2);
+        el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">Élargissement au dép. '+dept+'...</div></div>';
+        const resp2=await fetch('https://api.prix-carburants.2aaz.fr/stations/?dep='+dept);
+        const stations2=await resp2.json();
+        if(!stations2||!stations2.length){
+          el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">Aucune station trouvée. <a href="https://www.prix-carburants.gouv.fr" target="_blank" style="color:var(--primary)">Site officiel</a></div></div>';
+          return;
+        }
+        await loadPricesAndRender(el, stations2, fuelName, carburant);
+      } else {
+        el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">Aucune station trouvée dans ce rayon.</div></div>';
+      }
+      return;
+    }
+    await loadPricesAndRender(el, stations, fuelName, carburant);
+  }catch(e){
+    el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--err)">Erreur : '+(e.message||'réseau')+'</div></div>';
+  }
+}
+
+async function loadPricesAndRender(el, stations, fuelName, carburant){
+  el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">Chargement des prix...</div></div>';
+  // DEBUG — afficher la réponse brute du premier station detail
+  const firstId=stations[0].id;
+  const debugResp=await fetch('https://api.prix-carburants.2aaz.fr/station/'+firstId);
+  const debugText=await debugResp.text();
+  el.innerHTML='<div class="carb-list"><div style="font-size:.72rem;word-break:break-all;color:var(--txt)">ID:'+firstId+'<br>'+debugText.substring(0,500)+'</div></div>';
+  return;
+  const top=stations.slice(0,8);
+
+  let h='<div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);padding:8px 14px 4px">&#x26FD; '+fuelName+' — stations proches</div><div class="carb-list">';
+  withPrices.forEach(function(s,i){
+    const mapsUrl='https://maps.google.com?q='+encodeURIComponent(s.adresse+' '+s.ville);
+    h+='<a href="'+mapsUrl+'" target="_blank" style="text-decoration:none" onclick="event.stopPropagation()">'
+      +'<div class="carb-item'+(i===0?' best':'')+'"><div class="carb-prix">'+s.prix.toFixed(3)+'</div>'
+      +'<div class="carb-info"><div class="carb-nom">'+esc(s.nom)+'</div>'
+      +'<div class="carb-adresse">'+esc(s.adresse)+' '+esc(s.ville)+'</div></div>'
+      +(i===0?'<div style="font-size:.7rem;font-weight:700;color:var(--ok)">Moins cher</div>':'')
+      +'</div></a>';
+  });
+  h+='<div style="font-size:.7rem;color:var(--txl);padding:4px 0 2px">Source : prix-carburants.gouv.fr · Tap pour Maps</div></div>';
+  el.innerHTML=h;
 }
 
 function toggleVehActions(vid){
