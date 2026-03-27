@@ -530,7 +530,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <div class="mhdr"><div class="mtit">Partager un véhicule</div><button class="mcls" onclick="cm('inv')">✕</button></div>
     <div class="mbdy">
       <div class="fg"><label class="fl">Véhicule</label><select class="fc" id="inv-v"></select></div>
-      <div class="fg"><label class="fl">Email du membre</label><input class="fc" id="inv-e" type="email" placeholder="famille@email.com"></div>
+      <div class="fg"><label class="fl">Email du membre</label><input class="fc" id="inv-e" type="email" placeholder="membre@email.com"></div>
     </div>
     <div class="mft"><button class="btn btn-s btn-sm" onclick="cm('inv')">Annuler</button><button class="btn btn-p btn-sm" onclick="sendInv()">Envoyer</button></div>
   </div>
@@ -971,7 +971,7 @@ async function loadPartages(){
   S.pending=pend||[];
   // Notifier si nouvelles invitations en attente
   if(S.pending.length>0&&S.pending.length>prevPending){
-    toast(`📨 ${S.pending.length} invitation${S.pending.length>1?'s':''} en attente dans Famille`,'i');
+    toast(`📨 ${S.pending.length} invitation${S.pending.length>1?'s':''} en attente dans Équipe`,'i');
   }
 }
 
@@ -1020,7 +1020,7 @@ async function saveVeh(){
   btn.disabled=false;btn.textContent='Enregistrer';
   if(error){console.error(error);return toast('Erreur : '+(error.message||error.code),'e');}
   toast(id?'Véhicule mis à jour !':'Véhicule ajouté !','s');
-  cm('veh');await loadVehs();await loadEnts();nav('vehs');
+  cm('veh');await loadVehs();await loadEnts();nav('dash');
 }
 async function delVeh(){
   const id=g('v-id').value;if(!id)return;
@@ -1028,7 +1028,7 @@ async function delVeh(){
     const{error}=await sb.from('vehicles').delete().eq('id',id).eq('user_id',S.user.id);
     if(error)return toast('Erreur : '+error.message,'e');
     toast('Véhicule supprimé.','i');cm('veh');if(S.selVeh===id)S.selVeh=null;
-    await loadVehs();await loadEnts();nav('vehs');
+    await loadVehs();await loadEnts();nav('dash');
   });
 }
 function openKm(vid){
@@ -1097,7 +1097,7 @@ async function sendInv(){
     '',
     '1. Va sur : '+appUrl,
     '2. Cree un compte avec : '+email,
-    '3. Onglet Famille > accepte mon invitation',
+    '3. Onglet Équipe > accepte mon invitation',
     '',
     'AutoCarnet - Carnet entretien numerique'
   ];
@@ -1112,7 +1112,7 @@ async function sendInv(){
     await navigator.clipboard.writeText(msg);
     toast('✅ Invitation créée ! Message copié — envoyez-le à '+email,'s');
   }catch(e){
-    toast('✅ Invitation créée pour '+email+' — allez dans Famille pour voir','s');
+    toast('✅ Invitation créée pour '+email+' — allez dans Équipe pour voir','s');
   }
   // Partage natif si disponible
   if(navigator.share){
