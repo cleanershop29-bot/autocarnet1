@@ -1,45 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fond dégradé bleu -->
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1E40AF"/>
+      <stop offset="0%" style="stop-color:#1D4ED8"/>
       <stop offset="100%" style="stop-color:#2563EB"/>
     </linearGradient>
-    <linearGradient id="shine" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
-      <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+    <linearGradient id="car_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#E0EAFF;stop-opacity:1"/>
     </linearGradient>
   </defs>
   <!-- Fond arrondi -->
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <!-- Reflet -->
-  <rect width="512" height="256" rx="112" fill="url(#shine)"/>
-  <!-- Carnet / livre stylisé -->
-  <rect x="130" y="120" width="252" height="300" rx="18" fill="white" opacity="0.12"/>
-  <rect x="142" y="132" width="228" height="276" rx="14" fill="white" opacity="0.92"/>
-  <!-- Reliure -->
-  <rect x="142" y="132" width="28" height="276" rx="14" fill="#1D4ED8"/>
-  <!-- Lignes contenu -->
-  <rect x="192" y="176" width="148" height="10" rx="5" fill="#93C5FD"/>
-  <rect x="192" y="202" width="120" height="8" rx="4" fill="#BFDBFE"/>
-  <rect x="192" y="224" width="136" height="8" rx="4" fill="#BFDBFE"/>
-  <!-- Icône voiture -->
-  <g transform="translate(192, 255)">
-    <!-- Carrosserie -->
-    <path d="M8 28 L8 20 Q8 14 14 12 L24 8 Q28 6 36 6 Q44 6 48 8 L58 12 Q64 14 64 20 L64 28 Q64 32 60 32 L12 32 Q8 32 8 28Z" fill="#2563EB"/>
-    <!-- Toit -->
-    <path d="M20 12 L28 4 Q32 2 40 2 Q48 2 52 4 L60 12Z" fill="#1D4ED8"/>
-    <!-- Roues -->
-    <circle cx="22" cy="32" r="7" fill="#1E293B"/>
-    <circle cx="22" cy="32" r="3.5" fill="#94A3B8"/>
-    <circle cx="50" cy="32" r="7" fill="#1E293B"/>
-    <circle cx="50" cy="32" r="3.5" fill="#94A3B8"/>
-    <!-- Vitre -->
-    <path d="M26 12 L30 6 Q32 4 40 4 Q48 4 50 6 L54 12Z" fill="#93C5FD" opacity="0.8"/>
-  </g>
-  <!-- Lignes sous voiture -->
-  <rect x="192" y="316" width="100" height="8" rx="4" fill="#BFDBFE"/>
-  <rect x="192" y="336" width="76" height="8" rx="4" fill="#DBEAFE"/>
-  <!-- Check badge -->
-  <circle cx="370" cy="370" r="52" fill="#059669"/>
-  <polyline points="347,370 362,385 393,355" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Carrosserie principale -->
+  <rect x="96" y="270" width="320" height="90" rx="18" fill="url(#car_grad)"/>
+  
+  <!-- Toit / habitacle -->
+  <path d="M170 270 Q185 210 230 200 L282 200 Q327 210 342 270 Z" fill="url(#car_grad)"/>
+  
+  <!-- Vitre -->
+  <path d="M186 268 Q196 228 232 220 L280 220 Q316 228 326 268 Z" fill="#93C5FD" opacity="0.7"/>
+  
+  <!-- Roue gauche -->
+  <circle cx="168" cy="360" r="42" fill="#1E3A8A"/>
+  <circle cx="168" cy="360" r="26" fill="#DBEAFE"/>
+  <circle cx="168" cy="360" r="10" fill="#1E3A8A"/>
+  
+  <!-- Roue droite -->
+  <circle cx="344" cy="360" r="42" fill="#1E3A8A"/>
+  <circle cx="344" cy="360" r="26" fill="#DBEAFE"/>
+  <circle cx="344" cy="360" r="10" fill="#1E3A8A"/>
+  
+  <!-- Phare gauche -->
+  <rect x="100" y="290" width="36" height="20" rx="6" fill="#FCD34D"/>
+  
+  <!-- Phare droit -->
+  <rect x="376" y="290" width="36" height="20" rx="6" fill="#FCD34D"/>
+  
+  <!-- Calandre -->
+  <rect x="216" y="295" width="80" height="14" rx="4" fill="#93C5FD" opacity="0.5"/>
+  
+  <!-- Lettres AC en bas -->
+  <text x="256" y="178" font-family="Arial Black, sans-serif" font-size="52" font-weight="900" fill="white" text-anchor="middle" opacity="0.95">AC</text>
+  
+  <!-- Petite ligne déco sous AC -->
+  <rect x="206" y="185" width="100" height="4" rx="2" fill="white" opacity="0.4"/>
 </svg>
