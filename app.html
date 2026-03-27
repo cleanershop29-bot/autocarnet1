@@ -1100,8 +1100,7 @@ async function sendInv(){
     '',
     'AutoCarnet - Carnet entretien numerique'
   ];
-  const msg=lines.join('
-');
+  const msg=lines.join('\n');
   const{error}=await sb.from('partages').insert({vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending'});
   if(error)return toast('Erreur : '+error.message,'e');
   cm('inv');
