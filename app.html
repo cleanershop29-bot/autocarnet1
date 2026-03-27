@@ -847,9 +847,21 @@ async function doReg(){
   if(pass.length<8)return toast('Mot de passe : 8 caractères minimum.','e');
   if(!g('cgu-check').checked)return toast('Veuillez accepter les CGU pour continuer.','e');
   const btn=g('btn-reg');btn.disabled=true;btn.textContent='Création…';
-  const{error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});
+  const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});
   btn.disabled=false;btn.textContent='Créer mon compte';
-  if(error)toast(error.message,'e');else toast('Compte créé ! Vérifiez votre email.','s');
+  if(error){toast(error.message,'e');return;}
+  // Si confirmation email désactivée dans Supabase, la session est dispo immédiatement
+  if(data?.session?.user){
+    S.user=data.session.user;
+    await loadAll();
+    showApp();
+    toast('Bienvenue sur AutoCarnet ! 🎉','s');
+  } else {
+    // Confirmation email activée — rediriger vers connexion
+    toast('Compte créé ! Connectez-vous maintenant.','s');
+    authTab('l');
+    g('le').value=email;
+  }
 }
 async function doOut(){const hadUser=!!S.user;resetState();showAuth();if(hadUser){try{await sb.auth.signOut();}catch(e){}}}
 
@@ -954,7 +966,13 @@ async function loadPartages(){
     sb.from('partages').select('*').eq('invited_email',email).eq('status','pending'),
     sb.from('partages').select('*').eq('invited_user_id',uid),
   ]);
-  S.partages=[...(sent||[]),...(acc||[])];S.pending=pend||[];
+  S.partages=[...(sent||[]),...(acc||[])];
+  const prevPending=S.pending?.length||0;
+  S.pending=pend||[];
+  // Notifier si nouvelles invitations en attente
+  if(S.pending.length>0&&S.pending.length>prevPending){
+    toast(`📨 ${S.pending.length} invitation${S.pending.length>1?'s':''} en attente dans Famille`,'i');
+  }
 }
 
 /* CT */
@@ -1129,7 +1147,12 @@ function shareInvMsg(encodedMsg){
     navigator.clipboard.writeText(msg).then(()=>toast('Message copié !','s'));
   }
 }
-async function acceptInv(pid){const{error}=await sb.from('partages').update({status:'accepted',invited_user_id:S.user.id}).eq('id',pid);if(error)return toast('Erreur.','e');toast('Acceptée !','s');await loadAll();renderView();}
+async function acceptInv(pid){
+  const{error}=await sb.from('partages').update({status:'accepted',invited_user_id:S.user.id}).eq('id',pid);
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast('Invitation acceptée ! Le véhicule est maintenant visible.','s');
+  await loadAll();renderView();
+}
 async function rejectInv(pid){await sb.from('partages').update({status:'rejected'}).eq('id',pid);toast('Refusée.','i');await loadPartages();renderView();}
 async function revokeP(pid){cfm('Révoquer ce partage ?',"Cette personne n'aura plus accès au véhicule.",async()=>{await sb.from('partages').delete().eq('id',pid);toast('Révoqué.','i');await loadPartages();renderView();});}
 
