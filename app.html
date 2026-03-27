@@ -267,6 +267,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 /* OFFLINE BANNER */
 #offline-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:#1e293b;color:#fff;text-align:center;padding:9px;font-size:.82rem;font-weight:600}
 #offline-banner.visible{display:block}
+/* SECTION REPLIABLE */
+.adv-toggle{width:100%;background:var(--bg);border:1.5px dashed var(--border);border-radius:var(--r-sm);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;transition:.15s}
+.adv-toggle:hover{background:var(--primary-lt);color:var(--primary);border-color:var(--primary)}
+.adv-body{display:none;padding-top:4px}
+.adv-body.open{display:block}
+.adv-arrow{transition:transform .2s;font-size:.75rem}
+.adv-toggle.open .adv-arrow{transform:rotate(90deg)}
+/* DETAIL PILLS */
+.detail-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.detail-pill{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.72rem;font-weight:600;color:var(--txm);display:flex;align-items:center;gap:4px}
 /* SORT BAR */
 .sort-bar{display:flex;gap:5px;margin-bottom:8px;align-items:center}
 .sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
@@ -388,6 +398,61 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       </div>
       <div class="fg"><label class="fl">Icône</label><div id="ep"></div><input type="hidden" id="v-em" value="🚗"></div>
       <div class="fg"><label class="fl">VIN (optionnel)</label><input class="fc" id="v-vn" placeholder="Numéro de châssis"></div>
+      <!-- SECTION AVANCÉE VÉHICULE -->
+      <button type="button" class="adv-toggle" id="adv-veh-btn" onclick="toggleAdv('veh')">
+        ℹ️ Informations avancées <span class="adv-arrow">›</span>
+      </button>
+      <div class="adv-body" id="adv-veh-body">
+        <div class="fr">
+          <div class="fg"><label class="fl">Transmission</label>
+            <select class="fc" id="v-tr">
+              <option value="">—</option>
+              <option value="manuelle">⚙️ Manuelle</option>
+              <option value="automatique">🤖 Automatique</option>
+              <option value="cvt">🔄 CVT</option>
+              <option value="semi-auto">⚡ Semi-auto</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Traction</label>
+            <select class="fc" id="v-trc">
+              <option value="">—</option>
+              <option value="avant">➡️ Avant (FWD)</option>
+              <option value="arriere">⬅️ Arrière (RWD)</option>
+              <option value="4x4">🔀 4x4 / AWD</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Nb. portes</label>
+            <select class="fc" id="v-np">
+              <option value="">—</option>
+              <option value="2">2 portes</option>
+              <option value="3">3 portes</option>
+              <option value="4">4 portes</option>
+              <option value="5">5 portes</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Puissance (kW)</label>
+            <input class="fc" id="v-pkw" type="number" inputmode="numeric" placeholder="66" min="0">
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Valeur d'achat (€)</label>
+            <input class="fc" id="v-va" type="number" inputmode="decimal" placeholder="15000" min="0">
+          </div>
+          <div class="fg"><label class="fl">Valeur actuelle (€)</label>
+            <input class="fc" id="v-vact" type="number" inputmode="decimal" placeholder="10000" min="0">
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Assurance — échéance</label>
+            <input class="fc" id="v-as" type="date">
+          </div>
+          <div class="fg"><label class="fl">Compagnie assurance</label>
+            <input class="fc" id="v-ac" placeholder="Maif, AXA…">
+          </div>
+        </div>
+      </div>
     </div>
     <div class="mft">
       <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-v" onclick="delVeh()">🗑 Supprimer</button></div>
@@ -417,6 +482,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <div class="fr">
         <div class="fg"><label class="fl">Rappel date</label><input class="fc" id="e-rd" type="date"></div>
         <div class="fg"><label class="fl">Rappel km</label><input class="fc" id="e-rk" type="number" inputmode="numeric" placeholder="60000" min="0"></div>
+      </div>
+      <!-- SECTION AVANCÉE ENTRETIEN -->
+      <button type="button" class="adv-toggle" id="adv-ent-btn" onclick="toggleAdv('ent')">
+        ℹ️ Détails supplémentaires <span class="adv-arrow">›</span>
+      </button>
+      <div class="adv-body" id="adv-ent-body">
+        <div class="fg"><label class="fl">Pièces changées</label>
+          <input class="fc" id="e-pc" placeholder="Filtre à huile, plaquettes avant…">
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Technicien</label>
+            <input class="fc" id="e-tech" placeholder="Nom du mécanicien">
+          </div>
+          <div class="fg"><label class="fl">Durée (min)</label>
+            <input class="fc" id="e-dur" type="number" inputmode="numeric" placeholder="60" min="0">
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Garantie pièces (mois)</label>
+          <input class="fc" id="e-gar" type="number" inputmode="numeric" placeholder="12" min="0">
+        </div>
       </div>
     </div>
     <div class="mft">
@@ -900,6 +985,14 @@ async function saveVeh(){
     puissance:parseInt(g('v-pw').value)||null,
     emoji:g('v-em').value||'🚗',
     vin:g('v-vn').value.trim()||null,
+    transmission:g('v-tr').value||null,
+    traction:g('v-trc').value||null,
+    nb_portes:parseInt(g('v-np').value)||null,
+    puissance_kw:parseInt(g('v-pkw').value)||null,
+    valeur_achat:parseFloat(g('v-va').value)||null,
+    valeur_actuelle:parseFloat(g('v-vact').value)||null,
+    assurance_echeance:g('v-as').value||null,
+    assurance_compagnie:g('v-ac').value.trim()||null,
   };
   let error;
   try{
@@ -946,6 +1039,10 @@ async function saveEnt(){
     note:g('e-nt').value.trim()||null,
     rappel_date:g('e-rd').value||null,
     rappel_km:parseInt(g('e-rk').value)||null,
+    pieces:g('e-pc').value.trim()||null,
+    technicien:g('e-tech').value.trim()||null,
+    duree_minutes:parseInt(g('e-dur').value)||null,
+    garantie_mois:parseInt(g('e-gar').value)||null,
   };
   if(!id) p.id=crypto.randomUUID();
   // Alerte si km entretien < km actuel du véhicule
@@ -1004,6 +1101,12 @@ function getRappels(){
     const days=Math.ceil((new Date(v.ct_date)-today)/86400000);
     const sev=days<0?'danger':days<=60?'warn':'ok';
     if(sev!=='ok')list.push({id:'ct'+v.id,v,e:null,ti:{ico:'✅',label:'Contrôle technique'},kind:'ct',days,sev,label:days<0?`Expiré (${Math.abs(days)}j)`:`Dans ${days}j`,isCT:true});
+    // Rappel assurance
+    if(v.assurance_echeance){
+      const daysA=Math.ceil((new Date(v.assurance_echeance)-today)/86400000);
+      const sevA=daysA<0?'danger':daysA<=30?'warn':'ok';
+      if(sevA!=='ok')list.push({id:'as'+v.id,v,e:null,ti:{ico:'🛡️',label:'Assurance'},kind:'assurance',days:daysA,sev:sevA,label:daysA<0?`Expirée (${Math.abs(daysA)}j)`:`Dans ${daysA}j`,isCT:true});
+    }
   });
   return list.sort((a,b)=>({danger:0,warn:1,ok:2}[a.sev]-{danger:0,warn:1,ok:2}[b.sev]));
 }
@@ -1193,6 +1296,23 @@ function vcFullHTML(v){
     h+=`</div>`;
   }
 
+  // Infos avancées véhicule — affichées si renseignées
+  const advInfos=[];
+  if(v.transmission)advInfos.push({ico:'⚙️',val:v.transmission});
+  if(v.traction)advInfos.push({ico:'🔀',val:v.traction});
+  if(v.nb_portes)advInfos.push({ico:'🚪',val:v.nb_portes+' portes'});
+  if(v.puissance_kw)advInfos.push({ico:'⚡',val:v.puissance_kw+' kW'});
+  if(v.valeur_achat)advInfos.push({ico:'💰',val:'Achat : '+fmtCout(v.valeur_achat)});
+  if(v.valeur_actuelle)advInfos.push({ico:'📈',val:'Valeur : '+fmtCout(v.valeur_actuelle)});
+  if(v.assurance_compagnie)advInfos.push({ico:'🛡️',val:v.assurance_compagnie});
+  if(v.assurance_echeance){
+    const days=Math.ceil((new Date(v.assurance_echeance)-new Date())/86400000);
+    const color=days<0?'var(--err)':days<=30?'var(--warn)':'var(--ok)';
+    advInfos.push({ico:'📋',val:'Assurance : '+fmtDate(v.assurance_echeance),color});
+  }
+  if(advInfos.length){
+    h+=`<div class="detail-pills" style="padding:0 14px 12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
+  }
   h+=`</div></div>`;
   return h;
 }
@@ -1311,6 +1431,8 @@ function eiHTML(e,v){
       <div class="ei-mt"><span>📅 ${fmtDate(e.date)}</span>${e.km?`<span>📍 ${fmtKm(e.km)}</span>`:''}${e.garage?`<span>🏠 ${esc(e.garage)}</span>`:''}${v?`<span>${v.emoji||'🚗'} ${esc(v.marque)}</span>`:''}</div>
       ${e.note?`<div class="ei-nt">${esc(e.note)}</div>`:''}
       ${rappels.length?`<div class="ei-rp">Rappel : ${rappels.join(' · ')}</div>`:''}
+      ${e.pieces?`<div style="font-size:.72rem;color:var(--txm);margin-top:3px">🔩 ${esc(e.pieces)}</div>`:''}
+      ${e.garantie_mois?`<div style="font-size:.72rem;color:var(--ok);margin-top:2px">🛡️ Garantie ${e.garantie_mois} mois</div>`:''}
     </div>
     ${e.cout?`<div class="ei-ct">${fmtCout(e.cout)}</div>`:''}
   </div>`;
@@ -1391,11 +1513,21 @@ function openVeh(id){
     g('v-km').value=v.km_actuel||'';g('v-da').value=v.date_achat||'';
     g('v-ct').value=v.ct_date||'';g('v-cl').value=v.couleur||'';
     g('v-pw').value=v.puissance||'';g('v-em').value=v.emoji||'🚗';g('v-vn').value=v.vin||'';
+    g('v-tr').value=v.transmission||'';g('v-trc').value=v.traction||'';
+    g('v-np').value=v.nb_portes||'';g('v-pkw').value=v.puissance_kw||'';
+    g('v-va').value=v.valeur_achat||'';g('v-vact').value=v.valeur_actuelle||'';
+    g('v-as').value=v.assurance_echeance||'';g('v-ac').value=v.assurance_compagnie||'';
+    // Ouvrir section avancée si des données existent
+    if(v.transmission||v.traction||v.assurance_echeance||v.valeur_achat){
+      const btn=g('adv-veh-btn'),body=g('adv-veh-body');
+      if(btn&&body){btn.classList.add('open');body.classList.add('open');}
+    }
     g('btn-del-v').classList.remove('hidden');
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===v.emoji));
   }else{
     g('mt-veh').textContent='Ajouter un véhicule';
-    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn'].forEach(x=>{if(g(x))g(x).value='';});
+    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac'].forEach(x=>{if(g(x))g(x).value='';});
+    const advBtn=g('adv-veh-btn'),advBody=g('adv-veh-body');if(advBtn&&advBody){advBtn.classList.remove('open');advBody.classList.remove('open');}
     g('v-cb').value='essence';g('v-em').value='🚗';
     g('btn-del-v').classList.add('hidden');
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em==='🚗'));
@@ -1424,16 +1556,30 @@ function openEnt(id,forcedVid){
     g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';
     g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
     g('e-rk').value=e.rappel_km||'';
+    g('e-pc').value=e.pieces||'';g('e-tech').value=e.technicien||'';
+    g('e-dur').value=e.duree_minutes||'';g('e-gar').value=e.garantie_mois||'';
+    if(e.pieces||e.technicien||e.duree_minutes||e.garantie_mois){
+      const btn=g('adv-ent-btn'),body=g('adv-ent-body');
+      if(btn&&body){btn.classList.add('open');body.classList.add('open');}
+    }
     g('btn-del-e').classList.remove('hidden');
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk'].forEach(x=>{if(g(x))g(x).value='';});
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar'].forEach(x=>{if(g(x))g(x).value='';});
+    const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     const v=S.vehicles.find(x=>x.id===(forcedVid||S.selVeh));
     if(v?.km_actuel)g('e-km').value=v.km_actuel;
   }
   om('ent');
+}
+
+function toggleAdv(id){
+  const btn=g('adv-'+id+'-btn'),body=g('adv-'+id+'-body');
+  if(!btn||!body)return;
+  btn.classList.toggle('open');
+  body.classList.toggle('open');
 }
 
 function onTyChange(){
