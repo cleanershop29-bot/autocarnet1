@@ -752,7 +752,7 @@ async function doReset(){
   const email=g('pe').value.trim();
   if(!email)return toast('Entrez votre email.','e');
   const btn=g('btn-reset');btn.disabled=true;btn.textContent='Envoi…';
-  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://autocarnet.netlify.app/'});
+  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/'});
   btn.disabled=false;btn.textContent='Envoyer le lien';
   if(error)toast('Erreur : '+error.message,'e');
   else toast('Email envoyé ! Vérifiez votre boîte mail.','s');
@@ -776,7 +776,7 @@ function showCGU(){
       <p style="margin-bottom:12px"><strong>5. Disponibilité</strong><br>AutoCarnet s'efforce d'assurer une disponibilité maximale du service mais ne peut garantir une disponibilité ininterrompue. Des maintenances peuvent être effectuées sans préavis.</p>
       <p style="margin-bottom:12px"><strong>6. Responsabilité</strong><br>AutoCarnet est un outil d'aide au suivi d'entretien. Les décisions techniques concernant vos véhicules restent sous votre entière responsabilité. AutoCarnet ne saurait être tenu responsable de dommages résultant d'une mauvaise interprétation des données.</p>
       <p style="margin-bottom:12px"><strong>7. Modification des CGU</strong><br>Les présentes CGU peuvent être modifiées à tout moment. Les utilisateurs seront informés par email en cas de modification substantielle.</p>
-      <p><strong>8. Contact</strong><br>Pour toute question : support@autocarnet.app</p>
+      <p><strong>8. Contact</strong><br>Pour toute question : contactez-nous via l'application</p>
     </div>
   </div>`;
   document.body.appendChild(mo);
@@ -798,9 +798,9 @@ function showRGPD(){
       <p style="margin-bottom:12px"><strong>4. Base légale</strong><br>Le traitement est fondé sur l'exécution du contrat (CGU) et votre consentement pour les notifications push.</p>
       <p style="margin-bottom:12px"><strong>5. Conservation des données</strong><br>Vos données sont conservées pendant toute la durée d'utilisation du service, puis supprimées dans un délai de 30 jours après la suppression du compte.</p>
       <p style="margin-bottom:12px"><strong>6. Hébergement</strong><br>Les données sont hébergées par Supabase (infrastructure AWS, région EU-West). Supabase est conforme au RGPD et au Privacy Shield.</p>
-      <p style="margin-bottom:12px"><strong>7. Vos droits</strong><br>Conformément au RGPD, vous disposez des droits d'accès, rectification, suppression, portabilité et opposition. Pour exercer ces droits : support@autocarnet.app</p>
+      <p style="margin-bottom:12px"><strong>7. Vos droits</strong><br>Conformément au RGPD, vous disposez des droits d'accès, rectification, suppression, portabilité et opposition. Pour exercer ces droits : contactez-nous via l'application</p>
       <p style="margin-bottom:12px"><strong>8. Cookies</strong><br>AutoCarnet n'utilise pas de cookies publicitaires. Un cookie de session est utilisé pour maintenir votre connexion.</p>
-      <p><strong>9. Contact DPO</strong><br>Pour toute question relative à vos données : support@autocarnet.app</p>
+      <p><strong>9. Contact DPO</strong><br>Pour toute question relative à vos données : contactez-nous via l'application</p>
     </div>
   </div>`;
   document.body.appendChild(mo);
@@ -1438,7 +1438,6 @@ async function deleteAccount(){
       await sb.from('partages').delete().in('vehicle_id',vids);
       await sb.from('vehicles').delete().in('id',vids);
     }
-    await sb.from('push_subscriptions').delete().eq('user_id',S.user.id);
     toast('Compte supprimé.','i');
     resetState();
     showAuth();
