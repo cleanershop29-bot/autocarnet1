@@ -1479,13 +1479,23 @@ function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';renderEnt(
 function renderRap(){
   const el=g('rp-ctn');
   const raps=getRappels();
-  const urgent=raps.filter(r=>r.sev!=='ok'),ok=raps.filter(r=>r.sev==='ok');
+  // Seuil : afficher uniquement les rappels dans les 60 prochains jours
+  const urgent=raps.filter(r=>r.sev==='danger');
+  const soon=raps.filter(r=>r.sev==='warn'||(r.sev==='ok'&&r.days!==undefined&&r.days<=60));
+  const later=raps.filter(r=>r.sev==='ok'&&(r.days===undefined||r.days>60));
   let h='';
-  if(!raps.length){
-    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucune alerte en cours.</p></div>`;
+  if(!urgent.length&&!soon.length){
+    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 60 prochains jours.</p></div>`;
   } else {
-    if(urgent.length){h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes (${urgent.length})</span></div>`;h+=urgent.map(r=>riHTML(r)).join('');}
-    if(ok.length){h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ À venir</span></div>`;h+=ok.map(r=>riHTML(r)).join('');}
+    if(urgent.length){h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ En retard (${urgent.length})</span></div>`;h+=urgent.map(r=>riHTML(r)).join('');}
+    if(soon.length){h+=`<div class="sec-hdr mt12"><span class="sec-ttl">⏰ Dans les 60 jours (${soon.length})</span></div>`;h+=soon.map(r=>riHTML(r)).join('');}
+  }
+  if(later.length){
+    h+=`<div class="sec-hdr mt12" style="cursor:pointer" onclick="toggleLaterRaps(this)">
+      <span class="sec-ttl" style="color:var(--txl)">Plus tard (${later.length})</span>
+      <span style="font-size:.8rem;color:var(--txl)" id="later-arrow">▼ Voir</span>
+    </div>
+    <div id="later-raps" class="hidden">${later.map(r=>riHTML(r)).join('')}</div>`;
   }
   // Garanties actives
   const now=new Date();
@@ -1515,6 +1525,14 @@ function renderRap(){
   }
   // Filtre par année dans entretiens
   el.innerHTML=h;
+}
+
+function toggleLaterRaps(hdr){
+  const el=g('later-raps');
+  const arrow=g('later-arrow');
+  if(!el)return;
+  el.classList.toggle('hidden');
+  if(arrow)arrow.textContent=el.classList.contains('hidden')?'▼ Voir':'▲ Masquer';
 }
 
 function renderFam(){
