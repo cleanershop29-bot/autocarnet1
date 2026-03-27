@@ -254,11 +254,23 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 /* UTILS */
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
 .g6{display:flex;gap:6px;flex-wrap:wrap}
+/* SKELETON */
+.skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:skel-anim 1.2s ease-in-out infinite;border-radius:8px}
+@keyframes skel-anim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;gap:12px}
+/* OFFLINE BANNER */
+#offline-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:#1e293b;color:#fff;text-align:center;padding:9px;font-size:.82rem;font-weight:600}
+#offline-banner.visible{display:block}
+/* SORT BAR */
+.sort-bar{display:flex;gap:5px;margin-bottom:8px;align-items:center}
+.sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
+.sort-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 </style>
 </head>
 <body>
 
 <!-- INSTALL BANNER -->
+<div id="offline-banner">📡 Pas de connexion internet — les données peuvent être obsolètes</div>
 <div id="install-banner">
   <div style="font-size:1.5rem">📲</div>
   <div class="install-copy" style="flex:1">
@@ -463,6 +475,30 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 <script>
 'use strict';
 
+/* ══ OFFLINE DETECTION ══ */
+function updateOnlineStatus(){
+  const b=document.getElementById('offline-banner');
+  if(!b)return;
+  if(navigator.onLine){b.classList.remove('visible');}
+  else{b.classList.add('visible');}
+}
+window.addEventListener('online',updateOnlineStatus);
+window.addEventListener('offline',updateOnlineStatus);
+
+/* ══ HAPTIC ══ */
+function vib(ms=30){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
+
+/* ══ SCROLL TOP ON NAV ══ */
+function scrollTop(){try{document.querySelector('.content')?.scrollTo({top:0,behavior:'smooth'});}catch(e){}}
+
+/* ══ SKELETON ══ */
+function showSkeleton(el){
+  el.innerHTML=`
+    <div class="skel-card"><div class="skel" style="width:44px;height:44px;border-radius:50%;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:16px;width:60%"></div><div class="skel" style="height:12px;width:40%"></div></div></div>
+    <div class="skel-card"><div class="skel" style="width:44px;height:44px;border-radius:50%;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:16px;width:70%"></div><div class="skel" style="height:12px;width:35%"></div></div></div>
+    <div class="skel-card"><div class="skel" style="width:44px;height:44px;border-radius:50%;flex-shrink:0"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="height:16px;width:50%"></div><div class="skel" style="height:12px;width:45%"></div></div></div>`;
+}
+
 const SB_URL='https://qhacwsklhlsfyfxwnjff.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY';
 
@@ -556,7 +592,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:''};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date'};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -575,7 +611,7 @@ function toast(msg,type='i'){
 }
 
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
-function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();nav('dash');updateDot();}
+function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();}
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
 function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
 function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
@@ -604,6 +640,7 @@ async function init(){
   sb.auth.onAuthStateChange(async(ev,sess)=>{
     if(ev==='SIGNED_IN'&&sess?.user&&!S.user){S.user=sess.user;await loadAll();showApp();}
     else if(ev==='SIGNED_OUT'){resetState();showAuth();}
+    else if(ev==='TOKEN_REFRESHED'&&!sess){toast('Session expirée, reconnexion requise.','e');setTimeout(()=>{resetState();showAuth();},2000);}
   });
 
   if(session?.user){S.user=session.user;await loadAll();showApp();}
@@ -770,7 +807,11 @@ function showRGPD(){
 }
 
 /* DATA */
-async function loadAll(){await loadVehs();await Promise.all([loadEnts(),loadPartages()]);}
+async function loadAll(){
+  const dc=document.getElementById('d-ctn'),vc=document.getElementById('vh-ctn');
+  if(dc)showSkeleton(dc);if(vc)showSkeleton(vc);
+  await loadVehs();await Promise.all([loadEnts(),loadPartages()]);
+}
 async function loadVehs(){
   if(!S.user?.id)return;
   try{
@@ -876,6 +917,8 @@ async function saveEnt(){
     rappel_km:parseInt(g('e-rk').value)||null,
   };
   if(!id) p.id=crypto.randomUUID();
+  // Alerte si km entretien < km actuel du véhicule
+  if(km){const vv=S.vehicles.find(x=>x.id===vehicle_id);if(vv&&vv.km_actuel&&km<vv.km_actuel){if(!confirm(`⚠️ Le kilométrage saisi (${km.toLocaleString('fr')} km) est inférieur au kilométrage actuel du véhicule (${vv.km_actuel.toLocaleString('fr')} km). Continuer ?`))return;}}
   const{error}=id?await sb.from('entretiens').update(p).eq('id',id):await sb.from('entretiens').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
@@ -1004,6 +1047,8 @@ function vcDashHTML(v){
   const es=S.ents.filter(e=>e.vehicle_id===v.id);
   const last=es[0];
   const stColors={ok:'var(--ok)',warn:'var(--warn)',danger:'var(--err)'};
+  const lastVidange=es.find(e=>['vidange','filtre_huile','revision'].includes(e.type));
+  const totalCost=es.reduce((s,e)=>s+(e.cout||0),0);
   return`<div class="vc ${st}" style="cursor:pointer" onclick="nav('vehs');expandVeh('${v.id}')">
     <div class="vc-main">
       <div class="vc-ico">${v.emoji||'🚗'}</div>
@@ -1011,7 +1056,11 @@ function vcDashHTML(v){
         <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
           <span style="color:${stColors[st]};font-size:.72rem;font-weight:700">${{ok:'✓ À jour',warn:'⚠ Attention',danger:'✕ En retard'}[st]}</span>
-          ${last?`<span style="color:var(--txm);font-size:.72rem">Dernier : ${fmtDate(last.date)}</span>`:''}
+          ${totalCost?`<span style="color:var(--ok);font-size:.72rem;font-weight:600">${fmtCout(totalCost)}</span>`:''}
+        </div>
+        <div class="vc-sub" style="margin-top:2px">
+          ${lastVidange?`<span style="font-size:.7rem;color:var(--txm)">🛢️ Vidange : ${fmtDate(lastVidange.date)}</span>`:''}
+          ${v.ct_date?`<span style="font-size:.7rem;color:var(--txm)">✅ CT : ${fmtDate(v.ct_date)}</span>`:''}
         </div>
       </div>
       <span style="color:var(--txl);font-size:.9rem">›</span>
@@ -1113,6 +1162,7 @@ function renderEnt(){
   // Picker véhicule
   let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div class="vpi-i">${v.emoji||'🚗'}</div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
   h+=`<div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="ent-search" placeholder="Rechercher un entretien…" oninput="S.searchEnt=this.value;renderEnt()" value="${esc(S.searchEnt||'')}"></div>`;
+  h+=`<div class="sort-bar"><span style="font-size:.72rem;color:var(--txm);font-weight:600">Trier :</span><button class="sort-btn ${S.sortEnt==='date'?'on':''}" onclick="S.sortEnt='date';renderEnt()">📅 Date</button><button class="sort-btn ${S.sortEnt==='cout'?'on':''}" onclick="S.sortEnt='cout';renderEnt()">💶 Coût</button><button class="sort-btn ${S.sortEnt==='km'?'on':''}" onclick="S.sortEnt='km';renderEnt()">📍 Km</button></div>`;
 
   if(!S.selVeh){
     h+=`<div class="empty" style="padding:32px 16px"><span class="empty-i" style="font-size:2.2rem">☝️</span><div class="empty-t">Sélectionnez un véhicule</div></div>`;
@@ -1120,6 +1170,9 @@ function renderEnt(){
   }
   const v=S.vehicles.find(x=>x.id===S.selVeh);
   let ents=searchEnts(S.searchEnt||'');
+  if(S.sortEnt==='cout')ents=[...ents].sort((a,b)=>(b.cout||0)-(a.cout||0));
+  else if(S.sortEnt==='km')ents=[...ents].sort((a,b)=>(b.km||0)-(a.km||0));
+  else ents=[...ents].sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   // Filtres catégories
   const cats=[...new Set(ents.map(e=>getType(e.type).cat))];
@@ -1222,6 +1275,7 @@ function riHTML(r){
 
 /* NAV - 5 onglets fixes, jamais de vue cachée */
 function nav(view){
+  vib();scrollTop();
   S.view=view;
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
