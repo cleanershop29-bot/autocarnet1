@@ -1,49 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Fond dégradé bleu -->
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1D4ED8"/>
-      <stop offset="100%" style="stop-color:#2563EB"/>
+      <stop offset="0%" stop-color="#1E40AF"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
     </linearGradient>
-    <linearGradient id="car_grad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1"/>
-      <stop offset="100%" style="stop-color:#E0EAFF;stop-opacity:1"/>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.15)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
     </linearGradient>
   </defs>
-  <!-- Fond arrondi -->
+  <!-- Fond arrondi dégradé -->
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  
-  <!-- Carrosserie principale -->
-  <rect x="96" y="270" width="320" height="90" rx="18" fill="url(#car_grad)"/>
-  
-  <!-- Toit / habitacle -->
-  <path d="M170 270 Q185 210 230 200 L282 200 Q327 210 342 270 Z" fill="url(#car_grad)"/>
-  
-  <!-- Vitre -->
-  <path d="M186 268 Q196 228 232 220 L280 220 Q316 228 326 268 Z" fill="#93C5FD" opacity="0.7"/>
-  
+  <rect width="512" height="512" rx="112" fill="url(#shine)"/>
+  <!-- Carrosserie voiture -->
+  <path d="M96 296 C96 296 130 240 160 228 L208 192 C220 186 240 182 256 182 C272 182 292 186 304 192 L352 228 C382 240 416 296 416 296 L416 330 C416 342 406 352 394 352 L118 352 C106 352 96 342 96 330 Z" fill="white" opacity="0.95"/>
+  <!-- Toit voiture -->
+  <path d="M196 228 L220 188 C226 178 240 172 256 172 C272 172 286 178 292 188 L316 228 Z" fill="white" opacity="0.85"/>
+  <!-- Vitre gauche -->
+  <path d="M206 228 L222 196 C226 188 238 184 248 184 L248 228 Z" fill="#1E40AF" opacity="0.5"/>
+  <!-- Vitre droite -->
+  <path d="M306 228 L290 196 C286 188 274 184 264 184 L264 228 Z" fill="#1E40AF" opacity="0.5"/>
+  <!-- Vitre centre -->
+  <path d="M250 228 L252 184 L260 184 L262 228 Z" fill="#1E40AF" opacity="0.3"/>
   <!-- Roue gauche -->
-  <circle cx="168" cy="360" r="42" fill="#1E3A8A"/>
-  <circle cx="168" cy="360" r="26" fill="#DBEAFE"/>
-  <circle cx="168" cy="360" r="10" fill="#1E3A8A"/>
-  
+  <circle cx="158" cy="352" r="42" fill="#1E3A8A"/>
+  <circle cx="158" cy="352" r="26" fill="#60A5FA"/>
+  <circle cx="158" cy="352" r="12" fill="#1E40AF"/>
   <!-- Roue droite -->
-  <circle cx="344" cy="360" r="42" fill="#1E3A8A"/>
-  <circle cx="344" cy="360" r="26" fill="#DBEAFE"/>
-  <circle cx="344" cy="360" r="10" fill="#1E3A8A"/>
-  
-  <!-- Phare gauche -->
-  <rect x="100" y="290" width="36" height="20" rx="6" fill="#FCD34D"/>
-  
-  <!-- Phare droit -->
-  <rect x="376" y="290" width="36" height="20" rx="6" fill="#FCD34D"/>
-  
-  <!-- Calandre -->
-  <rect x="216" y="295" width="80" height="14" rx="4" fill="#93C5FD" opacity="0.5"/>
-  
-  <!-- Lettres AC en bas -->
-  <text x="256" y="178" font-family="Arial Black, sans-serif" font-size="52" font-weight="900" fill="white" text-anchor="middle" opacity="0.95">AC</text>
-  
-  <!-- Petite ligne déco sous AC -->
-  <rect x="206" y="185" width="100" height="4" rx="2" fill="white" opacity="0.4"/>
+  <circle cx="354" cy="352" r="42" fill="#1E3A8A"/>
+  <circle cx="354" cy="352" r="26" fill="#60A5FA"/>
+  <circle cx="354" cy="352" r="12" fill="#1E40AF"/>
+  <!-- Phare avant -->
+  <ellipse cx="108" cy="296" rx="14" ry="10" fill="#FCD34D" opacity="0.9"/>
+  <!-- Phare arrière -->
+  <ellipse cx="404" cy="296" rx="14" ry="10" fill="#EF4444" opacity="0.9"/>
+  <!-- Pare-chocs -->
+  <rect x="100" y="330" width="312" height="14" rx="7" fill="white" opacity="0.4"/>
 </svg>

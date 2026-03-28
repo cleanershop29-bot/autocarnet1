@@ -17,7 +17,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#F1F5F9;
+  --bg:#F8FAFC;
   --surface:#FFFFFF;
   --border:#E2E8F0;
   --primary:#2563EB;
@@ -27,9 +27,10 @@
   --warn:#D97706;--warn-bg:#FFFBEB;
   --err:#DC2626;--err-bg:#FEF2F2;
   --txt:#0F172A;--txm:#64748B;--txl:#94A3B8;
-  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
-  --sh-lg:0 8px 24px rgba(0,0,0,.09);
-  --r:14px;--r-sm:10px;
+  --sh:0 2px 6px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh-lg:0 10px 28px rgba(0,0,0,.10);
+  --sh-card:0 4px 12px rgba(37,99,235,.08);
+  --r:18px;--r-sm:12px;
 }
 
 /* SWIPE */
@@ -58,7 +59,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* FORM */
 .fg{margin-bottom:13px}
-.fl{display:block;font-size:.75rem;font-weight:700;color:var(--txm);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fl{display:block;font-size:.75rem;font-weight:600;color:var(--txm);margin-bottom:5px;letter-spacing:.01em}
 .fc{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.93rem;color:var(--txt);background:#fff;transition:.15s;outline:none;-webkit-appearance:none;appearance:none}
 .fc:focus{border-color:var(--primary);background:var(--primary-lt)}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -79,7 +80,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* APP SHELL */
 #app-screen{display:flex;flex-direction:column;min-height:100vh}
-.appbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:var(--sh)}
+.appbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:0 1px 4px rgba(37,99,235,.08)}
 .appbar-logo{font-size:1rem;font-weight:800;color:var(--primary);letter-spacing:-.5px}
 .content{flex:1;overflow-y:auto;padding:16px 16px 92px;-webkit-overflow-scrolling:touch}
 .tab{display:none}.tab.on{display:block}
@@ -88,13 +89,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .navbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:100;padding:2px 0 env(safe-area-inset-bottom,2px)}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 5px;border:none;background:none;font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:500;color:var(--txm);cursor:pointer;position:relative}
 .nb.on{color:var(--primary)}
-.nb-ico{font-size:1.25rem;line-height:1}
+.nb-ico{font-size:1.3rem;line-height:1}
 .rdot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--err);border-radius:50%;border:2px solid #fff}
 
 /* FAB */
 #fab{position:fixed;bottom:78px;right:14px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.45);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300}
 #fab.vis{display:flex}
-#fab:active{transform:scale(.92)}
+#fab:active{transform:scale(.88)}
+@keyframes fabpop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+#fab.vis{animation:fabpop .3s ease}
 
 /* TOAST */
 #tc{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;width:92%;max-width:360px}
@@ -106,7 +109,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* SECTION */
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px}
-.sec-ttl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txm)}
+.sec-ttl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm)}
 .sec-lnk{font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif}
 
 /* STATS */
@@ -116,14 +119,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .stat-l{font-size:.68rem;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
 
 /* VEHICLE CARD */
-.vc{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:.15s}
+.vc{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:.2s}
+.vc.expanded{box-shadow:var(--sh-card);border-color:rgba(37,99,235,.18)}
 .vc.ok{border-left-color:var(--ok)}
 .vc.warn{border-left-color:var(--warn)}
 .vc.danger{border-left-color:var(--err)}
 .vc-main{padding:14px;cursor:pointer;display:flex;align-items:center;gap:12px}
 .vc-ico{font-size:2rem;flex-shrink:0}
 .vc-info{flex:1;min-width:0}
-.vc-name{font-size:.97rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vc-name{font-size:.97rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em}
 .vc-sub{font-size:.76rem;color:var(--txm);margin-top:2px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .vc-km{font-size:.82rem;font-weight:600;color:var(--txt)}
 .vc-chevron{color:var(--txl);font-size:1rem;transition:transform .2s;flex-shrink:0}
@@ -139,7 +143,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .vc-ents-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 8px}
 
 /* BADGE */
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:.67rem;font-weight:700;letter-spacing:.01em}
 .badge-ok{background:var(--ok-bg);color:var(--ok)}
 .badge-warn{background:var(--warn-bg);color:var(--warn)}
 .badge-err{background:var(--err-bg);color:var(--err)}
@@ -721,7 +725,7 @@ function showSkeleton(el){
 const SB_URL='https://qhacwsklhlsfyfxwnjff.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY';
 
-const EMOJIS=['🚗','🚙','🏎️','🚕','🚐','🛻','🏍️','🛵','🚌','🚑','🚒','🚓','🚜','🚛','🛺'];
+const EMOJIS=['🚗','🚙','🏎️','🚕','🚐','🛻','🏍️','🛵','🚌','🚑','🚒','🚓','🚜','🚛','🛺','🚁','⛵','🚤','🛥️','🚎','🏕️','🚲','🛴','🛺','🚀'];
 
 const TYPES=[
   {id:'vidange',label:'Vidange / Huile moteur',ico:'🛢️',ikm:10000,imo:12,cat:'Moteur'},
@@ -767,6 +771,28 @@ const TYPES=[
   {id:'vitres',label:'Vitres / pare-brise',ico:'🪟',ikm:null,imo:null,cat:'Divers'},
   {id:'carrosserie',label:'Carrosserie / peinture',ico:'🎨',ikm:null,imo:null,cat:'Divers'},
   {id:'autre',label:'Autre intervention',ico:'🔨',ikm:null,imo:null,cat:'Divers'},
+  // MOTO
+  {id:'chaine_moto',label:'Chaîne / pignon / couronne',ico:'⛓️',ikm:10000,imo:null,cat:'Moto'},
+  {id:'fourche_moto',label:'Vidange de fourche',ico:'🔧',ikm:null,imo:36,cat:'Moto'},
+  {id:'cable_moto',label:'Câbles (accélérateur, embrayage)',ico:'🔗',ikm:null,imo:24,cat:'Moto'},
+  {id:'soupapes_moto',label:'Réglage soupapes',ico:'⚙️',ikm:20000,imo:null,cat:'Moto'},
+  {id:'suspension_moto',label:'Réglage suspension',ico:'🔩',ikm:null,imo:null,cat:'Moto'},
+  // CAMPING-CAR / VAN
+  {id:'groupe_elec',label:'Groupe électrogène',ico:'⚡',ikm:null,imo:12,cat:'Camping-car'},
+  {id:'panneau_solaire',label:'Panneau solaire / batterie auxiliaire',ico:'☀️',ikm:null,imo:12,cat:'Camping-car'},
+  {id:'wc_chimique',label:'WC chimique / vidange',ico:'🚽',ikm:null,imo:3,cat:'Camping-car'},
+  {id:'eau_sanitaire',label:'Circuit eau sanitaire',ico:'💧',ikm:null,imo:12,cat:'Camping-car'},
+  // ENTRETIEN CARROSSERIE
+  {id:'lavage_polish',label:'Lavage / polish',ico:'✨',ikm:null,imo:3,cat:'Carrosserie'},
+  {id:'ceramique',label:'Traitement céramique',ico:'💎',ikm:null,imo:24,cat:'Carrosserie'},
+  {id:'antirouille',label:'Traitement antirouille',ico:'🛡️',ikm:null,imo:36,cat:'Carrosserie'},
+  // ADMINISTRATIF
+  {id:'vignette_crit',label:'Vignette Crit Air',ico:'🏷️',ikm:null,imo:null,cat:'Administratif'},
+  {id:'vignette_auto',label:'Vignette autoroute étrangère',ico:'🛣️',ikm:null,imo:12,cat:'Administratif'},
+  // ÉQUIPEMENT
+  {id:'gps_tracker',label:'GPS / tracker installé',ico:'📍',ikm:null,imo:null,cat:'Équipement'},
+  {id:'dashcam',label:'Dashcam installée',ico:'📸',ikm:null,imo:null,cat:'Équipement'},
+  {id:'attelage',label:'Attelage / crochet de remorque',ico:'🔗',ikm:null,imo:null,cat:'Équipement'},
 ];
 
 const CAR_DB={
@@ -805,7 +831,21 @@ const CAR_DB={
   'DS':['DS3','DS4','DS7','DS9'],
   'MINI':['Mini 3 portes','Mini 5 portes','Clubman','Countryman','Cabrio','Cooper E'],
   'Alpine':['A110','A110 S','A110 GT'],
-  'Camping-car':['Profilé','Intégral','Capucine','Van aménagé'],
+  'Cupra':['Formentor','Born','Ateca','Leon','Terramar'],
+  'MG':['MG3','MG4','MG5','ZS','HS','Marvel R','Cyberster'],
+  'BYD':['Atto 3','Han','Tang','Seal','Dolphin','Seagull'],
+  'Xpeng':['P7','G9','G6','X9'],
+  'Polestar':['Polestar 2','Polestar 3','Polestar 4'],
+  'Abarth':['595','695','500e'],
+  'Lancia':['Ypsilon','Delta'],
+  'Isuzu':['D-Max','MU-X'],
+  'Harley-Davidson':['Sportster','Iron 883','Fat Boy','Street Glide','Road King','Pan America'],
+  'Royal Enfield':['Meteor 350','Classic 350','Himalayan','Scram 411','Hunter 350'],
+  'KTM':['Duke 390','Duke 790','Adventure 390','Adventure 890','RC 390'],
+  'Honda Moto':['CB500F','CB650R','CBR650R','Africa Twin','Transalp','Forza 750','X-ADV'],
+  'Triumph':['Street Triple','Tiger 900','Tiger 1200','Bonneville','Scrambler','Speed Triple'],
+  'Camping-car':['Profilé','Intégral','Capucine','Van aménagé','Fourgon','Tiny house'],
+  'Remorque':['Plateau','Porte-voiture','Bétaillère','Bateau','Caravane'],
   'Autre':[],
 };
 const BRANDS=Object.keys(CAR_DB);
@@ -931,7 +971,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -1079,7 +1119,7 @@ async function loadPartages(){
 }
 
 async function loadRappelsCustom(){
-  if(!S.user?.id||!S.vehicles.length)return;
+  if(!S.user?.id)return;
   const{data,error}=await sb.from('rappels_custom').select('*').eq('user_id',S.user.id).eq('statut','actif').order('date_rappel',{ascending:true});
   if(error){console.error(error);return;}
   S.rappels_custom=data||[];
@@ -1287,7 +1327,19 @@ function getRappels(){
   return list.sort((a,b)=>({danger:0,warn:1,ok:2}[a.sev]-{danger:0,warn:1,ok:2}[b.sev]));
 }
 function vStatus(vid){const r=getRappels().filter(x=>x.v.id===vid);if(r.some(x=>x.sev==='danger'))return'danger';if(r.some(x=>x.sev==='warn'))return'warn';return'ok';}
-function updateDot(){g('rdot').classList.toggle('hidden',!getRappels().some(x=>x.sev!=='ok'));}
+function updateDot(){
+  const hasUrgent=getRappels().some(x=>x.sev!=='ok');
+  const now=new Date();
+  const hasRcusUrgent=S.rappels_custom.some(r=>{
+    if(!r.date_rappel)return false;
+    return Math.ceil((new Date(r.date_rappel)-now)/86400000)<=0;
+  });
+  const hasDocExp=S.documents.some(d=>{
+    if(!d.date_expiration)return false;
+    return Math.ceil((new Date(d.date_expiration)-now)/86400000)<=30;
+  });
+  g('rdot').classList.toggle('hidden',!hasUrgent&&!hasRcusUrgent&&!hasDocExp);
+}
 
 /* GRAPHIQUE */
 function getCostsByYear(vid){
@@ -2254,6 +2306,8 @@ function riHTML(r){
 /* NAV - 5 onglets fixes, jamais de vue cachée */
 function nav(view){
   vib();scrollTop();
+  // Reset filtre année si on quitte l'onglet entretiens
+  if(S.view==='ent'&&view!=='ent')S.filterYear='all';
   S.view=view;
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
@@ -2441,8 +2495,10 @@ async function deleteAccount(){
     if(vids.length){
       await sb.from('entretiens').delete().in('vehicle_id',vids);
       await sb.from('partages').delete().in('vehicle_id',vids);
+      await sb.from('documents').delete().in('vehicle_id',vids);
       await sb.from('vehicles').delete().in('id',vids);
     }
+    await sb.from('rappels_custom').delete().eq('user_id',S.user.id);
     toast('Compte supprimé.','i');
     resetState();
     showAuth();
