@@ -579,6 +579,68 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
   </div>
 </div>
 
+<!-- MODAL RAPPEL CUSTOM -->
+<div class="mo" id="mo-rcus" onclick="if(event.target===this)cm('rcus')">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit" id="mt-rcus">Rappel personnalisé</div><button class="mcls" onclick="cm('rcus')">✕</button></div>
+    <div class="mbdy">
+      <input type="hidden" id="rcus-id">
+      <div class="fg"><label class="fl">Titre *</label><input class="fc" id="rcus-titre" placeholder="Ex: Renouveler assurance"></div>
+      <div class="fg"><label class="fl">Véhicule</label>
+        <select class="fc" id="rcus-vid">
+          <option value="">— Tous les véhicules —</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Date du rappel</label><input class="fc" type="date" id="rcus-date"></div>
+      <div class="fg"><label class="fl">Description</label><textarea class="fc" id="rcus-desc" rows="2" placeholder="Détails optionnels..."></textarea></div>
+      <div class="fg" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="rcus-rec" onchange="g('rcus-int-wrap').style.display=this.checked?'block':'none'">
+        <label for="rcus-rec" style="font-size:.85rem">Rappel récurrent</label>
+      </div>
+      <div id="rcus-int-wrap" style="display:none">
+        <div class="fg"><label class="fl">Intervalle (mois)</label><input class="fc" type="number" id="rcus-int" placeholder="Ex: 12" min="1"></div>
+      </div>
+      <div class="mftr">
+        <button class="btn btn-d hidden" id="btn-del-rcus" onclick="delRappelCustom()">Supprimer</button>
+        <button class="btn btn-p" onclick="saveRappelCustom()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DOCUMENT -->
+<div class="mo" id="mo-doc" onclick="if(event.target===this)cm('doc')">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit" id="mt-doc">Ajouter un document</div><button class="mcls" onclick="cm('doc')">✕</button></div>
+    <div class="mbdy">
+      <input type="hidden" id="doc-id">
+      <div class="fg"><label class="fl">Véhicule *</label>
+        <select class="fc" id="doc-vid">
+          <option value="">— Sélectionner —</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Type *</label>
+        <select class="fc" id="doc-type" onchange="adaptDocFields()">
+          <option value="">— Type —</option>
+          <option>Carte grise</option>
+          <option>Assurance</option>
+          <option>Contrôle technique</option>
+          <option>Garantie</option>
+          <option>Permis de conduire</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <!-- Champs dynamiques selon le type -->
+      <div id="doc-fields-dynamic"></div>
+      <div class="fg"><label class="fl">Note</label><textarea class="fc" id="doc-note" rows="2" placeholder="Informations complémentaires..."></textarea></div>
+      <div class="mftr">
+        <button class="btn btn-d hidden" id="btn-del-doc" onclick="delDocument()">Supprimer</button>
+        <button class="btn btn-p" onclick="saveDocument()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- PAGE CARBURANT -->
 <div id="carb-page">
   <div class="carb-page-header">
@@ -749,7 +811,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -979,7 +1041,7 @@ function showRGPD(){
 async function loadAll(){
   const dc=document.getElementById('d-ctn'),vc=document.getElementById('vh-ctn');
   if(dc)showSkeleton(dc);if(vc)showSkeleton(vc);
-  await loadVehs();await Promise.all([loadEnts(),loadPartages()]);
+  await loadVehs();await Promise.all([loadEnts(),loadPartages(),loadRappelsCustom(),loadDocuments()]);
 }
 async function loadVehs(){
   if(!S.user?.id)return;
@@ -1014,6 +1076,20 @@ async function loadPartages(){
   if(S.pending.length>0&&S.pending.length>prevPending){
     toast(`📨 ${S.pending.length} invitation${S.pending.length>1?'s':''} en attente dans Équipe`,'i');
   }
+}
+
+async function loadRappelsCustom(){
+  if(!S.user?.id||!S.vehicles.length)return;
+  const{data,error}=await sb.from('rappels_custom').select('*').eq('user_id',S.user.id).eq('statut','actif').order('date_rappel',{ascending:true});
+  if(error){console.error(error);return;}
+  S.rappels_custom=data||[];
+}
+async function loadDocuments(){
+  if(!S.user?.id||!S.vehicles.length)return;
+  const vids=S.vehicles.map(v=>v.id);
+  const{data,error}=await sb.from('documents').select('*').eq('user_id',S.user.id).in('vehicle_id',vids).order('date_expiration',{ascending:true});
+  if(error){console.error(error);return;}
+  S.documents=data||[];
 }
 
 /* CT */
@@ -1428,7 +1504,7 @@ function vcFullHTML(v){
         <div style="font-size:1.1rem">${ti.ico}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
-          <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?' · '+esc(e.garage):''}</div>
+          <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
         </div>
         ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
       </div>`;
@@ -1453,6 +1529,33 @@ function vcFullHTML(v){
   }
   if(advInfos.length){
     h+=`<div class="detail-pills" style="padding:0 14px 12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
+  }
+  // Section documents
+  if(isOwner){
+    const vdocs=S.documents.filter(d=>d.vehicle_id===v.id);
+    h+=`<div style="border-top:1px solid var(--border);padding:10px 14px 12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:.78rem;font-weight:700;color:var(--txm)">📄 DOCUMENTS (${vdocs.length})</span>
+        <button class="sec-lnk" onclick="event.stopPropagation();openDocument('${v.id}')">+ Ajouter</button>
+      </div>`;
+    if(vdocs.length){
+      h+=vdocs.map(d=>{
+        const nowD=new Date();
+        const ddays=d.date_expiration?Math.ceil((new Date(d.date_expiration)-nowD)/86400000):null;
+        const dcolor=ddays===null?'var(--txm)':ddays<0?'var(--err)':ddays<=30?'var(--warn)':'var(--ok)';
+        const dlabel=ddays===null?'':ddays<0?'Expiré':ddays===0?"Expire auj.":'Dans '+ddays+'j';
+        return`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="event.stopPropagation();openDocument('${v.id}','${d.id}')">
+          <span style="font-size:.85rem">📄</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.8rem;font-weight:600">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
+            ${d.date_expiration?`<div style="font-size:.7rem;color:${dcolor}">${dlabel} · Expire ${fmtDate(d.date_expiration)}</div>`:''}
+          </div>
+        </div>`;
+      }).join('');
+    } else {
+      h+=`<div style="font-size:.78rem;color:var(--txl)">Aucun document enregistré.</div>`;
+    }
+    h+=`</div>`;
   }
   h+=`</div></div>`;
   return h;
@@ -1575,6 +1678,183 @@ async function fetchStationsAndPrices(el, url, fuelName, preloaded){
   }catch(e){
     el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--err)">Erreur : '+(e.message||'réseau')+'</div></div>';
   }
+}
+
+/* ══ RAPPELS CUSTOM ══ */
+function openRappelCustom(id){
+  // Remplir select véhicules
+  const sel=g('rcus-vid');
+  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  g('rcus-id').value='';
+  g('rcus-titre').value='';g('rcus-date').value='';g('rcus-desc').value='';
+  g('rcus-rec').checked=false;g('rcus-int').value='';
+  g('rcus-int-wrap').style.display='none';
+  g('btn-del-rcus').classList.add('hidden');
+  g('mt-rcus').textContent='Nouveau rappel';
+  if(id){
+    const r=S.rappels_custom.find(x=>x.id===id);
+    if(!r)return;
+    g('rcus-id').value=r.id;
+    g('rcus-titre').value=r.titre||'';
+    g('rcus-vid').value=r.vehicle_id||'';
+    g('rcus-date').value=r.date_rappel||'';
+    g('rcus-desc').value=r.description||'';
+    g('rcus-rec').checked=!!r.recurrent;
+    g('rcus-int').value=r.intervalle_mois||'';
+    if(r.recurrent)g('rcus-int-wrap').style.display='block';
+    g('btn-del-rcus').classList.remove('hidden');
+    g('mt-rcus').textContent='Modifier le rappel';
+  }
+  om('rcus');
+}
+async function saveRappelCustom(){
+  const titre=g('rcus-titre').value.trim();
+  if(!titre)return toast('Le titre est requis.','e');
+  const id=g('rcus-id').value;
+  const p={
+    user_id:S.user.id,
+    vehicle_id:g('rcus-vid').value||null,
+    titre,
+    description:g('rcus-desc').value.trim()||null,
+    date_rappel:g('rcus-date').value||null,
+    recurrent:g('rcus-rec').checked,
+    intervalle_mois:parseInt(g('rcus-int').value)||null,
+    statut:'actif'
+  };
+  if(!id)p.id=crypto.randomUUID();
+  const{error}=id?await sb.from('rappels_custom').update(p).eq('id',id):await sb.from('rappels_custom').insert(p);
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast(id?'Rappel mis à jour !':'Rappel créé !','s');
+  cm('rcus');await loadRappelsCustom();renderView();
+}
+async function delRappelCustom(){
+  const id=g('rcus-id').value;if(!id)return;
+  cfm('Supprimer ce rappel ?','Action irréversible.',async()=>{
+    await sb.from('rappels_custom').delete().eq('id',id);
+    toast('Rappel supprimé.','i');cm('rcus');await loadRappelsCustom();renderView();
+  });
+}
+
+/* ══ DOCUMENTS ══ */
+/* Champs dynamiques selon le type de document */
+const DOC_FIELDS={
+  'Carte grise':[
+    {id:'doc-num', label:'Numéro immatriculation', type:'text', placeholder:'AB-123-CD'},
+    {id:'doc-nom', label:'Titulaire', type:'text', placeholder:'Nom du propriétaire'},
+    {id:'doc-emission', label:'Date de mise en circulation', type:'date'},
+  ],
+  'Assurance':[
+    {id:'doc-nom', label:'Compagnie', type:'text', placeholder:'Ex: AXA, MAIF, Groupama...'},
+    {id:'doc-num', label:'Numéro de contrat', type:'text', placeholder:'N° contrat'},
+    {id:'doc-emission', label:'Date de début', type:'date'},
+    {id:'doc-expiration', label:"Date d'échéance *", type:'date'},
+  ],
+  'Contrôle technique':[
+    {id:'doc-nom', label:'Centre CT', type:'text', placeholder:'Nom du centre'},
+    {id:'doc-emission', label:'Date du CT', type:'date'},
+    {id:'doc-expiration', label:'Date du prochain CT *', type:'date'},
+    {id:'doc-num', label:'Numéro rapport', type:'text', placeholder:'N° rapport'},
+  ],
+  'Garantie':[
+    {id:'doc-nom', label:'Objet garanti', type:'text', placeholder:'Ex: Moteur, boîte...'},
+    {id:'doc-num', label:'Numéro garantie', type:'text', placeholder:'Référence'},
+    {id:'doc-emission', label:'Date de début', type:'date'},
+    {id:'doc-expiration', label:'Date de fin *', type:'date'},
+  ],
+  'Permis de conduire':[
+    {id:'doc-num', label:'Numéro de permis', type:'text', placeholder:'Numéro'},
+    {id:'doc-emission', label:"Date d'obtention", type:'date'},
+    {id:'doc-expiration', label:"Date d'expiration", type:'date'},
+  ],
+  'Autre':[
+    {id:'doc-nom', label:'Nom / Référence', type:'text', placeholder:'Nom du document'},
+    {id:'doc-num', label:'Numéro', type:'text', placeholder:'Numéro'},
+    {id:'doc-emission', label:"Date d'émission", type:'date'},
+    {id:'doc-expiration', label:"Date d'expiration", type:'date'},
+  ]
+};
+
+function adaptDocFields(preserveValues){
+  const type=g('doc-type').value;
+  const fields=DOC_FIELDS[type]||DOC_FIELDS['Autre'];
+  // Sauvegarder les valeurs actuelles si demandé
+  const vals={};
+  if(preserveValues){
+    ['doc-nom','doc-num','doc-emission','doc-expiration'].forEach(id=>{const el=g(id);if(el)vals[id]=el.value;});
+  }
+  // Construire les champs dynamiques
+  const wrap=g('doc-fields-dynamic');
+  wrap.innerHTML=fields.map(f=>`
+    <div class="fg">
+      <label class="fl">${f.label}</label>
+      <input class="fc" id="${f.id}" type="${f.type}" placeholder="${f.placeholder||''}">
+    </div>`).join('');
+  // Restaurer les valeurs
+  if(preserveValues){
+    Object.entries(vals).forEach(([id,val])=>{const el=g(id);if(el)el.value=val;});
+  }
+}
+
+function openDocument(vid, docId){
+  const sel=g('doc-vid');
+  sel.innerHTML='<option value="">— Sélectionner —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  g('doc-id').value='';
+  g('doc-vid').value=vid||'';
+  g('doc-type').value='';
+  g('doc-fields-dynamic').innerHTML='';
+  g('doc-note').value='';
+  g('btn-del-doc').classList.add('hidden');
+  g('mt-doc').textContent='Ajouter un document';
+  if(docId){
+    const d=S.documents.find(x=>x.id===docId);
+    if(!d)return;
+    g('doc-id').value=d.id;
+    g('doc-vid').value=d.vehicle_id||'';
+    g('doc-type').value=d.type||'';
+    adaptDocFields(false); // Créer les champs
+    // Remplir les valeurs
+    if(g('doc-nom'))g('doc-nom').value=d.nom||'';
+    if(g('doc-num'))g('doc-num').value=d.numero||'';
+    if(g('doc-emission'))g('doc-emission').value=d.date_emission||'';
+    if(g('doc-expiration'))g('doc-expiration').value=d.date_expiration||'';
+    g('doc-note').value=d.note||'';
+    g('btn-del-doc').classList.remove('hidden');
+    g('mt-doc').textContent='Modifier le document';
+  } else {
+    adaptDocFields(false);
+  }
+  om('doc');
+}
+async function saveDocument(){
+  const vid=g('doc-vid').value;
+  const type=g('doc-type').value;
+  if(!vid)return toast('Sélectionnez un véhicule.','e');
+  if(!type)return toast('Sélectionnez un type.','e');
+  const id=g('doc-id').value;
+  // Lire les champs dynamiques (peuvent ne pas exister selon le type)
+  const getVal=id=>{const el=g(id);return el?el.value.trim()||null:null;};
+  const p={
+    user_id:S.user.id,
+    vehicle_id:vid,
+    type,
+    nom:getVal('doc-nom'),
+    numero:getVal('doc-num'),
+    date_emission:getVal('doc-emission'),
+    date_expiration:getVal('doc-expiration'),
+    note:g('doc-note').value.trim()||null
+  };
+  if(!id)p.id=crypto.randomUUID();
+  const{error}=id?await sb.from('documents').update(p).eq('id',id):await sb.from('documents').insert(p);
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast(id?'Document mis à jour !':'Document ajouté !','s');
+  cm('doc');await loadDocuments();renderView();
+}
+async function delDocument(){
+  const id=g('doc-id').value;if(!id)return;
+  cfm('Supprimer ce document ?','Action irréversible.',async()=>{
+    await sb.from('documents').delete().eq('id',id);
+    toast('Document supprimé.','i');cm('doc');await loadDocuments();renderView();
+  });
 }
 
 /* ══ PAGE CARBURANT ══ */
@@ -1822,7 +2102,53 @@ function renderRap(){
       </div>`;
     }).join('');
   }
-  // Filtre par année dans entretiens
+  // Rappels custom
+  if(S.rappels_custom.length){
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">📌 Rappels personnalisés</span><button class="sec-lnk" onclick="openRappelCustom()">+ Ajouter</button></div>`;
+    h+=S.rappels_custom.map(r=>{
+      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
+      const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-new Date())/86400000):null;
+      const sev=days===null?'ok':days<0?'danger':days<=30?'warn':'ok';
+      const label=days===null?'Sans date':days<0?'En retard':days===0?"Aujourd'hui":'Dans '+days+'j';
+      return`<div class="ri ${sev}" onclick="openRappelCustom('${r.id}')">
+        <div class="ri-ico">📌</div>
+        <div class="ri-inf">
+          <div class="ri-ti">${esc(r.titre)}</div>
+          <div class="ri-mt">${v?v.emoji+' '+esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}${r.recurrent?' · Récurrent':''}</div>
+        </div>
+        <div class="rbadge ${sev}">${label}</div>
+      </div>`;
+    }).join('');
+  } else {
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">📌 Rappels personnalisés</span><button class="sec-lnk" onclick="openRappelCustom()">+ Ajouter</button></div>`;
+    h+=`<div class="info-box">Ajoutez des rappels personnalisés indépendants des entretiens.</div>`;
+  }
+
+  // Documents expirants
+  const now2=new Date();
+  const docsExp=S.documents.filter(d=>{
+    if(!d.date_expiration)return false;
+    const days=Math.ceil((new Date(d.date_expiration)-now2)/86400000);
+    return days<=60;
+  }).sort((a,b)=>new Date(a.date_expiration)-new Date(b.date_expiration));
+  if(docsExp.length){
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">📄 Documents à renouveler</span></div>`;
+    h+=docsExp.map(d=>{
+      const v=S.vehicles.find(x=>x.id===d.vehicle_id);
+      const days=Math.ceil((new Date(d.date_expiration)-now2)/86400000);
+      const sev=days<0?'danger':days<=30?'warn':'ok';
+      const label=days<0?'Expiré':days===0?"Expire aujourd'hui":'Dans '+days+'j';
+      return`<div class="ri ${sev}">
+        <div class="ri-ico">📄</div>
+        <div class="ri-inf">
+          <div class="ri-ti">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
+          <div class="ri-mt">${v?v.emoji+' '+esc(v.marque)+' '+esc(v.modele):''} · Expire ${fmtDate(d.date_expiration)}</div>
+        </div>
+        <div class="rbadge ${sev}">${label}</div>
+      </div>`;
+    }).join('');
+  }
+
   el.innerHTML=h;
 }
 
@@ -1873,7 +2199,7 @@ function eiHTML(e,v){
     <div class="ei-ico">${ti.ico}</div>
     <div class="ei-inf">
       <div class="ei-ty">${esc(ti.label)}</div>
-      <div class="ei-mt"><span>${fmtDate(e.date)}</span>${e.km?`<span>${fmtKm(e.km)}</span>`:''}${e.garage?`<span>${esc(e.garage)}</span>`:''}${v?`<span>${esc(v.marque)}</span>`:''}</div>
+      <div class="ei-mt"><span>${fmtDate(e.date)}</span>${e.km?`<span>${fmtKm(e.km)}</span>`:''}${e.garage?`<span><a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a></span>`:''}${v?`<span>${esc(v.marque)}</span>`:''}</div>
       ${e.note?`<div class="ei-nt">${esc(e.note)}</div>`:''}
       ${rappels.length?`<div class="ei-rp">Rappel : ${rappels.join(' · ')}</div>`:''}
       ${e.pieces?`<div style="font-size:.72rem;color:var(--txm);margin-top:3px">🔩 ${esc(e.pieces)}</div>`:''}
