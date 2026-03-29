@@ -303,6 +303,21 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .sort-bar{display:flex;gap:5px;margin-bottom:8px;align-items:center}
 .sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
 .sort-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* ONBOARDING */
+#mo-onboard{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+#mo-onboard.open{opacity:1;pointer-events:all}
+#mo-onboard.open .ob-sheet{transform:translateY(0)}
+.ob-sheet{background:#fff;border-radius:24px 24px 0 0;width:100%;padding:28px 24px 36px;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:24px}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:.2s}
+.ob-dot.on{background:var(--primary);width:22px;border-radius:4px}
+.ob-ico{font-size:3rem;text-align:center;margin-bottom:14px}
+.ob-ttl{font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.02em}
+.ob-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.6;margin-bottom:24px}
+.ob-feat{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.ob-feat-row{display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:var(--r-sm);padding:11px 13px}
+.ob-feat-ico{font-size:1.4rem;flex-shrink:0}
+.ob-feat-txt{font-size:.85rem;font-weight:600}
 </style>
 </head>
 <body>
@@ -384,6 +399,42 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 <button id="fab" onclick="handleFab()">+</button>
 <div id="tc"></div>
+
+<!-- ONBOARDING -->
+<div id="mo-onboard">
+  <div class="ob-sheet">
+    <div class="ob-dots">
+      <div class="ob-dot on"></div>
+      <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
+    </div>
+    <!-- Étape 1 -->
+    <div class="ob-step" id="ob-s1">
+      <div class="ob-ico">🚗</div>
+      <div class="ob-ttl">Bienvenue sur AutoCarnet</div>
+      <div class="ob-txt">Votre carnet d'entretien digital.<br>Suivez tous vos véhicules en un seul endroit.</div>
+      <button class="btn btn-p" style="width:100%" onclick="showOnboardStep(2)">Suivant →</button>
+    </div>
+    <!-- Étape 2 -->
+    <div class="ob-step hidden" id="ob-s2">
+      <div class="ob-feat">
+        <div class="ob-feat-row"><div class="ob-feat-ico">🔧</div><div class="ob-feat-txt">Historique complet de chaque entretien</div></div>
+        <div class="ob-feat-row"><div class="ob-feat-ico">🔔</div><div class="ob-feat-txt">Rappels automatiques date & kilométrage</div></div>
+        <div class="ob-feat-row"><div class="ob-feat-ico">📄</div><div class="ob-feat-txt">Export PDF & CSV en un tap</div></div>
+        <div class="ob-feat-row"><div class="ob-feat-ico">⛽</div><div class="ob-feat-txt">Prix carburant autour de vous</div></div>
+      </div>
+      <button class="btn btn-p" style="width:100%" onclick="showOnboardStep(3)">Suivant →</button>
+    </div>
+    <!-- Étape 3 -->
+    <div class="ob-step hidden" id="ob-s3">
+      <div class="ob-ico">✨</div>
+      <div class="ob-ttl">Prêt à commencer ?</div>
+      <div class="ob-txt">Ajoutez votre premier véhicule pour démarrer le suivi.</div>
+      <button class="btn btn-p" style="width:100%;margin-bottom:10px" onclick="onboardFinish()">+ Ajouter mon véhicule</button>
+      <button class="btn btn-s" style="width:100%" onclick="closeOnboarding()">Plus tard</button>
+    </div>
+  </div>
+</div>
 
 <!-- Modal Véhicule -->
 <div class="mo" id="mo-veh" onclick="if(event.target===this)cm('veh')">
@@ -873,7 +924,7 @@ function toast(msg,type='i'){
 }
 
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
-function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();}
+function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();setTimeout(checkOnboarding,600);}
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
 function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
 function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
@@ -2653,6 +2704,33 @@ function copyLink(url){
     document.execCommand('copy'); document.body.removeChild(el);
     toast('Lien copié !','s');
   });
+}
+
+/* ══ ONBOARDING ══ */
+function checkOnboarding(){
+  if(localStorage.getItem('ac_onboarded')) return;
+  if(S.vehicles.length) return; // déjà des véhicules = pas nouveau
+  showOnboarding();
+}
+function showOnboarding(){
+  g('mo-onboard').classList.add('open');
+  document.body.style.overflow='hidden';
+  showOnboardStep(1);
+}
+function showOnboardStep(n){
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.add('hidden'));
+  g('ob-s'+n)?.classList.remove('hidden');
+  // Points de progression
+  document.querySelectorAll('.ob-dot').forEach((d,i)=>d.classList.toggle('on',i+1===n));
+}
+function closeOnboarding(){
+  localStorage.setItem('ac_onboarded','1');
+  g('mo-onboard').classList.remove('open');
+  document.body.style.overflow='';
+}
+function onboardFinish(){
+  closeOnboarding();
+  setTimeout(()=>openVeh(),200);
 }
 
 window.addEventListener('beforeinstallprompt', e => {
