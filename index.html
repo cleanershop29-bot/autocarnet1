@@ -4,117 +4,137 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AutoCarnet — Carnet d'entretien numérique</title>
-<meta name="description" content="Gérez l'entretien de tous vos véhicules. Rappels automatiques, historique complet, export PDF, prix carburant. Gratuit.">
+<meta name="description" content="Gérez l'entretien de tous vos véhicules. Rappels automatiques, historique complet, export PDF. Gratuit.">
 <meta property="og:title" content="AutoCarnet — Carnet d'entretien numérique">
-<meta property="og:description" content="Fini les carnets papier. AutoCarnet centralise vos véhicules, entretiens, documents et rappels.">
+<meta property="og:description" content="Fini les carnets papier. AutoCarnet centralise vos véhicules, entretiens et rappels.">
 <meta property="og:image" content="/icon-512.png">
 <meta name="theme-color" content="#2563EB">
 <link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#2563EB;--blue-dk:#1D4ED8;--blue-lt:#EFF6FF;--blue-mid:#BFDBFE;--txt:#0F172A;--txm:#475569;--txl:#94A3B8;--border:#E2E8F0;--bg:#FFFFFF;--bg2:#F8FAFC}
+:root{
+  --blue:#2563EB;--blue-dk:#1D4ED8;--blue-lt:#EFF6FF;--blue-mid:#BFDBFE;
+  --txt:#0F172A;--txm:#475569;--txl:#94A3B8;--border:#E2E8F0;
+  --bg:#FFFFFF;--bg2:#F8FAFC;--r:14px;
+}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
-h1,h2,.step-t,.feat-t,.stat-n,.nav-logo-txt{font-family:'Syne',sans-serif}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-.nav-in{width:100%;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:9px}
-.nav-logo-ico{width:28px;height:28px;background:linear-gradient(135deg,#2563EB,#3B82F6);border-radius:7px;display:grid;place-items:center;font-size:.78rem;flex-shrink:0}
-.nav-logo-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:-.02em}
-.nav-cta{background:var(--blue);color:#fff;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:60px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 2px 14px rgba(0,0,0,.07)}
+.nav-in{width:100%;max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1rem;letter-spacing:-.02em;color:var(--txt)}
+.nav-logo-ico{width:30px;height:30px;background:linear-gradient(135deg,#2563EB,#60A5FA);border-radius:8px;display:grid;place-items:center;font-size:.82rem;flex-shrink:0}
+.nav-cta{background:var(--blue);color:#fff;padding:9px 18px;border-radius:10px;font-size:.84rem;font-weight:700;transition:.15s}
+.nav-cta:active{background:var(--blue-dk)}
 
-.hero{padding:90px 20px 48px;text-align:center}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-lt);border:1px solid var(--blue-mid);color:var(--blue);padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:600;margin-bottom:20px}
-.hero-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-h1{font-size:clamp(1.9rem,7vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.04em;margin-bottom:14px}
+/* REVEAL */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.rv.up{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.4s}
+
+/* HERO */
+.hero{padding:96px 20px 52px;text-align:center;background:var(--bg);position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.06) 0%,transparent 65%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-lt);border:1px solid var(--blue-mid);color:var(--blue);padding:5px 13px;border-radius:20px;font-size:.73rem;font-weight:700;margin-bottom:22px;letter-spacing:.01em}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+h1{font-size:clamp(2rem,6.5vw,3.4rem);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:16px;color:var(--txt)}
 h1 .hi{color:var(--blue)}
-.hero-p{font-size:.93rem;color:var(--txm);line-height:1.75;margin-bottom:26px;max-width:440px;margin-left:auto;margin-right:auto}
-.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
-.btn-p{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;border-radius:10px;font-size:.86rem;font-weight:600;background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.26)}
-.btn-s{display:inline-flex;align-items:center;gap:7px;padding:12px 18px;border-radius:10px;font-size:.86rem;font-weight:600;background:var(--bg2);color:var(--txt);border:1.5px solid var(--border)}
-.trust{font-size:.72rem;color:var(--txl);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
-.trust span::before{content:'✓ ';color:var(--blue);font-weight:700}
+.hero-p{font-size:.97rem;color:var(--txm);line-height:1.8;margin-bottom:30px;max-width:440px;margin-left:auto;margin-right:auto;font-weight:500}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.btn-main{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:.9rem;font-weight:700;background:var(--blue);color:#fff;box-shadow:0 4px 18px rgba(37,99,235,.3);font-family:'Nunito',sans-serif}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:12px;font-size:.9rem;font-weight:600;background:var(--bg2);color:var(--txt);border:1.5px solid var(--border);font-family:'Nunito',sans-serif}
+.trust{font-size:.75rem;color:var(--txl);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-weight:600}
+.trust span::before{content:'✓ ';color:var(--blue);font-weight:800}
 
-.mockup-wrap{padding:4px 20px 48px;display:flex;justify-content:center}
-.mockup{background:linear-gradient(160deg,#1E40AF,#3B82F6);border-radius:20px;padding:16px;max-width:290px;width:100%;box-shadow:0 20px 56px rgba(37,99,235,.22)}
-.m-bar{display:flex;gap:5px;margin-bottom:11px}
-.m-bar span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25)}
-.m-card{background:#fff;border-radius:11px;padding:11px;margin-bottom:7px}
+/* MOCKUP */
+.mockup-wrap{padding:4px 20px 52px;display:flex;justify-content:center}
+.mockup{background:linear-gradient(155deg,#1E3A8A,#3B82F6);border-radius:22px;padding:18px;max-width:294px;width:100%;box-shadow:0 24px 60px rgba(37,99,235,.24)}
+.m-bar{display:flex;gap:5px;margin-bottom:13px}
+.m-bar span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22)}
+.m-card{background:#fff;border-radius:12px;padding:12px;margin-bottom:8px}
 .m-row{display:flex;align-items:center;gap:9px}
-.m-ico{width:34px;height:34px;background:var(--blue-lt);border-radius:7px;display:grid;place-items:center;font-size:.95rem;flex-shrink:0}
-.m-name{font-size:.8rem;font-weight:700}
-.m-sub{font-size:.65rem;color:var(--txm);margin-top:1px}
-.m-ok{margin-left:auto;background:#ECFDF5;color:#059669;font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:20px;flex-shrink:0}
-.m-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px}
-.m-st{background:var(--bg2);border-radius:5px;padding:5px;text-align:center}
-.m-sv{font-size:.72rem;font-weight:700}
-.m-sl{font-size:.55rem;color:var(--txm);margin-top:1px}
-.m-notif{background:rgba(255,255,255,.13);border-radius:9px;padding:9px 11px;display:flex;align-items:center;gap:8px}
-.m-notif-txt{font-size:.69rem;color:#fff;line-height:1.4}
-.m-notif-txt strong{display:block;font-weight:700}
+.m-ico{width:36px;height:36px;background:var(--blue-lt);border-radius:8px;display:grid;place-items:center;font-size:1rem;flex-shrink:0}
+.m-name{font-size:.82rem;font-weight:800}
+.m-sub{font-size:.65rem;color:var(--txm);margin-top:1px;font-weight:500}
+.m-ok{margin-left:auto;background:#ECFDF5;color:#059669;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:20px;flex-shrink:0}
+.m-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:10px}
+.m-st{background:var(--bg2);border-radius:6px;padding:6px;text-align:center}
+.m-sv{font-size:.74rem;font-weight:800}
+.m-sl{font-size:.55rem;color:var(--txm);margin-top:1px;font-weight:600}
+.m-notif{background:rgba(255,255,255,.13);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:9px}
+.m-ntxt{font-size:.7rem;color:#fff;line-height:1.45;font-weight:500}
+.m-ntxt strong{display:block;font-weight:800}
 
-.stats-band{background:var(--blue);padding:28px 20px}
-.stats-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:18px;text-align:center}
+/* STATS */
+.stats-band{background:var(--blue);padding:32px 20px}
+.stats-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;text-align:center}
 @media(min-width:580px){.stats-in{grid-template-columns:repeat(4,1fr)}}
-.stat-n{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff;line-height:1}
-.stat-l{font-size:.71rem;color:rgba(255,255,255,.6);margin-top:4px}
+.stat-n{font-size:2rem;font-weight:900;color:#fff;line-height:1;letter-spacing:-.03em}
+.stat-l{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:5px;font-weight:600}
 
-.features{padding:56px 20px}
-.sec-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:7px}
-h2{font-size:clamp(1.45rem,4vw,2rem);font-weight:800;letter-spacing:-.04em;line-height:1.15;margin-bottom:9px}
-.sec-p{font-size:.86rem;color:var(--txm);line-height:1.7;max-width:380px}
-.feat-grid{display:grid;grid-template-columns:1fr;gap:9px;margin-top:28px}
+/* FEATURES */
+.features{padding:60px 20px}
+.sec-lbl{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:8px}
+h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-bottom:10px}
+.sec-p{font-size:.9rem;color:var(--txm);line-height:1.75;font-weight:500}
+.feat-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:30px}
 @media(min-width:560px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
-.feat{background:var(--bg2);border-radius:13px;padding:18px;border:1px solid var(--border)}
-.feat-ico{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;font-size:.95rem;margin-bottom:10px}
-.fi-b{background:var(--blue-lt)}.fi-g{background:#ECFDF5}.fi-o{background:#FFFBEB}.fi-p{background:#F5F3FF}.fi-r{background:#FEF2F2}.fi-c{background:#ECFEFF}
-.feat-t{font-size:.85rem;font-weight:700;margin-bottom:4px}
-.feat-d{font-size:.78rem;color:var(--txm);line-height:1.6}
+.feat{background:var(--bg2);border-radius:var(--r);padding:20px;border:1px solid var(--border)}
+.feat-ico{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font-size:1rem;margin-bottom:11px}
+.fi-b{background:var(--blue-lt)}.fi-g{background:#ECFDF5}.fi-o{background:#FFFBEB}
+.fi-p{background:#F5F3FF}.fi-r{background:#FEF2F2}.fi-c{background:#ECFEFF}
+.feat-t{font-size:.88rem;font-weight:800;margin-bottom:5px}
+.feat-d{font-size:.8rem;color:var(--txm);line-height:1.65;font-weight:500}
 
-.steps-sec{padding:56px 20px;background:var(--bg2)}
+/* STEPS */
+.steps-sec{padding:60px 20px;background:var(--bg2)}
 .steps-in{max-width:500px;margin:0 auto}
-.steps-list{margin-top:28px;display:flex;flex-direction:column;position:relative}
-.steps-list::before{content:'';position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:var(--blue-mid)}
-.step{display:flex;gap:16px;padding-bottom:24px}
+.steps-list{margin-top:30px;display:flex;flex-direction:column;position:relative}
+.steps-list::before{content:'';position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:linear-gradient(to bottom,var(--blue),var(--blue-mid))}
+.step{display:flex;gap:18px;padding-bottom:26px}
 .step:last-child{padding-bottom:0}
-.step-n{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.83rem;flex-shrink:0;z-index:1}
-.step-t{font-size:.86rem;font-weight:700;margin-bottom:3px;padding-top:10px}
-.step-d{font-size:.77rem;color:var(--txm);line-height:1.6}
+.step-n{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900;font-size:.86rem;flex-shrink:0;z-index:1;box-shadow:0 0 0 5px rgba(37,99,235,.1)}
+.step-t{font-size:.9rem;font-weight:800;margin-bottom:4px;padding-top:9px}
+.step-d{font-size:.8rem;color:var(--txm);line-height:1.65;font-weight:500}
 
-.pricing-sec{padding:56px 20px;text-align:center}
-.pricing-grid{max-width:540px;margin:26px auto 0;display:grid;grid-template-columns:1fr;gap:11px}
+/* PRICING */
+.pricing-sec{padding:60px 20px;text-align:center}
+.pricing-grid{max-width:540px;margin:28px auto 0;display:grid;grid-template-columns:1fr;gap:12px}
 @media(min-width:460px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
-.price-c{background:var(--bg);border:1.5px solid var(--border);border-radius:16px;padding:20px;position:relative;text-align:left}
+.price-c{background:var(--bg);border:1.5px solid var(--border);border-radius:18px;padding:22px;position:relative;text-align:left}
 .price-c.hot{border-color:var(--blue);background:var(--blue-lt)}
-.p-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:.64rem;font-weight:700;padding:3px 11px;border-radius:20px;white-space:nowrap}
-.p-plan{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--txm);margin-bottom:7px}
-.p-amt{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;letter-spacing:-.05em;margin-bottom:2px}
-.p-amt sup{font-size:.86rem;font-weight:700;vertical-align:super}
-.p-per{font-size:.73rem;color:var(--txm);margin-bottom:14px}
-.p-feats{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-.p-feats li{font-size:.77rem;color:var(--txm);display:flex;align-items:center;gap:6px}
-.ck{color:var(--blue);font-weight:700;font-size:.78rem;flex-shrink:0}
-.p-cta{display:block;text-align:center;padding:10px;border-radius:8px;font-size:.8rem;font-weight:600}
+.p-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:.65rem;font-weight:800;padding:3px 12px;border-radius:20px;white-space:nowrap}
+.p-plan{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--txm);margin-bottom:8px}
+.p-amt{font-size:2.3rem;font-weight:900;letter-spacing:-.04em;margin-bottom:2px}
+.p-amt sup{font-size:.88rem;vertical-align:super}
+.p-per{font-size:.74rem;color:var(--txm);margin-bottom:16px;font-weight:500}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.p-feats li{font-size:.8rem;color:var(--txm);display:flex;align-items:center;gap:7px;font-weight:500}
+.ck{color:var(--blue);font-weight:800;font-size:.8rem;flex-shrink:0}
+.p-cta{display:block;text-align:center;padding:11px;border-radius:10px;font-size:.84rem;font-weight:700;font-family:'Nunito',sans-serif}
 .p-cta.full{background:var(--blue);color:#fff}
 
-.cta-sec{padding:64px 20px;text-align:center;background:linear-gradient(160deg,#1E40AF,#2563EB)}
-.cta-sec h2{color:#fff;margin-bottom:10px}
-.cta-sec p{font-size:.86rem;color:rgba(255,255,255,.7);margin-bottom:22px;line-height:1.7}
-.btn-w{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;border-radius:10px;font-size:.86rem;font-weight:700;background:#fff;color:var(--blue)}
-.inst-note{margin-top:14px;font-size:.69rem;color:rgba(255,255,255,.45);line-height:1.9}
+/* CTA */
+.cta-sec{padding:68px 20px;text-align:center;background:linear-gradient(155deg,#1E3A8A,#2563EB);overflow:hidden;position:relative}
+.cta-sec::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-250px;right:-150px}
+.cta-sec h2{color:#fff;margin-bottom:12px;position:relative}
+.cta-sec p{font-size:.9rem;color:rgba(255,255,255,.7);margin-bottom:26px;line-height:1.75;font-weight:500;position:relative}
+.btn-w{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:.9rem;font-weight:700;background:#fff;color:var(--blue);position:relative;font-family:'Nunito',sans-serif}
+.inst-note{margin-top:16px;font-size:.71rem;color:rgba(255,255,255,.45);line-height:2;position:relative;font-weight:500}
 
-footer{padding:20px;border-top:1px solid var(--border);text-align:center}
-.footer-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
-.footer-links a{font-size:.74rem;color:var(--txm)}
-.footer-copy{font-size:.69rem;color:var(--txl);margin-bottom:3px}
-.footer-email{font-size:.69rem}
-.footer-email a{color:var(--txm)}
+/* FOOTER */
+footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
+.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.footer-links a{font-size:.76rem;color:var(--txm);font-weight:600}
+.footer-copy{font-size:.7rem;color:var(--txl);margin-bottom:3px;font-weight:500}
+.footer-email a{font-size:.7rem;color:var(--txm);font-weight:500}
 </style>
 </head>
 <body>
@@ -123,30 +143,41 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
   <div class="nav-in">
     <a href="/" class="nav-logo">
       <div class="nav-logo-ico">🚗</div>
-      <span class="nav-logo-txt">AutoCarnet</span>
+      AutoCarnet
     </a>
     <a href="/app.html" class="nav-cta">Commencer →</a>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-badge"><div class="hero-dot"></div>PWA · Fonctionne hors ligne</div>
-  <h1>Le carnet d'entretien<br>qui <span class="hi">simplifie tout</span></h1>
-  <p class="hero-p">Fini les carnets papier perdus. Centralisez vos véhicules, entretiens, rappels et documents dans une app installable sur votre téléphone.</p>
-  <div class="hero-btns">
-    <a href="/app.html" class="btn-p">📱 Commencer gratuitement</a>
-    <a href="#features" class="btn-s">Voir les fonctionnalités</a>
+  <div class="hero-glow"></div>
+  <div class="rv">
+    <div class="hero-badge"><div class="badge-dot"></div>PWA · Fonctionne hors ligne</div>
   </div>
-  <div class="trust">
-    <span>100% gratuit</span>
-    <span>Sans pub</span>
-    <span>Données privées</span>
-    <span>PWA installable</span>
+  <div class="rv d1">
+    <h1>Le carnet d'entretien<br>qui <span class="hi">simplifie tout</span></h1>
+  </div>
+  <div class="rv d2">
+    <p class="hero-p">Fini les carnets papier perdus. Centralisez vos véhicules, entretiens et rappels dans une app gratuite, installable sur votre téléphone.</p>
+  </div>
+  <div class="rv d3">
+    <div class="hero-btns">
+      <a href="/app.html" class="btn-main">📱 Commencer gratuitement</a>
+      <a href="#features" class="btn-ghost">Voir les fonctionnalités</a>
+    </div>
+    <div class="trust">
+      <span>100% gratuit</span>
+      <span>Sans pub</span>
+      <span>Données privées</span>
+      <span>PWA installable</span>
+    </div>
   </div>
 </section>
 
+<!-- MOCKUP -->
 <div class="mockup-wrap">
-  <div class="mockup">
+  <div class="mockup rv">
     <div class="m-bar"><span></span><span></span><span></span></div>
     <div class="m-card">
       <div class="m-row">
@@ -164,56 +195,64 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
       </div>
     </div>
     <div class="m-notif">
-      <span style="font-size:1rem">🔔</span>
-      <div class="m-notif-txt"><strong>Rappel vidange</strong>Dans 500 km — Peugeot 308</div>
+      <span style="font-size:1.1rem">🔔</span>
+      <div class="m-ntxt"><strong>Rappel vidange</strong>Dans 500 km — Peugeot 308</div>
     </div>
   </div>
 </div>
 
+<!-- STATS -->
 <div class="stats-band">
   <div class="stats-in">
-    <div><div class="stat-n">44</div><div class="stat-l">Types d'interventions</div></div>
-    <div><div class="stat-n">200+</div><div class="stat-l">Modèles de véhicules</div></div>
-    <div><div class="stat-n">0€</div><div class="stat-l">Pour toujours</div></div>
-    <div><div class="stat-n">100%</div><div class="stat-l">Données privées</div></div>
+    <div class="rv"><div class="stat-n" data-count="44" data-suffix="">0</div><div class="stat-l">Types d'interventions</div></div>
+    <div class="rv d1"><div class="stat-n" data-count="200" data-suffix="+">0</div><div class="stat-l">Modèles de véhicules</div></div>
+    <div class="rv d2"><div class="stat-n" data-count="0" data-suffix="€">0€</div><div class="stat-l">Pour toujours</div></div>
+    <div class="rv d3"><div class="stat-n" data-count="100" data-suffix="%">0</div><div class="stat-l">Données privées</div></div>
   </div>
 </div>
 
+<!-- FEATURES -->
 <section class="features" id="features">
-  <div class="sec-lbl">Fonctionnalités</div>
-  <h2>Tout ce qu'il faut,<br>rien de superflu</h2>
-  <p class="sec-p">Un outil pensé pour gérer ses véhicules sans prise de tête.</p>
+  <div class="rv">
+    <div class="sec-lbl">Fonctionnalités</div>
+    <h2>Tout ce qu'il faut,<br>rien de superflu</h2>
+    <p class="sec-p">Un outil pensé pour gérer ses véhicules sans prise de tête.</p>
+  </div>
   <div class="feat-grid">
-    <div class="feat"><div class="feat-ico fi-b">🔧</div><div class="feat-t">44 types d'interventions</div><div class="feat-d">Vidange, freins, pneus, CT, courroie… Tous les entretiens courants, organisés par catégorie.</div></div>
-    <div class="feat"><div class="feat-ico fi-g">🔔</div><div class="feat-t">Rappels intelligents</div><div class="feat-d">Alertes par date et par kilométrage. Plus jamais de CT raté ou de vidange oubliée.</div></div>
-    <div class="feat"><div class="feat-ico fi-o">⛽</div><div class="feat-t">Prix carburant en direct</div><div class="feat-d">Stations les moins chères autour de vous. Données officielles, temps réel.</div></div>
-    <div class="feat"><div class="feat-ico fi-p">📄</div><div class="feat-t">Gestion des documents</div><div class="feat-d">Carte grise, assurance, garanties — centralisés avec alertes d'expiration.</div></div>
-    <div class="feat"><div class="feat-ico fi-c">👥</div><div class="feat-t">Mode équipe</div><div class="feat-d">Partagez un véhicule avec votre famille ou vos collègues.</div></div>
-    <div class="feat"><div class="feat-ico fi-r">📊</div><div class="feat-t">Stats & export PDF/CSV</div><div class="feat-d">Coût par km, coûts annuels, valeur résiduelle. Export complet.</div></div>
+    <div class="feat rv"><div class="feat-ico fi-b">🔧</div><div class="feat-t">44 types d'interventions</div><div class="feat-d">Vidange, freins, pneus, CT, courroie… Tous les entretiens courants organisés par catégorie.</div></div>
+    <div class="feat rv d1"><div class="feat-ico fi-g">🔔</div><div class="feat-t">Rappels intelligents</div><div class="feat-d">Alertes par date et kilométrage. Plus jamais de CT raté ou de vidange oubliée.</div></div>
+    <div class="feat rv"><div class="feat-ico fi-o">⛽</div><div class="feat-t">Prix carburant en direct</div><div class="feat-d">Trouvez les stations les moins chères autour de vous. Source officielle gouvernementale.</div></div>
+    <div class="feat rv d1"><div class="feat-ico fi-p">📄</div><div class="feat-t">Gestion des documents</div><div class="feat-d">Carte grise, assurance, garanties — centralisés avec alertes d'expiration automatiques.</div></div>
+    <div class="feat rv"><div class="feat-ico fi-c">👥</div><div class="feat-t">Mode équipe</div><div class="feat-d">Partagez un véhicule avec votre famille ou vos collègues. Chacun peut consulter et ajouter.</div></div>
+    <div class="feat rv d1"><div class="feat-ico fi-r">📊</div><div class="feat-t">Stats & export PDF/CSV</div><div class="feat-d">Coût par km, dépenses annuelles, valeur résiduelle. Export complet en un tap.</div></div>
   </div>
 </section>
 
+<!-- STEPS -->
 <section class="steps-sec">
   <div class="steps-in">
-    <div style="text-align:center">
+    <div class="rv" style="text-align:center">
       <div class="sec-lbl">Comment ça marche</div>
       <h2>Prêt en 2 minutes</h2>
     </div>
     <div class="steps-list">
-      <div class="step"><div class="step-n">1</div><div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire, aucune vérification complexe.</div></div></div>
-      <div class="step"><div class="step-n">2</div><div><div class="step-t">Ajoutez vos véhicules</div><div class="step-d">Marque, modèle, immatriculation, kilométrage. 38 marques et 200+ modèles.</div></div></div>
-      <div class="step"><div class="step-n">3</div><div><div class="step-t">Enregistrez vos entretiens</div><div class="step-d">44 types d'interventions. Date, km, garage, coût, pièces — tout est là.</div></div></div>
-      <div class="step"><div class="step-n">4</div><div><div class="step-t">Recevez vos alertes</div><div class="step-d">AutoCarnet vous prévient avant chaque échéance. CT, révision, assurance.</div></div></div>
+      <div class="step rv"><div class="step-n">1</div><div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire, aucune vérification complexe.</div></div></div>
+      <div class="step rv d1"><div class="step-n">2</div><div><div class="step-t">Ajoutez vos véhicules</div><div class="step-d">38 marques et 200+ modèles disponibles. Immatriculation, kilométrage, carburant.</div></div></div>
+      <div class="step rv d2"><div class="step-n">3</div><div><div class="step-t">Enregistrez vos entretiens</div><div class="step-d">Date, km, garage, coût, pièces — tout est tracé, rien n'est oublié.</div></div></div>
+      <div class="step rv d3"><div class="step-n">4</div><div><div class="step-t">Recevez vos alertes</div><div class="step-d">CT, révision, assurance — AutoCarnet vous prévient avant chaque échéance.</div></div></div>
     </div>
   </div>
 </section>
 
+<!-- PRICING -->
 <section class="pricing-sec" id="pricing">
-  <div class="sec-lbl">Tarifs</div>
-  <h2>Simple et transparent</h2>
-  <p style="font-size:.86rem;color:var(--txm);margin-top:7px">Commencez gratuitement dès aujourd'hui.</p>
+  <div class="rv">
+    <div class="sec-lbl">Tarifs</div>
+    <h2>Simple et transparent</h2>
+    <p style="font-size:.88rem;color:var(--txm);margin-top:8px;font-weight:500">Commencez gratuitement, sans engagement.</p>
+  </div>
   <div class="pricing-grid">
-    <div class="price-c">
+    <div class="price-c rv">
       <div class="p-plan">Gratuit</div>
       <div class="p-amt">0<sup>€</sup></div>
       <div class="p-per">Pour toujours</div>
@@ -225,7 +264,7 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
       </ul>
       <a href="/app.html" class="p-cta full">Commencer gratuitement</a>
     </div>
-    <div class="price-c hot">
+    <div class="price-c hot rv d1">
       <div class="p-badge">✨ Bientôt</div>
       <div class="p-plan">Premium</div>
       <div class="p-amt" style="font-size:1.2rem;padding-top:8px;color:var(--txm)">À venir</div>
@@ -242,13 +281,16 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
   </div>
 </section>
 
+<!-- CTA -->
 <section class="cta-sec">
-  <h2>Commencez dès maintenant</h2>
-  <p>Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
-  <a href="/app.html" class="btn-w">📱 Ouvrir AutoCarnet gratuitement</a>
-  <div class="inst-note">
-    <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
-    <div>Android : Menu ⋮ → Installer l'application</div>
+  <div class="rv">
+    <h2>Commencez dès maintenant</h2>
+    <p>Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
+    <a href="/app.html" class="btn-w">📱 Ouvrir AutoCarnet gratuitement</a>
+    <div class="inst-note">
+      <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
+      <div>Android : Menu ⋮ → Installer l'application</div>
+    </div>
   </div>
 </section>
 
@@ -284,9 +326,42 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
   }catch(e){}
 })();
 
+// Nav scroll
 window.addEventListener('scroll',()=>{
-  document.getElementById('navbar').style.boxShadow=window.scrollY>20?'0 1px 10px rgba(0,0,0,.08)':'none';
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);
 },{passive:true});
+
+// Reveal observer — threshold bas pour mobile
+const rvEls=document.querySelectorAll('.rv');
+const rvObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('up');rvObs.unobserve(e.target);}
+  });
+},{threshold:0.05,rootMargin:'0px 0px -20px 0px'});
+rvEls.forEach(el=>rvObs.observe(el));
+// Filet de sécurité 1.5s
+setTimeout(()=>rvEls.forEach(el=>el.classList.add('up')),1500);
+
+// Compteurs animés
+function animCounter(el){
+  const target=parseInt(el.dataset.count);
+  const suffix=el.dataset.suffix||'';
+  if(isNaN(target)||target===0){el.textContent='0'+suffix;return;}
+  const dur=1800,start=performance.now();
+  function step(now){
+    const p=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(ease*target)+suffix;
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const ctrObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){animCounter(e.target);ctrObs.unobserve(e.target);}
+  });
+},{threshold:0.3});
+document.querySelectorAll('[data-count]').forEach(el=>ctrObs.observe(el));
 </script>
 </body>
 </html>
