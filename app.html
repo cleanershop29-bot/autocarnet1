@@ -977,16 +977,18 @@ function resetState(){
 }
 
 async function doLogin(){
-  const email=g('le').value.trim(),pass=g('lp').value;
+  const email=g('le').value.trim().toLowerCase(),pass=g('lp').value;
   if(!email||!pass)return toast('Remplissez tous les champs.','e');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast('Email invalide.','e');
   const btn=g('btn-login');btn.disabled=true;btn.textContent='Connexion…';
   const{error}=await sb.auth.signInWithPassword({email,password:pass});
   btn.disabled=false;btn.textContent='Se connecter';
   if(error)toast(error.message==='Invalid login credentials'?'Email ou mot de passe incorrect.':error.message,'e');
 }
 async function doReg(){
-  const name=g('rn').value.trim(),email=g('re').value.trim(),pass=g('rp').value;
+  const name=g('rn').value.trim().slice(0,50),email=g('re').value.trim().toLowerCase(),pass=g('rp').value;
   if(!name||!email||!pass)return toast('Remplissez tous les champs.','e');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast('Email invalide.','e');
   if(pass.length<8)return toast('Mot de passe : 8 caractères minimum.','e');
   if(!g('cgu-check').checked)return toast('Veuillez accepter les CGU pour continuer.','e');
   const btn=g('btn-reg');btn.disabled=true;btn.textContent='Création…';
@@ -1223,7 +1225,7 @@ async function saveEnt(){
   if(!id) p.id=crypto.randomUUID();
   // Alerte si km entretien < km actuel du véhicule
   if(km){const vv=S.vehicles.find(x=>x.id===vehicle_id);if(vv&&vv.km_actuel&&km<vv.km_actuel){if(!confirm(`⚠️ Le kilométrage saisi (${km.toLocaleString('fr')} km) est inférieur au kilométrage actuel du véhicule (${vv.km_actuel.toLocaleString('fr')} km). Continuer ?`))return;}}
-  const{error}=id?await sb.from('entretiens').update(p).eq('id',id):await sb.from('entretiens').insert(p);
+  const{error}=id?await sb.from('entretiens').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('entretiens').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
@@ -1233,7 +1235,7 @@ async function saveEnt(){
 async function delEnt(){
   const id=g('e-id').value;if(!id)return;
   cfm('Supprimer cet entretien ?','Action irréversible.',async()=>{
-    const{error}=await sb.from('entretiens').delete().eq('id',id);
+    const{error}=await sb.from('entretiens').delete().eq('id',id).eq('user_id',S.user.id);
     if(error)return toast('Erreur : '+error.message,'e');
     toast('Entretien supprimé.','i');cm('ent');await loadEnts();renderView();
   });
@@ -1245,6 +1247,9 @@ async function sendInv(){
   if(!vid)return toast('Sélectionnez un véhicule.','e');
   if(!email)return toast('Email requis.','e');
   if(email===S.user.email)return toast('Vous ne pouvez pas vous inviter.','e');
+  // Vérifier doublon
+  const alreadyInvited=S.partages.find(p=>p.owner_id===S.user.id&&p.vehicle_id===vid&&p.invited_email===email&&p.status!=='rejected');
+  if(alreadyInvited)return toast('Une invitation existe déjà pour cet email.','e');
   const v=S.vehicles.find(x=>x.id===vid);
   const vname=v?(v.marque+' '+v.modele):'le véhicule';
   const appUrl=window.location.origin+'/app.html';
@@ -1278,12 +1283,20 @@ async function sendInv(){
 }
 
 async function acceptInv(pid){
-  const{error}=await sb.from('partages').update({status:'accepted',invited_user_id:S.user.id}).eq('id',pid);
+  // Vérifier que c'est bien notre invitation (invited_email correspond)
+  const inv=S.pending.find(x=>x.id===pid);
+  if(!inv)return toast('Invitation introuvable.','e');
+  const{error}=await sb.from('partages').update({status:'accepted',invited_user_id:S.user.id}).eq('id',pid).eq('invited_email',S.user.email);
   if(error)return toast('Erreur : '+error.message,'e');
   toast('Invitation acceptée ! Le véhicule est maintenant visible.','s');
   await loadAll();renderView();
 }
-async function rejectInv(pid){await sb.from('partages').update({status:'rejected'}).eq('id',pid);toast('Refusée.','i');await loadPartages();renderView();}
+async function rejectInv(pid){
+  const inv=S.pending.find(x=>x.id===pid);
+  if(!inv)return toast('Invitation introuvable.','e');
+  await sb.from('partages').update({status:'rejected'}).eq('id',pid).eq('invited_email',S.user.email);
+  toast('Refusée.','i');await loadPartages();renderView();
+}
 async function quitPartage(pid){
   cfm('Quitter ce partage ?','Vous n\'aurez plus accès à ce véhicule.',async()=>{
     await sb.from('partages').delete().eq('id',pid);
@@ -1774,7 +1787,7 @@ async function saveRappelCustom(){
     statut:'actif'
   };
   if(!id)p.id=crypto.randomUUID();
-  const{error}=id?await sb.from('rappels_custom').update(p).eq('id',id):await sb.from('rappels_custom').insert(p);
+  const{error}=id?await sb.from('rappels_custom').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('rappels_custom').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   toast(id?'Rappel mis à jour !':'Rappel créé !','s');
   cm('rcus');await loadRappelsCustom();renderView();
@@ -1782,7 +1795,7 @@ async function saveRappelCustom(){
 async function delRappelCustom(){
   const id=g('rcus-id').value;if(!id)return;
   cfm('Supprimer ce rappel ?','Action irréversible.',async()=>{
-    await sb.from('rappels_custom').delete().eq('id',id);
+    await sb.from('rappels_custom').delete().eq('id',id).eq('user_id',S.user.id);
     toast('Rappel supprimé.','i');cm('rcus');await loadRappelsCustom();renderView();
   });
 }
@@ -1882,6 +1895,7 @@ async function saveDocument(){
   const type=g('doc-type').value;
   if(!vid)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type.','e');
+  if(!S.vehicles.find(x=>x.id===vid&&x.user_id===S.user.id))return toast('Véhicule non autorisé.','e');
   const id=g('doc-id').value;
   // Lire les champs dynamiques (peuvent ne pas exister selon le type)
   const getVal=id=>{const el=g(id);return el?el.value.trim()||null:null;};
@@ -1896,7 +1910,7 @@ async function saveDocument(){
     note:g('doc-note').value.trim()||null
   };
   if(!id)p.id=crypto.randomUUID();
-  const{error}=id?await sb.from('documents').update(p).eq('id',id):await sb.from('documents').insert(p);
+  const{error}=id?await sb.from('documents').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('documents').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   toast(id?'Document mis à jour !':'Document ajouté !','s');
   cm('doc');await loadDocuments();renderView();
@@ -1904,7 +1918,7 @@ async function saveDocument(){
 async function delDocument(){
   const id=g('doc-id').value;if(!id)return;
   cfm('Supprimer ce document ?','Action irréversible.',async()=>{
-    await sb.from('documents').delete().eq('id',id);
+    await sb.from('documents').delete().eq('id',id).eq('user_id',S.user.id);
     toast('Document supprimé.','i');cm('doc');await loadDocuments();renderView();
   });
 }
