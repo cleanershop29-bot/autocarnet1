@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Auto Carnet</title>
+<title>AutoCarnet</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#2563EB">
 <meta name="mobile-web-app-capable" content="yes">
@@ -605,9 +605,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <div id="rcus-int-wrap" style="display:none">
         <div class="fg"><label class="fl">Intervalle (mois)</label><input class="fc" type="number" id="rcus-int" placeholder="Ex: 12" min="1"></div>
       </div>
-      <div class="mftr">
-        <button class="btn btn-d hidden" id="btn-del-rcus" onclick="delRappelCustom()">Supprimer</button>
-        <button class="btn btn-p" onclick="saveRappelCustom()">Enregistrer</button>
+      <div class="mft" style="padding:10px 0 0">
+        <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-rcus" onclick="delRappelCustom()">Supprimer</button></div>
+        <button class="btn btn-s btn-sm" onclick="cm('rcus')">Annuler</button>
+        <button class="btn btn-p btn-sm" onclick="saveRappelCustom()">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -638,9 +639,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <!-- Champs dynamiques selon le type -->
       <div id="doc-fields-dynamic"></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fc" id="doc-note" rows="2" placeholder="Informations complémentaires..."></textarea></div>
-      <div class="mftr">
-        <button class="btn btn-d hidden" id="btn-del-doc" onclick="delDocument()">Supprimer</button>
-        <button class="btn btn-p" onclick="saveDocument()">Enregistrer</button>
+      <div class="mft" style="padding:10px 0 0">
+        <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-doc" onclick="delDocument()">Supprimer</button></div>
+        <button class="btn btn-s btn-sm" onclick="cm('doc')">Annuler</button>
+        <button class="btn btn-p btn-sm" onclick="saveDocument()">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -972,7 +974,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -1023,8 +1025,9 @@ function authTab(t){
   document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));
 }
 async function doReset(){
-  const email=g('pe').value.trim();
+  const email=g('pe').value.trim().toLowerCase();
   if(!email)return toast('Entrez votre email.','e');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast('Email invalide.','e');
   const btn=g('btn-reset');btn.disabled=true;btn.textContent='Envoi…';
   const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/'});
   btn.disabled=false;btn.textContent='Envoyer le lien';
