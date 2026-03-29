@@ -1,5 +1,5 @@
-// AutoCarnet Service Worker v7 — minimal, ne cache pas les pages HTML
-const CACHE = 'autocarnet-v7';
+// AutoCarnet Service Worker v8 — minimal, ne cache pas les pages HTML
+const CACHE = 'autocarnet-v8';
 
 self.addEventListener('install', event => {
   self.skipWaiting();

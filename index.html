@@ -323,10 +323,10 @@ footer{padding:24px;border-top:1px solid var(--border);text-align:center}
     <a href="#pricing">Tarifs</a>
   </div>
   <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
-  <div class="footer-email"><a href="mailto:autocarnetpro@gmail.com">autocarnetpro@gmail.com</a></div>
+  <div class="footer-email"><a href="/cdn-cgi/l/email-protection#462733322925273428233236342906212b272f2a6825292b"><span class="__cf_email__" data-cfemail="2a4b5f5e45494b58444f5e5a58456a4d474b434604494547">[email&#160;protected]</span></a></div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Redirect si connecté
 (function(){
   var h=window.location.hash;
@@ -383,13 +383,4 @@ function animateCounter(el){
 
 const counterObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.querySelectorAll('[data-count]').forEach(animateCounter);
-      counterObs.unobserve(e.target);
-    }
-  });
-},{threshold:0.3});
-document.querySelectorAll('.stats').forEach(el=>counterObs.observe(el));
-</script>
-</body>
-</html>
+    if(e.isInters

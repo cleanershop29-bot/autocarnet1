@@ -963,11 +963,11 @@ async function saveNewPass(){
       ({error}=await sb.auth.updateUser({password:pass}));
     }
     if(error) return toast('Erreur : '+error.message,'e');
+    try{await sb.auth.signOut();}catch(e){}
     cm('newpass');
-    toast('Mot de passe mis à jour ! Connectez-vous.','s');
     resetState();
     showAuth();
-    try{await sb.auth.signOut();}catch(e){}
+    toast('Mot de passe mis à jour ! Connectez-vous avec votre nouveau mot de passe.','s');
   }catch(e){
     toast('Erreur réseau : '+e.message,'e');
   }
@@ -2166,7 +2166,7 @@ function renderRap(){
         <div class="ri-ico">🛡️</div>
         <div class="ri-inf">
           <div class="ri-ti">${esc(ti.label)}${e.pieces?' — '+esc(e.pieces):''}</div>
-          <div class="ri-mt">${v?v.emoji+'  '+esc(v.marque)+' '+esc(v.modele):''} · expire ${fmtDate(new Date(e.date).setMonth(new Date(e.date).getMonth()+e.garantie_mois))}</div>
+          <div class="ri-mt">${v?v.emoji+'  '+esc(v.marque)+' '+esc(v.modele):''} · expire ${(()=>{const d=new Date(e.date);d.setMonth(d.getMonth()+e.garantie_mois);return fmtDate(d.toISOString());})()} </div>
         </div>
         <div class="rbadge ok">Dans ${days}j</div>
       </div>`;
