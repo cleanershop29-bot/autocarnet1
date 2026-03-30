@@ -93,11 +93,17 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .rdot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--err);border-radius:50%;border:2px solid #fff}
 
 /* FAB */
-#fab{position:fixed;bottom:78px;right:14px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.45);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300}
+#fab{position:fixed;bottom:78px;right:14px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.45);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300;transition:transform .2s}
 #fab.vis{display:flex}
+#fab.open{transform:rotate(45deg)}
 #fab:active{transform:scale(.88)}
 @keyframes fabpop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
 #fab.vis{animation:fabpop .3s ease}
+#fab-menu{position:fixed;bottom:140px;right:14px;z-index:98;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s}
+#fab-menu.open{pointer-events:all;opacity:1;transform:translateY(0)}
+.fab-item{display:flex;align-items:center;gap:9px;background:#fff;border-radius:24px;padding:9px 14px 9px 11px;box-shadow:0 4px 14px rgba(0,0,0,.12);cursor:pointer;font-size:.84rem;font-weight:700;color:var(--txt);border:none;font-family:'Outfit',sans-serif;white-space:nowrap}
+.fab-item:active{transform:scale(.96)}
+.fab-item-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 
 /* TOAST */
 #tc{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;width:92%;max-width:360px}
@@ -454,6 +460,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 </div>
 
 <button id="fab" onclick="handleFab()">+</button>
+<div id="fab-menu">
+  <button class="fab-item" onclick="fabAction('veh')"><div class="fab-item-ico" style="background:var(--primary-lt)">🚗</div>Ajouter un véhicule</button>
+  <button class="fab-item" onclick="fabAction('ent')"><div class="fab-item-ico" style="background:#ECFDF5">🔧</div>Ajouter un entretien</button>
+  <button class="fab-item" onclick="fabAction('rap')"><div class="fab-item-ico" style="background:#FFFBEB">📌</div>Ajouter un rappel</button>
+</div>
+<div id="fab-overlay" onclick="closeFabMenu()" style="position:fixed;inset:0;z-index:97;display:none"></div>
 
 <!-- MODAL DETAIL VEHICULE -->
 <div id="mo-veh-detail">
@@ -1802,7 +1814,11 @@ function renderVehs(){
     +'<div style="font-size:.78rem;color:#B45309;margin-top:2px">Trouvez les stations les moins chères</div></div>'
     +'<div style="color:#D97706;font-size:1rem">›</div>'
     +'</div>';
-  h+=S.vehicles.map(v=>vcCompactHTML(v)).join('');
+  const sortedVehs=[...S.vehicles].sort((a,b)=>{
+    const order={danger:0,warn:1,ok:2};
+    return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);
+  });
+  h+=sortedVehs.map(v=>vcCompactHTML(v)).join('');
   el.innerHTML=h;
 }
 
@@ -2708,17 +2724,17 @@ function renderRap(){
 
   let h='';
 
-  // Compteurs
+  // Compteurs cliquables
   h+=`<div class="rap-counters">
-    <div class="rap-counter danger">
+    <div class="rap-counter danger" style="cursor:pointer" onclick="scrollToRapSection('rap-section-danger')">
       <div class="rap-count danger">${totalDanger}</div>
       <div class="rap-lbl danger">En retard</div>
     </div>
-    <div class="rap-counter warn">
+    <div class="rap-counter warn" style="cursor:pointer" onclick="scrollToRapSection('rap-section-warn')">
       <div class="rap-count warn">${totalWarn}</div>
       <div class="rap-lbl warn">Cette semaine</div>
     </div>
-    <div class="rap-counter ok">
+    <div class="rap-counter ok" style="cursor:pointer" onclick="scrollToRapSection('rap-section-ok')">
       <div class="rap-count ok">${totalOk}</div>
       <div class="rap-lbl ok">À venir</div>
     </div>
@@ -2748,7 +2764,7 @@ function renderRap(){
 
   // En retard
   if(urgentF.length||rcUrgent.length||docsUrgent.length){
-    h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ En retard (${urgentF.length+rcUrgent.length+docsUrgent.length})</span></div>`;
+    h+=`<div class="sec-hdr" id="rap-section-danger"><span class="sec-ttl">⚠️ En retard (${urgentF.length+rcUrgent.length+docsUrgent.length})</span></div>`;
     h+=urgentF.map(r=>getRapItem(r)).join('');
     h+=rcUrgent.map(r=>{
       const v=S.vehicles.find(x=>x.id===r.vehicle_id);
@@ -2764,7 +2780,7 @@ function renderRap(){
 
   // À venir
   if(soonF.length||rcSoon.length||docsSoon.length){
-    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">⏰ À venir (${soonF.length+rcSoon.length+docsSoon.length})</span></div>`;
+    h+=`<div class="sec-hdr mt12" id="rap-section-warn"><span class="sec-ttl">⏰ À venir (${soonF.length+rcSoon.length+docsSoon.length})</span></div>`;
     h+=soonF.map(r=>getRapItem(r)).join('');
     h+=rcSoon.map(r=>{
       const v=S.vehicles.find(x=>x.id===r.vehicle_id);
@@ -2782,7 +2798,7 @@ function renderRap(){
 
   // Plus tard
   if(laterF.length){
-    h+=`<div class="sec-hdr mt12" style="cursor:pointer" onclick="toggleLaterRaps(this)"><span class="sec-ttl" style="color:var(--txl)">Plus tard (${laterF.length})</span><span style="font-size:.8rem;color:var(--txl)" id="later-arrow">▼ Voir</span></div><div id="later-raps" class="hidden">${laterF.map(r=>getRapItem(r)).join('')}</div>`;
+    h+=`<div class="sec-hdr mt12" id="rap-section-ok" style="cursor:pointer" onclick="toggleLaterRaps(this)"><span class="sec-ttl" style="color:var(--txl)">Plus tard (${laterF.length})</span><span style="font-size:.8rem;color:var(--txl)" id="later-arrow">▼ Voir</span></div><div id="later-raps" class="hidden">${laterF.map(r=>getRapItem(r)).join('')}</div>`;
   }
 
   // Garanties actives
@@ -2818,6 +2834,20 @@ function renderRap(){
   }
 
   el.innerHTML=h;
+}
+function scrollToRapSection(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  // Si la section "Plus tard" est cachee, l'ouvrir d'abord
+  if(id==='rap-section-ok'){
+    const later=g('later-raps');
+    if(later&&later.classList.contains('hidden')){
+      later.classList.remove('hidden');
+      const arrow=g('later-arrow');
+      if(arrow)arrow.textContent='▲ Masquer';
+    }
+  }
+  el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function toggleLaterRaps(hdr){
   const el=g('later-raps');
@@ -2932,9 +2962,30 @@ function nav(view){
   renderView();
 }
 
+let _fabOpen=false;
 function handleFab(){
-  if(S.view==='dash')openVeh();
-  else if(S.view==='ent')openEnt();
+  _fabOpen=!_fabOpen;
+  const fab=g('fab');
+  const menu=document.getElementById('fab-menu');
+  const overlay=document.getElementById('fab-overlay');
+  fab.classList.toggle('open',_fabOpen);
+  menu.classList.toggle('open',_fabOpen);
+  overlay.style.display=_fabOpen?'block':'none';
+  vib(20);
+}
+function closeFabMenu(){
+  _fabOpen=false;
+  g('fab').classList.remove('open');
+  document.getElementById('fab-menu').classList.remove('open');
+  document.getElementById('fab-overlay').style.display='none';
+}
+function fabAction(type){
+  closeFabMenu();
+  setTimeout(()=>{
+    if(type==='veh')openVeh();
+    else if(type==='ent')openEnt();
+    else if(type==='rap')openRappelCustom();
+  },150);
 }
 
 /* MODALS */
