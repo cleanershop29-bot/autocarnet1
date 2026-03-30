@@ -163,31 +163,46 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <p class="hero-p">Fini les carnets papier perdus. Centralisez vos véhicules, entretiens et rappels dans une app gratuite, installable sur votre téléphone.</p>
   </div>
   <div class="rv d3">
-    <div style="display:grid;grid-template-columns:1fr;gap:10px;max-width:420px;margin:0 auto 18px;text-align:left">
-      <div style="background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="flex:1">
-          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:3px">Gratuit</div>
-          <div style="font-size:1.3rem;font-weight:900;color:var(--txt);letter-spacing:-.03em">0€</div>
-          <div style="font-size:.72rem;color:var(--txl);margin-top:1px">1 véhicule · 10 entretiens</div>
-        </div>
-        <a href="/app.html" style="background:var(--blue);color:#fff;padding:9px 14px;border-radius:9px;font-size:.8rem;font-weight:700;white-space:nowrap;text-decoration:none">Commencer</a>
+    <div style="display:flex;flex-direction:column;gap:11px;max-width:420px;margin:0 auto 18px;text-align:left">
+      <div class="price-c">
+        <div class="p-plan">Gratuit</div>
+        <div class="p-amt">0<sup>€</sup></div>
+        <div class="p-per">Pour toujours</div>
+        <ul class="p-feats">
+          <li><span class="ck">✓</span>1 véhicule</li>
+          <li><span class="ck">✓</span>10 entretiens</li>
+          <li><span class="ck">✓</span>Rappels date & km</li>
+          <li><span class="ck">✓</span>PWA installable</li>
+        </ul>
+        <a href="/app.html" class="p-cta full">Commencer gratuitement</a>
       </div>
-      <div style="background:var(--bg2);border:1.5px solid #10B981;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="flex:1">
-          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:3px">👨‍👩‍👧 Famille</div>
-          <div style="font-size:1.3rem;font-weight:900;color:var(--txt);letter-spacing:-.03em">1,99€<span style="font-size:.75rem;font-weight:600;color:var(--txm)">/mois</span></div>
-          <div style="font-size:.72rem;color:var(--txl);margin-top:1px">3 véhicules · essai 15j gratuit</div>
-        </div>
-        <a href="/premium" style="background:#10B981;color:#fff;padding:9px 14px;border-radius:9px;font-size:.8rem;font-weight:700;white-space:nowrap;text-decoration:none">Essayer</a>
+      <div class="price-c" style="border-color:#10B981">
+        <div class="p-badge" style="background:#10B981">👨‍👩‍👧 Famille</div>
+        <div class="p-plan">Famille</div>
+        <div class="p-amt">1<sup>,99€</sup></div>
+        <div class="p-per">par mois · essai 15 jours offert</div>
+        <ul class="p-feats">
+          <li><span class="ck">✓</span>3 véhicules</li>
+          <li><span class="ck">✓</span>10 entretiens par véhicule</li>
+          <li><span class="ck">✓</span>Rappels date & km</li>
+          <li><span class="ck">✓</span>PWA installable</li>
+        </ul>
+        <a href="/premium" class="p-cta full" style="background:#10B981">Essayer 15 jours →</a>
       </div>
-      <div style="background:var(--bg2);border:1.5px solid #F59E0B;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;position:relative">
-        <div style="position:absolute;top:-9px;left:14px;background:#F59E0B;color:#fff;font-size:.6rem;font-weight:800;padding:2px 9px;border-radius:20px">⭐ Recommandé</div>
-        <div style="flex:1">
-          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:3px">🚀 Pro</div>
-          <div style="font-size:1.3rem;font-weight:900;color:var(--txt);letter-spacing:-.03em">4,99€<span style="font-size:.75rem;font-weight:600;color:var(--txm)">/mois</span></div>
-          <div style="font-size:.72rem;color:var(--txl);margin-top:1px">Tout illimité · essai 15j gratuit</div>
-        </div>
-        <a href="/premium" style="background:#F59E0B;color:#fff;padding:9px 14px;border-radius:9px;font-size:.8rem;font-weight:700;white-space:nowrap;text-decoration:none">Essayer</a>
+      <div class="price-c hot">
+        <div class="p-badge">⭐ Pro</div>
+        <div class="p-plan">Pro</div>
+        <div class="p-amt">4<sup>,99€</sup></div>
+        <div class="p-per">par mois · essai 15 jours offert</div>
+        <ul class="p-feats">
+          <li><span class="ck">✓</span>Véhicules illimités</li>
+          <li><span class="ck">✓</span>Entretiens illimités</li>
+          <li><span class="ck">✓</span>Prix carburant</li>
+          <li><span class="ck">✓</span>Documents & équipe</li>
+          <li><span class="ck">✓</span>Export PDF & CSV</li>
+          <li><span class="ck">✓</span>Notifications push</li>
+        </ul>
+        <a href="/premium" class="p-cta full">Essayer 15 jours →</a>
       </div>
     </div>
     <div class="trust">
