@@ -289,6 +289,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .rap-counter.danger{background:var(--err-bg);border-color:#FECACA}
 .rap-counter.warn{background:var(--warn-bg);border-color:#FDE68A}
 .rap-counter.ok{background:var(--ok-bg);border-color:#A7F3D0}
+.rap-counter.blue{background:#EFF6FF;border-color:#BFDBFE}
 .rap-count{font-size:1.8rem;font-weight:900;line-height:1}
 .rap-count.danger{color:var(--err)}
 .rap-count.warn{color:var(--warn)}
@@ -2706,37 +2707,42 @@ function renderRap(){
   if(!S.rapFilterVeh)S.rapFilterVeh='all';
 
   const allRaps=getRappels();
+  // En retard : dépassé
   const urgent=allRaps.filter(r=>r.sev==='danger');
-  const soon=allRaps.filter(r=>r.sev==='warn');
-  const later=allRaps.filter(r=>r.sev==='ok'&&r.days!==undefined&&r.days<=60);
+  // Dans 30 jours
+  const soon30=allRaps.filter(r=>r.sev==='warn'||(r.sev==='ok'&&r.days!==undefined&&r.days<=30));
+  // Dans 90 jours (31-90j)
+  const soon90=allRaps.filter(r=>r.sev==='ok'&&r.days!==undefined&&r.days>30&&r.days<=90);
 
   const rcAll=S.rappels_custom;
   const rcUrgent=rcAll.filter(r=>r.date_rappel&&Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0);
-  const rcSoon=rcAll.filter(r=>{if(!r.date_rappel)return false;const d=Math.ceil((new Date(r.date_rappel)-today)/86400000);return d>0&&d<=7;});
+  const rcSoon30=rcAll.filter(r=>{if(!r.date_rappel)return false;const d=Math.ceil((new Date(r.date_rappel)-today)/86400000);return d>0&&d<=30;});
+  const rcSoon90=rcAll.filter(r=>{if(!r.date_rappel)return false;const d=Math.ceil((new Date(r.date_rappel)-today)/86400000);return d>30&&d<=90;});
 
   const now2=new Date();
   const docsUrgent=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0);
-  const docsSoon=S.documents.filter(d=>{if(!d.date_expiration)return false;const d2=Math.ceil((new Date(d.date_expiration)-today)/86400000);return d2>0&&d2<=30;});
+  const docsSoon30=S.documents.filter(d=>{if(!d.date_expiration)return false;const d2=Math.ceil((new Date(d.date_expiration)-today)/86400000);return d2>0&&d2<=30;});
+  const docsSoon90=S.documents.filter(d=>{if(!d.date_expiration)return false;const d2=Math.ceil((new Date(d.date_expiration)-today)/86400000);return d2>30&&d2<=90;});
 
   const totalDanger=urgent.length+rcUrgent.length+docsUrgent.length;
-  const totalWarn=soon.length+rcSoon.length+docsSoon.length;
-  const totalOk=allRaps.filter(r=>r.sev==='ok').length;
+  const total30=soon30.length+rcSoon30.length+docsSoon30.length;
+  const total90=soon90.length+rcSoon90.length+docsSoon90.length;
 
   let h='';
 
-  // Compteurs cliquables
+  // Compteurs cliquables — 3 périodes
   h+=`<div class="rap-counters">
     <div class="rap-counter danger" style="cursor:pointer" onclick="scrollToRapSection('rap-section-danger')">
       <div class="rap-count danger">${totalDanger}</div>
       <div class="rap-lbl danger">En retard</div>
     </div>
-    <div class="rap-counter warn" style="cursor:pointer" onclick="scrollToRapSection('rap-section-warn')">
-      <div class="rap-count warn">${totalWarn}</div>
-      <div class="rap-lbl warn">Cette semaine</div>
+    <div class="rap-counter warn" style="cursor:pointer" onclick="scrollToRapSection('rap-section-30')">
+      <div class="rap-count warn">${total30}</div>
+      <div class="rap-lbl warn">Dans 30 jours</div>
     </div>
-    <div class="rap-counter ok" style="cursor:pointer" onclick="scrollToRapSection('rap-section-ok')">
-      <div class="rap-count ok">${totalOk}</div>
-      <div class="rap-lbl ok">À venir</div>
+    <div class="rap-counter blue" style="cursor:pointer" onclick="scrollToRapSection('rap-section-90')">
+      <div class="rap-count blue">${total90}</div>
+      <div class="rap-lbl blue">Dans 90 jours</div>
     </div>
   </div>`;
 
@@ -2754,51 +2760,46 @@ function renderRap(){
   h+=`<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-p btn-sm" onclick="openRappelCustom()">+ Rappel</button></div>`;
 
   function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
+  function filterVid(vid){return S.rapFilterVeh==='all'||vid===S.rapFilterVeh;}
   const urgentF=urgent.filter(filterV);
-  const soonF=soon.filter(filterV);
-  const laterF=later.filter(filterV);
+  const soon30F=soon30.filter(filterV);
+  const soon90F=soon90.filter(filterV);
+  const rcUrgentF=rcUrgent.filter(r=>filterVid(r.vehicle_id));
+  const rcSoon30F=rcSoon30.filter(r=>filterVid(r.vehicle_id));
+  const rcSoon90F=rcSoon90.filter(r=>filterVid(r.vehicle_id));
+  const docsUrgentF=docsUrgent.filter(d=>filterVid(d.vehicle_id));
+  const docsSoon30F=docsSoon30.filter(d=>filterVid(d.vehicle_id));
+  const docsSoon90F=docsSoon90.filter(d=>filterVid(d.vehicle_id));
 
-  if(!urgentF.length&&!soonF.length&&!rcUrgent.length&&!rcSoon.length&&!docsUrgent.length&&!docsSoon.length){
-    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel urgent pour le moment.</p></div>`;
+  if(!urgentF.length&&!rcUrgentF.length&&!docsUrgentF.length&&!soon30F.length&&!rcSoon30F.length&&!docsSoon30F.length&&!soon90F.length&&!rcSoon90F.length&&!docsSoon90F.length){
+    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 90 prochains jours.</p></div>`;
   }
 
-  // En retard
-  if(urgentF.length||rcUrgent.length||docsUrgent.length){
-    h+=`<div class="sec-hdr" id="rap-section-danger"><span class="sec-ttl">⚠️ En retard (${urgentF.length+rcUrgent.length+docsUrgent.length})</span></div>`;
+  function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="font-size:.62rem;color:var(--txl)">📌</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
+  function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
+
+  // ── EN RETARD ──
+  if(urgentF.length||rcUrgentF.length||docsUrgentF.length){
+    h+=`<div class="sec-hdr" id="rap-section-danger"><span class="sec-ttl">⚠️ En retard (${urgentF.length+rcUrgentF.length+docsUrgentF.length})</span></div>`;
     h+=urgentF.map(r=>getRapItem(r)).join('');
-    h+=rcUrgent.map(r=>{
-      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
-      const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';
-      return`<div class="ri2 danger" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}</span><span style="font-size:.62rem;color:var(--txl)">📌 Custom</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div><div class="ri2-badge danger">⚠️ En retard</div></div>`;
-    }).join('');
-    h+=docsUrgent.map(d=>{
-      const v=S.vehicles.find(x=>x.id===d.vehicle_id);
-      const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';
-      return`<div class="ri2 danger"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄 Doc</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">Expiré le ${fmtDate(d.date_expiration)}</div></div><div class="ri2-badge danger">⚠️ Expiré</div></div>`;
-    }).join('');
+    h+=rcUrgentF.map(r=>rcCard(r,'danger','En retard')).join('');
+    h+=docsUrgentF.map(d=>docCard(d,'danger','Expiré le '+fmtDate(d.date_expiration))).join('');
   }
 
-  // À venir
-  if(soonF.length||rcSoon.length||docsSoon.length){
-    h+=`<div class="sec-hdr mt12" id="rap-section-warn"><span class="sec-ttl">⏰ À venir (${soonF.length+rcSoon.length+docsSoon.length})</span></div>`;
-    h+=soonF.map(r=>getRapItem(r)).join('');
-    h+=rcSoon.map(r=>{
-      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
-      const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';
-      const days=Math.ceil((new Date(r.date_rappel)-today)/86400000);
-      return`<div class="ri2 warn" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}</span><span style="font-size:.62rem;color:var(--txl)">📌 Custom</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${fmtDate(r.date_rappel)}</div></div><div class="ri2-badge warn">⏰ Dans ${days}j</div></div>`;
-    }).join('');
-    h+=docsSoon.map(d=>{
-      const v=S.vehicles.find(x=>x.id===d.vehicle_id);
-      const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';
-      const days=Math.ceil((new Date(d.date_expiration)-today)/86400000);
-      return`<div class="ri2 warn"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄 Doc</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">Expire le ${fmtDate(d.date_expiration)}</div></div><div class="ri2-badge warn">⏰ Dans ${days}j</div></div>`;
-    }).join('');
+  // ── DANS 30 JOURS ──
+  if(soon30F.length||rcSoon30F.length||docsSoon30F.length){
+    h+=`<div class="sec-hdr mt12" id="rap-section-30"><span class="sec-ttl">📅 Dans 30 jours (${soon30F.length+rcSoon30F.length+docsSoon30F.length})</span></div>`;
+    h+=soon30F.map(r=>getRapItem(r)).join('');
+    h+=rcSoon30F.map(r=>{const days=Math.ceil((new Date(r.date_rappel)-today)/86400000);return rcCard(r,'warn','Dans '+days+'j');}).join('');
+    h+=docsSoon30F.map(d=>{const days=Math.ceil((new Date(d.date_expiration)-today)/86400000);return docCard(d,'warn','Dans '+days+'j');}).join('');
   }
 
-  // Plus tard
-  if(laterF.length){
-    h+=`<div class="sec-hdr mt12" id="rap-section-ok" style="cursor:pointer" onclick="toggleLaterRaps(this)"><span class="sec-ttl" style="color:var(--txl)">Plus tard (${laterF.length})</span><span style="font-size:.8rem;color:var(--txl)" id="later-arrow">▼ Voir</span></div><div id="later-raps" class="hidden">${laterF.map(r=>getRapItem(r)).join('')}</div>`;
+  // ── DANS 90 JOURS ──
+  if(soon90F.length||rcSoon90F.length||docsSoon90F.length){
+    h+=`<div class="sec-hdr mt12" id="rap-section-90"><span class="sec-ttl">🔵 Dans 90 jours (${soon90F.length+rcSoon90F.length+docsSoon90F.length})</span></div>`;
+    h+=soon90F.map(r=>getRapItem(r)).join('');
+    h+=rcSoon90F.map(r=>{const days=Math.ceil((new Date(r.date_rappel)-today)/86400000);return rcCard(r,'ok','Dans '+days+'j');}).join('');
+    h+=docsSoon90F.map(d=>{const days=Math.ceil((new Date(d.date_expiration)-today)/86400000);return docCard(d,'ok','Dans '+days+'j');}).join('');
   }
 
   // Garanties actives
@@ -2839,7 +2840,7 @@ function scrollToRapSection(id){
   const el=document.getElementById(id);
   if(!el)return;
   // Si la section "Plus tard" est cachee, l'ouvrir d'abord
-  if(id==='rap-section-ok'){
+  if(id==='rap-section-90'||id==='rap-section-ok'){
     const later=g('later-raps');
     if(later&&later.classList.contains('hidden')){
       later.classList.remove('hidden');
