@@ -277,6 +277,22 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* UTILS */
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
+/* CARTE VEHICULE COMPACTE */
+.vc-compact{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:8px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden}
+.vc-compact.ok{border-left-color:var(--ok)}
+.vc-compact.warn{border-left-color:var(--warn)}
+.vc-compact.danger{border-left-color:var(--err)}
+.vc-compact-main{padding:12px 14px;display:flex;align-items:center;gap:11px}
+.vc-compact-info{flex:1;min-width:0}
+.vc-compact-name{font-size:.95rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em}
+.vc-compact-sub{font-size:.73rem;color:var(--txm);margin-top:2px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.vc-compact-km{font-size:.8rem;font-weight:600;color:var(--txt)}
+.vc-compact-acts{padding:0 14px 10px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:8px}
+/* MODAL DETAIL VEHICULE */
+#mo-veh-detail{position:fixed;inset:0;z-index:450;background:var(--bg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+#mo-veh-detail.open{transform:translateX(0)}
+.vd-header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;height:54px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh)}
+.vd-content{flex:1;overflow-y:auto;padding:16px 16px 32px;-webkit-overflow-scrolling:touch}
 .g6{display:flex;gap:6px;flex-wrap:wrap}
 /* SKELETON */
 .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:skel-anim 1.2s ease-in-out infinite;border-radius:8px}
@@ -410,6 +426,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 </div>
 
 <button id="fab" onclick="handleFab()">+</button>
+
+<!-- MODAL DETAIL VEHICULE -->
+<div id="mo-veh-detail">
+  <div class="vd-header">
+    <button class="mcls" onclick="closeVehDetail()" style="background:var(--bg2)">←</button>
+    <div id="vd-title" style="font-size:.97rem;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+    <button class="btn btn-s btn-sm" id="vd-edit-btn" onclick="openVehDetailEdit()">Modifier</button>
+  </div>
+  <div class="vd-content" id="vd-content"></div>
+</div>
 <div id="tc"></div>
 
 <!-- ONBOARDING -->
@@ -1688,12 +1714,45 @@ function renderVehs(){
     +'<div style="font-size:.78rem;color:#B45309;margin-top:2px">Trouvez les stations les moins chères</div></div>'
     +'<div style="color:#D97706;font-size:1rem">›</div>'
     +'</div>';
-  h+=S.vehicles.map(v=>vcFullHTML(v)).join('');
+  h+=S.vehicles.map(v=>vcCompactHTML(v)).join('');
   el.innerHTML=h;
-  setTimeout(()=>{initSwipe&&initSwipe();},50);
+}
+
+function vcCompactHTML(v){
+  const st=vStatus(v.id);
+  const es=S.ents.filter(e=>e.vehicle_id===v.id);
+  const total=es.reduce((s,e)=>s+(e.cout||0),0);
+  const isOwner=v.user_id===S.user.id;
+  const ct=ctStatus(v.ct_date);
+  const col=v.couleur_carte||v.emoji||'#2563EB';
+  const premClass=isPremium()?' premium-user':'';
+  const rapCount=getRappels().filter(r=>r.v?.id===v.id&&r.sev!=='ok').length;
+
+  return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}">
+    <div class="vc-compact-main">
+      <div style="width:38px;height:38px;border-radius:9px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
+      <div class="vc-compact-info">
+        <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
+        <div class="vc-compact-sub">
+          <span class="vc-compact-km">${fmtKm(v.km_actuel)}</span>
+          ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem">${esc(v.immatriculation)}</span>`:''}
+          ${v.num_parc?`<span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.7rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:''}
+          ${ct?`<span class="badge ${ct.cls}" style="font-size:.65rem">${ct.label}</span>`:''}
+          ${rapCount>0?`<span style="background:var(--err-bg);color:var(--err);font-size:.7rem;font-weight:700;padding:1px 6px;border-radius:10px">⚠️ ${rapCount} rappel${rapCount>1?'s':''}</span>`:''}
+          ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
+        </div>
+      </div>
+    </div>
+    <div class="vc-compact-acts">
+      <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">→ Détail</button>
+    </div>
+  </div>`;
 }
 
 function vcFullHTML(v){
+  // Garde la fonction pour la modal detail
   const st=vStatus(v.id);
   const es=S.ents.filter(e=>e.vehicle_id===v.id);
   const total=es.reduce((s,e)=>s+(e.cout||0),0);
@@ -1839,6 +1898,7 @@ function vcFullHTML(v){
   h+=`</div></div>`;
   return h;
 }
+
 
 /* ══ PRIX CARBURANT ══ */
 async function showCarburant(vid, carburant){
@@ -2277,7 +2337,127 @@ function toggleVeh(vid){
   S.expandedVeh=S.expandedVeh===vid?null:vid;
   renderVehs();
 }
-function expandVeh(vid){S.expandedVeh=vid;renderView();}
+function expandVeh(vid){S.expandedVeh=vid;renderView();setTimeout(()=>openVehDetail(vid),50);}
+
+function openVehDetail(vid){
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  S.expandedVeh=vid;
+  const col=v.couleur_carte||v.emoji||'#2563EB';
+  const isOwner=v.user_id===S.user.id;
+  g('vd-title').innerHTML=`<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${col};margin-right:6px;vertical-align:middle"></span>${esc(v.marque)} ${esc(v.modele)}`;
+  g('vd-edit-btn').style.display=isOwner?'':'none';
+  // Contenu detail = vcFullHTML sans l'enveloppe vc
+  const es=S.ents.filter(e=>e.vehicle_id===vid);
+  const total=es.reduce((s,e)=>s+(e.cout||0),0);
+  const ct=ctStatus(v.ct_date);
+  const costData=getCostsByYear(vid);
+  let h='';
+  // Stats
+  h+=`<div class="vc-stats-row" style="border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px">
+    <div><span class="vs-v">${fmtKm(v.km_actuel)}</span><span class="vs-l">Kilométrage</span></div>
+    <div><span class="vs-v">${es.length}</span><span class="vs-l">Entretiens</span></div>
+    <div><span class="vs-v" style="font-size:.82rem">${fmtCout(total)}</span><span class="vs-l">Coût total</span></div>
+    <div><span class="vs-v" style="font-size:.78rem;color:var(--ok)">${getNextRevision(v,es)}</span><span class="vs-l">Prochaine révision</span></div>
+    ${total&&v.km_actuel?`<div><span class="vs-v" style="font-size:.78rem">${(total/v.km_actuel).toFixed(2)}€</span><span class="vs-l">€/km</span></div>`:''}
+  </div>`;
+  // Graphique
+  if(costData.length>1){
+    const max=Math.max(...costData.map(d=>d.total),1);
+    h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
+  }
+  // Actions
+  h+=`<div class="g6 mb8">
+    <button class="btn btn-p btn-sm" onclick="openEnt(null,'${vid}')">+ Entretien</button>
+    <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
+    <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
+    <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
+    <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')">🔗 Lien</button>
+    <button class="btn btn-s btn-sm" onclick="openCarburantPage()">⛽ Carburant</button>
+  </div>`;
+  h+=statsHTML(vid);
+  // Derniers entretiens
+  if(es.length){
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Derniers entretiens</span><button class="sec-lnk" onclick="S.selVeh='${vid}';closeVehDetail();nav('ent')">Tout voir</button></div>`;
+    h+=es.slice(0,5).map(e=>{
+      const ti=getType(e.type);
+      return`<div class="ei-inline" onclick="openEnt('${e.id}')">
+        <div style="font-size:1.1rem">${ti.ico}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
+          <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
+        </div>
+        ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+  // Infos avancées
+  const advInfos=[];
+  if(v.transmission)advInfos.push({ico:'⚙️',val:v.transmission});
+  if(v.traction)advInfos.push({ico:'🔀',val:v.traction});
+  if(v.nb_portes)advInfos.push({ico:'🚪',val:v.nb_portes+' portes'});
+  if(v.puissance_kw)advInfos.push({ico:'⚡',val:v.puissance_kw+' kW'});
+  if(v.co2)advInfos.push({ico:'💨',val:v.co2+' g/km CO₂'});
+  if(v.valeur_achat)advInfos.push({ico:'💰',val:'Achat : '+fmtCout(v.valeur_achat)});
+  if(v.valeur_actuelle)advInfos.push({ico:'📈',val:'Valeur : '+fmtCout(v.valeur_actuelle)});
+  if(v.assurance_compagnie)advInfos.push({ico:'🛡️',val:v.assurance_compagnie});
+  if(v.assurance_echeance){
+    const days=Math.ceil((new Date(v.assurance_echeance)-new Date())/86400000);
+    const color=days<0?'var(--err)':days<=30?'var(--warn)':'var(--ok)';
+    advInfos.push({ico:'📋',val:'Assurance : '+fmtDate(v.assurance_echeance),color});
+  }
+  if(advInfos.length)h+=`<div class="detail-pills" style="margin-bottom:12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
+  // Documents
+  const vdocs=S.documents.filter(d=>d.vehicle_id===vid);
+  h+=`<div class="sec-hdr"><span class="sec-ttl">📄 Documents (${vdocs.length})</span><button class="sec-lnk" onclick="openDocument('${vid}')">+ Ajouter</button></div>`;
+  if(vdocs.length){
+    h+=vdocs.map(d=>{
+      const nowD=new Date();
+      const ddays=d.date_expiration?Math.ceil((new Date(d.date_expiration)-nowD)/86400000):null;
+      const dcolor=ddays===null?'var(--txm)':ddays<0?'var(--err)':ddays<=30?'var(--warn)':'var(--ok)';
+      const dlabel=ddays===null?'':ddays<0?'Expiré':ddays===0?"Expire auj.":'Dans '+ddays+'j';
+      return`<div class="ei-inline" onclick="openDocument('${vid}','${d.id}')">
+        <span style="font-size:1rem">📄</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.82rem;font-weight:600">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
+          ${d.date_expiration?`<div style="font-size:.7rem;color:${dcolor}">${dlabel} · Expire ${fmtDate(d.date_expiration)}</div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun document.</div>`;
+  }
+  // Rappels
+  const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===vid);
+  h+=`<div class="sec-hdr"><span class="sec-ttl">📌 Rappels (${vrapps.length})</span><button class="sec-lnk" onclick="openRappelCustomVeh('${vid}')">+ Ajouter</button></div>`;
+  if(vrapps.length){
+    const today2=new Date();today2.setHours(0,0,0,0);
+    h+=vrapps.map(r=>{
+      const days2=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today2)/86400000):null;
+      const sev2=days2===null?'ok':days2<0?'danger':days2<=7?'warn':'ok';
+      const col2=sev2==='danger'?'var(--err)':sev2==='warn'?'var(--warn)':'var(--txm)';
+      const lbl2=days2===null?'Sans date':days2<0?'En retard':days2===0?"Aujourd'hui":'Dans '+days2+'j';
+      return`<div class="ei-inline" onclick="openRappelCustom('${r.id}')">
+        <span style="font-size:1rem">📌</span>
+        <div style="flex:1"><div style="font-size:.82rem;font-weight:600">${esc(r.titre)}</div><div style="font-size:.7rem;color:${col2}">${lbl2}${r.date_rappel?' · '+fmtDate(r.date_rappel):''}</div></div>
+      </div>`;
+    }).join('');
+  } else {
+    h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun rappel.</div>`;
+  }
+  g('vd-content').innerHTML=h;
+  document.getElementById('mo-veh-detail').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeVehDetail(){
+  document.getElementById('mo-veh-detail').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function openVehDetailEdit(){
+  const v=S.vehicles.find(x=>x.id===S.expandedVeh);if(!v)return;
+  openVeh(v.id);
+}
 
 function renderEnt(){
   const el=g('en-ctn');
