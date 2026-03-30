@@ -4,7 +4,7 @@ const ADMIN_CODE = 'AC2026admin';
 
 exports.handler = async (event) => {
   const headers = {
-    'Access-Control-Allow-Origin': 'https://autocarnet.fr',
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
@@ -32,6 +32,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email requis' }) };
   }
 
+  // Trouver l'utilisateur
   const listRes = await fetch(`${SB_URL}/auth/v1/admin/users?per_page=1000`, {
     headers: {
       'apikey': SB_SERVICE_KEY,
@@ -46,6 +47,18 @@ exports.handler = async (event) => {
     return { statusCode: 404, headers, body: JSON.stringify({ error: 'Utilisateur introuvable' }) };
   }
 
+  const currentPremium = user.user_metadata?.is_premium === true;
+
+  // Si is_premium est null = juste vérifier le statut sans modifier
+  if (is_premium === null || is_premium === undefined) {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ success: true, email, is_premium: currentPremium, check_only: true })
+    };
+  }
+
+  // Sinon mettre à jour
   const updateRes = await fetch(`${SB_URL}/auth/v1/admin/users/${user.id}`, {
     method: 'PUT',
     headers: {
@@ -74,3 +87,4 @@ exports.handler = async (event) => {
     })
   };
 };
+
