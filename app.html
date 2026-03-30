@@ -944,7 +944,16 @@ function toast(msg,type='i'){
 }
 
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
-function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();setTimeout(checkOnboarding,600);setTimeout(initAdmin,300);}
+function showApp(){
+  g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
+  buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
+  setTimeout(checkOnboarding,600);setTimeout(initAdmin,300);
+  // Toast bienvenue Premium
+  if(isPremium()&&!sessionStorage.getItem('ac_premium_welcomed')){
+    sessionStorage.setItem('ac_premium_welcomed','1');
+    setTimeout(()=>toast('🎉 Bienvenue dans AutoCarnet Premium !','s'),800);
+  }
+}
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
 function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
 function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
@@ -2542,8 +2551,9 @@ function renderProfil(){
 
   el.innerHTML=`
   <div class="profil-card" style="text-align:center">
-    <div class="profil-avatar">${initial}</div>
+    <div class="profil-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
     <div style="font-size:1rem;font-weight:700;margin-bottom:4px">${esc(name)||'Utilisateur'}</div>
+    ${isPremium()?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>':'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL,'_blank')">Passer Premium →</div>'}
     <div class="profil-email">${esc(email)}</div>
     <div class="stats-adv" style="margin-top:16px">
       <div class="stat-adv"><div class="stat-adv-v">${totalVehs}</div><div class="stat-adv-l">Véhicules</div></div>
@@ -2894,6 +2904,22 @@ if (isIOS && !isStandalone) {
 
 /* PANNEAU ADMIN */
 const ADMIN_CODE_CHECK='AC2026admin';
+/* Compteur taps avatar pour admin secret */
+let _adminTaps=0,_adminTimer=null;
+function handleAvatarTap(){
+  _adminTaps++;
+  if(_adminTimer) clearTimeout(_adminTimer);
+  _adminTimer=setTimeout(()=>{_adminTaps=0;},2000);
+  if(_adminTaps>=7){
+    _adminTaps=0;
+    g('admin-code').value='';
+    g('admin-auth').classList.remove('hidden');
+    g('admin-panel').classList.add('hidden');
+    g('admin-status').textContent='';
+    g('mo-admin').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+}
 function initAdmin(){
   if(!window.location.hash.includes('admin')) return;
   window.history.replaceState({},document.title,window.location.pathname);
