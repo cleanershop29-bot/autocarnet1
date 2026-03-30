@@ -944,7 +944,7 @@ function toast(msg,type='i'){
 }
 
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
-function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();setTimeout(checkOnboarding,600);}
+function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();setTimeout(checkOnboarding,600);setTimeout(initAdmin,300);}
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
 function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
 function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
@@ -2885,7 +2885,32 @@ if (isIOS && !isStandalone) {
   document.getElementById('ios-hint')?.classList.add('visible');
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{init();initAdmin();});
+/* PANNEAU ADMIN */
+const ADMIN_CODE_CHECK='AC2026admin';
+function initAdmin(){
+  if(!window.location.hash.includes('admin')) return;
+  window.history.replaceState({},document.title,window.location.pathname);
+  g('admin-code').value='';
+  g('admin-auth').classList.remove('hidden');
+  g('admin-panel').classList.add('hidden');
+  g('admin-status').textContent='';
+  g('mo-admin').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAdmin(){
+  g('mo-admin').classList.remove('open');
+  document.body.style.overflow='';
+}
+function checkAdminCode(){
+  if(g('admin-code').value===ADMIN_CODE_CHECK){
+    g('admin-auth').classList.add('hidden');
+    g('admin-panel').classList.remove('hidden');
+  } else {
+    toast('Code incorrect.','e');
+    g('admin-code').value='';
+  }
+}
+document.addEventListener("DOMContentLoaded", ()=>{init();});
 </script>
 </body>
 </html>
