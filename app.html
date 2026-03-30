@@ -247,16 +247,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* PROFIL */
 .profil-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px}
-.profil-card-premium{background:linear-gradient(135deg,#1E3A8A,#2563EB,#3B82F6);border-radius:var(--r);padding:22px;box-shadow:0 8px 24px rgba(37,99,235,.3);border:none;margin-bottom:12px;text-align:center;position:relative;overflow:hidden}
-.profil-card-premium::before{content:'⭐';position:absolute;font-size:8rem;opacity:.06;top:-20px;right:-20px;line-height:1}
-.prem-avatar{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#fff;font-weight:700;margin:0 auto 12px;cursor:pointer}
-.prem-name{font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-.02em}
-.prem-email{font-size:.78rem;color:rgba(255,255,255,.65);margin-bottom:14px}
-.prem-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:.02em}
+.profil-card-premium{background:#fff;border-radius:var(--r);padding:24px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;border:1.5px solid #E2E8F0;box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.profil-card-premium::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#F59E0B,#FBBF24,#FDE68A,#FBBF24,#F59E0B)}
+.prem-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1E3A8A,#3B82F6);border:3px solid #FDE68A;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#fff;font-weight:800;margin:12px auto 12px;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.25)}
+.prem-name{font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:3px;letter-spacing:-.02em}
+.prem-email{font-size:.78rem;color:var(--txm);margin-bottom:12px}
+.prem-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1px solid #F59E0B;color:#92400E;font-size:.72rem;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:18px;letter-spacing:.02em;box-shadow:0 2px 8px rgba(245,158,11,.2)}
 .prem-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.prem-stat{background:rgba(255,255,255,.12);border-radius:var(--r-sm);padding:10px}
-.prem-stat-v{font-size:1.1rem;font-weight:800;color:#fff}
-.prem-stat-l{font-size:.65rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;font-weight:600}
+.prem-stat{background:var(--bg2);border-radius:var(--r-sm);padding:12px;border:1px solid var(--border)}
+.prem-stat-v{font-size:1.1rem;font-weight:800;color:var(--txt)}
+.prem-stat-l{font-size:.65rem;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;font-weight:600}
 .vc.premium-user{border-left-color:#F59E0B}
 .profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;font-weight:700;margin:0 auto 16px;font-family:'Outfit',sans-serif}
 .profil-email{font-size:.82rem;color:var(--txm);text-align:center;margin-bottom:16px}
