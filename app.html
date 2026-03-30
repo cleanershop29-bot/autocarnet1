@@ -2780,47 +2780,39 @@ function isPremium(){
   return S.user?.user_metadata?.is_premium===true;
 }
 function showUpgradeModal(msg){
-  // Modale upgrade dédiée — sans réutiliser mo-cfm
-  const existing = document.getElementById('mo-upgrade');
-  if(existing) existing.remove();
-  const mo = document.createElement('div');
-  mo.id = 'mo-upgrade';
-  mo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)';
-  mo.innerHTML = '<div style="background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.15)">'
-    +'<div style="font-size:1.5rem;text-align:center;margin-bottom:12px">🚀</div>'
-    +'<div style="font-size:1rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.02em">Passez à Premium</div>'
-    +'<div style="font-size:.84rem;color:#475569;text-align:center;line-height:1.6;margin-bottom:20px">'+msg+' Débloquez les véhicules illimités, entretiens illimités, export PDF et plus — 4,99€/mois.</div>'
-    +'<a href="'+GUMROAD_URL+'" target="_blank" style="display:block;text-align:center;padding:12px;background:#2563EB;color:#fff;border-radius:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;text-decoration:none">Voir Premium →</a>'
-    +'<button onclick="document.getElementById('mo-upgrade').remove()" style="display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:Outfit,sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569">Plus tard</button>'
-    +'</div>';
+  const existing=document.getElementById('mo-upgrade');
+  if(existing)existing.remove();
+  const mo=document.createElement('div');
+  mo.id='mo-upgrade';
+  mo.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)';
+  const box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.15);text-align:center';
+  const ico=document.createElement('div');
+  ico.style.cssText='font-size:1.5rem;margin-bottom:12px';
+  ico.textContent='🚀';
+  const ttl=document.createElement('div');
+  ttl.style.cssText='font-size:1rem;font-weight:800;margin-bottom:8px;letter-spacing:-.02em';
+  ttl.textContent='Passez à Premium';
+  const txt=document.createElement('div');
+  txt.style.cssText='font-size:.84rem;color:#475569;line-height:1.6;margin-bottom:20px';
+  txt.textContent=msg+' Débloquez les véhicules illimités, entretiens illimités, export PDF et plus — 4,99€/mois.';
+  const btnOk=document.createElement('a');
+  btnOk.href=GUMROAD_URL;
+  btnOk.target='_blank';
+  btnOk.style.cssText='display:block;padding:12px;background:#2563EB;color:#fff;border-radius:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;text-decoration:none';
+  btnOk.textContent='Voir Premium →';
+  const btnClose=document.createElement('button');
+  btnClose.style.cssText='display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:Outfit,sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569';
+  btnClose.textContent='Plus tard';
+  btnClose.onclick=()=>mo.remove();
+  box.appendChild(ico);
+  box.appendChild(ttl);
+  box.appendChild(txt);
+  box.appendChild(btnOk);
+  box.appendChild(btnClose);
+  mo.appendChild(box);
+  mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
   document.body.appendChild(mo);
-  mo.addEventListener('click', e => { if(e.target === mo) mo.remove(); });
-}
-
-function initAdmin(){
-  if(window.location.hash !== "#admin") return;
-  window.history.replaceState({},document.title,window.location.pathname);
-  g("admin-code").value="";
-  g("admin-auth").classList.remove("hidden");
-  g("admin-panel").classList.add("hidden");
-  g("mo-admin").classList.add("open");
-  document.body.style.overflow="hidden";
-}
-function closeAdmin(){
-  g("mo-admin").classList.remove("open");
-  document.body.style.overflow="";
-  g("admin-code").value="";
-  g("admin-email") && (g("admin-email").value="");
-  g("admin-status") && (g("admin-status").textContent="");
-}
-function checkAdminCode(){
-  if(g("admin-code").value === ADMIN_CODE){
-    g("admin-auth").classList.add("hidden");
-    g("admin-panel").classList.remove("hidden");
-  } else {
-    toast("Code incorrect.","e");
-    g("admin-code").value="";
-  }
 }
 async function adminCallFunction(email, is_premium){
   const st = g("admin-status");
