@@ -247,6 +247,17 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* PROFIL */
 .profil-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px}
+.profil-card-premium{background:linear-gradient(135deg,#1E3A8A,#2563EB,#3B82F6);border-radius:var(--r);padding:22px;box-shadow:0 8px 24px rgba(37,99,235,.3);border:none;margin-bottom:12px;text-align:center;position:relative;overflow:hidden}
+.profil-card-premium::before{content:'⭐';position:absolute;font-size:8rem;opacity:.06;top:-20px;right:-20px;line-height:1}
+.prem-avatar{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#fff;font-weight:700;margin:0 auto 12px;cursor:pointer}
+.prem-name{font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-.02em}
+.prem-email{font-size:.78rem;color:rgba(255,255,255,.65);margin-bottom:14px}
+.prem-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:.02em}
+.prem-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.prem-stat{background:rgba(255,255,255,.12);border-radius:var(--r-sm);padding:10px}
+.prem-stat-v{font-size:1.1rem;font-weight:800;color:#fff}
+.prem-stat-l{font-size:.65rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;font-weight:600}
+.vc.premium-user{border-left-color:#F59E0B}
 .profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;font-weight:700;margin:0 auto 16px;font-family:'Outfit',sans-serif}
 .profil-email{font-size:.82rem;color:var(--txm);text-align:center;margin-bottom:16px}
 /* STATS AVANCÉES */
@@ -393,7 +404,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <button class="nb" id="nb-ent"  onclick="nav('ent')"><span class="nb-ico">🔧</span>Entretiens</button>
     <button class="nb" id="nb-rap"  onclick="nav('rap')"><span class="nb-ico">🔔</span>Rappels<div class="rdot hidden" id="rdot"></div></button>
     <button class="nb" id="nb-fam"  onclick="nav('fam')"><span class="nb-ico">👥</span>Équipe</button>
-    <button class="nb" id="nb-profil" onclick="nav('profil')"><span class="nb-ico">👤</span>Profil</button>
+    <button class="nb" id="nb-profil" onclick="nav('profil')"><span class="nb-ico">👤</span>Profil<span id="nb-prem" class="hidden" style="position:absolute;top:5px;right:calc(50% - 16px);font-size:.55rem;color:#F59E0B">⭐</span></button>
   </nav>
 </div>
 
@@ -1438,6 +1449,10 @@ function getRappels(){
   return list.sort((a,b)=>({danger:0,warn:1,ok:2}[a.sev]-{danger:0,warn:1,ok:2}[b.sev]));
 }
 function vStatus(vid){const r=getRappels().filter(x=>x.v.id===vid);if(r.some(x=>x.sev==='danger'))return'danger';if(r.some(x=>x.sev==='warn'))return'warn';return'ok';}
+function updatePremStar(){
+  const star=g('nb-prem');
+  if(star) star.classList.toggle('hidden',!isPremium());
+}
 function updateDot(){
   const hasUrgent=getRappels().some(x=>x.sev!=='ok');
   const now=new Date();
@@ -1612,7 +1627,7 @@ function vcFullHTML(v){
   const isExp=S.expandedVeh===v.id;
   const badge={ok:'badge-ok',warn:'badge-warn',danger:'badge-err'}[st];
 
-  let h=`<div class="vc ${st}${isExp?' expanded':''}" id="vc-${v.id}">
+  const premClass=isPremium()?" premium-user":"";let h=`<div class="vc ${st}${isExp?' expanded':''} ${premClass}" id="vc-${v.id}">
     <div class="vc-main" onclick="toggleVeh('${v.id}')">
       <div class="vc-ico">${v.emoji||'🚗'}</div>
       <div class="vc-info">
@@ -2552,9 +2567,21 @@ function renderProfil(){
     ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>'
     :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL)">Passer Premium →</div>';
 
-  el.innerHTML=`
+  const profilTopCard = isPremium() ? `
+  <div class="profil-card-premium">
+    <div class="prem-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
+    <div class="prem-name">${esc(name)||'Utilisateur'}</div>
+    <div class="prem-email">${esc(email)}</div>
+    <div class="prem-badge">⭐ Membre Premium</div>
+    <div class="prem-stats">
+      <div class="prem-stat"><div class="prem-stat-v">${totalVehs}</div><div class="prem-stat-l">Véhicules</div></div>
+      <div class="prem-stat"><div class="prem-stat-v">${totalEnts}</div><div class="prem-stat-l">Entretiens</div></div>
+      <div class="prem-stat"><div class="prem-stat-v" style="font-size:.9rem">${fmtCout(totalCout)}</div><div class="prem-stat-l">Coût total</div></div>
+      <div class="prem-stat"><div class="prem-stat-v">${S.vehicles.length}</div><div class="prem-stat-l">Partagés</div></div>
+    </div>
+  </div>` : `
   <div class="profil-card" style="text-align:center">
-        <div class="profil-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
+    <div class="profil-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
     <div style="font-size:1rem;font-weight:700;margin-bottom:4px">${esc(name)||'Utilisateur'}</div>
     ${premiumBadge}
     <div class="profil-email">${esc(email)}</div>
@@ -2564,7 +2591,9 @@ function renderProfil(){
       <div class="stat-adv"><div class="stat-adv-v" style="font-size:1rem">${fmtCout(totalCout)}</div><div class="stat-adv-l">Coût total</div></div>
       <div class="stat-adv"><div class="stat-adv-v">${S.vehicles.length}</div><div class="stat-adv-l">Dont partagés</div></div>
     </div>
-  </div>
+  </div>`;
+
+  el.innerHTML=`${profilTopCard}
 
   <div class="profil-card">
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Modifier le profil</div>
