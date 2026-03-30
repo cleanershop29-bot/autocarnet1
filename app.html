@@ -2685,13 +2685,11 @@ function getRapItem(r){
   const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
   const vLabel=v?(esc(v.marque)+' '+esc(v.modele)):'';
   const parcLabel=v&&v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.62rem">${esc(v.num_parc)}</span>`:'';
-  const typeIco=r.kind==='date'?'📅':r.kind==='km'?'📍':r.kind==='ct'?'✅':r.kind==='assurance'?'🛡️':'📌';
   return `<div class="ri2 ${r.sev}" onclick="${r.e?`openEnt('${r.e.id}')`:r.v?`openVehDetail('${r.v.id}')`:''}" >
     <div style="flex:1;min-width:0">
       <div class="ri2-veh">
         <div class="ri2-veh-color" style="background:${vColor}"></div>
         <span class="ri2-veh-name">${vLabel}</span>${parcLabel}
-        <span style="font-size:.62rem;color:var(--txl)">${typeIco} ${r.kind==='km'?'Km':'Date'}</span>
       </div>
       <div style="font-size:.87rem;font-weight:700">${esc(r.ti.label)}</div>
       <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${r.label}</div>
