@@ -226,8 +226,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .mft{padding:10px 18px 20px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
 .mft-l{flex:1}
 .ep{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
-.epb{width:38px;height:38px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:1rem;cursor:pointer;transition:.15s}
-.epb.on{border-color:var(--primary);background:var(--primary-lt)}
+.epb{width:30px;height:30px;border:2px solid transparent;border-radius:50%;cursor:pointer;transition:.15s;flex-shrink:0}
+.epb.on{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-lt)}
+.ep{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px}
 
 /* EMPTY */
 .empty{text-align:center;padding:40px 16px;color:var(--txm)}
@@ -247,6 +248,17 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* PROFIL */
 .profil-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px}
+.profil-card-premium{background:#fff;border-radius:var(--r);padding:24px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;border:1.5px solid #E2E8F0;box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.profil-card-premium::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#F59E0B,#FBBF24,#FDE68A,#FBBF24,#F59E0B)}
+.prem-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1E3A8A,#3B82F6);border:3px solid #FDE68A;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#fff;font-weight:800;margin:12px auto 12px;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.25)}
+.prem-name{font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:3px;letter-spacing:-.02em}
+.prem-email{font-size:.78rem;color:var(--txm);margin-bottom:12px}
+.prem-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1px solid #F59E0B;color:#92400E;font-size:.72rem;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:18px;letter-spacing:.02em;box-shadow:0 2px 8px rgba(245,158,11,.2)}
+.prem-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.prem-stat{background:var(--bg2);border-radius:var(--r-sm);padding:12px;border:1px solid var(--border)}
+.prem-stat-v{font-size:1.1rem;font-weight:800;color:var(--txt)}
+.prem-stat-l{font-size:.65rem;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;font-weight:600}
+.vc.premium-user{border-left-color:#F59E0B}
 .profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;font-weight:700;margin:0 auto 16px;font-family:'Outfit',sans-serif}
 .profil-email{font-size:.82rem;color:var(--txm);text-align:center;margin-bottom:16px}
 /* STATS AVANCÉES */
@@ -393,7 +405,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <button class="nb" id="nb-ent"  onclick="nav('ent')"><span class="nb-ico">🔧</span>Entretiens</button>
     <button class="nb" id="nb-rap"  onclick="nav('rap')"><span class="nb-ico">🔔</span>Rappels<div class="rdot hidden" id="rdot"></div></button>
     <button class="nb" id="nb-fam"  onclick="nav('fam')"><span class="nb-ico">👥</span>Équipe</button>
-    <button class="nb" id="nb-profil" onclick="nav('profil')"><span class="nb-ico">👤</span>Profil</button>
+    <button class="nb" id="nb-profil" onclick="nav('profil')"><span class="nb-ico">👤</span>Profil<span id="nb-prem" class="hidden" style="position:absolute;top:5px;right:calc(50% - 16px);font-size:.55rem;color:#F59E0B">⭐</span></button>
   </nav>
 </div>
 
@@ -488,8 +500,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <div class="fg"><label class="fl">Couleur</label><input class="fc" id="v-cl" placeholder="Blanc nacré"></div>
         <div class="fg"><label class="fl">Puissance (ch)</label><input class="fc" id="v-pw" type="number" inputmode="numeric" placeholder="90" min="0"></div>
       </div>
-      <div class="fg"><label class="fl">Icône</label><div id="ep"></div><input type="hidden" id="v-em" value="🚗"></div>
+      <div class="fg"><label class="fl">Icône</label><div id="ep"></div><input type="hidden" id="v-em" value="#2563EB"></div>
       <div class="fg"><label class="fl">VIN (optionnel)</label><input class="fc" id="v-vn" placeholder="Numéro de châssis"></div>
+      <div class="fr">
+        <div class="fg"><label class="fl">N° de parc</label><input class="fc" id="v-np2" placeholder="Ex: VH-042"></div>
+        <div class="fg"><label class="fl">Rejet CO2 (g/km)</label><input class="fc" id="v-co2" type="number" inputmode="numeric" placeholder="120" min="0"></div>
+      </div>
       <!-- SECTION AVANCÉE VÉHICULE -->
       <button type="button" class="adv-toggle" id="adv-veh-btn" onclick="toggleAdv('veh')">
         ℹ️ Informations avancées <span class="adv-arrow">›</span>
@@ -543,6 +559,27 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
           <div class="fg"><label class="fl">Compagnie assurance</label>
             <input class="fc" id="v-ac" placeholder="Maif, AXA…">
           </div>
+        </div>
+      </div>
+      <!-- SECTION DOCUMENTS VÉHICULE -->
+      <button type="button" class="adv-toggle" id="adv-docs-btn" onclick="toggleAdv('docs')" style="margin-top:8px">
+        📄 Documents du véhicule <span class="adv-arrow">›</span>
+      </button>
+      <div class="adv-body" id="adv-docs-body">
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:8px 0 6px">🪪 Carte grise</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Titulaire</label><input class="fc" id="vdoc-cg-nom" placeholder="Nom du propriétaire"></div>
+          <div class="fg"><label class="fl">Mise en circulation</label><input class="fc" id="vdoc-cg-emission" type="date"></div>
+        </div>
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">🛡️ Assurance</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">N° contrat</label><input class="fc" id="vdoc-as-num" placeholder="Numéro de contrat"></div>
+          <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
+        </div>
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">✅ Contrôle technique</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Centre CT</label><input class="fc" id="vdoc-ct-nom" placeholder="Nom du centre"></div>
+          <div class="fg"><label class="fl">Date du CT</label><input class="fc" id="vdoc-ct-emission" type="date"></div>
         </div>
       </div>
     </div>
@@ -944,10 +981,26 @@ function toast(msg,type='i'){
 }
 
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
-function showApp(){g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();setTimeout(checkOnboarding,600);}
+function showApp(){
+  g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
+  buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
+  setTimeout(checkOnboarding,600);setTimeout(initAdmin,300);
+  // Toast bienvenue Premium
+  if(isPremium()&&!sessionStorage.getItem('ac_premium_welcomed')){
+    sessionStorage.setItem('ac_premium_welcomed','1');
+    setTimeout(()=>toast('🎉 Bienvenue dans AutoCarnet Premium !','s'),800);
+  }
+}
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
-function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
-function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
+function buildEpicker(){
+  const colors=['#DC2626', '#EA580C', '#D97706', '#16A34A', '#0891B2', '#2563EB', '#7C3AED', '#DB2777', '#374151', '#78716C', '#FFFFFF'];
+  g('ep').innerHTML=colors.map(c=>`<button type="button" class="epb" data-em="${c}" onclick="pickColor('${c}')" style="background:${c};border-color:${c==='#FFFFFF'?'#E2E8F0':c}"></button>`).join('');
+}
+function pickColor(c){
+  g('v-em').value=c;
+  document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===c));
+}
+
 function initAutoComplete(){
   const mk=g('v-mk'),mo=g('v-mo'),mkl=g('dl-mk'),mol=g('dl-mo');
   if(!mk||!mkl)return;
@@ -1225,6 +1278,13 @@ async function saveVeh(){
   const marque=g('v-mk').value.trim(),modele=g('v-mo').value.trim();
   if(!marque)return toast('La marque est requise.','e');
   if(!modele)return toast('Le modèle est requis.','e');
+  // Limite freemium véhicules
+  if(!id&&!isPremium()){
+    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+    if(myVehs.length>=getMaxVehs()){
+      return showUpgradeModal('Vous avez atteint la limite de véhicules de votre plan.');
+    }
+  }
   const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
   const payload={marque,modele,
     annee:parseInt(g('v-yr').value)||null,
@@ -1235,7 +1295,7 @@ async function saveVeh(){
     ct_date:g('v-ct').value||null,
     couleur:g('v-cl').value.trim()||null,
     puissance:parseInt(g('v-pw').value)||null,
-    emoji:g('v-em').value||'🚗',
+    couleur_carte:g('v-em').value||'#2563EB',
     vin:g('v-vn').value.trim()||null,
     transmission:g('v-tr').value||null,
     traction:g('v-trc').value||null,
@@ -1245,16 +1305,58 @@ async function saveVeh(){
     valeur_actuelle:parseFloat(g('v-vact').value)||null,
     assurance_echeance:g('v-as').value||null,
     assurance_compagnie:g('v-ac').value.trim()||null,
+    num_parc:g('v-np2').value.trim()||null,
+    co2:parseInt(g('v-co2').value)||null,
   };
-  let error;
+  let error,payload_id_temp=id||null;
   try{
     if(id){({error}=await sb.from('vehicles').update(payload).eq('id',id).eq('user_id',S.user.id));}
-    else{({error}=await sb.from('vehicles').insert({...payload,id:crypto.randomUUID(),user_id:S.user.id}));}
+    else{const newId=crypto.randomUUID();payload_id_temp=newId;({error}=await sb.from('vehicles').insert({...payload,id:newId,user_id:S.user.id}));}
   }catch(e){btn.disabled=false;btn.textContent='Enregistrer';return toast('Erreur réseau : '+e.message,'e');}
   btn.disabled=false;btn.textContent='Enregistrer';
   if(error){console.error(error);return toast('Erreur : '+(error.message||error.code),'e');}
+  // Recuperer l'id final du vehicule
+  const finalVid = id || payload_id_temp;
   toast(id?'Véhicule mis à jour !':'Véhicule ajouté !','s');
-  cm('veh');await loadVehs();await loadEnts();nav('dash');
+
+  // Sauvegarder automatiquement les documents renseignés
+  if(finalVid) await saveVehDocs(finalVid, S.user.id);
+
+  cm('veh');await loadVehs();await loadEnts();await loadDocuments();nav('dash');
+}
+
+async function saveVehDocs(vid, uid){
+  // Carte grise
+  const cgNom=g('vdoc-cg-nom')?.value.trim()||null;
+  const cgEmission=g('vdoc-cg-emission')?.value||null;
+  if(cgNom||cgEmission){
+    const v=S.vehicles.find(x=>x.id===vid)||{immatriculation:null};
+    const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Carte grise');
+    const p={user_id:uid,vehicle_id:vid,type:'Carte grise',nom:cgNom,numero:v.immatriculation||null,date_emission:cgEmission,date_expiration:null,note:null};
+    if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
+    else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
+  }
+  // Assurance
+  const asNum=g('vdoc-as-num')?.value.trim()||null;
+  const asEmission=g('vdoc-as-emission')?.value||null;
+  const asEcheance=g('v-as')?.value||null;
+  const asCompagnie=g('v-ac')?.value.trim()||null;
+  if(asNum||asEmission||asEcheance||asCompagnie){
+    const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Assurance');
+    const p={user_id:uid,vehicle_id:vid,type:'Assurance',nom:asCompagnie,numero:asNum,date_emission:asEmission,date_expiration:asEcheance,note:null};
+    if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
+    else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
+  }
+  // CT
+  const ctNom=g('vdoc-ct-nom')?.value.trim()||null;
+  const ctEmission=g('vdoc-ct-emission')?.value||null;
+  const ctEcheance=g('v-ct')?.value||null;
+  if(ctNom||ctEmission||ctEcheance){
+    const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Contrôle technique');
+    const p={user_id:uid,vehicle_id:vid,type:'Contrôle technique',nom:ctNom,numero:null,date_emission:ctEmission,date_expiration:ctEcheance,note:null};
+    if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
+    else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
+  }
 }
 async function delVeh(){
   const id=g('v-id').value;if(!id)return;
@@ -1268,12 +1370,12 @@ async function delVeh(){
 function openKm(vid){
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   g('km-vid').value=vid;g('km-v').value=v.km_actuel||'';
-  g('km-h').textContent='Actuel : '+fmtKm(v.km_actuel);om('km');
+  g('km-h').textContent='Actuel : '+fmtKm(v.km_actuel)+(v.km_maj_date?' · Mis à jour le '+fmtDate(v.km_maj_date):'');om('km');
 }
 async function saveKm(){
   const vid=g('km-vid').value,km=parseInt(g('km-v').value);
   if(isNaN(km)||km<0)return toast('Kilométrage invalide.','e');
-  const{error}=await sb.from('vehicles').update({km_actuel:km}).eq('id',vid).eq('user_id',S.user.id);
+  const{error}=await sb.from('vehicles').update({km_actuel:km,km_maj_date:new Date().toISOString().split('T')[0]}).eq('id',vid).eq('user_id',S.user.id);
   if(error)return toast('Erreur : '+error.message,'e');
   toast('Kilométrage mis à jour !','s');cm('km');await loadVehs();renderView();
 }
@@ -1285,6 +1387,13 @@ async function saveEnt(){
   if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type d\'intervention.','e');
   if(!date)return toast('La date est requise.','e');
+  // Limite freemium entretiens
+  if(!id&&!isPremium()){
+    const myEnts=S.ents.filter(e=>S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
+    if(myEnts.length>=getMaxEnts()){
+      return showUpgradeModal('Vous avez atteint la limite d\'entretiens de votre plan.');
+    }
+  }
   const km=parseInt(g('e-km').value)||null;
   const p={user_id:S.user.id,vehicle_id,type,date,km,
     garage:g('e-gr').value.trim()||null,
@@ -1415,6 +1524,10 @@ function getRappels(){
   return list.sort((a,b)=>({danger:0,warn:1,ok:2}[a.sev]-{danger:0,warn:1,ok:2}[b.sev]));
 }
 function vStatus(vid){const r=getRappels().filter(x=>x.v.id===vid);if(r.some(x=>x.sev==='danger'))return'danger';if(r.some(x=>x.sev==='warn'))return'warn';return'ok';}
+function updatePremStar(){
+  const star=g('nb-prem');
+  if(star) star.classList.toggle('hidden',!isPremium());
+}
 function updateDot(){
   const hasUrgent=getRappels().some(x=>x.sev!=='ok');
   const now=new Date();
@@ -1520,7 +1633,7 @@ function vcDashHTML(v){
   const totalCost=es.reduce((s,e)=>s+(e.cout||0),0);
   return`<div class="vc ${st}" style="cursor:pointer" onclick="nav('vehs');expandVeh('${v.id}')">
     <div class="vc-main">
-      <div class="vc-ico">${v.emoji||'🚗'}</div>
+      <div style="width:36px;height:36px;border-radius:8px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
         <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
@@ -1589,11 +1702,11 @@ function vcFullHTML(v){
   const isExp=S.expandedVeh===v.id;
   const badge={ok:'badge-ok',warn:'badge-warn',danger:'badge-err'}[st];
 
-  let h=`<div class="vc ${st}${isExp?' expanded':''}" id="vc-${v.id}">
+  const premClass=isPremium()?" premium-user":"";let h=`<div class="vc ${st}${isExp?' expanded':''} ${premClass}" id="vc-${v.id}">
     <div class="vc-main" onclick="toggleVeh('${v.id}')">
-      <div class="vc-ico">${v.emoji||'🚗'}</div>
+      <div style="width:36px;height:36px;border-radius:8px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
-        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?` (${v.annee})`:''}</div>
+        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub">
           ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:3px;font-size:.72rem">${esc(v.immatriculation)}</span>`:''}
           ${ct?`<span class="badge ${ct.cls}">${ct.label}</span>`:''}
@@ -1696,6 +1809,32 @@ function vcFullHTML(v){
       h+=`<div style="font-size:.78rem;color:var(--txl)">Aucun document enregistré.</div>`;
     }
     h+=`</div>`;
+  }
+  if(isOwner){
+    const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===v.id);
+    const today2=new Date();today2.setHours(0,0,0,0);
+    h+='<div style="border-top:1px solid var(--border);padding:10px 14px 12px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+      +'<span style="font-size:.78rem;font-weight:700;color:var(--txm)">📌 RAPPELS ('+vrapps.length+')</span>'
+      +'<button class="sec-lnk" onclick="event.stopPropagation();openRappelCustomVeh(\''+v.id+'\');">+ Ajouter</button>'
+      +'</div>';
+    if(vrapps.length){
+      h+=vrapps.map(function(r){
+        const days2=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today2)/86400000):null;
+        const sev2=days2===null?'ok':days2<0?'danger':days2<=7?'warn':'ok';
+        const col2=sev2==='danger'?'var(--err)':sev2==='warn'?'var(--warn)':'var(--txm)';
+        const lbl2=days2===null?'Sans date':days2<0?'En retard':days2===0?"Aujourd'hui":'Dans '+days2+'j';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="event.stopPropagation();openRappelCustom(\''+r.id+'\');">'
+          +'<span style="font-size:.85rem">📌</span>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:.8rem;font-weight:600">'+esc(r.titre)+'</div>'
+          +(r.date_rappel?'<div style="font-size:.7rem;color:'+col2+'">'+lbl2+' · '+fmtDate(r.date_rappel)+'</div>':'')
+          +'</div></div>';
+      }).join('');
+    } else {
+      h+='<div style="font-size:.78rem;color:var(--txl)">Aucun rappel pour ce véhicule.</div>';
+    }
+    h+='</div>';
   }
   h+=`</div></div>`;
   return h;
@@ -1821,10 +1960,11 @@ async function fetchStationsAndPrices(el, url, fuelName, preloaded){
 }
 
 /* ══ RAPPELS CUSTOM ══ */
-function openRappelCustom(id){
+function openRappelCustomVeh(vid){openRappelCustom(null,vid);}
+function openRappelCustom(id,preVid){
   // Remplir select véhicules
   const sel=g('rcus-vid');
-  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${esc(v.marque)} ${esc(v.modele)}</option>`).join('');if(preVid)sel.value=preVid;
   g('rcus-id').value='';
   g('rcus-titre').value='';g('rcus-date').value='';g('rcus-desc').value='';
   g('rcus-rec').checked=false;g('rcus-int').value='';
@@ -1951,13 +2091,14 @@ function openDocument(vid, docId){
     g('doc-id').value=d.id;
     g('doc-vid').value=d.vehicle_id||'';
     g('doc-type').value=d.type||'';
-    adaptDocFields(false); // Créer les champs
-    // Remplir les valeurs
-    if(g('doc-nom'))g('doc-nom').value=d.nom||'';
-    if(g('doc-num'))g('doc-num').value=d.numero||'';
-    if(g('doc-emission'))g('doc-emission').value=d.date_emission||'';
-    if(g('doc-expiration'))g('doc-expiration').value=d.date_expiration||'';
-    g('doc-note').value=d.note||'';
+    adaptDocFields(false);
+    setTimeout(()=>{
+      if(g('doc-nom'))g('doc-nom').value=d.nom||'';
+      if(g('doc-num'))g('doc-num').value=d.numero||'';
+      if(g('doc-emission'))g('doc-emission').value=d.date_emission||'';
+      if(g('doc-expiration'))g('doc-expiration').value=d.date_expiration||'';
+      g('doc-note').value=d.note||'';
+    },10);
     g('btn-del-doc').classList.remove('hidden');
     g('mt-doc').textContent='Modifier le document';
   } else {
@@ -2145,7 +2286,7 @@ function renderEnt(){
     return;
   }
   // Picker véhicule
-  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div class="vpi-i">${v.emoji||'🚗'}</div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
+  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div style="width:28px;height:28px;border-radius:6px;background:${v.couleur_carte||v.emoji||'#2563EB'};margin:0 auto 3px;border:1px solid rgba(0,0,0,.08)"></div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
   h+=`<div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="ent-search" placeholder="Rechercher un entretien…" oninput="S.searchEnt=this.value;renderEnt()" value="${esc(S.searchEnt||'')}"></div>`;
   h+=`<div class="sort-bar"><span style="font-size:.72rem;color:var(--txm);font-weight:600">Trier :</span><button class="sort-btn ${S.sortEnt==='date'?'on':''}" onclick="S.sortEnt='date';renderEnt()">📅 Date</button><button class="sort-btn ${S.sortEnt==='cout'?'on':''}" onclick="S.sortEnt='cout';renderEnt()">💶 Coût</button><button class="sort-btn ${S.sortEnt==='km'?'on':''}" onclick="S.sortEnt='km';renderEnt()">📍 Km</button></div>`;
 
@@ -2173,7 +2314,7 @@ function renderEnt(){
   const total=ents.reduce((s,e)=>s+(e.cout||0),0);
   // Mini header véhicule sélectionné
   h+=`<div style="background:var(--primary);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;color:#fff;display:flex;align-items:center;gap:10px">
-    <div style="font-size:1.8rem">${v.emoji||'🚗'}</div>
+    <div style="width:40px;height:40px;border-radius:10px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
     <div style="flex:1">
       <div style="font-size:.95rem;font-weight:700">${esc(v.marque)} ${esc(v.modele)}</div>
       <div style="font-size:.76rem;opacity:.8">${fmtKm(v.km_actuel)} · ${ents.length} entretien${ents.length>1?'s':''} · ${fmtCout(total)}</div>
@@ -2417,7 +2558,7 @@ function cm(id){const el=g('mo-'+id);if(el){el.classList.remove('open');document
 function cfm(title,msg,cb){g('cfm-t').textContent=title;g('cfm-m').textContent=msg;S.cfmCb=cb;om('cfm');}
 function runCfm(){cm('cfm');if(S.cfmCb)S.cfmCb();S.cfmCb=null;}
 
-function openVeh(id){
+async function openVeh(id){
   g('v-id').value=id||'';
   if(id){
     const v=S.vehicles.find(x=>x.id===id);if(!v)return;
@@ -2426,9 +2567,18 @@ function openVeh(id){
     g('v-cb').value=v.carburant||'essence';g('v-im').value=v.immatriculation||'';
     g('v-km').value=v.km_actuel||'';g('v-da').value=v.date_achat||'';
     g('v-ct').value=v.ct_date||'';g('v-cl').value=v.couleur||'';
-    g('v-pw').value=v.puissance||'';g('v-em').value=v.emoji||'🚗';g('v-vn').value=v.vin||'';
+    g('v-pw').value=v.puissance||'';g('v-em').value=v.couleur_carte||v.emoji||'#2563EB';g('v-vn').value=v.vin||'';
     g('v-tr').value=v.transmission||'';g('v-trc').value=v.traction||'';
-    g('v-np').value=v.nb_portes||'';g('v-pkw').value=v.puissance_kw||'';
+    g('v-np').value=v.nb_portes||'';g('v-pkw').value=v.puissance_kw||'';g('v-np2').value=v.num_parc||'';g('v-co2').value=v.co2||'';
+    // Pre-remplir docs
+    await loadDocuments();
+    const vdocs=S.documents.filter(d=>d.vehicle_id===v.id);
+    const cg=vdocs.find(d=>d.type==='Carte grise');
+    const as2=vdocs.find(d=>d.type==='Assurance');
+    const ct2=vdocs.find(d=>d.type==='Contrôle technique');
+    if(cg){if(g('vdoc-cg-nom'))g('vdoc-cg-nom').value=cg.nom||'';if(g('vdoc-cg-emission'))g('vdoc-cg-emission').value=cg.date_emission||'';}
+    if(as2){if(g('vdoc-as-num'))g('vdoc-as-num').value=as2.numero||'';if(g('vdoc-as-emission'))g('vdoc-as-emission').value=as2.date_emission||'';}
+    if(ct2){if(g('vdoc-ct-nom'))g('vdoc-ct-nom').value=ct2.nom||'';if(g('vdoc-ct-emission'))g('vdoc-ct-emission').value=ct2.date_emission||'';}
     g('v-va').value=v.valeur_achat||'';g('v-vact').value=v.valeur_actuelle||'';
     g('v-as').value=v.assurance_echeance||'';g('v-ac').value=v.assurance_compagnie||'';
     // Ouvrir section avancée si des données existent
@@ -2440,7 +2590,7 @@ function openVeh(id){
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===v.emoji));
   }else{
     g('mt-veh').textContent='Ajouter un véhicule';
-    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac'].forEach(x=>{if(g(x))g(x).value='';});
+    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac','v-np2','v-co2','vdoc-cg-nom','vdoc-cg-emission','vdoc-as-num','vdoc-as-emission','vdoc-ct-nom','vdoc-ct-emission'].forEach(x=>{if(g(x))g(x).value='';});g('v-em').value='#2563EB';buildEpicker();
     const advBtn=g('adv-veh-btn'),advBody=g('adv-veh-body');if(advBtn&&advBody){advBtn.classList.remove('open');advBody.classList.remove('open');}
     g('v-cb').value='essence';g('v-em').value='🚗';
     g('btn-del-v').classList.add('hidden');
@@ -2525,11 +2675,27 @@ function renderProfil(){
   const totalVehs=S.vehicles.filter(v=>v.user_id===S.user.id).length;
   const totalEnts=S.ents.length;
   const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
+  const premiumBadge=isPremium()
+    ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>'
+    :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL)">Passer Premium →</div>';
 
-  el.innerHTML=`
+  const profilTopCard = isPremium() ? `
+  <div class="profil-card-premium">
+    <div class="prem-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
+    <div class="prem-name">${esc(name)||'Utilisateur'}</div>
+    <div class="prem-email">${esc(email)}</div>
+    <div class="prem-badge">⭐ Membre Premium</div>
+    <div class="prem-stats">
+      <div class="prem-stat"><div class="prem-stat-v">${totalVehs}</div><div class="prem-stat-l">Véhicules</div></div>
+      <div class="prem-stat"><div class="prem-stat-v">${totalEnts}</div><div class="prem-stat-l">Entretiens</div></div>
+      <div class="prem-stat"><div class="prem-stat-v" style="font-size:.9rem">${fmtCout(totalCout)}</div><div class="prem-stat-l">Coût total</div></div>
+      <div class="prem-stat"><div class="prem-stat-v">${S.vehicles.length}</div><div class="prem-stat-l">Partagés</div></div>
+    </div>
+  </div>` : `
   <div class="profil-card" style="text-align:center">
-    <div class="profil-avatar">${initial}</div>
+    <div class="profil-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
     <div style="font-size:1rem;font-weight:700;margin-bottom:4px">${esc(name)||'Utilisateur'}</div>
+    ${premiumBadge}
     <div class="profil-email">${esc(email)}</div>
     <div class="stats-adv" style="margin-top:16px">
       <div class="stat-adv"><div class="stat-adv-v">${totalVehs}</div><div class="stat-adv-l">Véhicules</div></div>
@@ -2537,7 +2703,9 @@ function renderProfil(){
       <div class="stat-adv"><div class="stat-adv-v" style="font-size:1rem">${fmtCout(totalCout)}</div><div class="stat-adv-l">Coût total</div></div>
       <div class="stat-adv"><div class="stat-adv-v">${S.vehicles.length}</div><div class="stat-adv-l">Dont partagés</div></div>
     </div>
-  </div>
+  </div>`;
+
+  el.innerHTML=`${profilTopCard}
 
   <div class="profil-card">
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Modifier le profil</div>
@@ -2757,30 +2925,73 @@ function onboardFinish(){
 /* ══ PANNEAU ADMIN ══ */
 const ADMIN_CODE = "AC2026admin";
 
-function initAdmin(){
-  if(window.location.hash !== "#admin") return;
-  window.history.replaceState({},document.title,window.location.pathname);
-  g("admin-code").value="";
-  g("admin-auth").classList.remove("hidden");
-  g("admin-panel").classList.add("hidden");
-  g("mo-admin").classList.add("open");
-  document.body.style.overflow="hidden";
+/* ══ FREEMIUM ══ */
+const GUMROAD_URL='/premium';
+const PLANS={
+  free:{max_vehs:1,max_ents:10},
+  famille:{max_vehs:3,max_ents:10},
+  pro:{max_vehs:Infinity,max_ents:Infinity}
+};
+function getUserPlan(){
+  const p=S.user?.user_metadata?.plan;
+  if(p==='pro'||S.user?.user_metadata?.is_premium===true)return 'pro';
+  if(p==='famille')return 'famille';
+  return 'free';
 }
-function closeAdmin(){
-  g("mo-admin").classList.remove("open");
-  document.body.style.overflow="";
-  g("admin-code").value="";
-  g("admin-email") && (g("admin-email").value="");
-  g("admin-status") && (g("admin-status").textContent="");
+function isPremium(){return getUserPlan()!=='free';}
+function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
+function getMaxEnts(){return PLANS[getUserPlan()].max_ents;}
+function showUpgradeModal(msg){
+  const existing=document.getElementById('mo-upgrade');
+  if(existing)existing.remove();
+  const mo=document.createElement('div');
+  mo.id='mo-upgrade';
+  mo.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)';
+  const box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.15);text-align:center';
+  const ico=document.createElement('div');
+  ico.style.cssText='font-size:1.5rem;margin-bottom:12px';
+  ico.textContent='🚀';
+  const ttl=document.createElement('div');
+  ttl.style.cssText='font-size:1rem;font-weight:800;margin-bottom:8px;letter-spacing:-.02em';
+  ttl.textContent='Passez à Premium';
+  const txt=document.createElement('div');
+  txt.style.cssText='font-size:.84rem;color:#475569;line-height:1.6;margin-bottom:20px';
+  txt.textContent=msg+' Débloquez les véhicules illimités, entretiens illimités, export PDF et plus — 4,99€/mois.';
+  const btnOk=document.createElement('a');
+  btnOk.href=GUMROAD_URL;
+  btnOk.target='_blank';
+  btnOk.style.cssText='display:block;padding:12px;background:#2563EB;color:#fff;border-radius:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;text-decoration:none';
+  btnOk.textContent='Voir Premium →';
+  const btnClose=document.createElement('button');
+  btnClose.style.cssText='display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:Outfit,sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569';
+  btnClose.textContent='Plus tard';
+  btnClose.onclick=()=>mo.remove();
+  box.appendChild(ico);
+  box.appendChild(ttl);
+  box.appendChild(txt);
+  box.appendChild(btnOk);
+  box.appendChild(btnClose);
+  mo.appendChild(box);
+  mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
+  document.body.appendChild(mo);
 }
-function checkAdminCode(){
-  if(g("admin-code").value === ADMIN_CODE){
-    g("admin-auth").classList.add("hidden");
-    g("admin-panel").classList.remove("hidden");
-  } else {
-    toast("Code incorrect.","e");
-    g("admin-code").value="";
-  }
+async function adminCallFunction(email, is_premium){
+  const st = g("admin-status");
+  st.textContent = "En cours...";
+  try{
+    const r = await fetch('/.netlify/functions/set-premium', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, is_premium, code: ADMIN_CODE})
+    });
+    const d = await r.json();
+    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
+    st.innerHTML = is_premium
+      ? '<span style=color:var(--ok)>✅ Premium activé !</span>'
+      : '<span style=color:var(--err)>❌ Premium révoqué.</span>';
+    toast(d.message, 's');
+  }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
 async function adminCheckUser(){
   const email = g("admin-email").value.trim().toLowerCase();
@@ -2788,29 +2999,30 @@ async function adminCheckUser(){
   const st = g("admin-status");
   st.textContent = "Recherche...";
   try{
-    const {data,error} = await sb.auth.admin.listUsers();
-    if(error){st.textContent="Erreur : "+error.message;return;}
-    const user = data.users.find(u=>u.email===email);
-    if(!user){st.textContent="❌ Utilisateur introuvable.";return;}
-    const isPremium = user.user_metadata?.is_premium === true;
-    st.innerHTML = isPremium ? "<span style=color:var(--ok)>✅ Premium actif</span>" : "<span style=color:var(--txm)>⭕ Compte gratuit</span>";
-  }catch(e){st.textContent="Erreur réseau.";}
+    const r = await fetch('/.netlify/functions/set-premium', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, is_premium: null, code: ADMIN_CODE})
+    });
+    const d = await r.json();
+    if(r.status === 404){st.innerHTML='<span style=color:var(--err)>❌ Utilisateur introuvable.</span>';return;}
+    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
+    st.innerHTML = d.is_premium
+      ? '<span style=color:var(--ok)>✅ Premium actif</span>'
+      : '<span style=color:var(--txm)>⭕ Compte gratuit</span>';
+  }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
 async function adminSetPremium(val){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
-  const st = g("admin-status");
-  st.textContent = "Mise à jour...";
-  try{
-    const {data,error} = await sb.auth.admin.listUsers();
-    if(error){st.textContent="Erreur : "+error.message;return;}
-    const user = data.users.find(u=>u.email===email);
-    if(!user){st.textContent="❌ Utilisateur introuvable.";return;}
-    const {error:e2} = await sb.auth.admin.updateUserById(user.id,{user_metadata:{...user.user_metadata,is_premium:val}});
-    if(e2){st.textContent="Erreur : "+e2.message;return;}
-    st.innerHTML = val ? "<span style=color:var(--ok)>✅ Premium activé !</span>" : "<span style=color:var(--err)>❌ Premium révoqué.</span>";
-    toast(val ? email+" est maintenant Premium !" : email+" repassé en gratuit.","s");
-  }catch(e){st.textContent="Erreur réseau.";}
+  await adminCallFunction(email, val);
+  // Si c'est le compte connecté, rafraîchir la session
+  if(S.user && S.user.email === email){
+    try{
+      const {data} = await sb.auth.refreshSession();
+      if(data?.user) S.user = data.user;
+    }catch(e){}
+  }
 }
 
 window.addEventListener('beforeinstallprompt', e => {
@@ -2842,7 +3054,48 @@ if (isIOS && !isStandalone) {
   document.getElementById('ios-hint')?.classList.add('visible');
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{init();initAdmin();});
+/* PANNEAU ADMIN */
+const ADMIN_CODE_CHECK='AC2026admin';
+/* Compteur taps avatar pour admin secret */
+let _adminTaps=0,_adminTimer=null;
+function handleAvatarTap(){
+  _adminTaps++;
+  if(_adminTimer) clearTimeout(_adminTimer);
+  _adminTimer=setTimeout(()=>{_adminTaps=0;},2000);
+  if(_adminTaps>=7){
+    _adminTaps=0;
+    g('admin-code').value='';
+    g('admin-auth').classList.remove('hidden');
+    g('admin-panel').classList.add('hidden');
+    g('admin-status').textContent='';
+    g('mo-admin').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+}
+function initAdmin(){
+  if(!window.location.hash.includes('admin')) return;
+  window.history.replaceState({},document.title,window.location.pathname);
+  g('admin-code').value='';
+  g('admin-auth').classList.remove('hidden');
+  g('admin-panel').classList.add('hidden');
+  g('admin-status').textContent='';
+  g('mo-admin').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAdmin(){
+  g('mo-admin').classList.remove('open');
+  document.body.style.overflow='';
+}
+function checkAdminCode(){
+  if(g('admin-code').value===ADMIN_CODE_CHECK){
+    g('admin-auth').classList.add('hidden');
+    g('admin-panel').classList.remove('hidden');
+  } else {
+    toast('Code incorrect.','e');
+    g('admin-code').value='';
+  }
+}
+document.addEventListener("DOMContentLoaded", ()=>{init();});
 </script>
 </body>
 </html>
