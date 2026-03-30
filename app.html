@@ -2548,12 +2548,15 @@ function renderProfil(){
   const totalVehs=S.vehicles.filter(v=>v.user_id===S.user.id).length;
   const totalEnts=S.ents.length;
   const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
+  const premiumBadge=isPremium()
+    ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>'
+    :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL,'_blank')">Passer Premium →</div>';
 
   el.innerHTML=`
   <div class="profil-card" style="text-align:center">
-    <div class="profil-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
+        <div class="profil-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
     <div style="font-size:1rem;font-weight:700;margin-bottom:4px">${esc(name)||'Utilisateur'}</div>
-    ${isPremium()?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>':'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL,'_blank')">Passer Premium →</div>'}
+    ${premiumBadge}
     <div class="profil-email">${esc(email)}</div>
     <div class="stats-adv" style="margin-top:16px">
       <div class="stat-adv"><div class="stat-adv-v">${totalVehs}</div><div class="stat-adv-l">Véhicules</div></div>
