@@ -651,42 +651,55 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <div class="mhdr"><div class="mtit" id="mt-ent">Ajouter un entretien</div><button class="mcls" onclick="cm('ent')">✕</button></div>
     <div class="mbdy">
       <input type="hidden" id="e-id">
+
+      <!-- ÉTAPE 1 : L'ESSENTIEL -->
       <div class="fg"><label class="fl">Véhicule</label><select class="fc" id="e-vh"></select></div>
       <div class="fg"><label class="fl">Type d'intervention</label><select class="fc" id="e-ty" onchange="onTyChange()"></select></div>
       <div class="fr">
-        <div class="fg"><label class="fl">Date</label><input class="fc" id="e-dt" type="date"></div>
-        <div class="fg"><label class="fl">Km</label><input class="fc" id="e-km" type="number" inputmode="numeric" placeholder="50000" min="0"></div>
+        <div class="fg">
+          <label class="fl">Date de l'entretien</label>
+          <input class="fc" id="e-dt" type="date">
+        </div>
+        <div class="fg">
+          <label class="fl">Km du véhicule</label>
+          <input class="fc" id="e-km" type="number" inputmode="numeric" placeholder="50000" min="0">
+          <div style="font-size:.68rem;color:var(--txm);margin-top:3px">Km au moment de l'entretien</div>
+        </div>
       </div>
       <div class="fr">
         <div class="fg"><label class="fl">Garage / Lieu</label><input class="fc" id="e-gr" placeholder="Nom du garage"></div>
         <div class="fg"><label class="fl">Coût (€)</label><input class="fc" id="e-ct" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01"></div>
       </div>
-      <div class="fg"><label class="fl">Notes</label><input class="fc" id="e-nt" placeholder="Pièces changées, observations…"></div>
-      <div class="fg">
-        <label class="fl">Date de l'échéance</label>
-        <input class="fc" id="e-rd" type="date" oninput="updateEntRappelPreview()">
-        <div style="font-size:.72rem;color:var(--txm);margin-top:3px">Date prévue de la prochaine intervention</div>
-      </div>
-      <div class="fg">
-        <label class="fl">Me rappeler avant</label>
+
+      <!-- ÉTAPE 2 : PROCHAINE ÉCHÉANCE -->
+      <div style="background:var(--primary-lt);border:1px solid var(--blue-mid,#BFDBFE);border-radius:var(--r-sm);padding:12px;margin-bottom:10px">
+        <div style="font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:8px">🔔 Prochaine échéance</div>
+        <div class="fg" style="margin-bottom:8px">
+          <label class="fl">Date prévue</label>
+          <input class="fc" id="e-rd" type="date" oninput="updateEntRappelPreview()">
+          <div id="e-echeance-hint" style="font-size:.68rem;color:var(--txm);margin-top:3px">Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur</div>
+        </div>
+        <div class="fg" style="margin-bottom:6px">
+          <label class="fl">Km prévu</label>
+          <input class="fc" id="e-rk" type="number" inputmode="numeric" placeholder="Ex: 60000" min="0">
+        </div>
+        <div style="font-size:.72rem;color:var(--txm);margin-bottom:6px">Me rappeler avant l'échéance :</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
-          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(7)">7j</button>
-          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(15)">15j</button>
-          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(30)">30j</button>
-          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(0)">Jour J</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(7)">7 jours</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(15)">15 jours</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(30)">30 jours</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(0)">Le jour J</button>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <input class="fc" type="number" id="e-avant" placeholder="Nb jours" min="0" style="max-width:120px" oninput="updateEntRappelPreview()">
-          <span style="font-size:.78rem;color:var(--txm)">jours avant</span>
-        </div>
-        <div id="e-rappel-preview" style="font-size:.72rem;color:var(--primary);margin-top:4px;font-weight:600"></div>
+        <div id="e-rappel-preview" style="font-size:.72rem;color:var(--primary);font-weight:600;min-height:16px"></div>
+        <input type="hidden" id="e-avant">
       </div>
-      <div class="fg"><label class="fl">Rappel km</label><input class="fc" id="e-rk" type="number" inputmode="numeric" placeholder="60000" min="0"></div>
-      <!-- SECTION AVANCÉE ENTRETIEN -->
+
+      <!-- ÉTAPE 3 : DÉTAILS (repliable) -->
       <button type="button" class="adv-toggle" id="adv-ent-btn" onclick="toggleAdv('ent')">
-        ℹ️ Détails supplémentaires <span class="adv-arrow">›</span>
+        ＋ Détails supplémentaires <span class="adv-arrow">›</span>
       </button>
       <div class="adv-body" id="adv-ent-body">
+        <div class="fg"><label class="fl">Notes</label><input class="fc" id="e-nt" placeholder="Observations, remarques…"></div>
         <div class="fg"><label class="fl">Pièces changées</label>
           <input class="fc" id="e-pc" placeholder="Filtre à huile, plaquettes avant…">
         </div>
@@ -2970,7 +2983,7 @@ function openEnt(id,forcedVid){
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';;
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
@@ -2987,6 +3000,8 @@ function toggleAdv(id){
 
 function setEntAvant(jours){
   g('e-avant').value=jours;
+  // Highlight bouton actif
+  document.querySelectorAll('#mo-ent .btn-s.btn-xs').forEach(b=>b.classList.remove('btn-p'));
   updateEntRappelPreview();
 }
 function updateEntRappelPreview(){
@@ -2997,13 +3012,27 @@ function updateEntRappelPreview(){
   if(!echeance){prev.textContent='';return;}
   const d=new Date(echeance);
   d.setDate(d.getDate()-avant);
-  prev.textContent=avant===0?'Rappel le jour de l\'échéance : '+fmtDate(echeance):'Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' ('+avant+'j avant)';
+  if(avant===0){
+    prev.textContent='✓ Rappel le jour de l\'échéance : '+fmtDate(echeance);
+  } else {
+    prev.textContent='✓ Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' — soit '+avant+'j avant l\'échéance';
+  }
 }
 function onTyChange(){
   const ti=getType(g('e-ty').value);
   const v=S.vehicles.find(x=>x.id===g('e-vh').value);
-  if(ti.imo&&!g('e-rd').value){const d=new Date();d.setMonth(d.getMonth()+ti.imo);g('e-rd').value=d.toISOString().split('T')[0];updateEntRappelPreview();}
-  if(ti.ikm&&v?.km_actuel&&!g('e-rk').value)g('e-rk').value=v.km_actuel+ti.ikm;
+  // Pre-remplir echeance
+  if(ti.imo){const d=new Date();d.setMonth(d.getMonth()+ti.imo);g('e-rd').value=d.toISOString().split('T')[0];updateEntRappelPreview();}
+  if(ti.ikm&&v?.km_actuel)g('e-rk').value=v.km_actuel+ti.ikm;
+  // Afficher le conseil
+  const hint=g('e-echeance-hint');
+  if(hint){
+    let txt='À titre indicatif, vérifiez votre carnet constructeur';
+    if(ti.imo&&ti.ikm)txt='Recommandé : tous les '+ti.imo+' mois ou +'+ti.ikm.toLocaleString('fr')+' km · '+txt;
+    else if(ti.imo)txt='Recommandé : tous les '+ti.imo+' mois · '+txt;
+    else if(ti.ikm)txt='Recommandé : tous les +'+ti.ikm.toLocaleString('fr')+' km · '+txt;
+    hint.textContent=txt;
+  }
 }
 
 function openInv(){
