@@ -436,6 +436,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
   </div>
 </div>
 
+<!-- MODAL ADMIN -->
+<div class="mo" id="mo-admin" style="z-index:900">
+  <div class="modal modal-c">
+    <div class="mhdr"><div class="mtit">🔐 Panneau Admin</div><button class="mcls" onclick="closeAdmin()">✕</button></div>
+    <div class="mbdy">
+      <div id="admin-auth">
+        <div class="fg"><label class="fl">Code secret</label><input class="fc" id="admin-code" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkAdminCode()"></div>
+        <button class="btn btn-p" style="width:100%" onclick="checkAdminCode()">Accéder</button>
+      </div>
+      <div id="admin-panel" class="hidden">
+        <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;font-size:.78rem;color:#92400E;margin-bottom:14px">⚠️ Panneau réservé à ladministrateur</div>
+        <div class="fg"><label class="fl">Email utilisateur</label><input class="fc" id="admin-email" type="email" placeholder="utilisateur@email.com"></div>
+        <div id="admin-status" style="font-size:.78rem;margin-bottom:10px;min-height:20px;color:var(--txm)"></div>
+        <div style="display:flex;gap:8px;margin-bottom:8px"><button class="btn btn-p btn-sm" style="flex:1" onclick="adminSetPremium(true)">✅ Activer Premium</button><button class="btn btn-d btn-sm" style="flex:1" onclick="adminSetPremium(false)">❌ Révoquer</button></div>
+        <button class="btn btn-s btn-sm" style="width:100%" onclick="adminCheckUser()">🔍 Vérifier statut</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Véhicule -->
 <div class="mo" id="mo-veh" onclick="if(event.target===this)cm('veh')">
   <div class="modal">
@@ -2733,6 +2753,66 @@ function onboardFinish(){
   setTimeout(()=>openVeh(),200);
 }
 
+
+/* ══ PANNEAU ADMIN ══ */
+const ADMIN_CODE = "AC2026admin";
+
+function initAdmin(){
+  if(window.location.hash !== "#admin") return;
+  window.history.replaceState({},document.title,window.location.pathname);
+  g("admin-code").value="";
+  g("admin-auth").classList.remove("hidden");
+  g("admin-panel").classList.add("hidden");
+  g("mo-admin").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function closeAdmin(){
+  g("mo-admin").classList.remove("open");
+  document.body.style.overflow="";
+  g("admin-code").value="";
+  g("admin-email") && (g("admin-email").value="");
+  g("admin-status") && (g("admin-status").textContent="");
+}
+function checkAdminCode(){
+  if(g("admin-code").value === ADMIN_CODE){
+    g("admin-auth").classList.add("hidden");
+    g("admin-panel").classList.remove("hidden");
+  } else {
+    toast("Code incorrect.","e");
+    g("admin-code").value="";
+  }
+}
+async function adminCheckUser(){
+  const email = g("admin-email").value.trim().toLowerCase();
+  if(!email) return toast("Entrez un email.","e");
+  const st = g("admin-status");
+  st.textContent = "Recherche...";
+  try{
+    const {data,error} = await sb.auth.admin.listUsers();
+    if(error){st.textContent="Erreur : "+error.message;return;}
+    const user = data.users.find(u=>u.email===email);
+    if(!user){st.textContent="❌ Utilisateur introuvable.";return;}
+    const isPremium = user.user_metadata?.is_premium === true;
+    st.innerHTML = isPremium ? "<span style=color:var(--ok)>✅ Premium actif</span>" : "<span style=color:var(--txm)>⭕ Compte gratuit</span>";
+  }catch(e){st.textContent="Erreur réseau.";}
+}
+async function adminSetPremium(val){
+  const email = g("admin-email").value.trim().toLowerCase();
+  if(!email) return toast("Entrez un email.","e");
+  const st = g("admin-status");
+  st.textContent = "Mise à jour...";
+  try{
+    const {data,error} = await sb.auth.admin.listUsers();
+    if(error){st.textContent="Erreur : "+error.message;return;}
+    const user = data.users.find(u=>u.email===email);
+    if(!user){st.textContent="❌ Utilisateur introuvable.";return;}
+    const {error:e2} = await sb.auth.admin.updateUserById(user.id,{user_metadata:{...user.user_metadata,is_premium:val}});
+    if(e2){st.textContent="Erreur : "+e2.message;return;}
+    st.innerHTML = val ? "<span style=color:var(--ok)>✅ Premium activé !</span>" : "<span style=color:var(--err)>❌ Premium révoqué.</span>";
+    toast(val ? email+" est maintenant Premium !" : email+" repassé en gratuit.","s");
+  }catch(e){st.textContent="Erreur réseau.";}
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _installPrompt = e;
@@ -2762,7 +2842,7 @@ if (isIOS && !isStandalone) {
   document.getElementById('ios-hint')?.classList.add('visible');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener("DOMContentLoaded", ()=>{init();initAdmin();});
 </script>
 </body>
 </html>
