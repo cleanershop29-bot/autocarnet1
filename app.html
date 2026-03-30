@@ -662,10 +662,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <div class="fg"><label class="fl">Coût (€)</label><input class="fc" id="e-ct" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01"></div>
       </div>
       <div class="fg"><label class="fl">Notes</label><input class="fc" id="e-nt" placeholder="Pièces changées, observations…"></div>
-      <div class="fr">
-        <div class="fg"><label class="fl">Rappel date</label><input class="fc" id="e-rd" type="date"></div>
-        <div class="fg"><label class="fl">Rappel km</label><input class="fc" id="e-rk" type="number" inputmode="numeric" placeholder="60000" min="0"></div>
+      <div class="fg">
+        <label class="fl">Date de l'échéance</label>
+        <input class="fc" id="e-rd" type="date" oninput="updateEntRappelPreview()">
+        <div style="font-size:.72rem;color:var(--txm);margin-top:3px">Date prévue de la prochaine intervention</div>
       </div>
+      <div class="fg">
+        <label class="fl">Me rappeler avant</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(7)">7j</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(15)">15j</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(30)">30j</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setEntAvant(0)">Jour J</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input class="fc" type="number" id="e-avant" placeholder="Nb jours" min="0" style="max-width:120px" oninput="updateEntRappelPreview()">
+          <span style="font-size:.78rem;color:var(--txm)">jours avant</span>
+        </div>
+        <div id="e-rappel-preview" style="font-size:.72rem;color:var(--primary);margin-top:4px;font-weight:600"></div>
+      </div>
+      <div class="fg"><label class="fl">Rappel km</label><input class="fc" id="e-rk" type="number" inputmode="numeric" placeholder="60000" min="0"></div>
       <!-- SECTION AVANCÉE ENTRETIEN -->
       <button type="button" class="adv-toggle" id="adv-ent-btn" onclick="toggleAdv('ent')">
         ℹ️ Détails supplémentaires <span class="adv-arrow">›</span>
@@ -1471,7 +1487,14 @@ async function saveEnt(){
     garage:g('e-gr').value.trim()||null,
     cout:parseFloat(g('e-ct').value)||null,
     note:g('e-nt').value.trim()||null,
-    rappel_date:g('e-rd').value||null,
+    rappel_date:(()=>{
+      const ech=g('e-rd').value;
+      const av=parseInt(g('e-avant').value)||0;
+      if(!ech)return null;
+      if(av===0)return ech;
+      const d=new Date(ech);d.setDate(d.getDate()-av);
+      return d.toISOString().split('T')[0];
+    })(),
     rappel_km:parseInt(g('e-rk').value)||null,
     pieces:g('e-pc').value.trim()||null,
     technicien:g('e-tech').value.trim()||null,
@@ -2947,7 +2970,7 @@ function openEnt(id,forcedVid){
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar'].forEach(x=>{if(g(x))g(x).value='';});
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';;
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
@@ -2962,10 +2985,24 @@ function toggleAdv(id){
   body.classList.toggle('open');
 }
 
+function setEntAvant(jours){
+  g('e-avant').value=jours;
+  updateEntRappelPreview();
+}
+function updateEntRappelPreview(){
+  const echeance=g('e-rd').value;
+  const avant=parseInt(g('e-avant').value)||0;
+  const prev=g('e-rappel-preview');
+  if(!prev)return;
+  if(!echeance){prev.textContent='';return;}
+  const d=new Date(echeance);
+  d.setDate(d.getDate()-avant);
+  prev.textContent=avant===0?'Rappel le jour de l\'échéance : '+fmtDate(echeance):'Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' ('+avant+'j avant)';
+}
 function onTyChange(){
   const ti=getType(g('e-ty').value);
   const v=S.vehicles.find(x=>x.id===g('e-vh').value);
-  if(ti.imo&&!g('e-rd').value){const d=new Date();d.setMonth(d.getMonth()+ti.imo);g('e-rd').value=d.toISOString().split('T')[0];}
+  if(ti.imo&&!g('e-rd').value){const d=new Date();d.setMonth(d.getMonth()+ti.imo);g('e-rd').value=d.toISOString().split('T')[0];updateEntRappelPreview();}
   if(ti.ikm&&v?.km_actuel&&!g('e-rk').value)g('e-rk').value=v.km_actuel+ti.ikm;
 }
 
