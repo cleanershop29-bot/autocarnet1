@@ -2550,7 +2550,7 @@ function renderProfil(){
   const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   const premiumBadge=isPremium()
     ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>'
-    :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL,'_blank')">Passer Premium →</div>';
+    :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL)">Passer Premium →</div>';
 
   el.innerHTML=`
   <div class="profil-card" style="text-align:center">
