@@ -2854,6 +2854,13 @@ async function adminSetPremium(val){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
   await adminCallFunction(email, val);
+  // Si c'est le compte connecté, rafraîchir la session
+  if(S.user && S.user.email === email){
+    try{
+      const {data} = await sb.auth.refreshSession();
+      if(data?.user) S.user = data.user;
+    }catch(e){}
+  }
 }
 
 window.addEventListener('beforeinstallprompt', e => {
