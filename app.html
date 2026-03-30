@@ -752,14 +752,32 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <div class="mhdr"><div class="mtit" id="mt-rcus">Rappel personnalisé</div><button class="mcls" onclick="cm('rcus')">✕</button></div>
     <div class="mbdy">
       <input type="hidden" id="rcus-id">
-      <div class="fg"><label class="fl">Titre *</label><input class="fc" id="rcus-titre" placeholder="Ex: Renouveler assurance"></div>
+      <div class="fg"><label class="fl">Titre *</label><input class="fc" id="rcus-titre" placeholder="Ex: Renouveler assurance, Révision prévue…"></div>
       <div class="fg"><label class="fl">Véhicule</label>
         <select class="fc" id="rcus-vid">
           <option value="">— Tous les véhicules —</option>
         </select>
       </div>
-      <div class="fg"><label class="fl">Date du rappel</label><input class="fc" type="date" id="rcus-date"></div>
-      <div class="fg"><label class="fl">Description</label><textarea class="fc" id="rcus-desc" rows="2" placeholder="Détails optionnels..."></textarea></div>
+      <div class="fg">
+        <label class="fl">Date de l'échéance</label>
+        <input class="fc" type="date" id="rcus-date">
+        <div style="font-size:.72rem;color:var(--txm);margin-top:4px">La date réelle de l'intervention ou de l'expiration</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Me rappeler avant</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+          <button type="button" class="btn btn-s btn-xs" onclick="setRappelAvant(7)">7 jours</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setRappelAvant(15)">15 jours</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setRappelAvant(30)">30 jours</button>
+          <button type="button" class="btn btn-s btn-xs" onclick="setRappelAvant(0)">Le jour J</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input class="fc" type="number" id="rcus-avant" placeholder="Nb de jours" min="0" style="max-width:130px" oninput="updateRappelDatePreview()">
+          <div style="font-size:.78rem;color:var(--txm)">jours avant</div>
+        </div>
+        <div id="rcus-date-preview" style="font-size:.72rem;color:var(--primary);margin-top:4px;font-weight:600"></div>
+      </div>
+      <div class="fg"><label class="fl">Description</label><textarea class="fc" id="rcus-desc" rows="2" placeholder="Détails optionnels…"></textarea></div>
       <div class="fg" style="display:flex;align-items:center;gap:10px">
         <input type="checkbox" id="rcus-rec" onchange="g('rcus-int-wrap').style.display=this.checked?'block':'none'">
         <label for="rcus-rec" style="font-size:.85rem">Rappel récurrent</label>
@@ -2047,6 +2065,23 @@ async function fetchStationsAndPrices(el, url, fuelName, preloaded){
 }
 
 /* ══ RAPPELS CUSTOM ══ */
+function setRappelAvant(jours){
+  g('rcus-avant').value=jours;
+  updateRappelDatePreview();
+}
+function updateRappelDatePreview(){
+  const echeance=g('rcus-date').value;
+  const avant=parseInt(g('rcus-avant').value)||0;
+  const prev=g('rcus-date-preview');
+  if(!echeance){prev.textContent='';return;}
+  const d=new Date(echeance);
+  d.setDate(d.getDate()-avant);
+  if(avant===0){
+    prev.textContent='Rappel le jour de l\'échéance : '+fmtDate(echeance);
+  } else {
+    prev.textContent='Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' ('+avant+'j avant)';
+  }
+}
 function openRappelCustomVeh(vid){openRappelCustom(null,vid);}
 function openRappelCustom(id,preVid){
   // Remplir select véhicules
@@ -2054,7 +2089,8 @@ function openRappelCustom(id,preVid){
   sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${esc(v.marque)} ${esc(v.modele)}</option>`).join('');if(preVid)sel.value=preVid;
   g('rcus-id').value='';
   g('rcus-titre').value='';g('rcus-date').value='';g('rcus-desc').value='';
-  g('rcus-rec').checked=false;g('rcus-int').value='';
+  g('rcus-rec').checked=false;g('rcus-int').value='';g('rcus-avant').value='';
+  if(g('rcus-date-preview'))g('rcus-date-preview').textContent='';
   g('rcus-int-wrap').style.display='none';
   g('btn-del-rcus').classList.add('hidden');
   g('mt-rcus').textContent='Nouveau rappel';
@@ -2064,7 +2100,9 @@ function openRappelCustom(id,preVid){
     g('rcus-id').value=r.id;
     g('rcus-titre').value=r.titre||'';
     g('rcus-vid').value=r.vehicle_id||'';
-    g('rcus-date').value=r.date_rappel||'';
+    g('rcus-date').value=r.echeance_date||r.date_rappel||'';
+    if(r.avant_jours!==undefined&&r.avant_jours!==null){g('rcus-avant').value=r.avant_jours;}
+    updateRappelDatePreview();
     g('rcus-desc').value=r.description||'';
     g('rcus-rec').checked=!!r.recurrent;
     g('rcus-int').value=r.intervalle_mois||'';
@@ -2078,12 +2116,21 @@ async function saveRappelCustom(){
   const titre=g('rcus-titre').value.trim();
   if(!titre)return toast('Le titre est requis.','e');
   const id=g('rcus-id').value;
+  // Calculer date_rappel = echeance - avant_jours
+  const echeance=g('rcus-date').value||null;
+  const avant=parseInt(g('rcus-avant').value)||0;
+  let dateRappel=echeance;
+  if(echeance&&avant>0){
+    const d=new Date(echeance);
+    d.setDate(d.getDate()-avant);
+    dateRappel=d.toISOString().split('T')[0];
+  }
   const p={
     user_id:S.user.id,
     vehicle_id:g('rcus-vid').value||null,
     titre,
     description:g('rcus-desc').value.trim()||null,
-    date_rappel:g('rcus-date').value||null,
+    date_rappel:dateRappel,
     recurrent:g('rcus-rec').checked,
     intervalle_mois:parseInt(g('rcus-int').value)||null,
     statut:'actif'
