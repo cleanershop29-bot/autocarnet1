@@ -226,8 +226,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .mft{padding:10px 18px 20px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
 .mft-l{flex:1}
 .ep{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
-.epb{width:38px;height:38px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:1rem;cursor:pointer;transition:.15s}
-.epb.on{border-color:var(--primary);background:var(--primary-lt)}
+.epb{width:30px;height:30px;border:2px solid transparent;border-radius:50%;cursor:pointer;transition:.15s;flex-shrink:0}
+.epb.on{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-lt)}
+.ep{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px}
 
 /* EMPTY */
 .empty{text-align:center;padding:40px 16px;color:var(--txm)}
@@ -499,8 +500,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <div class="fg"><label class="fl">Couleur</label><input class="fc" id="v-cl" placeholder="Blanc nacré"></div>
         <div class="fg"><label class="fl">Puissance (ch)</label><input class="fc" id="v-pw" type="number" inputmode="numeric" placeholder="90" min="0"></div>
       </div>
-      <div class="fg"><label class="fl">Icône</label><div id="ep"></div><input type="hidden" id="v-em" value="🚗"></div>
+      <div class="fg"><label class="fl">Icône</label><div id="ep"></div><input type="hidden" id="v-em" value="#2563EB"></div>
       <div class="fg"><label class="fl">VIN (optionnel)</label><input class="fc" id="v-vn" placeholder="Numéro de châssis"></div>
+      <div class="fr">
+        <div class="fg"><label class="fl">N° de parc</label><input class="fc" id="v-np2" placeholder="Ex: VH-042"></div>
+        <div class="fg"><label class="fl">Rejet CO2 (g/km)</label><input class="fc" id="v-co2" type="number" inputmode="numeric" placeholder="120" min="0"></div>
+      </div>
       <!-- SECTION AVANCÉE VÉHICULE -->
       <button type="button" class="adv-toggle" id="adv-veh-btn" onclick="toggleAdv('veh')">
         ℹ️ Informations avancées <span class="adv-arrow">›</span>
@@ -966,8 +971,15 @@ function showApp(){
   }
 }
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
-function buildEpicker(){g('ep').innerHTML=EMOJIS.map(e=>`<button type="button" class="epb" data-em="${e}" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
-function pickEmoji(em){g('v-em').value=em;document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===em));}
+function buildEpicker(){
+  const colors=['#DC2626', '#EA580C', '#D97706', '#16A34A', '#0891B2', '#2563EB', '#7C3AED', '#DB2777', '#374151', '#78716C', '#FFFFFF'];
+  g('ep').innerHTML=colors.map(c=>`<button type="button" class="epb" data-em="${c}" onclick="pickColor('${c}')" style="background:${c};border-color:${c==='#FFFFFF'?'#E2E8F0':c}"></button>`).join('');
+}
+function pickColor(c){
+  g('v-em').value=c;
+  document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===c));
+}
+
 function initAutoComplete(){
   const mk=g('v-mk'),mo=g('v-mo'),mkl=g('dl-mk'),mol=g('dl-mo');
   if(!mk||!mkl)return;
@@ -1248,8 +1260,8 @@ async function saveVeh(){
   // Limite freemium véhicules
   if(!id&&!isPremium()){
     const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
-    if(myVehs.length>=FREE_MAX_VEHS){
-      return showUpgradeModal('Vous avez atteint la limite de '+FREE_MAX_VEHS+' véhicule en version gratuite.');
+    if(myVehs.length>=getMaxVehs()){
+      return showUpgradeModal('Vous avez atteint la limite de véhicules de votre plan.');
     }
   }
   const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
@@ -1262,7 +1274,7 @@ async function saveVeh(){
     ct_date:g('v-ct').value||null,
     couleur:g('v-cl').value.trim()||null,
     puissance:parseInt(g('v-pw').value)||null,
-    emoji:g('v-em').value||'🚗',
+    couleur_carte:g('v-em').value||'#2563EB',
     vin:g('v-vn').value.trim()||null,
     transmission:g('v-tr').value||null,
     traction:g('v-trc').value||null,
@@ -1272,6 +1284,8 @@ async function saveVeh(){
     valeur_actuelle:parseFloat(g('v-vact').value)||null,
     assurance_echeance:g('v-as').value||null,
     assurance_compagnie:g('v-ac').value.trim()||null,
+    num_parc:g('v-np2').value.trim()||null,
+    co2:parseInt(g('v-co2').value)||null,
   };
   let error;
   try{
@@ -1295,12 +1309,12 @@ async function delVeh(){
 function openKm(vid){
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   g('km-vid').value=vid;g('km-v').value=v.km_actuel||'';
-  g('km-h').textContent='Actuel : '+fmtKm(v.km_actuel);om('km');
+  g('km-h').textContent='Actuel : '+fmtKm(v.km_actuel)+(v.km_maj_date?' · Mis à jour le '+fmtDate(v.km_maj_date):'');om('km');
 }
 async function saveKm(){
   const vid=g('km-vid').value,km=parseInt(g('km-v').value);
   if(isNaN(km)||km<0)return toast('Kilométrage invalide.','e');
-  const{error}=await sb.from('vehicles').update({km_actuel:km}).eq('id',vid).eq('user_id',S.user.id);
+  const{error}=await sb.from('vehicles').update({km_actuel:km,km_maj_date:new Date().toISOString().split('T')[0]}).eq('id',vid).eq('user_id',S.user.id);
   if(error)return toast('Erreur : '+error.message,'e');
   toast('Kilométrage mis à jour !','s');cm('km');await loadVehs();renderView();
 }
@@ -1315,8 +1329,8 @@ async function saveEnt(){
   // Limite freemium entretiens
   if(!id&&!isPremium()){
     const myEnts=S.ents.filter(e=>S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
-    if(myEnts.length>=FREE_MAX_ENTS){
-      return showUpgradeModal('Vous avez atteint la limite de '+FREE_MAX_ENTS+' entretiens en version gratuite.');
+    if(myEnts.length>=getMaxEnts()){
+      return showUpgradeModal('Vous avez atteint la limite d\'entretiens de votre plan.');
     }
   }
   const km=parseInt(g('e-km').value)||null;
@@ -1558,7 +1572,7 @@ function vcDashHTML(v){
   const totalCost=es.reduce((s,e)=>s+(e.cout||0),0);
   return`<div class="vc ${st}" style="cursor:pointer" onclick="nav('vehs');expandVeh('${v.id}')">
     <div class="vc-main">
-      <div class="vc-ico">${v.emoji||'🚗'}</div>
+      <div style="width:36px;height:36px;border-radius:8px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
         <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
@@ -1629,9 +1643,9 @@ function vcFullHTML(v){
 
   const premClass=isPremium()?" premium-user":"";let h=`<div class="vc ${st}${isExp?' expanded':''} ${premClass}" id="vc-${v.id}">
     <div class="vc-main" onclick="toggleVeh('${v.id}')">
-      <div class="vc-ico">${v.emoji||'🚗'}</div>
+      <div style="width:36px;height:36px;border-radius:8px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
-        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?` (${v.annee})`:''}</div>
+        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub">
           ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:3px;font-size:.72rem">${esc(v.immatriculation)}</span>`:''}
           ${ct?`<span class="badge ${ct.cls}">${ct.label}</span>`:''}
@@ -1734,6 +1748,32 @@ function vcFullHTML(v){
       h+=`<div style="font-size:.78rem;color:var(--txl)">Aucun document enregistré.</div>`;
     }
     h+=`</div>`;
+  }
+  if(isOwner){
+    const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===v.id);
+    const today2=new Date();today2.setHours(0,0,0,0);
+    h+='<div style="border-top:1px solid var(--border);padding:10px 14px 12px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+      +'<span style="font-size:.78rem;font-weight:700;color:var(--txm)">📌 RAPPELS ('+vrapps.length+')</span>'
+      +'<button class="sec-lnk" onclick="event.stopPropagation();openRappelCustomVeh(\''+v.id+'\');">+ Ajouter</button>'
+      +'</div>';
+    if(vrapps.length){
+      h+=vrapps.map(function(r){
+        const days2=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today2)/86400000):null;
+        const sev2=days2===null?'ok':days2<0?'danger':days2<=7?'warn':'ok';
+        const col2=sev2==='danger'?'var(--err)':sev2==='warn'?'var(--warn)':'var(--txm)';
+        const lbl2=days2===null?'Sans date':days2<0?'En retard':days2===0?"Aujourd'hui":'Dans '+days2+'j';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="event.stopPropagation();openRappelCustom(\''+r.id+'\');">'
+          +'<span style="font-size:.85rem">📌</span>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:.8rem;font-weight:600">'+esc(r.titre)+'</div>'
+          +(r.date_rappel?'<div style="font-size:.7rem;color:'+col2+'">'+lbl2+' · '+fmtDate(r.date_rappel)+'</div>':'')
+          +'</div></div>';
+      }).join('');
+    } else {
+      h+='<div style="font-size:.78rem;color:var(--txl)">Aucun rappel pour ce véhicule.</div>';
+    }
+    h+='</div>';
   }
   h+=`</div></div>`;
   return h;
@@ -1859,10 +1899,11 @@ async function fetchStationsAndPrices(el, url, fuelName, preloaded){
 }
 
 /* ══ RAPPELS CUSTOM ══ */
-function openRappelCustom(id){
+function openRappelCustomVeh(vid){openRappelCustom(null,vid);}
+function openRappelCustom(id,preVid){
   // Remplir select véhicules
   const sel=g('rcus-vid');
-  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${esc(v.marque)} ${esc(v.modele)}</option>`).join('');if(preVid)sel.value=preVid;
   g('rcus-id').value='';
   g('rcus-titre').value='';g('rcus-date').value='';g('rcus-desc').value='';
   g('rcus-rec').checked=false;g('rcus-int').value='';
@@ -1989,13 +2030,14 @@ function openDocument(vid, docId){
     g('doc-id').value=d.id;
     g('doc-vid').value=d.vehicle_id||'';
     g('doc-type').value=d.type||'';
-    adaptDocFields(false); // Créer les champs
-    // Remplir les valeurs
-    if(g('doc-nom'))g('doc-nom').value=d.nom||'';
-    if(g('doc-num'))g('doc-num').value=d.numero||'';
-    if(g('doc-emission'))g('doc-emission').value=d.date_emission||'';
-    if(g('doc-expiration'))g('doc-expiration').value=d.date_expiration||'';
-    g('doc-note').value=d.note||'';
+    adaptDocFields(false);
+    setTimeout(()=>{
+      if(g('doc-nom'))g('doc-nom').value=d.nom||'';
+      if(g('doc-num'))g('doc-num').value=d.numero||'';
+      if(g('doc-emission'))g('doc-emission').value=d.date_emission||'';
+      if(g('doc-expiration'))g('doc-expiration').value=d.date_expiration||'';
+      g('doc-note').value=d.note||'';
+    },10);
     g('btn-del-doc').classList.remove('hidden');
     g('mt-doc').textContent='Modifier le document';
   } else {
@@ -2183,7 +2225,7 @@ function renderEnt(){
     return;
   }
   // Picker véhicule
-  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div class="vpi-i">${v.emoji||'🚗'}</div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
+  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div style="width:28px;height:28px;border-radius:6px;background:${v.couleur_carte||v.emoji||'#2563EB'};margin:0 auto 3px;border:1px solid rgba(0,0,0,.08)"></div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
   h+=`<div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="ent-search" placeholder="Rechercher un entretien…" oninput="S.searchEnt=this.value;renderEnt()" value="${esc(S.searchEnt||'')}"></div>`;
   h+=`<div class="sort-bar"><span style="font-size:.72rem;color:var(--txm);font-weight:600">Trier :</span><button class="sort-btn ${S.sortEnt==='date'?'on':''}" onclick="S.sortEnt='date';renderEnt()">📅 Date</button><button class="sort-btn ${S.sortEnt==='cout'?'on':''}" onclick="S.sortEnt='cout';renderEnt()">💶 Coût</button><button class="sort-btn ${S.sortEnt==='km'?'on':''}" onclick="S.sortEnt='km';renderEnt()">📍 Km</button></div>`;
 
@@ -2211,7 +2253,7 @@ function renderEnt(){
   const total=ents.reduce((s,e)=>s+(e.cout||0),0);
   // Mini header véhicule sélectionné
   h+=`<div style="background:var(--primary);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;color:#fff;display:flex;align-items:center;gap:10px">
-    <div style="font-size:1.8rem">${v.emoji||'🚗'}</div>
+    <div style="width:40px;height:40px;border-radius:10px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
     <div style="flex:1">
       <div style="font-size:.95rem;font-weight:700">${esc(v.marque)} ${esc(v.modele)}</div>
       <div style="font-size:.76rem;opacity:.8">${fmtKm(v.km_actuel)} · ${ents.length} entretien${ents.length>1?'s':''} · ${fmtCout(total)}</div>
@@ -2464,9 +2506,9 @@ function openVeh(id){
     g('v-cb').value=v.carburant||'essence';g('v-im').value=v.immatriculation||'';
     g('v-km').value=v.km_actuel||'';g('v-da').value=v.date_achat||'';
     g('v-ct').value=v.ct_date||'';g('v-cl').value=v.couleur||'';
-    g('v-pw').value=v.puissance||'';g('v-em').value=v.emoji||'🚗';g('v-vn').value=v.vin||'';
+    g('v-pw').value=v.puissance||'';g('v-em').value=v.couleur_carte||v.emoji||'#2563EB';g('v-vn').value=v.vin||'';
     g('v-tr').value=v.transmission||'';g('v-trc').value=v.traction||'';
-    g('v-np').value=v.nb_portes||'';g('v-pkw').value=v.puissance_kw||'';
+    g('v-np').value=v.nb_portes||'';g('v-pkw').value=v.puissance_kw||'';g('v-np2').value=v.num_parc||'';g('v-co2').value=v.co2||'';
     g('v-va').value=v.valeur_achat||'';g('v-vact').value=v.valeur_actuelle||'';
     g('v-as').value=v.assurance_echeance||'';g('v-ac').value=v.assurance_compagnie||'';
     // Ouvrir section avancée si des données existent
@@ -2478,7 +2520,7 @@ function openVeh(id){
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===v.emoji));
   }else{
     g('mt-veh').textContent='Ajouter un véhicule';
-    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac'].forEach(x=>{if(g(x))g(x).value='';});
+    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac','v-np2','v-co2'].forEach(x=>{if(g(x))g(x).value='';});g('v-em').value='#2563EB';buildEpicker();
     const advBtn=g('adv-veh-btn'),advBody=g('adv-veh-body');if(advBtn&&advBody){advBtn.classList.remove('open');advBody.classList.remove('open');}
     g('v-cb').value='essence';g('v-em').value='🚗';
     g('btn-del-v').classList.add('hidden');
@@ -2815,12 +2857,20 @@ const ADMIN_CODE = "AC2026admin";
 
 /* ══ FREEMIUM ══ */
 const GUMROAD_URL='/premium';
-const FREE_MAX_VEHS=1;
-const FREE_MAX_ENTS=10;
-
-function isPremium(){
-  return S.user?.user_metadata?.is_premium===true;
+const PLANS={
+  free:{max_vehs:1,max_ents:10},
+  famille:{max_vehs:3,max_ents:10},
+  pro:{max_vehs:Infinity,max_ents:Infinity}
+};
+function getUserPlan(){
+  const p=S.user?.user_metadata?.plan;
+  if(p==='pro'||S.user?.user_metadata?.is_premium===true)return 'pro';
+  if(p==='famille')return 'famille';
+  return 'free';
 }
+function isPremium(){return getUserPlan()!=='free';}
+function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
+function getMaxEnts(){return PLANS[getUserPlan()].max_ents;}
 function showUpgradeModal(msg){
   const existing=document.getElementById('mo-upgrade');
   if(existing)existing.remove();
