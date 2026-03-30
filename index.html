@@ -34,8 +34,9 @@ nav.scrolled{box-shadow:0 2px 14px rgba(0,0,0,.07)}
 .nav-cta:active{background:var(--blue-dk)}
 
 /* REVEAL */
-.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
-.rv.up{opacity:1;transform:none}
+.rv{opacity:1;transform:none}
+.rv.anim{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.rv.anim.up{opacity:1;transform:none}
 .rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.4s}
 
 /* HERO */
@@ -265,10 +266,10 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
       <a href="/app.html" class="p-cta full">Commencer gratuitement</a>
     </div>
     <div class="price-c hot rv d1">
-      <div class="p-badge">✨ Bientôt</div>
+      <div class="p-badge">⭐ Populaire</div>
       <div class="p-plan">Premium</div>
-      <div class="p-amt" style="font-size:1.2rem;padding-top:8px;color:var(--txm)">À venir</div>
-      <div class="p-per">&nbsp;</div>
+      <div class="p-amt">4<sup>,99€</sup></div>
+      <div class="p-per">par mois · annulable à tout moment</div>
       <ul class="p-feats">
         <li><span class="ck">✓</span>Véhicules illimités</li>
         <li><span class="ck">✓</span>Entretiens illimités</li>
@@ -277,6 +278,7 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
         <li><span class="ck">✓</span>Export PDF & CSV</li>
         <li><span class="ck">✓</span>Notifications push</li>
       </ul>
+      <a href="https://autocarnet.gumroad.com/l/lvoes" target="_blank" class="p-cta full">Passer Premium →</a>
     </div>
   </div>
 </section>
@@ -301,10 +303,10 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <a href="#pricing">Tarifs</a>
   </div>
   <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
-  <div class="footer-email"><a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a></div>
+  <div class="footer-email"><a href="/cdn-cgi/l/email-protection#85e6eaebf1e4e6f1c5e4f0f1eae6e4f7ebe0f1abe3f7"><span class="__cf_email__" data-cfemail="9bf8f4f5effaf8efdbfaeeeff4f8fae9f5feefb5fde9">[email&#160;protected]</span></a></div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function(){
   var h=window.location.hash;
   if(h.includes('type=recovery')||h.includes('access_token')){
@@ -331,16 +333,18 @@ window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);
 },{passive:true});
 
-// Reveal observer — threshold bas pour mobile
+// Reveal observer
 const rvEls=document.querySelectorAll('.rv');
-const rvObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){e.target.classList.add('up');rvObs.unobserve(e.target);}
-  });
-},{threshold:0.05,rootMargin:'0px 0px -20px 0px'});
-rvEls.forEach(el=>rvObs.observe(el));
-// Filet de sécurité 1.5s
-setTimeout(()=>rvEls.forEach(el=>el.classList.add('up')),1500);
+requestAnimationFrame(()=>{
+  rvEls.forEach(el=>el.classList.add('anim'));
+  const rvObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('up');rvObs.unobserve(e.target);}
+    });
+  },{threshold:0.05,rootMargin:'0px 0px -20px 0px'});
+  rvEls.forEach(el=>rvObs.observe(el));
+  setTimeout(()=>rvEls.forEach(el=>el.classList.add('up')),1500);
+});
 
 // Compteurs animés
 function animCounter(el){

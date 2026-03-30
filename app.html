@@ -1225,6 +1225,13 @@ async function saveVeh(){
   const marque=g('v-mk').value.trim(),modele=g('v-mo').value.trim();
   if(!marque)return toast('La marque est requise.','e');
   if(!modele)return toast('Le modèle est requis.','e');
+  // Limite freemium véhicules
+  if(!id&&!isPremium()){
+    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+    if(myVehs.length>=FREE_MAX_VEHS){
+      return showUpgradeModal('Vous avez atteint la limite de '+FREE_MAX_VEHS+' véhicule en version gratuite.');
+    }
+  }
   const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
   const payload={marque,modele,
     annee:parseInt(g('v-yr').value)||null,
@@ -1285,6 +1292,13 @@ async function saveEnt(){
   if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type d\'intervention.','e');
   if(!date)return toast('La date est requise.','e');
+  // Limite freemium entretiens
+  if(!id&&!isPremium()){
+    const myEnts=S.ents.filter(e=>S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
+    if(myEnts.length>=FREE_MAX_ENTS){
+      return showUpgradeModal('Vous avez atteint la limite de '+FREE_MAX_ENTS+' entretiens en version gratuite.');
+    }
+  }
   const km=parseInt(g('e-km').value)||null;
   const p={user_id:S.user.id,vehicle_id,type,date,km,
     garage:g('e-gr').value.trim()||null,
@@ -2757,6 +2771,32 @@ function onboardFinish(){
 /* ══ PANNEAU ADMIN ══ */
 const ADMIN_CODE = "AC2026admin";
 
+/* ══ FREEMIUM ══ */
+const GUMROAD_URL='https://autocarnet.gumroad.com/l/lvoes';
+const FREE_MAX_VEHS=1;
+const FREE_MAX_ENTS=10;
+
+function isPremium(){
+  return S.user?.user_metadata?.is_premium===true;
+}
+function showUpgradeModal(msg){
+  // Modale upgrade dédiée — sans réutiliser mo-cfm
+  const existing = document.getElementById('mo-upgrade');
+  if(existing) existing.remove();
+  const mo = document.createElement('div');
+  mo.id = 'mo-upgrade';
+  mo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)';
+  mo.innerHTML = '<div style="background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.15)">'
+    +'<div style="font-size:1.5rem;text-align:center;margin-bottom:12px">🚀</div>'
+    +'<div style="font-size:1rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.02em">Passez à Premium</div>'
+    +'<div style="font-size:.84rem;color:#475569;text-align:center;line-height:1.6;margin-bottom:20px">'+msg+' Débloquez les véhicules illimités, entretiens illimités, export PDF et plus — 4,99€/mois.</div>'
+    +'<a href="'+GUMROAD_URL+'" target="_blank" style="display:block;text-align:center;padding:12px;background:#2563EB;color:#fff;border-radius:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;text-decoration:none">Voir Premium →</a>'
+    +'<button onclick="document.getElementById('mo-upgrade').remove()" style="display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:Outfit,sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569">Plus tard</button>'
+    +'</div>';
+  document.body.appendChild(mo);
+  mo.addEventListener('click', e => { if(e.target === mo) mo.remove(); });
+}
+
 function initAdmin(){
   if(window.location.hash !== "#admin") return;
   window.history.replaceState({},document.title,window.location.pathname);
@@ -2782,35 +2822,46 @@ function checkAdminCode(){
     g("admin-code").value="";
   }
 }
+async function adminCallFunction(email, is_premium){
+  const st = g("admin-status");
+  st.textContent = "En cours...";
+  try{
+    const r = await fetch('/.netlify/functions/set-premium', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, is_premium, code: ADMIN_CODE})
+    });
+    const d = await r.json();
+    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
+    st.innerHTML = is_premium
+      ? '<span style=color:var(--ok)>✅ Premium activé !</span>'
+      : '<span style=color:var(--err)>❌ Premium révoqué.</span>';
+    toast(d.message, 's');
+  }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
+}
 async function adminCheckUser(){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
   const st = g("admin-status");
   st.textContent = "Recherche...";
   try{
-    const {data,error} = await sb.auth.admin.listUsers();
-    if(error){st.textContent="Erreur : "+error.message;return;}
-    const user = data.users.find(u=>u.email===email);
-    if(!user){st.textContent="❌ Utilisateur introuvable.";return;}
-    const isPremium = user.user_metadata?.is_premium === true;
-    st.innerHTML = isPremium ? "<span style=color:var(--ok)>✅ Premium actif</span>" : "<span style=color:var(--txm)>⭕ Compte gratuit</span>";
-  }catch(e){st.textContent="Erreur réseau.";}
+    const r = await fetch('/.netlify/functions/set-premium', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, is_premium: null, code: ADMIN_CODE})
+    });
+    const d = await r.json();
+    if(r.status === 404){st.innerHTML='<span style=color:var(--err)>❌ Utilisateur introuvable.</span>';return;}
+    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
+    st.innerHTML = d.is_premium
+      ? '<span style=color:var(--ok)>✅ Premium actif</span>'
+      : '<span style=color:var(--txm)>⭕ Compte gratuit</span>';
+  }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
 async function adminSetPremium(val){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
-  const st = g("admin-status");
-  st.textContent = "Mise à jour...";
-  try{
-    const {data,error} = await sb.auth.admin.listUsers();
-    if(error){st.textContent="Erreur : "+error.message;return;}
-    const user = data.users.find(u=>u.email===email);
-    if(!user){st.textContent="❌ Utilisateur introuvable.";return;}
-    const {error:e2} = await sb.auth.admin.updateUserById(user.id,{user_metadata:{...user.user_metadata,is_premium:val}});
-    if(e2){st.textContent="Erreur : "+e2.message;return;}
-    st.innerHTML = val ? "<span style=color:var(--ok)>✅ Premium activé !</span>" : "<span style=color:var(--err)>❌ Premium révoqué.</span>";
-    toast(val ? email+" est maintenant Premium !" : email+" repassé en gratuit.","s");
-  }catch(e){st.textContent="Erreur réseau.";}
+  await adminCallFunction(email, val);
 }
 
 window.addEventListener('beforeinstallprompt', e => {
