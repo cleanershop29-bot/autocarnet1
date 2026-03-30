@@ -435,7 +435,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 <div id="app-screen" class="hidden">
   <div class="appbar">
     <div class="appbar-logo">🚗 AutoCarnet</div>
-    <button class="btn-out" onclick="doOut()">Déconnexion</button>
+
   </div>
   <div class="content">
     <div class="tab on" id="t-dash"><div id="d-ctn"></div></div>
@@ -917,7 +917,6 @@ function vib(ms=30){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
   document.addEventListener('touchend',async()=>{
     if(triggered){
       await loadAll();renderView();
-      toast('Actualisé ✓','s');
     }
     startY=0;pulling=false;triggered=false;
   },{passive:true});
@@ -1523,13 +1522,21 @@ async function saveEnt(){
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
   g('e-id').value='';
   cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
+  if(S.expandedVeh&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
+    openVehDetail(S.expandedVeh);
+  }
 }
 async function delEnt(){
   const id=g('e-id').value;if(!id)return;
   cfm('Supprimer cet entretien ?','Action irréversible.',async()=>{
     const{error}=await sb.from('entretiens').delete().eq('id',id).eq('user_id',S.user.id);
     if(error)return toast('Erreur : '+error.message,'e');
-    toast('Entretien supprimé.','i');cm('ent');await loadEnts();renderView();
+    toast('Entretien supprimé.','i');cm('ent');
+    await loadEnts();renderView();
+    // Rafraichir modal detail si ouverte
+    if(S.expandedVeh&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
+      openVehDetail(S.expandedVeh);
+    }
   });
 }
 
@@ -1725,7 +1732,7 @@ function renderDash(){
   h+=S.vehicles.map(v=>vcDashHTML(v)).join('');
   const recent=[...S.ents].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
   if(recent.length){
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Derniers entretiens</span><button class="sec-lnk" onclick="nav('ent')">Tout voir</button></div>`;
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Derniers entretiens</span></div>`;
     h+=recent.map(e=>eiHTML(e,S.vehicles.find(v=>v.id===e.vehicle_id))).join('');
   }
   el.innerHTML=h;
@@ -1902,7 +1909,7 @@ function vcFullHTML(v){
         ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
       </div>`;
     }).join('');
-    if(es.length>3)h+=`<button class="btn btn-s btn-sm" style="width:100%;margin-top:4px" onclick="event.stopPropagation();S.selVeh='${v.id}';nav('ent')">Voir tous les entretiens (${es.length})</button>`;
+    if(es.length>3)h+=`<button class="btn btn-s btn-sm" style="width:100%;margin-top:4px" onclick="event.stopPropagation();openVehDetail('${v.id}')">Voir tous les entretiens (${es.length})</button>`;
     h+=`</div>`;
   }
 
@@ -2487,7 +2494,7 @@ function openVehDetail(vid){
   h+=statsHTML(vid);
   // Derniers entretiens
   if(es.length){
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Derniers entretiens</span><button class="sec-lnk" onclick="S.selVeh='${vid}';closeVehDetail();nav('ent')">Tout voir</button></div>`;
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span>${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}</div>`;
     h+=es.slice(0,5).map(e=>{
       const ti=getType(e.type);
       return`<div class="ei-inline" onclick="openEnt('${e.id}')">
@@ -2559,6 +2566,35 @@ function openVehDetail(vid){
   document.body.style.overflow='hidden';
 }
 
+function showAllEntsInDetail(vid){
+  const el=g('vd-content');
+  if(!el)return;
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  const es=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  let h=`<button class="btn btn-s btn-sm" style="margin-bottom:12px" onclick="openVehDetail('${vid}')">← Retour</button>`;
+  h+=`<button class="btn btn-p btn-sm" style="margin-bottom:12px;margin-left:8px" onclick="openEnt(null,'${vid}')">+ Entretien</button>`;
+  if(!es.length){h+=`<div class="empty"><span class="empty-i">📋</span><div class="empty-t">Aucun entretien</div></div>`;}
+  else{
+    h+=es.map(e=>{
+      const ti=getType(e.type);
+      return`<div class="ei" onclick="openEnt('${e.id}')">
+        <div class="ei-ico">${ti.ico}</div>
+        <div class="ei-inf">
+          <div class="ei-ty">${esc(ti.label)}</div>
+          <div class="ei-mt">
+            <span>${fmtDate(e.date)}</span>
+            ${e.km?`<span>${fmtKm(e.km)}</span>`:''}
+            ${e.garage?`<span>📍 ${esc(e.garage)}</span>`:''}
+          </div>
+          ${e.note?`<div class="ei-nt">${esc(e.note)}</div>`:''}
+        </div>
+        ${e.cout?`<div class="ei-ct">${fmtCout(e.cout)}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+  el.innerHTML=h;
+  el.scrollTop=0;
+}
 function closeVehDetail(){
   document.getElementById('mo-veh-detail').classList.remove('open');
   document.body.style.overflow='';
@@ -3103,8 +3139,11 @@ function renderProfil(){
   </div>
 
   <div class="profil-card">
-    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--err);margin-bottom:12px">Zone danger</div>
-    <button class="btn btn-d btn-sm" onclick="deleteAccount()">🗑 Supprimer mon compte</button>
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Compte</div>
+    <div class="g6">
+      <button class="btn btn-s btn-sm" onclick="doOut()">🚪 Déconnexion</button>
+      <button class="btn btn-d btn-sm" onclick="deleteAccount()">🗑 Supprimer mon compte</button>
+    </div>
   </div>`;
 }
 
