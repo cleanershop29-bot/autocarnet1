@@ -163,9 +163,32 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <p class="hero-p">Fini les carnets papier perdus. Centralisez vos véhicules, entretiens et rappels dans une app gratuite, installable sur votre téléphone.</p>
   </div>
   <div class="rv d3">
-    <div class="hero-btns">
-      <a href="/app.html" class="btn-main">📱 Commencer gratuitement</a>
-      <a href="#features" class="btn-ghost">Voir les fonctionnalités</a>
+    <div style="display:grid;grid-template-columns:1fr;gap:10px;max-width:420px;margin:0 auto 18px;text-align:left">
+      <div style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="flex:1">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin-bottom:3px">Gratuit</div>
+          <div style="font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:-.03em">0€</div>
+          <div style="font-size:.72rem;color:rgba(255,255,255,.55);margin-top:1px">1 véhicule · 10 entretiens</div>
+        </div>
+        <a href="/app.html" style="background:rgba(255,255,255,.2);color:#fff;padding:9px 14px;border-radius:9px;font-size:.8rem;font-weight:700;white-space:nowrap;text-decoration:none">Commencer</a>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1.5px solid #34D399;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="flex:1">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin-bottom:3px">👨‍👩‍👧 Famille</div>
+          <div style="font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:-.03em">1,99€<span style="font-size:.75rem;font-weight:600;opacity:.7">/mois</span></div>
+          <div style="font-size:.72rem;color:rgba(255,255,255,.55);margin-top:1px">3 véhicules · essai 15j gratuit</div>
+        </div>
+        <a href="/premium" style="background:#10B981;color:#fff;padding:9px 14px;border-radius:9px;font-size:.8rem;font-weight:700;white-space:nowrap;text-decoration:none">Essayer</a>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1.5px solid #FBBF24;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;position:relative">
+        <div style="position:absolute;top:-9px;left:14px;background:#FBBF24;color:#fff;font-size:.6rem;font-weight:800;padding:2px 9px;border-radius:20px">⭐ Recommandé</div>
+        <div style="flex:1">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin-bottom:3px">🚀 Pro</div>
+          <div style="font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:-.03em">4,99€<span style="font-size:.75rem;font-weight:600;opacity:.7">/mois</span></div>
+          <div style="font-size:.72rem;color:rgba(255,255,255,.55);margin-top:1px">Tout illimité · essai 15j gratuit</div>
+        </div>
+        <a href="/premium" style="background:#FBBF24;color:#fff;padding:9px 14px;border-radius:9px;font-size:.8rem;font-weight:700;white-space:nowrap;text-decoration:none">Essayer</a>
+      </div>
     </div>
     <div class="trust">
       <span>Sans pub</span>
@@ -248,10 +271,10 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
 <section class="pricing-sec" id="pricing">
   <div class="rv">
     <div class="sec-lbl">Tarifs</div>
-    <h2>Simple et transparent</h2>
-    <p style="font-size:.88rem;color:var(--txm);margin-top:8px;font-weight:500">Commencez gratuitement, sans engagement.</p>
+    <h2>Un plan pour chaque besoin</h2>
+    <p style="font-size:.88rem;color:var(--txm);margin-top:8px;font-weight:500">Essai gratuit 15 jours sur les plans payants. Annulable à tout moment.</p>
   </div>
-  <div class="pricing-grid">
+  <div style="max-width:560px;margin:24px auto 0;display:flex;flex-direction:column;gap:11px">
     <div class="price-c rv">
       <div class="p-plan">Gratuit</div>
       <div class="p-amt">0<sup>€</sup></div>
@@ -264,11 +287,24 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
       </ul>
       <a href="/app.html" class="p-cta full">Commencer gratuitement</a>
     </div>
-    <div class="price-c hot rv d1">
-      <div class="p-badge">⭐ Populaire</div>
-      <div class="p-plan">Premium</div>
+    <div class="price-c rv d1" style="border-color:#10B981">
+      <div class="p-badge" style="background:#10B981">👨‍👩‍👧 Famille</div>
+      <div class="p-plan">Famille</div>
+      <div class="p-amt">1<sup>,99€</sup></div>
+      <div class="p-per">par mois · essai 15 jours offert</div>
+      <ul class="p-feats">
+        <li><span class="ck">✓</span>3 véhicules</li>
+        <li><span class="ck">✓</span>10 entretiens par véhicule</li>
+        <li><span class="ck">✓</span>Rappels date & km</li>
+        <li><span class="ck">✓</span>PWA installable</li>
+      </ul>
+      <a href="/premium" class="p-cta full" style="background:#10B981">Essayer 15 jours →</a>
+    </div>
+    <div class="price-c hot rv d2">
+      <div class="p-badge">⭐ Pro</div>
+      <div class="p-plan">Pro</div>
       <div class="p-amt">4<sup>,99€</sup></div>
-      <div class="p-per">par mois · annulable à tout moment</div>
+      <div class="p-per">par mois · essai 15 jours offert</div>
       <ul class="p-feats">
         <li><span class="ck">✓</span>Véhicules illimités</li>
         <li><span class="ck">✓</span>Entretiens illimités</li>
@@ -277,7 +313,7 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
         <li><span class="ck">✓</span>Export PDF & CSV</li>
         <li><span class="ck">✓</span>Notifications push</li>
       </ul>
-      <a href="/premium" target="_blank" class="p-cta full">Passer Premium →</a>
+      <a href="/premium" class="p-cta full">Essayer 15 jours →</a>
     </div>
   </div>
 </section>
@@ -302,10 +338,10 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <a href="#pricing">Tarifs</a>
   </div>
   <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
-  <div class="footer-email"><a href="/cdn-cgi/l/email-protection#85e6eaebf1e4e6f1c5e4f0f1eae6e4f7ebe0f1abe3f7"><span class="__cf_email__" data-cfemail="9bf8f4f5effaf8efdbfaeeeff4f8fae9f5feefb5fde9">[email&#160;protected]</span></a></div>
+  <div class="footer-email"><a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a></div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 (function(){
   var h=window.location.hash;
   if(h.includes('type=recovery')||h.includes('access_token')){
