@@ -3142,7 +3142,7 @@ function renderProfil(){
   const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   const premiumBadge=isPremium()
     ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>'
-    :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL)">Passer Premium →</div>';
+    :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL)">Voir les plans →</div>';
 
   const profilTopCard = isPremium() ? `
   <div class="profil-card-premium">
@@ -3395,6 +3395,8 @@ const ADMIN_CODE = "AC2026admin";
 
 /* ══ FREEMIUM ══ */
 const GUMROAD_URL='/premium';
+const GUMROAD_FAMILLE='https://autocarnet.gumroad.com/l/aspjzg';
+const GUMROAD_PRO='https://autocarnet.gumroad.com/l/lvoes';
 const PLANS={
   free:{max_vehs:1,max_ents:10},
   famille:{max_vehs:3,max_ents:10},
@@ -3425,12 +3427,17 @@ function showUpgradeModal(msg){
   ttl.textContent='Passez à Premium';
   const txt=document.createElement('div');
   txt.style.cssText='font-size:.84rem;color:#475569;line-height:1.6;margin-bottom:20px';
-  txt.textContent=msg+' Débloquez les véhicules illimités, entretiens illimités, export PDF et plus — 4,99€/mois.';
-  const btnOk=document.createElement('a');
-  btnOk.href=GUMROAD_URL;
-  btnOk.target='_blank';
-  btnOk.style.cssText='display:block;padding:12px;background:#2563EB;color:#fff;border-radius:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;text-decoration:none';
-  btnOk.textContent='Voir Premium →';
+  txt.textContent=msg+' Choisissez un plan adapté à vos besoins.';
+  const btnFam=document.createElement('a');
+  btnFam.href=GUMROAD_FAMILLE;
+  btnFam.target='_blank';
+  btnFam.style.cssText='display:block;padding:11px;background:#F0FDF4;border:1.5px solid #10B981;color:#065F46;border-radius:10px;font-size:.84rem;font-weight:700;margin-bottom:8px;text-decoration:none;text-align:center';
+  btnFam.innerHTML='&#x1F46A; Famille &mdash; 1,99&euro;/mois<br><small style="font-weight:500;opacity:.8">3 v&eacute;hicules &middot; Essai 7j</small>';
+  const btnPro=document.createElement('a');
+  btnPro.href=GUMROAD_PRO;
+  btnPro.target='_blank';
+  btnPro.style.cssText='display:block;padding:11px;background:#2563EB;color:#fff;border-radius:10px;font-size:.84rem;font-weight:700;margin-bottom:8px;text-decoration:none;text-align:center';
+  btnPro.innerHTML='&#x1F680; Pro &mdash; 4,99&euro;/mois<br><small style="font-weight:500;opacity:.85">Tout illimit&eacute; &middot; Essai 7j</small>';
   const btnClose=document.createElement('button');
   btnClose.style.cssText='display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:Outfit,sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569';
   btnClose.textContent='Plus tard';
@@ -3438,7 +3445,8 @@ function showUpgradeModal(msg){
   box.appendChild(ico);
   box.appendChild(ttl);
   box.appendChild(txt);
-  box.appendChild(btnOk);
+  box.appendChild(btnFam);
+  box.appendChild(btnPro);
   box.appendChild(btnClose);
   mo.appendChild(box);
   mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
