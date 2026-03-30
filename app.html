@@ -277,6 +277,35 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* UTILS */
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
+/* ONGLET RAPPELS - TABLEAU DE BORD */
+.rap-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.rap-counter{border-radius:var(--r);padding:12px;text-align:center;border:1px solid transparent}
+.rap-counter.danger{background:var(--err-bg);border-color:#FECACA}
+.rap-counter.warn{background:var(--warn-bg);border-color:#FDE68A}
+.rap-counter.ok{background:var(--ok-bg);border-color:#A7F3D0}
+.rap-count{font-size:1.6rem;font-weight:900;line-height:1}
+.rap-count.danger{color:var(--err)}
+.rap-count.warn{color:var(--warn)}
+.rap-count.ok{color:var(--ok)}
+.rap-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:3px;opacity:.8}
+.rap-filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.rap-filters::-webkit-scrollbar{display:none}
+.ri2{background:#fff;border-radius:var(--r);padding:12px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);margin-bottom:7px;cursor:pointer;border:1px solid var(--border);border-left:4px solid var(--border)}
+.ri2.danger{border-left-color:var(--err);background:var(--err-bg)}
+.ri2.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+.ri2.ok{border-left-color:var(--ok)}
+.ri2-veh{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.ri2-veh-color{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.ri2-veh-name{font-size:.7rem;font-weight:700;color:var(--txm)}
+.ri2-veh-parc{font-size:.65rem;color:var(--txl);background:var(--bg2);padding:1px 5px;border-radius:3px}
+.ri2-title{font-size:.87rem;font-weight:700}
+.ri2-meta{font-size:.72rem;color:var(--txm);margin-top:2px}
+.ri2-badge{flex-shrink:0;font-size:.7rem;font-weight:800;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.ri2-badge.danger{background:var(--err);color:#fff}
+.ri2-badge.warn{background:var(--warn);color:#fff}
+.ri2-badge.ok{background:var(--ok-bg);color:var(--ok);border:1px solid #A7F3D0}
+.ri2-done{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer}
+.ri2-done:active{background:var(--ok-bg)}
 .g6{display:flex;gap:6px;flex-wrap:wrap}
 /* SKELETON */
 .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:skel-anim 1.2s ease-in-out infinite;border-radius:8px}
@@ -1077,7 +1106,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -1648,6 +1677,7 @@ function vcFullHTML(v){
         <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub">
           ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:3px;font-size:.72rem">${esc(v.immatriculation)}</span>`:''}
+          ${v.num_parc?`<span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 6px;border-radius:3px;font-size:.72rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:''}
           ${ct?`<span class="badge ${ct.cls}">${ct.label}</span>`:''}
           ${st==='danger'?'<span class="badge badge-err">En retard</span>':st==='warn'?'<span class="badge badge-warn">À surveiller</span>':''}
           ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
@@ -2276,96 +2306,225 @@ function renderEnt(){
 function setFilter(f){S.filterEnt=f;renderEnt();}
 function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';renderEnt();}
 
+function getRapItem(r){
+  // Genere une carte rappel enrichie avec couleur vehicule + num_parc
+  const v=r.v;
+  const vColor=v?(v.couleur_carte||v.emoji||'#2563EB'):'#2563EB';
+  const isColor=vColor&&vColor.startsWith('#');
+  const vLabel=v?(esc(v.marque)+' '+esc(v.modele)):'';
+  const parcLabel=v&&v.num_parc?` <span class="ri2-veh-parc">${esc(v.num_parc)}</span>`:'';
+  const typeLabel=r.kind==='date'?'📅 Date':r.kind==='km'?'📍 Km':r.kind==='ct'?'✅ CT':r.kind==='assurance'?'🛡️ Assurance':'📌';
+  let action='';
+  if(r.e&&r.kind==='date'){
+    action=`<button class="ri2-done" title="Marquer comme traité" onclick="event.stopPropagation();markRapDone('${r.e.id}','${r.kind}')">✓</button>`;
+  }
+  return `<div class="ri2 ${r.sev}" onclick="${r.e?`openEnt('${r.e.id}')`:r.isCT?`openVeh('${v.id}')`:''}" >
+    <div style="flex:1;min-width:0">
+      <div class="ri2-veh">
+        ${isColor?`<div class="ri2-veh-color" style="background:${vColor}"></div>`:`<span style="font-size:.8rem">${vColor}</span>`}
+        <span class="ri2-veh-name">${vLabel}</span>${parcLabel}
+        <span style="font-size:.65rem;color:var(--txl);margin-left:2px">${typeLabel}</span>
+      </div>
+      <div class="ri2-title">${esc(r.ti.label)}</div>
+      <div class="ri2-meta">${r.kind==='km'&&r.left!==undefined?(r.left<=0?Math.abs(r.left).toLocaleString('fr')+' km dépassé':'Dans '+r.left.toLocaleString('fr')+' km'):(r.days!==undefined?(r.days<0?Math.abs(r.days)+'j de retard':r.days===0?"Aujourd'hui":'Dans '+r.days+'j'):'')}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+      <div class="ri2-badge ${r.sev}">${r.label}</div>
+      ${action}
+    </div>
+  </div>`;
+}
+
+function markRapDone(entId, kind){
+  if(kind==='date'){
+    cfm('Marquer comme traité ?','Le rappel date sera supprimé pour cet entretien.',async()=>{
+      await sb.from('entretiens').update({rappel_date:null}).eq('id',entId).eq('user_id',S.user.id);
+      await loadEnts();renderView();updateDot();toast('Rappel supprimé.','s');
+    });
+  }
+}
+
 function renderRap(){
   const el=g('rp-ctn');
-  const raps=getRappels();
-  // Seuil : afficher uniquement les rappels dans les 60 prochains jours
-  const urgent=raps.filter(r=>r.sev==='danger');
-  const soon=raps.filter(r=>r.sev==='warn'||(r.sev==='ok'&&r.days!==undefined&&r.days<=60));
-  const later=raps.filter(r=>r.sev==='ok'&&(r.days===undefined||r.days>60));
+  const today=new Date();today.setHours(0,0,0,0);
+
+  // Tous les rappels
+  const allRaps=getRappels();
+  const urgent=allRaps.filter(r=>r.sev==='danger');
+  const soon=allRaps.filter(r=>r.sev==='warn');
+  const later=allRaps.filter(r=>r.sev==='ok'&&r.days!==undefined&&r.days<=60);
+
+  // Rappels custom
+  const rcUrgent=S.rappels_custom.filter(r=>{
+    if(!r.date_rappel)return false;
+    return Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0;
+  });
+  const rcSoon=S.rappels_custom.filter(r=>{
+    if(!r.date_rappel)return false;
+    const d=Math.ceil((new Date(r.date_rappel)-today)/86400000);
+    return d>0&&d<=7;
+  });
+
+  // Docs expirants
+  const docsUrgent=S.documents.filter(d=>{
+    if(!d.date_expiration)return false;
+    return Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0;
+  });
+  const docsSoon=S.documents.filter(d=>{
+    if(!d.date_expiration)return false;
+    const d2=Math.ceil((new Date(d.date_expiration)-today)/86400000);
+    return d2>0&&d2<=30;
+  });
+
+  const totalDanger=urgent.length+rcUrgent.length+docsUrgent.length;
+  const totalWarn=soon.length+rcSoon.length+docsSoon.length;
+  const totalOk=Math.max(0,allRaps.filter(r=>r.sev==='ok').length);
+
+  // Filtre vehicule actif
+  if(!S.rapFilterVeh)S.rapFilterVeh='all';
+
   let h='';
-  if(!urgent.length&&!soon.length){
-    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 60 prochains jours.</p></div>`;
-  } else {
-    if(urgent.length){h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ En retard (${urgent.length})</span></div>`;h+=urgent.map(r=>riHTML(r)).join('');}
-    if(soon.length){h+=`<div class="sec-hdr mt12"><span class="sec-ttl">⏰ Dans les 60 jours (${soon.length})</span></div>`;h+=soon.map(r=>riHTML(r)).join('');}
+
+  // ── Compteurs ──
+  h+=`<div class="rap-counters">
+    <div class="rap-counter danger">
+      <div class="rap-count danger">${totalDanger}</div>
+      <div class="rap-lbl" style="color:var(--err)">En retard</div>
+    </div>
+    <div class="rap-counter warn">
+      <div class="rap-count warn">${totalWarn}</div>
+      <div class="rap-lbl" style="color:var(--warn)">Cette semaine</div>
+    </div>
+    <div class="rap-counter ok">
+      <div class="rap-count ok">${totalOk}</div>
+      <div class="rap-lbl" style="color:var(--ok)">À venir</div>
+    </div>
+  </div>`;
+
+  // ── Filtre véhicule ──
+  if(S.vehicles.length>1){
+    h+=`<div class="rap-filters">
+      <button class="flt ${S.rapFilterVeh==='all'?'on':''}" onclick="S.rapFilterVeh='all';renderRap()">Tous</button>`;
+    S.vehicles.forEach(v=>{
+      const col=v.couleur_carte||'#2563EB';
+      h+=`<button class="flt ${S.rapFilterVeh===v.id?'on':''}" onclick="S.rapFilterVeh='${v.id}';renderRap()" style="${S.rapFilterVeh===v.id?'':''}">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${col};margin-right:4px;vertical-align:middle"></span>${esc(v.marque)} ${esc(v.modele)}${v.num_parc?' · '+esc(v.num_parc):''}
+      </button>`;
+    });
+    h+=`</div>`;
   }
-  if(later.length){
+
+  // Bouton + rappel
+  h+=`<div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+    <button class="btn btn-p btn-sm" onclick="openRappelCustom()">+ Rappel</button>
+  </div>`;
+
+  // Filtrer par vehicule si besoin
+  function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
+  const urgentF=urgent.filter(filterV);
+  const soonF=soon.filter(filterV);
+  const laterF=allRaps.filter(r=>r.sev==='ok'&&filterV(r));
+
+  if(!urgentF.length&&!soonF.length&&!rcUrgent.length&&!rcSoon.length&&!docsUrgent.length&&!docsSoon.length){
+    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel urgent pour le moment.</p></div>`;
+  }
+
+  // En retard
+  if(urgentF.length||rcUrgent.length||docsUrgent.length){
+    h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ En retard (${urgentF.length+rcUrgent.length+docsUrgent.length})</span></div>`;
+    h+=urgentF.map(r=>getRapItem(r)).join('');
+    h+=rcUrgent.map(r=>{
+      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
+      const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      return`<div class="ri2 danger" onclick="openRappelCustom('${r.id}')">
+        <div style="flex:1;min-width:0">
+          <div class="ri2-veh"><div class="ri2-veh-color" style="background:${vColor}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}</span><span style="font-size:.65rem;color:var(--txl);margin-left:4px">📌 Custom</span></div>
+          <div class="ri2-title">${esc(r.titre)}</div>
+          <div class="ri2-meta">${r.date_rappel?fmtDate(r.date_rappel):''}</div>
+        </div>
+        <div class="ri2-badge danger">En retard</div>
+      </div>`;
+    }).join('');
+    h+=docsUrgent.map(d=>{
+      const v=S.vehicles.find(x=>x.id===d.vehicle_id);
+      const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      return`<div class="ri2 danger">
+        <div style="flex:1;min-width:0">
+          <div class="ri2-veh"><div class="ri2-veh-color" style="background:${vColor}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.65rem;color:var(--txl);margin-left:4px">📄 Document</span></div>
+          <div class="ri2-title">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
+          <div class="ri2-meta">Expiré le ${fmtDate(d.date_expiration)}</div>
+        </div>
+        <div class="ri2-badge danger">Expiré</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Cette semaine
+  if(soonF.length||rcSoon.length||docsSoon.length){
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">⏰ À venir (${soonF.length+rcSoon.length+docsSoon.length})</span></div>`;
+    h+=soonF.map(r=>getRapItem(r)).join('');
+    h+=rcSoon.map(r=>{
+      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
+      const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      const days=Math.ceil((new Date(r.date_rappel)-today)/86400000);
+      return`<div class="ri2 warn" onclick="openRappelCustom('${r.id}')">
+        <div style="flex:1;min-width:0">
+          <div class="ri2-veh"><div class="ri2-veh-color" style="background:${vColor}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}</span><span style="font-size:.65rem;color:var(--txl);margin-left:4px">📌 Custom</span></div>
+          <div class="ri2-title">${esc(r.titre)}</div>
+          <div class="ri2-meta">${fmtDate(r.date_rappel)}</div>
+        </div>
+        <div class="ri2-badge warn">Dans ${days}j</div>
+      </div>`;
+    }).join('');
+    h+=docsSoon.map(d=>{
+      const v=S.vehicles.find(x=>x.id===d.vehicle_id);
+      const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      const days=Math.ceil((new Date(d.date_expiration)-today)/86400000);
+      return`<div class="ri2 warn">
+        <div style="flex:1;min-width:0">
+          <div class="ri2-veh"><div class="ri2-veh-color" style="background:${vColor}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.65rem;color:var(--txl);margin-left:4px">📄 Document</span></div>
+          <div class="ri2-title">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
+          <div class="ri2-meta">Expire le ${fmtDate(d.date_expiration)}</div>
+        </div>
+        <div class="ri2-badge warn">Dans ${days}j</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Plus tard (accordion)
+  if(laterF.length){
     h+=`<div class="sec-hdr mt12" style="cursor:pointer" onclick="toggleLaterRaps(this)">
-      <span class="sec-ttl" style="color:var(--txl)">Plus tard (${later.length})</span>
+      <span class="sec-ttl" style="color:var(--txl)">Plus tard (${laterF.length})</span>
       <span style="font-size:.8rem;color:var(--txl)" id="later-arrow">▼ Voir</span>
     </div>
-    <div id="later-raps" class="hidden">${later.map(r=>riHTML(r)).join('')}</div>`;
+    <div id="later-raps" class="hidden">${laterF.map(r=>getRapItem(r)).join('')}</div>`;
   }
+
   // Garanties actives
-  const now=new Date();
+  const now2=new Date();
   const garanties=S.ents.filter(e=>{
     if(!e.garantie_mois||!e.date)return false;
     const exp=new Date(e.date);exp.setMonth(exp.getMonth()+e.garantie_mois);
-    return exp>now;
-  }).map(e=>{
-    const v=S.vehicles.find(x=>x.id===e.vehicle_id);
-    const exp=new Date(e.date);exp.setMonth(exp.getMonth()+e.garantie_mois);
-    const days=Math.ceil((exp-now)/86400000);
-    return{e,v,exp,days};
-  }).sort((a,b)=>a.days-b.days);
+    return exp>now2;
+  }).filter(e=>S.rapFilterVeh==='all'||e.vehicle_id===S.rapFilterVeh)
+    .map(e=>{
+      const v=S.vehicles.find(x=>x.id===e.vehicle_id);
+      const exp=new Date(e.date);exp.setMonth(exp.getMonth()+e.garantie_mois);
+      const days=Math.ceil((exp-now2)/86400000);
+      return{e,v,days};
+    }).sort((a,b)=>a.days-b.days);
   if(garanties.length){
     h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🛡️ Garanties actives (${garanties.length})</span></div>`;
     h+=garanties.map(({e,v,days})=>{
       const ti=getType(e.type);
-      return`<div class="ri" onclick="openEnt('${e.id}')">
-        <div class="ri-ico">🛡️</div>
-        <div class="ri-inf">
-          <div class="ri-ti">${esc(ti.label)}${e.pieces?' — '+esc(e.pieces):''}</div>
-          <div class="ri-mt">${v?v.emoji+'  '+esc(v.marque)+' '+esc(v.modele):''} · expire ${(()=>{const d=new Date(e.date);d.setMonth(d.getMonth()+e.garantie_mois);return fmtDate(d.toISOString());})()} </div>
+      const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      return`<div class="ri2 ok" onclick="openEnt('${e.id}')">
+        <div style="flex:1;min-width:0">
+          <div class="ri2-veh"><div class="ri2-veh-color" style="background:${vColor}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span></div>
+          <div class="ri2-title">🛡️ ${esc(ti.label)}${e.pieces?' — '+esc(e.pieces):''}</div>
+          <div class="ri2-meta">Expire le ${(()=>{const d=new Date(e.date);d.setMonth(d.getMonth()+e.garantie_mois);return fmtDate(d.toISOString());})()}</div>
         </div>
-        <div class="rbadge ok">Dans ${days}j</div>
-      </div>`;
-    }).join('');
-  }
-  // Rappels custom
-  if(S.rappels_custom.length){
-    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">📌 Rappels personnalisés</span><button class="sec-lnk" onclick="openRappelCustom()">+ Ajouter</button></div>`;
-    h+=S.rappels_custom.map(r=>{
-      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
-      const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-new Date())/86400000):null;
-      const sev=days===null?'ok':days<0?'danger':days<=30?'warn':'ok';
-      const label=days===null?'Sans date':days<0?'En retard':days===0?"Aujourd'hui":'Dans '+days+'j';
-      return`<div class="ri ${sev}" onclick="openRappelCustom('${r.id}')">
-        <div class="ri-ico">📌</div>
-        <div class="ri-inf">
-          <div class="ri-ti">${esc(r.titre)}</div>
-          <div class="ri-mt">${v?v.emoji+' '+esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}${r.recurrent?' · Récurrent':''}</div>
-        </div>
-        <div class="rbadge ${sev}">${label}</div>
-      </div>`;
-    }).join('');
-  } else {
-    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">📌 Rappels personnalisés</span><button class="sec-lnk" onclick="openRappelCustom()">+ Ajouter</button></div>`;
-    h+=`<div class="info-box">Ajoutez des rappels personnalisés indépendants des entretiens.</div>`;
-  }
-
-  // Documents expirants
-  const now2=new Date();
-  const docsExp=S.documents.filter(d=>{
-    if(!d.date_expiration)return false;
-    const days=Math.ceil((new Date(d.date_expiration)-now2)/86400000);
-    return days<=60;
-  }).sort((a,b)=>new Date(a.date_expiration)-new Date(b.date_expiration));
-  if(docsExp.length){
-    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">📄 Documents à renouveler</span></div>`;
-    h+=docsExp.map(d=>{
-      const v=S.vehicles.find(x=>x.id===d.vehicle_id);
-      const days=Math.ceil((new Date(d.date_expiration)-now2)/86400000);
-      const sev=days<0?'danger':days<=30?'warn':'ok';
-      const label=days<0?'Expiré':days===0?"Expire aujourd'hui":'Dans '+days+'j';
-      return`<div class="ri ${sev}">
-        <div class="ri-ico">📄</div>
-        <div class="ri-inf">
-          <div class="ri-ti">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
-          <div class="ri-mt">${v?v.emoji+' '+esc(v.marque)+' '+esc(v.modele):''} · Expire ${fmtDate(d.date_expiration)}</div>
-        </div>
-        <div class="rbadge ${sev}">${label}</div>
+        <div class="ri2-badge ok">Dans ${days}j</div>
       </div>`;
     }).join('');
   }
