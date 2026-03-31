@@ -3259,6 +3259,14 @@ function renderProfil(){
   </div>
 
   <div class="profil-card">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Notifications</div>
+    <div id="push-status-wrap" style="margin-bottom:10px;font-size:.8rem;color:var(--txm)">Vérification...</div>
+    <div class="g6" style="margin-bottom:0">
+      <button class="btn btn-p btn-sm" id="btn-push-on" onclick="registerPush()" style="display:none">🔔 Activer</button>
+      <button class="btn btn-s btn-sm" id="btn-push-off" onclick="unregisterPush().then(()=>renderProfil())" style="display:none">🔕 Désactiver</button>
+    </div>
+  </div>
+  <div class="profil-card">
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Compte</div>
     <div class="g6">
       <button class="btn btn-s btn-sm" onclick="doOut()">🚪 Déconnexion</button>
@@ -3281,6 +3289,24 @@ async function saveProfil(){
   S.user=( await sb.auth.getUser() ).data.user;
   toast('Profil mis à jour !','s');
   renderProfil();
+  // Verifier statut push
+  checkPushStatus().then(active=>{
+    const wrap=document.getElementById('push-status-wrap');
+    const btnOn=document.getElementById('btn-push-on');
+    const btnOff=document.getElementById('btn-push-off');
+    if(!wrap)return;
+    if(!('PushManager' in window)){
+      wrap.textContent='Notifications non supportées sur cet appareil.';
+      return;
+    }
+    if(active){
+      wrap.innerHTML='<span style="color:var(--ok)">🔔 Notifications activées</span>';
+      if(btnOff)btnOff.style.display='';
+    } else {
+      wrap.textContent='Recevez une alerte avant chaque échéance.';
+      if(btnOn)btnOn.style.display='';
+    }
+  });
 }
 
 async function deleteAccount(){
@@ -3479,6 +3505,79 @@ function getUserPlan(){
   return 'free';
 }
 function isPremium(){return getUserPlan()!=='free';}
+
+/* ══ PUSH NOTIFICATIONS ══ */
+const VAPID_PUBLIC_KEY='BE7KvvdlYZM6Ph2Eipldx1_wDUCrhSRn6FYP3CN9oQq6oRzR1T0UYecZ3xQMjruj0tTvWjwy54P7ZFJXyKNjW6Y';
+
+function urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const rawData=window.atob(base64);
+  const outputArray=new Uint8Array(rawData.length);
+  for(let i=0;i<rawData.length;++i)outputArray[i]=rawData.charCodeAt(i);
+  return outputArray;
+}
+
+async function registerPush(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)){
+    toast('Notifications non supportées sur cet appareil.','e');return;
+  }
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const existing=await reg.pushManager.getSubscription();
+    if(existing){
+      toast('Notifications déjà activées ✓','s');
+      await savePushSubscription(existing);
+      return;
+    }
+    const permission=await Notification.requestPermission();
+    if(permission!=='granted'){toast('Permission refusée.','e');return;}
+    const sub=await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    await savePushSubscription(sub);
+    toast('🔔 Notifications activées !','s');
+  }catch(e){
+    toast('Erreur : '+e.message,'e');
+  }
+}
+
+async function savePushSubscription(sub){
+  if(!S.user?.id)return;
+  const p=sub.toJSON();
+  await fetch('/.netlify/functions/save-push-sub',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({user_id:S.user.id,endpoint:p.endpoint,p256dh:p.keys?.p256dh,auth:p.keys?.auth})
+  });
+}
+
+async function unregisterPush(){
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    if(sub){
+      await sub.unsubscribe();
+      // Supprimer de Supabase
+      await fetch('/.netlify/functions/save-push-sub',{
+        method:'DELETE',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({user_id:S.user.id})
+      });
+      toast('Notifications désactivées.','i');
+    }
+  }catch(e){}
+}
+
+async function checkPushStatus(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window))return false;
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.getSubscription();
+    return !!sub;
+  }catch(e){return false;}
+}
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
 function getMaxEnts(){return PLANS[getUserPlan()].max_ents;}
 function isVehExces(vid){
