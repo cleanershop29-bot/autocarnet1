@@ -2051,7 +2051,7 @@ async function showCarburant(vid, carburant){
   el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">&#x1F4CD; Localisation...</div></div>';
 
   try{
-    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:15000,maximumAge:300000,enableHighAccuracy:false}));
     const lat=pos.coords.latitude.toFixed(6);
     const lon=pos.coords.longitude.toFixed(6);
     el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">&#x1F50D; Recherche...</div></div>';
@@ -2437,7 +2437,7 @@ async function searchCarburantPage(fuelName){
   if(S.carbCp){await searchCarburantPageWithCp(S.carbCp,fuelName);return;}
   el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">📍 Localisation en cours...</div>';
   try{
-    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:15000,maximumAge:300000,enableHighAccuracy:false}));
     S.carbLat=pos.coords.latitude.toFixed(6);
     S.carbLon=pos.coords.longitude.toFixed(6);
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche '+fuelName+'...</div>';
