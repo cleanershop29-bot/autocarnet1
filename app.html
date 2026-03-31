@@ -3201,6 +3201,9 @@ function renderProfil(){
     <div class="prem-name">${esc(name)||'Utilisateur'}</div>
     <div class="prem-email">${esc(email)}</div>
     <div class="prem-badge">${getUserPlan()==="famille"?"👨‍👩‍👧 Plan Famille":"🚀 Plan Pro"}</div>
+    ${S.user?.user_metadata?.gumroad_subscription_id
+      ?`<a href="https://app.gumroad.com/subscriptions/${S.user.user_metadata.gumroad_subscription_id}/manage" target="_blank" style="display:inline-block;margin-bottom:14px;padding:8px 16px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-size:.78rem;font-weight:600;color:#475569;text-decoration:none">⚙️ Gérer mon abonnement</a>`
+      :''}
     <div class="prem-stats">
       <div class="prem-stat"><div class="prem-stat-v">${totalVehs}</div><div class="prem-stat-l">Véhicules</div></div>
       <div class="prem-stat"><div class="prem-stat-v">${totalEnts}</div><div class="prem-stat-l">Entretiens</div></div>
