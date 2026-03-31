@@ -2359,32 +2359,58 @@ function closeCarburantPage(){
   document.body.style.overflow='';
 }
 
+// API officielle gouvernement
+const GOV_API='https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/prix-des-carburants-en-france-flux-instantane-v2/records';
+const FUEL_FIELD={Gazole:'prix_gazole',SP95:'prix_sp95',E10:'prix_e10',SP98:'prix_sp98',GPLc:'prix_gplc'};
+
+async function fetchGovApi(params){
+  const url=GOV_API+'?'+new URLSearchParams({limit:50,...params});
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('API '+r.status);
+  const d=await r.json();
+  return d.results||[];
+}
+
+function parseGovStations(records,fuelName){
+  const field=FUEL_FIELD[fuelName]||'prix_gazole';
+  return records.filter(s=>s[field]&&parseFloat(s[field])>0).map(s=>{
+    const prix=parseFloat(s[field]);
+    let majLabel='';
+    const majFields=['horaires_automate_24_24','prix_gazole_maj','prix_sp95_maj','prix_e10_maj','prix_sp98_maj'];
+    const majKey=field+'_maj';
+    const majRaw=s[majKey]||null;
+    if(majRaw){
+      try{
+        const d2=new Date(majRaw),now=new Date();
+        const diffH=Math.round((now-d2)/3600000);
+        if(diffH<1)majLabel='Rec\u00e9nt';
+        else if(diffH<24)majLabel='Il y a '+diffH+'h';
+        else{const diffD=Math.floor(diffH/24);majLabel='Il y a '+diffD+'j';}
+      }catch(e){}
+    }
+    return{nom:s.nom||'Station',adresse:s.adresse||'',ville:s.ville||'',cp:s.cp||'',prix,maj:majLabel};
+  }).sort((a,b)=>a.prix-b.prix).slice(0,8);
+}
+
 async function searchCarburantPage(fuelName){
   const el=document.getElementById('carb-page-ctn');
-  // Si on a déjà des coords GPS ou un CP, réutiliser directement
   if(S.carbLat&&S.carbLon){
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche '+fuelName+'...</div>';
     try{
-      const resp=await fetch('https://api.prix-carburants.2aaz.fr/stations/around/'+S.carbLat+','+S.carbLon+'/?m=15000');
-      const stations=await resp.json();
-      await renderCarburantPage(el, stations, fuelName);
+      const records=await fetchGovApi({where:"distance(geolocalisation,geom'POINT("+S.carbLon+" "+S.carbLat+")',15km)"});
+      await renderCarburantPage(el,records,fuelName);
     }catch(e){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--err)">Erreur réseau.</div>';}
     return;
   }
-  if(S.carbCp){
-    await searchCarburantPageWithCp(S.carbCp, fuelName);
-    return;
-  }
+  if(S.carbCp){await searchCarburantPageWithCp(S.carbCp,fuelName);return;}
   el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">📍 Localisation en cours...</div>';
   try{
     const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
     S.carbLat=pos.coords.latitude.toFixed(6);
     S.carbLon=pos.coords.longitude.toFixed(6);
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche '+fuelName+'...</div>';
-    const resp=await fetch('https://api.prix-carburants.2aaz.fr/stations/around/'+S.carbLat+','+S.carbLon+'/?m=15000');
-    const stations=await resp.json();
-    if(!stations||!stations.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">Aucune station trouvée dans un rayon de 15km.</div>';return;}
-    await renderCarburantPage(el, stations, fuelName);
+    const records=await fetchGovApi({where:"distance(geolocalisation,geom'POINT("+S.carbLon+" "+S.carbLat+")',15km)"});
+    await renderCarburantPage(el,records,fuelName);
   }catch(err){
     el.innerHTML='<div style="padding:16px">'
       +'<div style="font-size:.85rem;color:var(--txm);margin-bottom:12px">Géolocalisation indisponible. Entrez votre code postal :</div>'
@@ -2394,7 +2420,6 @@ async function searchCarburantPage(fuelName){
       +'</div></div>';
   }
 }
-
 async function searchCarburantPageByCp(){
   const cp=(document.getElementById('carb-page-cp')?.value||'').trim();
   if(!cp||cp.length<4)return toast('Code postal invalide','e');
@@ -2409,73 +2434,42 @@ async function searchCarburantPageByCp2(fuelName){
 }
 
 async function searchCarburantPageWithCp(cp, fuelName){
-  S.carbCp=cp; // Mémoriser le CP
+  S.carbCp=cp;
   const el=document.getElementById('carb-page-ctn');
   el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche...</div>';
   try{
-    let resp=await fetch('https://api.prix-carburants.2aaz.fr/stations/?postcode='+encodeURIComponent(cp));
-    let stations=await resp.json();
-    if(!stations||!stations.length){
-      const dept=cp.substring(0,2);
-      resp=await fetch('https://api.prix-carburants.2aaz.fr/stations/?dep='+dept);
-      stations=await resp.json();
-    }
-    if(!stations||!stations.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">Aucune station trouvée.</div>';return;}
-    await renderCarburantPage(el, stations, fuelName);
+    const dept=cp.substring(0,2);const records=await fetchGovApi({where:'cp like \''+dept+'%\''});
+    if(!records.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">Aucune station trouvée.</div>';return;}
+    await renderCarburantPage(el, records, fuelName);
   }catch(e){
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--err)">Erreur réseau.</div>';
   }
 }
 
-async function renderCarburantPage(el, stations, fuelName){
-  el.innerHTML='<div style="text-align:center;padding:12px;color:var(--txm);font-size:.85rem">Chargement des prix...</div>';
-  const top=stations.slice(0,10);
-  const details=await Promise.allSettled(
-    top.map(s=>fetch('https://api.prix-carburants.2aaz.fr/station/'+s.id).then(r=>r.json()))
-  );
-  const withPrices=details.map((r,i)=>{
-    if(r.status!=='fulfilled')return null;
-    const d=r.value;
-    const fuels=d.Fuels||[];
-    // Noms exacts API : Gazole | Super Sans Plomb 95 E10 | Super Sans Plomb 95 | Super Sans Plomb 98 | GPLc
-    const fuelNameMap={
-      'Gazole':'Gazole',
-      'SP95':'Super Sans Plomb 95',
-      'E10':'Super Sans Plomb 95 E10',
-      'SP98':'Super Sans Plomb 98',
-      'GPLc':'GPLc'
-    };
-    const exactName=fuelNameMap[fuelName]||fuelName;
-    const fuel=fuels.find(f=>f.name===exactName);
-    if(!fuel||!fuel.Price)return null;
-    const prixVal=fuel.Price.value||fuel.Price;
-    if(!prixVal)return null;
-    return{nom:d.name||top[i].name||'Station',adresse:(d.Address&&d.Address.street_line)||'',ville:(d.Address&&d.Address.city_line)||'',prix:parseFloat(prixVal),maj:(fuel.Update&&fuel.Update.text)||''};
-  }).filter(s=>s&&s.prix>0).sort((a,b)=>a.prix-b.prix).slice(0,8);
 
+async function renderCarburantPage(el,records,fuelName){
+  const withPrices=parseGovStations(records,fuelName);
   if(!withPrices.length){
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">Prix '+fuelName+' non disponibles pour ce secteur.</div>';
     return;
   }
-
-  // Boutons de changement de carburant
   const fuels2=['Gazole','SP95','E10','SP98'];
-  const fuelIcos={'Gazole':'🛢️','SP95':'⛽','E10':'🌿','SP98':'🔵'};
+  const fuelIcos={Gazole:'🛢️',SP95:'⛽',E10:'🌿',SP98:'🔵'};
   let h='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">'
-    +fuels2.map(function(f){return '<button class="btn btn-sm '+(fuelName===f?'btn-p':'btn-s')+'" onclick="searchCarburantPage(this.dataset.f)" data-f="'+f+'">'+fuelIcos[f]+' '+f+'</button>';}).join('')
+    +fuels2.map(f=>'<button class="btn btn-sm '+(fuelName===f?'btn-p':'btn-s')+'" onclick="searchCarburantPage(this.dataset.f)" data-f="'+f+'">'+fuelIcos[f]+' '+f+'</button>').join('')
     +'</div>';
   h+='<div class="sec-hdr" style="margin-top:0"><span class="sec-ttl">⛽ '+fuelName+' — '+withPrices.length+' stations</span></div>';
   h+='<div class="carb-list">';
-  withPrices.forEach(function(s,i){
-    const mapsUrl='https://maps.google.com?q='+encodeURIComponent(s.adresse+' '+s.ville);
-    h+='<a href="'+mapsUrl+'" target="_blank" style="text-decoration:none">'
+  withPrices.forEach((s,i)=>{
+    const q=encodeURIComponent(((s.adresse||'')+' '+(s.ville||'')).trim()||s.nom);
+    h+='<a href="https://maps.google.com?q='+q+'" target="_blank" style="text-decoration:none">'
       +'<div class="carb-item'+(i===0?' best':'')+'"><div class="carb-prix">'+s.prix.toFixed(3)+'</div>'
       +'<div class="carb-info"><div class="carb-nom">'+esc(s.nom)+'</div>'
-      +'<div class="carb-adresse">'+esc(s.adresse)+' '+esc(s.ville)+'</div>'
-      +(s.maj?'<div style="font-size:.65rem;color:var(--txl)">Mis à jour : '+esc(s.maj)+'</div>':'')
+      +'<div class="carb-adresse">'+esc(s.adresse)+(s.ville?' · '+esc(s.ville):'')+'</div>'
+      +(s.maj?'<div style="font-size:.65rem;color:var(--txl)">'+esc(s.maj)+'</div>':'')
       +'</div>'+(i===0?'<div style="font-size:.7rem;font-weight:700;color:var(--ok)">Moins cher</div>':'')+'</div></a>';
   });
-  h+='</div><div style="font-size:.72rem;color:var(--txl);margin-top:8px;text-align:center">📍 Appuyez sur une station pour ouvrir l\'itinéraire dans Maps · Source : prix-carburants.gouv.fr</div>';
+  h+='</div><div style="font-size:.72rem;color:var(--txl);margin-top:8px;text-align:center">Source officielle : data.gouv.fr</div>';
   el.innerHTML=h;
 }
 
