@@ -889,15 +889,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <button class="mcls" onclick="closeCarburantPage()">✕</button>
     </div>
     <div style="display:flex;gap:6px;width:100%;align-items:center">
-      <input id="carb-page-cp" class="fc" placeholder="Code postal" style="flex:1;max-width:130px;text-align:center;padding:7px 10px" maxlength="5">
-      <button class="btn btn-s btn-sm" onclick="searchCarburantPageByCp()">🔍 Chercher</button>
-      <button class="btn btn-s btn-sm" onclick="S.carbLat=null;S.carbLon=null;S.carbCp=null;searchCarburantPage('Gazole')">📍 GPS</button>
-      <div style="display:flex;gap:4px;margin-left:auto">
-        <button class="btn btn-xs" id="carb-btn-gazole" onclick="searchCarburantPage('Gazole')" style="padding:5px 7px;font-size:.72rem">🛢️</button>
-        <button class="btn btn-xs" id="carb-btn-sp95" onclick="searchCarburantPage('SP95')" style="padding:5px 7px;font-size:.72rem">⛽</button>
-        <button class="btn btn-xs" id="carb-btn-e10" onclick="searchCarburantPage('E10')" style="padding:5px 7px;font-size:.72rem">🌿</button>
-        <button class="btn btn-xs" id="carb-btn-sp98" onclick="searchCarburantPage('SP98')" style="padding:5px 7px;font-size:.72rem">🔵</button>
-      </div>
+      <input id="carb-page-cp" class="fc" placeholder="Code postal" style="flex:1;min-width:0;text-align:center;padding:7px 10px" maxlength="5">
+      <button class="btn btn-p btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="searchCarburantPageByCp()">🔍</button>
+      <button class="btn btn-s btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="S.carbLat=null;S.carbLon=null;S.carbCp=null;searchCarburantPage('Gazole')">📍</button>
+    </div>
+    <div style="display:flex;gap:6px;width:100%">
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="searchCarburantPage('Gazole')">🛢️ Gazole</button>
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="searchCarburantPage('SP95')">⛽ SP95</button>
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="searchCarburantPage('E10')">🌿 E10</button>
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="searchCarburantPage('SP98')">🔵 SP98</button>
     </div>
   </div>
   <div class="carb-page-content" id="carb-page-ctn">
