@@ -528,7 +528,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;font-size:.78rem;color:#92400E;margin-bottom:14px">⚠️ Panneau réservé à ladministrateur</div>
         <div class="fg"><label class="fl">Email utilisateur</label><input class="fc" id="admin-email" type="email" placeholder="utilisateur@email.com"></div>
         <div id="admin-status" style="font-size:.78rem;margin-bottom:10px;min-height:20px;color:var(--txm)"></div>
-        <div style="display:flex;gap:8px;margin-bottom:8px"><button class="btn btn-p btn-sm" style="flex:1" onclick="adminSetPremium(true)">✅ Activer Premium</button><button class="btn btn-d btn-sm" style="flex:1" onclick="adminSetPremium(false)">❌ Révoquer</button></div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <button class="btn btn-p btn-sm" style="flex:1;background:#10B981;border-color:#10B981" onclick="adminSetPlan('famille')">👨‍👩‍👧 Famille</button>
+          <button class="btn btn-p btn-sm" style="flex:1" onclick="adminSetPlan('pro')">🚀 Pro</button>
+          <button class="btn btn-d btn-sm" style="flex:1" onclick="adminSetPlan(null)">❌ Révoquer</button>
+        </div>
         <button class="btn btn-s btn-sm" style="width:100%" onclick="adminCheckUser()">🔍 Vérifier statut</button>
       </div>
     </div>
@@ -1101,7 +1105,9 @@ function showApp(){
   // Toast bienvenue Premium
   if(isPremium()&&!sessionStorage.getItem('ac_premium_welcomed')){
     sessionStorage.setItem('ac_premium_welcomed','1');
-    setTimeout(()=>toast('🎉 Bienvenue dans AutoCarnet Premium !','s'),800);
+    const plan=sess.user?.user_metadata?.plan;
+    const planLabel=plan==='famille'?'👨‍👩‍👧 Bienvenue dans AutoCarnet Famille !':'🚀 Bienvenue dans AutoCarnet Pro !';
+    setTimeout(()=>toast(planLabel,'s'),800);
   }
 }
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
@@ -3481,8 +3487,9 @@ async function adminCheckUser(){
     const d = await r.json();
     if(r.status === 404){st.innerHTML='<span style=color:var(--err)>❌ Utilisateur introuvable.</span>';return;}
     if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
-    st.innerHTML = d.is_premium
-      ? '<span style=color:var(--ok)>✅ Premium actif</span>'
+    const planInfo = d.plan==='pro'?'🚀 Pro':d.plan==='famille'?'👨‍👩‍👧 Famille':d.is_premium?'⭐ Premium (ancien)':'';
+    st.innerHTML = planInfo
+      ? '<span style=color:var(--ok)>✅ '+planInfo+'</span>'
       : '<span style=color:var(--txm)>⭕ Compte gratuit</span>';
   }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
@@ -3490,13 +3497,30 @@ async function adminSetPremium(val){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
   await adminCallFunction(email, val);
-  // Si c'est le compte connecté, rafraîchir la session
   if(S.user && S.user.email === email){
-    try{
-      const {data} = await sb.auth.refreshSession();
-      if(data?.user) S.user = data.user;
-    }catch(e){}
+    try{ const {data} = await sb.auth.refreshSession(); if(data?.user) S.user = data.user; }catch(e){}
   }
+}
+async function adminSetPlan(plan){
+  const email = g("admin-email").value.trim().toLowerCase();
+  if(!email) return toast("Entrez un email.","e");
+  const st = g("admin-status");
+  st.textContent = "En cours...";
+  try{
+    const r = await fetch('/.netlify/functions/set-premium', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, plan, code: ADMIN_CODE})
+    });
+    const d = await r.json();
+    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
+    const label = plan==='famille'?'👨‍👩‍👧 Plan Famille activé !':plan==='pro'?'🚀 Plan Pro activé !':'❌ Plan révoqué.';
+    st.innerHTML='<span style=color:var(--ok)>'+label+'</span>';
+    toast(label,'s');
+    if(S.user && S.user.email === email){
+      try{ const {data} = await sb.auth.refreshSession(); if(data?.user) S.user = data.user; }catch(e){}
+    }
+  }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
 
 window.addEventListener('beforeinstallprompt', e => {
