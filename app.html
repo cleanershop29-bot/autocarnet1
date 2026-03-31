@@ -1724,7 +1724,30 @@ function renderView(){
   if(v==='dash')renderVehs(); // Accueil = liste véhicules
   else if(v==='rap')renderRap();
   else if(v==='fam')renderFam();
-  else if(v==='profil')renderProfil();
+  else if(v==='profil'){
+    renderProfil();
+    setTimeout(()=>{
+      checkPushStatus().then(active=>{
+        const wrap=document.getElementById('push-status-wrap');
+        const btnOn=document.getElementById('btn-push-on');
+        const btnOff=document.getElementById('btn-push-off');
+        if(!wrap)return;
+        if(!('PushManager' in window)||!('serviceWorker' in navigator)){
+          wrap.textContent='Notifications non supportées sur cet appareil.';
+          return;
+        }
+        if(active){
+          wrap.innerHTML='<span style="color:var(--ok)">🔔 Notifications activées</span>';
+          if(btnOn)btnOn.style.display='none';
+          if(btnOff)btnOff.style.display='';
+        } else {
+          wrap.textContent='Recevez une alerte avant chaque échéance.';
+          if(btnOn)btnOn.style.display='';
+          if(btnOff)btnOff.style.display='none';
+        }
+      });
+    },100);
+  }
   updateDot();
 }
 
