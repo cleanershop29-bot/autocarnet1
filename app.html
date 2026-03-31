@@ -3002,12 +3002,16 @@ function cfm(title,msg,cb){g('cfm-t').textContent=title;g('cfm-m').textContent=m
 function runCfm(){cm('cfm');if(S.cfmCb)S.cfmCb();S.cfmCb=null;}
 
 async function openVeh(id){
-  // Bloquer modification si plan degrade (vehs en exces)
+  // Bloquer modification si plan degrade — sauf les X premiers vehicules (les plus anciens)
   if(id){
-    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id)
+      .sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
     const maxV=getMaxVehs();
     if(maxV!==Infinity&&myVehs.length>maxV){
-      return showUpgradeModal('Votre plan actuel ne permet que '+maxV+' véhicule'+(maxV>1?'s':'')+'. Passez à un plan supérieur pour modifier vos véhicules.');
+      const allowedIds=myVehs.slice(0,maxV).map(v=>v.id);
+      if(!allowedIds.includes(id)){
+        return showUpgradeModal('Ce véhicule dépasse la limite de votre plan ('+maxV+' max). Passez à un plan supérieur pour le modifier.');
+      }
     }
   }
   g('v-id').value=id||'';
