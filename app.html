@@ -2348,6 +2348,9 @@ async function delDocument(){
 
 /* ══ PAGE CARBURANT ══ */
 function openCarburantPage(){
+  if(getUserPlan()==='free'||getUserPlan()==='famille'){
+    return showUpgradeModal('Le comparateur de prix carburant est réservé au plan Pro.');
+  }
   document.getElementById('carb-page').classList.add('open');
   document.body.style.overflow='hidden';
 }
