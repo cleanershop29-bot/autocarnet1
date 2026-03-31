@@ -1397,11 +1397,11 @@ async function saveVeh(){
   const marque=g('v-mk').value.trim(),modele=g('v-mo').value.trim();
   if(!marque)return toast('La marque est requise.','e');
   if(!modele)return toast('Le modèle est requis.','e');
-  // Limite freemium véhicules
-  if(!id&&!isPremium()){
+  // Limite véhicules selon plan
+  if(!id){
     const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
     if(myVehs.length>=getMaxVehs()){
-      return showUpgradeModal('Vous avez atteint la limite de véhicules de votre plan.');
+      return showUpgradeModal('Vous avez atteint la limite de véhicules de votre plan ('+getMaxVehs()+' max).');
     }
   }
   const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
@@ -1506,11 +1506,11 @@ async function saveEnt(){
   if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type d\'intervention.','e');
   if(!date)return toast('La date est requise.','e');
-  // Limite freemium entretiens
-  if(!id&&!isPremium()){
-    const myEnts=S.ents.filter(e=>S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
-    if(myEnts.length>=getMaxEnts()){
-      return showUpgradeModal('Vous avez atteint la limite d\'entretiens de votre plan.');
+  // Limite entretiens selon plan (par vehicule)
+  if(!id){
+    const myEntsForVeh=S.ents.filter(e=>e.vehicle_id===vehicle_id&&S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
+    if(myEntsForVeh.length>=getMaxEnts()){
+      return showUpgradeModal('Vous avez atteint la limite d\'entretiens pour ce véhicule ('+getMaxEnts()+' max).');
     }
   }
   const km=parseInt(g('e-km').value)||null;

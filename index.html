@@ -358,4 +358,12 @@ function animCounter(el){
   }
   requestAnimationFrame(step);
 }
-const ctrObs=new Intersecti
+const ctrObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){animCounter(e.target);ctrObs.unobserve(e.target);}
+  });
+},{threshold:0.1});
+document.querySelectorAll('.stat-n').forEach(el=>ctrObs.observe(el));
+</script>
+</body>
+</html>
