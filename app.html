@@ -1488,6 +1488,7 @@ async function delVeh(){
   });
 }
 function openKm(vid){
+  if(blockIfExces(vid))return;
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   g('km-vid').value=vid;g('km-v').value=v.km_actuel||'';
   g('km-h').textContent='Actuel : '+fmtKm(v.km_actuel)+(v.km_maj_date?' · Mis à jour le '+fmtDate(v.km_maj_date):'');om('km');
@@ -1857,8 +1858,11 @@ function vcCompactHTML(v){
       </div>
     </div>
     <div class="vc-compact-acts">
-      <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>
+      ${isVehExces(v.id)
+        ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
+        :`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+        <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>`
+      }
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">→ Détail</button>
     </div>
   </div>`;
@@ -2150,7 +2154,7 @@ function updateRappelDatePreview(){
     prev.textContent='Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' ('+avant+'j avant)';
   }
 }
-function openRappelCustomVeh(vid){openRappelCustom(null,vid);}
+function openRappelCustomVeh(vid){if(blockIfExces(vid))return;openRappelCustom(null,vid);}
 function openRappelCustom(id,preVid){
   // Remplir select véhicules
   const sel=g('rcus-vid');
@@ -2278,6 +2282,7 @@ function adaptDocFields(preserveValues){
 }
 
 function openDocument(vid, docId){
+  if(vid&&!docId&&blockIfExces(vid))return;
   const sel=g('doc-vid');
   sel.innerHTML='<option value="">— Sélectionner —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
   g('doc-id').value='';
@@ -2507,15 +2512,26 @@ function openVehDetail(vid){
     const max=Math.max(...costData.map(d=>d.total),1);
     h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
   }
-  // Actions
-  h+=`<div class="g6 mb8">
-    <button class="btn btn-p btn-sm" onclick="openEnt(null,'${vid}')">+ Entretien</button>
-    <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
-    <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
-    <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
-    <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')">🔗 Lien</button>
-    <button class="btn btn-s btn-sm" onclick="openCarburantPage()">⛽ Carburant</button>
-  </div>`;
+  // Actions — bloquees si vehicule en exces
+  const _exces=isVehExces(vid);
+  if(_exces){
+    h+=`<div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;margin-bottom:10px;font-size:.8rem;color:#92400E">
+      ⚠️ Ce véhicule dépasse la limite de votre plan — <span style="font-weight:700;cursor:pointer;text-decoration:underline" onclick="showUpgradeModal('Passez à un plan supérieur pour modifier ce véhicule.')">Passer à un plan supérieur</span>
+    </div>`;
+    h+=`<div class="g6 mb8">
+      <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
+      <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
+    </div>`;
+  } else {
+    h+=`<div class="g6 mb8">
+      <button class="btn btn-p btn-sm" onclick="openEnt(null,'${vid}')">+ Entretien</button>
+      <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
+      <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
+      <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
+      <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')">🔗 Lien</button>
+      <button class="btn btn-s btn-sm" onclick="openCarburantPage()">⛽ Carburant</button>
+    </div>`;
+  }
   h+=statsHTML(vid);
   // Derniers entretiens
   if(es.length){
@@ -3433,6 +3449,23 @@ function getUserPlan(){
 function isPremium(){return getUserPlan()!=='free';}
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
 function getMaxEnts(){return PLANS[getUserPlan()].max_ents;}
+function isVehExces(vid){
+  // Retourne true si ce vehicule depasse la limite du plan
+  const maxV=getMaxVehs();
+  if(maxV===Infinity)return false;
+  if(!S.user?.id)return false;
+  const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+  if(myVehs.length<=maxV)return false;
+  const allowedVids=myVehs.slice(0,maxV).map(v=>v.id);
+  return!allowedVids.includes(vid);
+}
+function blockIfExces(vid){
+  if(isVehExces(vid)){
+    showUpgradeModal('Ce véhicule dépasse la limite de votre plan. Passez à un plan supérieur pour y accéder.');
+    return true;
+  }
+  return false;
+}
 function showUpgradeModal(msg){
   const existing=document.getElementById('mo-upgrade');
   if(existing)existing.remove();
