@@ -3002,6 +3002,14 @@ function cfm(title,msg,cb){g('cfm-t').textContent=title;g('cfm-m').textContent=m
 function runCfm(){cm('cfm');if(S.cfmCb)S.cfmCb();S.cfmCb=null;}
 
 async function openVeh(id){
+  // Bloquer modification si plan degrade (vehs en exces)
+  if(id){
+    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+    const maxV=getMaxVehs();
+    if(maxV!==Infinity&&myVehs.length>maxV){
+      return showUpgradeModal('Votre plan actuel ne permet que '+maxV+' véhicule'+(maxV>1?'s':'')+'. Passez à un plan supérieur pour modifier vos véhicules.');
+    }
+  }
   g('v-id').value=id||'';
   if(id){
     const v=S.vehicles.find(x=>x.id===id);if(!v)return;
