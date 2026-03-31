@@ -2364,8 +2364,9 @@ const GOV_API='https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/p
 const FUEL_FIELD={Gazole:'prix_gazole',SP95:'prix_sp95',E10:'prix_e10',SP98:'prix_sp98',GPLc:'prix_gplc'};
 
 async function fetchGovApi(params){
-  const url=GOV_API+'?'+new URLSearchParams({limit:50,...params});
-  const r=await fetch(url);
+  const p=new URLSearchParams({limit:'50',...params});
+  const url=GOV_API+'?'+p.toString();
+  const r=await fetch(url,{headers:{'Accept':'application/json'}});
   if(!r.ok)throw new Error('API '+r.status);
   const d=await r.json();
   return d.results||[];
@@ -2397,7 +2398,7 @@ async function searchCarburantPage(fuelName){
   if(S.carbLat&&S.carbLon){
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche '+fuelName+'...</div>';
     try{
-      const records=await fetchGovApi({where:"distance(geolocalisation,geom'POINT("+S.carbLon+" "+S.carbLat+")',15km)"});
+      const records=await fetchGovApi({'geofilter.distance':S.carbLat+','+S.carbLon+',15000'});
       await renderCarburantPage(el,records,fuelName);
     }catch(e){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--err)">Erreur réseau.</div>';}
     return;
@@ -2409,7 +2410,7 @@ async function searchCarburantPage(fuelName){
     S.carbLat=pos.coords.latitude.toFixed(6);
     S.carbLon=pos.coords.longitude.toFixed(6);
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche '+fuelName+'...</div>';
-    const records=await fetchGovApi({where:"distance(geolocalisation,geom'POINT("+S.carbLon+" "+S.carbLat+")',15km)"});
+    const records=await fetchGovApi({'geofilter.distance':S.carbLat+','+S.carbLon+',15000'});
     await renderCarburantPage(el,records,fuelName);
   }catch(err){
     el.innerHTML='<div style="padding:16px">'
@@ -2438,7 +2439,7 @@ async function searchCarburantPageWithCp(cp, fuelName){
   const el=document.getElementById('carb-page-ctn');
   el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche...</div>';
   try{
-    const dept=cp.substring(0,2);const records=await fetchGovApi({where:'cp like \''+dept+'%\''});
+    const dept=cp.substring(0,2);const records=await fetchGovApi({where:'Code_departement=\''+dept+'\''});
     if(!records.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">Aucune station trouvée.</div>';return;}
     await renderCarburantPage(el, records, fuelName);
   }catch(e){
