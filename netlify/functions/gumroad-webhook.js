@@ -75,8 +75,9 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Email manquant' }) };
   }
 
-  const plan = product_permalink === PRODUCT_FAMILLE ? 'famille'
-    : product_permalink === PRODUCT_PRO ? 'pro'
+  // product_permalink peut etre 'aspjzg' ou 'https://autocarnet.gumroad.com/l/aspjzg'
+  const plan = (product_permalink && product_permalink.includes(PRODUCT_FAMILLE)) ? 'famille'
+    : (product_permalink && product_permalink.includes(PRODUCT_PRO)) ? 'pro'
     : null;
 
   const isCancel = !!(subscription_cancelled_at || refunded === 'true');
