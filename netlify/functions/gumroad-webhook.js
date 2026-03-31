@@ -6,7 +6,7 @@ const PRODUCT_PRO = 'lvoes';
 
 async function logToSupabase(data) {
   try {
-    const res = await fetch(`${SB_URL}/rest/v1/webhook_logs`, {
+    await fetch(`${SB_URL}/rest/v1/webhook_logs`, {
       method: 'POST',
       headers: {
         'apikey': SB_SERVICE_KEY,
@@ -16,10 +16,7 @@ async function logToSupabase(data) {
       },
       body: JSON.stringify({ payload: JSON.stringify(data), created_at: new Date().toISOString() })
     });
-    console.log('Log Supabase status:', res.status);
-  } catch(e) {
-    console.log('Log error:', e.message);
-  }
+  } catch(e) {}
 }
 
 exports.handler = async (event) => {
@@ -30,31 +27,14 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json'
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod === 'GET') return { statusCode: 200, headers, body: JSON.stringify({ status: 'ok' }) };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
-  if (event.httpMethod === 'GET') {
-    return { statusCode: 200, headers, body: JSON.stringify({ status: 'ok' }) };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
-
-  // Logger tout — body brut + headers
-  const rawBody = event.isBase64Encoded 
+  const rawBody = event.isBase64Encoded
     ? Buffer.from(event.body || '', 'base64').toString('utf-8')
     : (event.body || '');
 
-  await logToSupabase({ 
-    raw_body: rawBody,
-    content_type: event.headers['content-type'] || '',
-    method: event.httpMethod,
-    timestamp: new Date().toISOString()
-  });
-
-  // Parser selon le content-type
   let params = {};
   try {
     const ct = (event.headers['content-type'] || '').toLowerCase();
@@ -64,42 +44,43 @@ exports.handler = async (event) => {
       params = Object.fromEntries(new URLSearchParams(rawBody));
     }
   } catch (e) {
-    params = { parse_error: e.message, raw: rawBody };
+    params = {};
   }
 
-  await logToSupabase({ parsed_params: params });
+  await logToSupabase({ params });
 
-  const { email, product_permalink, subscription_cancelled_at, refunded } = params;
+  const { email, product_permalink, subscription_id, subscription_cancelled_at, refunded } = params;
 
-  if (!email) {
-    return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Email manquant' }) };
-  }
+  if (!email) return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Email manquant' }) };
 
-  // product_permalink peut etre 'aspjzg' ou 'https://autocarnet.gumroad.com/l/aspjzg'
   const plan = (product_permalink && product_permalink.includes(PRODUCT_FAMILLE)) ? 'famille'
     : (product_permalink && product_permalink.includes(PRODUCT_PRO)) ? 'pro'
     : null;
 
   const isCancel = !!(subscription_cancelled_at || refunded === 'true');
 
+  // Trouver l'utilisateur
   const listRes = await fetch(`${SB_URL}/auth/v1/admin/users?per_page=1000`, {
     headers: { 'apikey': SB_SERVICE_KEY, 'Authorization': `Bearer ${SB_SERVICE_KEY}` }
   });
   const listData = await listRes.json();
   const user = (listData.users || []).find(u => u.email === email.toLowerCase().trim());
 
-  if (!user) {
-    return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Utilisateur non trouve' }) };
-  }
+  if (!user) return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Utilisateur non trouve' }) };
 
   let newMeta = { ...user.user_metadata };
 
   if (isCancel) {
     newMeta.plan = null;
     newMeta.is_premium = false;
+    // Garder le subscription_id pour reference mais vider le plan
   } else if (plan) {
     newMeta.plan = plan;
     newMeta.is_premium = true;
+    // Stocker le subscription_id pour le bouton "Gérer mon abonnement"
+    if (subscription_id) {
+      newMeta.gumroad_subscription_id = subscription_id;
+    }
   } else {
     return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Produit non reconnu' }) };
   }
@@ -117,6 +98,6 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify({ success: true, email, plan: newMeta.plan })
+    body: JSON.stringify({ success: true, email, plan: newMeta.plan, has_subscription_id: !!subscription_id })
   };
 };
