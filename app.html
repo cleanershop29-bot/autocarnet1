@@ -1397,11 +1397,12 @@ async function saveVeh(){
   const marque=g('v-mk').value.trim(),modele=g('v-mo').value.trim();
   if(!marque)return toast('La marque est requise.','e');
   if(!modele)return toast('Le modèle est requis.','e');
-  // Limite freemium véhicules
-  if(!id&&!isPremium()){
+  // Limite véhicules selon plan
+  if(!id){
     const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
-    if(myVehs.length>=getMaxVehs()){
-      return showUpgradeModal('Vous avez atteint la limite de véhicules de votre plan.');
+    const maxV=getMaxVehs();
+    if(maxV!==Infinity&&myVehs.length>=maxV){
+      return showUpgradeModal('Vous avez atteint la limite de '+maxV+' véhicule'+(maxV>1?'s':'')+' de votre plan.');
     }
   }
   const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
@@ -1506,11 +1507,12 @@ async function saveEnt(){
   if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type d\'intervention.','e');
   if(!date)return toast('La date est requise.','e');
-  // Limite freemium entretiens
-  if(!id&&!isPremium()){
-    const myEnts=S.ents.filter(e=>S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
-    if(myEnts.length>=getMaxEnts()){
-      return showUpgradeModal('Vous avez atteint la limite d\'entretiens de votre plan.');
+  // Limite entretiens selon plan (par vehicule)
+  if(!id){
+    const myEntsForVeh=S.ents.filter(e=>e.vehicle_id===vehicle_id&&S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
+    const maxE=getMaxEnts();
+    if(maxE!==Infinity&&myEntsForVeh.length>=maxE){
+      return showUpgradeModal('Vous avez atteint la limite de '+maxE+' entretiens pour ce véhicule.');
     }
   }
   const km=parseInt(g('e-km').value)||null;
@@ -3146,8 +3148,11 @@ function renderProfil(){
   const totalVehs=S.vehicles.filter(v=>v.user_id===S.user.id).length;
   const totalEnts=S.ents.length;
   const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
-  const premiumBadge=isPremium()
-    ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#FFF7ED;border:1px solid #FDE68A;color:#D97706;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">⭐ Premium</div>'
+  const _plan=getUserPlan();
+  const premiumBadge=_plan==='pro'
+    ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">🚀 Plan Pro</div>'
+    :_plan==='famille'
+    ?'<div style="display:inline-flex;align-items:center;gap:5px;background:#F0FDF4;border:1px solid #BBF7D0;color:#15803D;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px">👨‍👩‍👧 Plan Famille</div>'
     :'<div style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border);color:var(--txm);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;cursor:pointer" onclick="window.open(GUMROAD_URL)">Voir les plans →</div>';
 
   const profilTopCard = isPremium() ? `
@@ -3155,7 +3160,7 @@ function renderProfil(){
     <div class="prem-avatar" id="profil-avatar-tap" onclick="handleAvatarTap()">${initial}</div>
     <div class="prem-name">${esc(name)||'Utilisateur'}</div>
     <div class="prem-email">${esc(email)}</div>
-    <div class="prem-badge">⭐ Membre Premium</div>
+    <div class="prem-badge">${getUserPlan()==="famille"?"👨‍👩‍👧 Plan Famille":"🚀 Plan Pro"}</div>
     <div class="prem-stats">
       <div class="prem-stat"><div class="prem-stat-v">${totalVehs}</div><div class="prem-stat-l">Véhicules</div></div>
       <div class="prem-stat"><div class="prem-stat-v">${totalEnts}</div><div class="prem-stat-l">Entretiens</div></div>
