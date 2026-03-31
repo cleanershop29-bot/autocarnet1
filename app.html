@@ -3004,8 +3004,7 @@ function runCfm(){cm('cfm');if(S.cfmCb)S.cfmCb();S.cfmCb=null;}
 async function openVeh(id){
   // Bloquer modification si plan degrade — sauf les X premiers vehicules (les plus anciens)
   if(id){
-    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id)
-      .sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+    const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
     const maxV=getMaxVehs();
     if(maxV!==Infinity&&myVehs.length>maxV){
       const allowedIds=myVehs.slice(0,maxV).map(v=>v.id);
