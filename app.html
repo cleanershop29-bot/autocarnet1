@@ -533,7 +533,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
           <button class="btn btn-p btn-sm" style="flex:1" onclick="adminSetPlan('pro')">🚀 Pro</button>
           <button class="btn btn-d btn-sm" style="flex:1" onclick="adminSetPlan(null)">❌ Révoquer</button>
         </div>
-        <button class="btn btn-s btn-sm" style="width:100%" onclick="adminCheckUser()">🔍 Vérifier statut</button>
+        <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:8px" onclick="adminCheckUser()">🔍 Vérifier statut</button>
+        <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
+          <div class="fg" style="margin-bottom:6px">
+            <label class="fl" style="font-size:.72rem">ID abonnement Gumroad</label>
+            <input class="fc" id="admin-sub-id" placeholder="Ex: XQF_0nNDJYJDKyp64In39A==" style="font-size:.78rem">
+          </div>
+          <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()">💾 Enregistrer l'ID abonnement</button>
+        </div>
       </div>
     </div>
   </div>
@@ -3536,6 +3543,26 @@ async function adminCallFunction(email, is_premium){
       ? '<span style=color:var(--ok)>✅ Premium activé !</span>'
       : '<span style=color:var(--err)>❌ Premium révoqué.</span>';
     toast(d.message, 's');
+  }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
+}
+async function adminSetSubId(){
+  const email=g('admin-email').value.trim().toLowerCase();
+  const subId=g('admin-sub-id').value.trim();
+  if(!email)return toast('Entrez un email.','e');
+  if(!subId)return toast('Entrez un ID abonnement.','e');
+  const st=g('admin-status');
+  st.textContent='En cours...';
+  try{
+    const r=await fetch('/.netlify/functions/set-premium',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,subscription_id:subId,code:ADMIN_CODE})
+    });
+    const d=await r.json();
+    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
+    st.innerHTML='<span style=color:var(--ok)>✅ ID abonnement enregistré !</span>';
+    toast('ID abonnement enregistré !','s');
+    g('admin-sub-id').value='';
   }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
 async function adminCheckUser(){
