@@ -6,7 +6,7 @@ const PRODUCT_PRO = 'lvoes';
 
 async function logToSupabase(data) {
   try {
-    await fetch(`${SB_URL}/rest/v1/webhook_logs`, {
+    const res = await fetch(`${SB_URL}/rest/v1/webhook_logs`, {
       method: 'POST',
       headers: {
         'apikey': SB_SERVICE_KEY,
@@ -16,31 +16,58 @@ async function logToSupabase(data) {
       },
       body: JSON.stringify({ payload: JSON.stringify(data), created_at: new Date().toISOString() })
     });
-  } catch(e) {}
+    console.log('Log Supabase status:', res.status);
+  } catch(e) {
+    console.log('Log error:', e.message);
+  }
 }
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
   };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
+  if (event.httpMethod === 'GET') {
+    return { statusCode: 200, headers, body: JSON.stringify({ status: 'ok' }) };
+  }
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  // Parser le body
+  // Logger tout — body brut + headers
+  const rawBody = event.isBase64Encoded 
+    ? Buffer.from(event.body || '', 'base64').toString('utf-8')
+    : (event.body || '');
+
+  await logToSupabase({ 
+    raw_body: rawBody,
+    content_type: event.headers['content-type'] || '',
+    method: event.httpMethod,
+    timestamp: new Date().toISOString()
+  });
+
+  // Parser selon le content-type
   let params = {};
   try {
-    const body = event.body || '';
-    const decoded = event.isBase64Encoded ? Buffer.from(body, 'base64').toString('utf-8') : body;
-    params = Object.fromEntries(new URLSearchParams(decoded));
+    const ct = (event.headers['content-type'] || '').toLowerCase();
+    if (ct.includes('application/json')) {
+      params = JSON.parse(rawBody);
+    } else {
+      params = Object.fromEntries(new URLSearchParams(rawBody));
+    }
   } catch (e) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid body' }) };
+    params = { parse_error: e.message, raw: rawBody };
   }
 
-  // Logger tout ce que Gumroad envoie
-  await logToSupabase({ params, headers: event.headers });
+  await logToSupabase({ parsed_params: params });
 
   const { email, product_permalink, subscription_cancelled_at, refunded } = params;
 
@@ -54,7 +81,6 @@ exports.handler = async (event) => {
 
   const isCancel = !!(subscription_cancelled_at || refunded === 'true');
 
-  // Trouver l'utilisateur
   const listRes = await fetch(`${SB_URL}/auth/v1/admin/users?per_page=1000`, {
     headers: { 'apikey': SB_SERVICE_KEY, 'Authorization': `Bearer ${SB_SERVICE_KEY}` }
   });
@@ -90,6 +116,6 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify({ success: true, email, plan: newMeta.plan, is_premium: newMeta.is_premium })
+    body: JSON.stringify({ success: true, email, plan: newMeta.plan })
   };
 };
