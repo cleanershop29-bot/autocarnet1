@@ -883,24 +883,33 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 <!-- PAGE CARBURANT -->
 <div id="carb-page">
-  <div class="carb-page-header">
-    <div class="carb-page-title">⛽ Prix carburant</div>
-    <button class="mcls" onclick="closeCarburantPage()">✕</button>
+  <div class="carb-page-header" style="flex-direction:column;height:auto;padding:10px 16px;gap:8px">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+      <div class="carb-page-title">⛽ Prix carburant</div>
+      <button class="mcls" onclick="closeCarburantPage()">✕</button>
+    </div>
+    <div style="display:flex;gap:6px;width:100%;align-items:center">
+      <input id="carb-page-cp" class="fc" placeholder="Code postal" style="flex:1;max-width:130px;text-align:center;padding:7px 10px" maxlength="5">
+      <button class="btn btn-s btn-sm" onclick="searchCarburantPageByCp()">🔍 Chercher</button>
+      <button class="btn btn-s btn-sm" onclick="S.carbLat=null;S.carbLon=null;S.carbCp=null;searchCarburantPage('Gazole')">📍 GPS</button>
+      <div style="display:flex;gap:4px;margin-left:auto">
+        <button class="btn btn-xs" id="carb-btn-gazole" onclick="searchCarburantPage('Gazole')" style="padding:5px 7px;font-size:.72rem">🛢️</button>
+        <button class="btn btn-xs" id="carb-btn-sp95" onclick="searchCarburantPage('SP95')" style="padding:5px 7px;font-size:.72rem">⛽</button>
+        <button class="btn btn-xs" id="carb-btn-e10" onclick="searchCarburantPage('E10')" style="padding:5px 7px;font-size:.72rem">🌿</button>
+        <button class="btn btn-xs" id="carb-btn-sp98" onclick="searchCarburantPage('SP98')" style="padding:5px 7px;font-size:.72rem">🔵</button>
+      </div>
+    </div>
   </div>
   <div class="carb-page-content" id="carb-page-ctn">
     <div style="text-align:center;padding:40px 16px;color:var(--txm)">
       <div style="font-size:2.5rem;margin-bottom:12px">⛽</div>
       <div style="font-weight:700;margin-bottom:8px">Prix carburant autour de moi</div>
-      <div style="font-size:.85rem;margin-bottom:20px">Trouvez les stations les moins chères près de vous</div>
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
-        <button class="btn btn-p" onclick="searchCarburantPage('Gazole')">🛢️ Gazole</button>
-        <button class="btn btn-s" onclick="searchCarburantPage('SP95')">⛽ SP95</button>
-        <button class="btn btn-s" onclick="searchCarburantPage('E10')">🌿 E10</button>
-        <button class="btn btn-s" onclick="searchCarburantPage('SP98')">🔵 SP98</button>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;justify-content:center">
-        <input id="carb-page-cp" class="fc" placeholder="Code postal" style="max-width:140px;text-align:center" maxlength="5">
-        <button class="btn btn-s" id="carb-page-cp-btn" onclick="searchCarburantPageByCp()">Chercher</button>
+      <div style="font-size:.85rem;margin-bottom:20px">Entrez un code postal ou utilisez le GPS via le bouton 📍 en haut</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" onclick="searchCarburantPage('Gazole')">🛢️ Gazole</button>
+        <button class="btn btn-s btn-sm" onclick="searchCarburantPage('SP95')">⛽ SP95</button>
+        <button class="btn btn-s btn-sm" onclick="searchCarburantPage('E10')">🌿 E10</button>
+        <button class="btn btn-s btn-sm" onclick="searchCarburantPage('SP98')">🔵 SP98</button>
       </div>
     </div>
   </div>
