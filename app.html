@@ -2308,9 +2308,20 @@ async function uploadPhoto(entId){
 }
 
 function openPhotoFullscreen(url){
+  if(!url||url==='DELETE')return toast('Aucune photo disponible.','e');
   const mo = document.createElement('div');
-  mo.style.cssText = 'position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;padding:16px';
-  mo.innerHTML = '<img src="'+url+'" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px"><button onclick="this.parentElement.remove()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer">✕</button>';
+  mo.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;padding:16px';
+  const img = document.createElement('img');
+  img.style.cssText = 'max-width:100%;max-height:90vh;object-fit:contain;border-radius:8px;opacity:0;transition:opacity .2s';
+  img.onload = () => { img.style.opacity = '1'; };
+  img.onerror = () => { mo.remove(); toast('Impossible de charger la photo.','e'); };
+  img.src = url;
+  const btn = document.createElement('button');
+  btn.innerHTML = '✕';
+  btn.style.cssText = 'position:absolute;top:16px;right:16px;background:rgba(255,255,255,.25);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:1';
+  btn.onclick = () => mo.remove();
+  mo.appendChild(img);
+  mo.appendChild(btn);
   mo.addEventListener('click', e => { if(e.target===mo) mo.remove(); });
   document.body.appendChild(mo);
 }
