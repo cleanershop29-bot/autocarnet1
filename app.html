@@ -752,7 +752,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <div style="padding:4px 0 8px">
           <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)">
           <!-- Bouton ajouter (visible si pas de photo) -->
-          <button type="button" class="photo-btn" id="e-photo-btn" onclick="g('e-photo-input').click()">
+          <button type="button" class="photo-btn" id="e-photo-btn" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input').click();}">
             📷 <span id="e-photo-label">Ajouter une photo de facture</span>
           </button>
           <!-- Actions photo (visible si photo présente) -->
