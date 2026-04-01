@@ -757,7 +757,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
           </button>
           <!-- Actions photo (visible si photo présente) -->
           <div id="e-photo-actions" class="hidden" style="display:none;gap:6px">
-            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="openPhotoFullscreen(g('e-photo-url').value)">🔍 Voir</button>
+            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="openPhotoFullscreen(_photoPreviewUrl||g('e-photo-url').value)">🔍 Voir</button>
             <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="g('e-photo-input').click()">🔄 Changer</button>
             <button type="button" class="btn btn-d btn-sm" style="flex:1" onclick="removePhoto()">🗑 Supprimer</button>
           </div>
@@ -2266,8 +2266,6 @@ function showPhotoPreview(file){
   _photoFile = file;
   if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); }
   _photoPreviewUrl = URL.createObjectURL(file);
-  // Stocker l'URL preview pour "Voir"
-  g('e-photo-url').value = _photoPreviewUrl;
   showPhotoActions();
 }
 
@@ -2720,9 +2718,9 @@ function openVehDetail(vid){
           <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
           <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px">
           ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
-          ${e.photo_url?`<span style="font-size:.85rem" title="Photo de facture disponible">📷</span>`:''}
+          ${e.photo_url?`<span style="font-size:.72rem;color:var(--txm)">📷 facture</span>`:''}
         </div>
       </div>`;
     }).join('');
