@@ -283,6 +283,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 
 /* UTILS */
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
+/* PHOTO FACTURE */
+.photo-btn{width:100%;padding:12px;border:2px dashed var(--border);border-radius:var(--r-sm);background:var(--bg2);display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif}
+.photo-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-lt)}
+.photo-btn.has-photo{border-style:solid;border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.photo-preview{width:100%;border-radius:var(--r-sm);overflow:hidden;position:relative;margin-top:6px}
+.photo-preview img{width:100%;max-height:180px;object-fit:cover;display:block;cursor:pointer}
+.photo-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.photo-thumb{width:42px;height:42px;border-radius:6px;object-fit:cover;flex-shrink:0;cursor:pointer;border:1px solid var(--border)}
 /* COMPTEURS RAPPELS */
 .rap-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .rap-counter{border-radius:var(--r);padding:12px;text-align:center;border:1px solid transparent}
@@ -738,6 +746,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <div class="fg"><label class="fl">Garantie pièces (mois)</label>
           <input class="fc" id="e-gar" type="number" inputmode="numeric" placeholder="12" min="0">
         </div>
+      </div>
+    </div>
+      <!-- PHOTO FACTURE -->
+      <div style="padding:0 0 12px">
+        <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)">
+        <button type="button" class="photo-btn" id="e-photo-btn" onclick="g('e-photo-input').click()">
+          📷 <span id="e-photo-label">Ajouter une photo de facture</span>
+        </button>
+        <div class="photo-preview hidden" id="e-photo-preview">
+          <img id="e-photo-img" src="" alt="Facture">
+          <button class="photo-del" onclick="removePhoto()">✕</button>
+        </div>
+        <input type="hidden" id="e-photo-url" value="">
       </div>
     </div>
     <div class="mft">
@@ -1557,8 +1578,21 @@ async function saveEnt(){
   const{error}=id?await sb.from('entretiens').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('entretiens').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
+  // Upload photo si present
+  const finalId = p.id || id;
+  if(_photoFile && finalId){
+    const photoUrl = await uploadPhoto(finalId);
+    if(photoUrl){
+      await sb.from('entretiens').update({photo_url:photoUrl}).eq('id',finalId).eq('user_id',S.user.id);
+    }
+  } else if(!_photoFile && g('e-photo-url').value === 'DELETE' && id) {
+    // Supprimer la photo existante
+    await sb.storage.from('factures').remove([`${S.user.id}/${id}.jpg`,`${S.user.id}/${id}.png`]);
+    await sb.from('entretiens').update({photo_url:null}).eq('id',id).eq('user_id',S.user.id);
+  }
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
   g('e-id').value='';
+  removePhoto();
   cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
   if(S.expandedVeh&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
     openVehDetail(S.expandedVeh);
@@ -2193,6 +2227,86 @@ function updateRappelDatePreview(){
     prev.textContent='Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' ('+avant+'j avant)';
   }
 }
+/* ══ PHOTOS FACTURES ══ */
+let _photoFile = null;
+let _photoPreviewUrl = null;
+
+function onPhotoSelected(input){
+  const file = input.files[0];
+  if(!file) return;
+  // Compresser si > 1Mo
+  if(file.size > 1024*1024){
+    compressPhoto(file).then(compressed => showPhotoPreview(compressed));
+  } else {
+    showPhotoPreview(file);
+  }
+}
+
+function compressPhoto(file){
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 1200;
+      let w = img.width, h = img.height;
+      if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; }
+      if(h > MAX){ w = Math.round(w*MAX/h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => { URL.revokeObjectURL(url); resolve(blob||file); }, 'image/jpeg', 0.82);
+    };
+    img.src = url;
+  });
+}
+
+function showPhotoPreview(file){
+  _photoFile = file;
+  const url = URL.createObjectURL(file);
+  _photoPreviewUrl = url;
+  const img = g('e-photo-img');
+  const preview = g('e-photo-preview');
+  const btn = g('e-photo-btn');
+  const label = g('e-photo-label');
+  img.src = url;
+  preview.classList.remove('hidden');
+  btn.classList.add('has-photo');
+  label.textContent = '✓ Photo ajoutée — changer';
+}
+
+function removePhoto(){
+  _photoFile = null;
+  if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); _photoPreviewUrl = null; }
+  g('e-photo-img').src = '';
+  g('e-photo-preview').classList.add('hidden');
+  g('e-photo-btn').classList.remove('has-photo');
+  g('e-photo-label').textContent = 'Ajouter une photo de facture';
+  g('e-photo-url').value = '';
+  g('e-photo-input').value = '';
+}
+
+async function uploadPhoto(entId){
+  if(!_photoFile) return null;
+  try{
+    const ext = _photoFile.type === 'image/png' ? 'png' : 'jpg';
+    const path = `${S.user.id}/${entId}.${ext}`;
+    const { error } = await sb.storage.from('factures').upload(path, _photoFile, {
+      upsert: true, contentType: _photoFile.type || 'image/jpeg'
+    });
+    if(error){ console.error('Upload photo:', error.message); return null; }
+    const { data } = sb.storage.from('factures').getPublicUrl(path);
+    return data?.publicUrl || null;
+  } catch(e){ console.error('Upload photo:', e.message); return null; }
+}
+
+function openPhotoFullscreen(url){
+  const mo = document.createElement('div');
+  mo.style.cssText = 'position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;padding:16px';
+  mo.innerHTML = '<img src="'+url+'" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px"><button onclick="this.parentElement.remove()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer">✕</button>';
+  mo.addEventListener('click', e => { if(e.target===mo) mo.remove(); });
+  document.body.appendChild(mo);
+}
+
 function openRappelCustomVeh(vid){if(blockIfExces(vid))return;openRappelCustom(null,vid);}
 function openRappelCustom(id,preVid){
   // Remplir select véhicules
@@ -2596,7 +2710,10 @@ function openVehDetail(vid){
           <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
           <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
         </div>
-        ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
+          ${e.photo_url?`<img src="${e.photo_url}" class="photo-thumb" onclick="event.stopPropagation();openPhotoFullscreen('${e.photo_url}')" alt="Facture">`:''}
+        </div>
       </div>`;
     }).join('');
   }
@@ -3145,6 +3262,14 @@ function openEnt(id,forcedVid){
     g('e-dt').value=e.date||'';g('e-km').value=e.km||'';
     g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';
     g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
+    // Charger photo existante
+    if(e.photo_url){
+      g('e-photo-url').value=e.photo_url;
+      g('e-photo-img').src=e.photo_url;
+      g('e-photo-preview').classList.remove('hidden');
+      g('e-photo-btn').classList.add('has-photo');
+      g('e-photo-label').textContent='✓ Photo présente — changer';
+    }
     g('e-rk').value=e.rappel_km||'';
     g('e-pc').value=e.pieces||'';g('e-tech').value=e.technicien||'';
     g('e-dur').value=e.duree_minutes||'';g('e-gar').value=e.garantie_mois||'';
@@ -3156,7 +3281,7 @@ function openEnt(id,forcedVid){
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';removePhoto();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
