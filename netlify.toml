@@ -1,6 +1,9 @@
-
 [functions]
   directory = "netlify/functions"
+
+[functions."send-notifications"]
+  schedule = "0 7 * * *"
+
 [[headers]]
   for = "/service-worker.js"
   [headers.values]
