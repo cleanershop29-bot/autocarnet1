@@ -751,10 +751,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <!-- PHOTO FACTURE -->
         <div style="padding:4px 0 8px">
           <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)">
+          <!-- Bouton ajouter (visible si pas de photo) -->
           <button type="button" class="photo-btn" id="e-photo-btn" onclick="g('e-photo-input').click()">
             📷 <span id="e-photo-label">Ajouter une photo de facture</span>
           </button>
-          <div class="hidden" id="e-photo-preview"></div>
+          <!-- Actions photo (visible si photo présente) -->
+          <div id="e-photo-actions" class="hidden" style="display:none;gap:6px">
+            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="openPhotoFullscreen(g('e-photo-url').value)">🔍 Voir</button>
+            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="g('e-photo-input').click()">🔄 Changer</button>
+            <button type="button" class="btn btn-d btn-sm" style="flex:1" onclick="removePhoto()">🗑 Supprimer</button>
+          </div>
           <input type="hidden" id="e-photo-url" value="">
         </div>
     <div class="mft">
@@ -2260,23 +2266,33 @@ function showPhotoPreview(file){
   _photoFile = file;
   if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); }
   _photoPreviewUrl = URL.createObjectURL(file);
+  // Stocker l'URL preview pour "Voir"
+  g('e-photo-url').value = _photoPreviewUrl;
+  showPhotoActions();
+}
+
+function showPhotoActions(){
   const btn = g('e-photo-btn');
-  const label = g('e-photo-label');
-  btn.classList.add('has-photo');
-  label.textContent = '📷 Photo ajoutée — appuyer pour changer';
+  const actions = g('e-photo-actions');
+  if(btn) btn.style.display = 'none';
+  if(actions){ actions.classList.remove('hidden'); actions.style.display = 'flex'; }
+}
+
+function hidePhotoActions(){
+  const btn = g('e-photo-btn');
+  const actions = g('e-photo-actions');
+  if(btn) btn.style.display = '';
+  if(actions){ actions.classList.add('hidden'); actions.style.display = 'none'; }
 }
 
 function removePhoto(){
   _photoFile = null;
   if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); _photoPreviewUrl = null; }
-  const btn = g('e-photo-btn');
-  if(btn){ btn.classList.remove('has-photo'); }
-  const label = g('e-photo-label');
-  if(label){ label.textContent = 'Ajouter une photo de facture'; }
   const url = g('e-photo-url');
-  if(url){ url.value = ''; }
+  if(url){ url.value = 'DELETE'; }
   const input = g('e-photo-input');
   if(input){ input.value = ''; }
+  hidePhotoActions();
 }
 
 async function uploadPhoto(entId){
@@ -3259,8 +3275,7 @@ function openEnt(id,forcedVid){
     // Charger photo existante
     if(e.photo_url){
       g('e-photo-url').value=e.photo_url;
-      g('e-photo-btn').classList.add('has-photo');
-      g('e-photo-label').textContent='📷 Photo présente — appuyer pour changer';
+      showPhotoActions();
     }
     g('e-rk').value=e.rappel_km||'';
     g('e-pc').value=e.pieces||'';g('e-tech').value=e.technicien||'';
@@ -3273,7 +3288,7 @@ function openEnt(id,forcedVid){
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';removePhoto();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';_photoFile=null;if(_photoPreviewUrl){URL.revokeObjectURL(_photoPreviewUrl);_photoPreviewUrl=null;}if(g('e-photo-url'))g('e-photo-url').value='';if(g('e-photo-input'))g('e-photo-input').value='';hidePhotoActions();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
