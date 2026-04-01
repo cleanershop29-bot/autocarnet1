@@ -109,62 +109,107 @@ exports.handler = async () => {
   const today = new Date();
   today.setHours(0,0,0,0);
 
-  // Récupérer tous les abonnements push
   const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=*`, { headers: SB_HEADERS });
   const subs = await subsRes.json();
-  if (!subs.length) return { statusCode: 200, body: 'Aucun abonné' };
+  if (!Array.isArray(subs) || !subs.length) return { statusCode: 200, body: 'Aucun abonné' };
 
-  // Pour chaque abonné, trouver ses rappels du jour et des 2 prochains jours
   let sent = 0, errors = 0, expired = 0;
 
   for (const sub of subs) {
     try {
-      // Récupérer les entretiens avec rappel aujourd'hui ou dans 2 jours
+      // Charger les véhicules pour avoir les noms
+      const vehsRes = await fetch(
+        `${SB_URL}/rest/v1/vehicles?user_id=eq.${sub.user_id}&select=id,marque,modele,num_parc`,
+        { headers: SB_HEADERS }
+      );
+      const vehs = await vehsRes.json();
+      const vehMap = {};
+      (Array.isArray(vehs) ? vehs : []).forEach(v => {
+        vehMap[v.id] = v.num_parc
+          ? `${v.marque} ${v.modele} (${v.num_parc})`
+          : `${v.marque} ${v.modele}`;
+      });
+
+      // Entretiens avec rappel
       const entsRes = await fetch(
-        `${SB_URL}/rest/v1/entretiens?user_id=eq.${sub.user_id}&rappel_date=not.is.null&select=*`,
+        `${SB_URL}/rest/v1/entretiens?user_id=eq.${sub.user_id}&rappel_date=not.is.null&select=id,type,rappel_date,vehicle_id`,
         { headers: SB_HEADERS }
       );
       const ents = await entsRes.json();
 
       // Rappels custom
       const rcRes = await fetch(
-        `${SB_URL}/rest/v1/rappels_custom?user_id=eq.${sub.user_id}&date_rappel=not.is.null&statut=eq.actif&select=*`,
+        `${SB_URL}/rest/v1/rappels_custom?user_id=eq.${sub.user_id}&date_rappel=not.is.null&statut=eq.actif&select=id,titre,date_rappel,vehicle_id`,
         { headers: SB_HEADERS }
       );
       const rcs = await rcRes.json();
 
+      // Documents expirants
+      const docsRes = await fetch(
+        `${SB_URL}/rest/v1/documents?user_id=eq.${sub.user_id}&date_expiration=not.is.null&select=id,type,nom,date_expiration,vehicle_id`,
+        { headers: SB_HEADERS }
+      );
+      const docs = await docsRes.json();
+
       const alerts = [];
 
-      ents.forEach(e => {
+      // Entretiens
+      (Array.isArray(ents) ? ents : []).forEach(e => {
         if (!e.rappel_date) return;
         const d = new Date(e.rappel_date); d.setHours(0,0,0,0);
         const diff = Math.round((d - today) / 86400000);
-        if (diff === 0) alerts.push({ title: '🔧 Entretien aujourd\'hui', body: e.type || 'Entretien prévu' });
-        if (diff === 1) alerts.push({ title: '🔧 Entretien demain', body: e.type || 'Entretien prévu' });
-        if (diff === 7) alerts.push({ title: '🔧 Entretien dans 7 jours', body: e.type || 'Entretien prévu' });
+        if (diff < 0 || diff > 7) return;
+        const veh = vehMap[e.vehicle_id] || 'Véhicule';
+        const when = diff === 0 ? "aujourd'hui" : diff === 1 ? 'demain' : `dans ${diff}j`;
+        if ([0,1,7].includes(diff)) {
+          alerts.push({
+            title: `🔧 ${veh}`,
+            body: `${e.type || 'Entretien'} — ${when}`
+          });
+        }
       });
 
-      rcs.forEach(r => {
+      // Rappels custom
+      (Array.isArray(rcs) ? rcs : []).forEach(r => {
         if (!r.date_rappel) return;
         const d = new Date(r.date_rappel); d.setHours(0,0,0,0);
         const diff = Math.round((d - today) / 86400000);
-        if (diff === 0) alerts.push({ title: '📌 ' + r.titre, body: 'Rappel aujourd\'hui' });
-        if (diff === 1) alerts.push({ title: '📌 ' + r.titre, body: 'Rappel demain' });
+        if (diff < 0 || diff > 1) return;
+        const veh = r.vehicle_id ? (vehMap[r.vehicle_id] || '') : '';
+        const when = diff === 0 ? "aujourd'hui" : 'demain';
+        alerts.push({
+          title: `📌 ${r.titre}`,
+          body: `${veh ? veh + ' — ' : ''}${when}`
+        });
       });
+
+      // Documents expirants (J-30, J-7, J-0)
+      (Array.isArray(docs) ? docs : []).forEach(d => {
+        if (!d.date_expiration) return;
+        const exp = new Date(d.date_expiration); exp.setHours(0,0,0,0);
+        const diff = Math.round((exp - today) / 86400000);
+        const veh = d.vehicle_id ? (vehMap[d.vehicle_id] || '') : '';
+        const docLabel = d.nom ? `${d.type} — ${d.nom}` : d.type;
+        if (diff === 0) alerts.push({ title: `📄 ${docLabel} expire aujourd'hui`, body: veh });
+        if (diff === 7) alerts.push({ title: `📄 ${docLabel} expire dans 7j`, body: veh });
+        if (diff === 30) alerts.push({ title: `📄 ${docLabel} expire dans 30j`, body: veh });
+      });
+
+      if (!alerts.length) continue;
 
       for (const alert of alerts) {
         const result = await sendPush(sub, alert.title, alert.body);
         if (result === 'ok') sent++;
         else if (result === 'expired') {
           expired++;
-          // Supprimer l'abonnement expiré
           await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${sub.user_id}`, {
             method: 'DELETE', headers: SB_HEADERS
           });
+          break; // Plus besoin d'envoyer d'autres notifs à cet abonné
         } else errors++;
       }
     } catch(e) {
-      console.error('Erreur pour user', sub.user_id, e.message);
+      console.error('Erreur pour user', sub.user_id, ':', e.message);
       errors++;
     }
   }
