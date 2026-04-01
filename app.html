@@ -754,10 +754,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
           <button type="button" class="photo-btn" id="e-photo-btn" onclick="g('e-photo-input').click()">
             📷 <span id="e-photo-label">Ajouter une photo de facture</span>
           </button>
-          <div class="photo-preview hidden" id="e-photo-preview">
-            <img id="e-photo-img" src="" alt="Facture">
-            <button class="photo-del" onclick="removePhoto()">✕</button>
-          </div>
+          <div class="hidden" id="e-photo-preview"></div>
           <input type="hidden" id="e-photo-url" value="">
         </div>
     <div class="mft">
@@ -2261,27 +2258,25 @@ function compressPhoto(file){
 
 function showPhotoPreview(file){
   _photoFile = file;
-  const url = URL.createObjectURL(file);
-  _photoPreviewUrl = url;
-  const img = g('e-photo-img');
-  const preview = g('e-photo-preview');
+  if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); }
+  _photoPreviewUrl = URL.createObjectURL(file);
   const btn = g('e-photo-btn');
   const label = g('e-photo-label');
-  img.src = url;
-  preview.classList.remove('hidden');
   btn.classList.add('has-photo');
-  label.textContent = '✓ Photo ajoutée — changer';
+  label.textContent = '📷 Photo ajoutée — appuyer pour changer';
 }
 
 function removePhoto(){
   _photoFile = null;
   if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); _photoPreviewUrl = null; }
-  g('e-photo-img').src = '';
-  g('e-photo-preview').classList.add('hidden');
-  g('e-photo-btn').classList.remove('has-photo');
-  g('e-photo-label').textContent = 'Ajouter une photo de facture';
-  g('e-photo-url').value = '';
-  g('e-photo-input').value = '';
+  const btn = g('e-photo-btn');
+  if(btn){ btn.classList.remove('has-photo'); }
+  const label = g('e-photo-label');
+  if(label){ label.textContent = 'Ajouter une photo de facture'; }
+  const url = g('e-photo-url');
+  if(url){ url.value = ''; }
+  const input = g('e-photo-input');
+  if(input){ input.value = ''; }
 }
 
 async function uploadPhoto(entId){
@@ -2711,7 +2706,7 @@ function openVehDetail(vid){
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
           ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
-          ${e.photo_url?`<img src="${e.photo_url}" class="photo-thumb" onclick="event.stopPropagation();openPhotoFullscreen('${e.photo_url}')" alt="Facture">`:''}
+          ${e.photo_url?`<span style="font-size:.85rem" title="Photo de facture disponible">📷</span>`:''}
         </div>
       </div>`;
     }).join('');
@@ -3264,10 +3259,8 @@ function openEnt(id,forcedVid){
     // Charger photo existante
     if(e.photo_url){
       g('e-photo-url').value=e.photo_url;
-      g('e-photo-img').src=e.photo_url;
-      g('e-photo-preview').classList.remove('hidden');
       g('e-photo-btn').classList.add('has-photo');
-      g('e-photo-label').textContent='✓ Photo présente — changer';
+      g('e-photo-label').textContent='📷 Photo présente — appuyer pour changer';
     }
     g('e-rk').value=e.rappel_km||'';
     g('e-pc').value=e.pieces||'';g('e-tech').value=e.technicien||'';
