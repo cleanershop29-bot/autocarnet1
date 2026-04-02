@@ -94,6 +94,23 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
 .footer-links a{font-size:.74rem;color:var(--txm);font-weight:600}
 .footer-copy{font-size:.69rem;color:var(--txl);font-weight:500}
 </style>
+<script>
+async function stripeCheckout(plan){
+  try{
+    const r=await fetch('/.netlify/functions/create-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan})
+    });
+    const d=await r.json();
+    if(d.url){window.location.href=d.url;}
+    else{alert('Erreur. Veuillez reessayer.');}
+  }catch(e){
+    alert('Erreur reseau. Veuillez reessayer.');
+  }
+}
+</script>
+
 <meta property="og:title" content="AutoCarnet — Plans Famille & Pro">
 <meta property="og:description" content="Véhicules illimités, photos de factures, notifications push. À partir de 1,99€/mois. Essai 7 jours gratuit.">
 <meta property="og:url" content="https://autocarnet.fr/premium.html">
