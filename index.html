@@ -189,22 +189,6 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
 .footer-copy{font-size:.7rem;color:var(--txl);margin-bottom:3px;font-weight:500}
 .footer-email a{font-size:.7rem;color:var(--txm);font-weight:500}
 </style>
-<script>
-async function stripeCheckout(plan){
-  try{
-    const r=await fetch('/.netlify/functions/create-checkout',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({plan})
-    });
-    const d=await r.json();
-    if(d.url){window.location.href=d.url;}
-    else{alert('Erreur. Veuillez reessayer.');}
-  }catch(e){
-    alert('Erreur reseau. Veuillez reessayer.');
-  }
-}
-</script>
 
 </head>
 <body>
@@ -435,4 +419,32 @@ function animCounter(el){
     el.textContent=Math.round(ease*target)+suffix;
     if(p<1)requestAnimationFrame(step);
   }
-  requestAn
+  requestAnimationFrame(step);
+}
+
+const cntObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){animCounter(e.target);cntObs.unobserve(e.target);}
+  });
+},{threshold:0.3});
+document.querySelectorAll('[data-count]').forEach(el=>cntObs.observe(el));
+
+</script>
+<script>
+async function stripeCheckout(plan){
+  try{
+    const r=await fetch('/.netlify/functions/create-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan})
+    });
+    const d=await r.json();
+    if(d.url){window.location.href=d.url;}
+    else{alert('Erreur. Veuillez reessayer.');}
+  }catch(e){
+    alert('Erreur reseau. Veuillez reessayer.');
+  }
+}
+</script>
+</body>
+</html>
