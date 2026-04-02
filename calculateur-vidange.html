@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculateur vidange voiture — Quand faire ma prochaine vidange ? AutoCarnet</title>
+<meta name="description" content="Calculez gratuitement la date de votre prochaine vidange selon votre kilométrage, votre moteur et votre usage. Outil gratuit AutoCarnet.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://autocarnet.fr/calculateur-vidange.html">
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Calculateur vidange voiture",
+  "url": "https://autocarnet.fr/calculateur-vidange.html",
+  "description": "Calculez gratuitement la date de votre prochaine vidange selon votre kilométrage et votre usage.",
+  "applicationCategory": "UtilitiesApplication",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}
+}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563EB;--tx:#0f172a;--txm:#475569;--txl:#94a3b8;--bg:#F8FAFC;--border:#E2E8F0;--r:14px;--ok:#10B981;--warn:#F59E0B}
+body{font-family:'Outfit',sans-serif;color:var(--tx);background:var(--bg);line-height:1.6}
+a{color:var(--blue)}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1rem;color:var(--tx);text-decoration:none}
+.nav-logo img{width:28px;height:28px;border-radius:6px}
+.nav-cta{background:var(--blue);color:#fff;padding:7px 16px;border-radius:20px;font-size:.82rem;font-weight:700;text-decoration:none}
+.container{max-width:580px;margin:0 auto;padding:32px 20px 80px}
+.back{font-size:.82rem;color:var(--txm);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:20px}
+.hero{text-align:center;margin-bottom:32px}
+h1{font-size:1.6rem;font-weight:900;letter-spacing:-.03em;margin-bottom:8px}
+.hero p{font-size:.9rem;color:var(--txm)}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.card h2{font-size:.9rem;font-weight:800;margin-bottom:16px;color:var(--tx)}
+.fg{margin-bottom:14px}
+.fl{font-size:.82rem;font-weight:600;color:var(--txm);display:block;margin-bottom:6px}
+.fc{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--tx);background:#fff;appearance:none}
+.fc:focus{outline:none;border-color:var(--blue)}
+.btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:8px}
+.btn:hover{opacity:.9}
+.result{display:none;background:#fff;border:1.5px solid var(--ok);border-radius:var(--r);padding:24px;margin-bottom:16px;text-align:center}
+.result.warn{border-color:var(--warn)}
+.result.danger{border-color:#EF4444}
+.result-ico{font-size:2.5rem;margin-bottom:12px}
+.result-title{font-size:1.1rem;font-weight:800;margin-bottom:8px}
+.result-km{font-size:2rem;font-weight:900;color:var(--blue);margin-bottom:4px;letter-spacing:-.03em}
+.result-sub{font-size:.85rem;color:var(--txm);margin-bottom:16px}
+.result-details{background:#F8FAFC;border-radius:10px;padding:14px;text-align:left;margin-bottom:16px}
+.result-details p{font-size:.82rem;color:var(--txm);margin-bottom:4px}
+.result-details strong{color:var(--tx)}
+.cta-box{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #BFDBFE;border-radius:var(--r);padding:20px;text-align:center;margin-top:16px}
+.cta-box p{font-size:.85rem;color:var(--txm);margin-bottom:12px}
+.cta-btn{background:var(--blue);color:#fff;padding:11px 20px;border-radius:10px;font-weight:700;font-size:.88rem;text-decoration:none;display:inline-block}
+.info-box{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px 16px;margin-top:16px}
+.info-box p{font-size:.82rem;color:#92400E;margin:0}
+footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center;font-size:.72rem;color:var(--txl)}
+footer a{color:var(--txl)}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><img src="/icon-192.png" alt="AutoCarnet">AutoCarnet</a>
+  <a href="/app.html" class="nav-cta">Essayer gratuitement</a>
+</nav>
+
+<div class="container">
+  <a href="/" class="back">← Retour à l'accueil</a>
+  <div class="hero">
+    <h1>🛢️ Calculateur vidange</h1>
+    <p>Trouvez en 30 secondes quand faire votre prochaine vidange.</p>
+  </div>
+
+  <div class="card">
+    <h2>Informations sur votre véhicule</h2>
+
+    <div class="fg">
+      <label class="fl">Type de moteur</label>
+      <select class="fc" id="moteur">
+        <option value="">-- Sélectionnez --</option>
+        <option value="essence">Essence</option>
+        <option value="diesel">Diesel</option>
+        <option value="hybride">Hybride</option>
+        <option value="electrique">Électrique</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label class="fl">Type d'huile utilisée</label>
+      <select class="fc" id="huile">
+        <option value="">-- Sélectionnez --</option>
+        <option value="minerale">Huile minérale</option>
+        <option value="semi">Huile semi-synthétique</option>
+        <option value="synthetique">Huile synthétique (Full Synth)</option>
+        <option value="longlife">Huile Long Life</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label class="fl">Type d'usage principal</label>
+      <select class="fc" id="usage">
+        <option value="">-- Sélectionnez --</option>
+        <option value="urbain">Urbain (ville, trajets courts)</option>
+        <option value="mixte">Mixte (ville + route)</option>
+        <option value="routier">Routier / Autoroute</option>
+        <option value="intensif">Intensif (taxi, VTC, beaucoup de km)</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label class="fl">Kilométrage actuel</label>
+      <input class="fc" type="number" id="km-actuel" placeholder="Ex: 75000" inputmode="numeric">
+    </div>
+
+    <div class="fg">
+      <label class="fl">Kilométrage de la dernière vidange</label>
+      <input class="fc" type="number" id="km-derniere" placeholder="Ex: 60000" inputmode="numeric">
+    </div>
+
+    <div class="fg">
+      <label class="fl">Date de la dernière vidange</label>
+      <input class="fc" type="date" id="date-derniere">
+    </div>
+
+    <button class="btn" onclick="calculer()">Calculer ma prochaine vidange →</button>
+  </div>
+
+  <div class="result" id="result">
+    <div class="result-ico" id="result-ico">✅</div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-km" id="result-km"></div>
+    <div class="result-sub" id="result-sub"></div>
+    <div class="result-details" id="result-details"></div>
+    <div class="info-box">
+      <p>⚠️ Ces résultats sont indicatifs. Consultez toujours le carnet constructeur de votre véhicule pour les intervalles officiels.</p>
+    </div>
+    <div class="cta-box">
+      <p>Enregistrez ces données dans AutoCarnet et recevez un rappel automatique avant votre prochaine vidange.</p>
+      <a href="/app.html" class="cta-btn">🔔 Programmer mon rappel →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 AutoCarnet · <a href="/">Accueil</a> · <a href="/blog.html">Blog auto</a> · <a href="/mentions-legales.html">Mentions légales</a></p>
+</footer>
+
+<script>
+const INTERVALLES = {
+  essence: { minerale: 7500, semi: 10000, synthetique: 15000, longlife: 20000 },
+  diesel:  { minerale: 7500, semi: 10000, synthetique: 15000, longlife: 20000 },
+  hybride: { minerale: 7500, semi: 10000, synthetique: 15000, longlife: 20000 },
+  electrique: null
+};
+
+const COEFF_USAGE = { urbain: 0.7, mixte: 1.0, routier: 1.1, intensif: 0.6 };
+
+function calculer() {
+  const moteur = document.getElementById('moteur').value;
+  const huile = document.getElementById('huile').value;
+  const usage = document.getElementById('usage').value;
+  const kmActuel = parseInt(document.getElementById('km-actuel').value) || 0;
+  const kmDerniere = parseInt(document.getElementById('km-derniere').value) || 0;
+  const dateDerniere = document.getElementById('date-derniere').value;
+
+  if (!moteur || !usage || !kmActuel) {
+    alert('Veuillez remplir au moins le type de moteur, l\'usage et le kilométrage actuel.');
+    return;
+  }
+
+  const result = document.getElementById('result');
+  result.style.display = 'block';
+  result.className = 'result';
+
+  if (moteur === 'electrique') {
+    document.getElementById('result-ico').textContent = '⚡';
+    document.getElementById('result-title').textContent = 'Véhicule électrique';
+    document.getElementById('result-km').textContent = 'Pas de vidange';
+    document.getElementById('result-sub').textContent = 'Les véhicules 100% électriques ne nécessitent pas de vidange d\'huile moteur.';
+    document.getElementById('result-details').innerHTML = '<p>En revanche, pensez à vérifier régulièrement :<br><strong>• Liquide de frein</strong> (tous les 2 ans)<br><strong>• Liquide de refroidissement</strong> (selon constructeur)<br><strong>• Huile de pont</strong> (si applicable)</p>';
+    return;
+  }
+
+  if (!huile) {
+    alert('Veuillez sélectionner le type d\'huile.');
+    return;
+  }
+
+  const baseInterval = INTERVALLES[moteur][huile];
+  const coeff = COEFF_USAGE[usage];
+  const intervalleAjuste = Math.round(baseInterval * coeff / 500) * 500;
+
+  const kmProchaineVidange = kmDerniere > 0 ? kmDerniere + intervalleAjuste : kmActuel + intervalleAjuste;
+  const kmRestants = kmProchaineVidange - kmActuel;
+  const kmDepuisDerniere = kmDerniere > 0 ? kmActuel - kmDerniere : 0;
+
+  // Calculer la date estimée
+  let dateEstimee = '';
+  if (dateDerniere && kmDerniere > 0 && kmDepuisDerniere > 0) {
+    const joursParKm = (new Date() - new Date(dateDerniere)) / (1000 * 86400) / kmDepuisDerniere;
+    const joursRestants = kmRestants * joursParKm;
+    const dateProchaine = new Date(Date.now() + joursRestants * 86400000);
+    dateEstimee = dateProchaine.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  }
+
+  let ico, titre, classe;
+  if (kmRestants <= 0) {
+    ico = '🚨'; titre = 'Vidange en retard !'; classe = 'result danger';
+  } else if (kmRestants <= 1500) {
+    ico = '⚠️'; titre = 'Vidange bientôt due'; classe = 'result warn';
+  } else {
+    ico = '✅'; titre = 'Vidange à venir'; classe = 'result';
+  }
+
+  result.className = classe;
+  document.getElementById('result-ico').textContent = ico;
+  document.getElementById('result-title').textContent = titre;
+  document.getElementById('result-km').textContent = kmRestants > 0 ? '+' + kmRestants.toLocaleString('fr') + ' km' : Math.abs(kmRestants).toLocaleString('fr') + ' km de retard';
+  document.getElementById('result-sub').textContent = kmRestants > 0 ? `Prochaine vidange à ${kmProchaineVidange.toLocaleString('fr')} km${dateEstimee ? ' · Estimée : ' + dateEstimee : ''}` : `La vidange était due à ${kmProchaineVidange.toLocaleString('fr')} km`;
+
+  document.getElementById('result-details').innerHTML = `
+    <p><strong>Intervalle recommandé :</strong> tous les ${intervalleAjuste.toLocaleString('fr')} km</p>
+    ${kmDerniere > 0 ? `<p><strong>Dernière vidange :</strong> à ${kmDerniere.toLocaleString('fr')} km (${kmDepuisDerniere.toLocaleString('fr')} km il y a)</p>` : ''}
+    <p><strong>Moteur :</strong> ${moteur.charAt(0).toUpperCase() + moteur.slice(1)} · <strong>Huile :</strong> ${huile === 'synthetique' ? 'Full Synthétique' : huile === 'semi' ? 'Semi-synthétique' : huile === 'longlife' ? 'Long Life' : 'Minérale'}</p>
+    <p><strong>Usage :</strong> ${usage.charAt(0).toUpperCase() + usage.slice(1)}</p>
+  `;
+
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

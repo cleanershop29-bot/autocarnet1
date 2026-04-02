@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Politique de confidentialité — AutoCarnet</title>
+<meta name="description" content="Politique de confidentialité et protection des données personnelles d'AutoCarnet. RGPD, cookies, droits des utilisateurs.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://autocarnet.fr/politique-confidentialite.html">
+<link rel="icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563EB;--tx:#0f172a;--txm:#475569;--txl:#94a3b8;--bg:#F8FAFC;--border:#E2E8F0;--r:14px}
+body{font-family:'Outfit',sans-serif;color:var(--tx);background:var(--bg);line-height:1.7}
+a{color:var(--blue)}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1rem;color:var(--tx);text-decoration:none}
+.nav-logo img{width:28px;height:28px;border-radius:6px}
+.nav-cta{background:var(--blue);color:#fff;padding:7px 16px;border-radius:20px;font-size:.82rem;font-weight:700;text-decoration:none}
+.container{max-width:720px;margin:0 auto;padding:40px 20px 80px}
+.back{font-size:.82rem;color:var(--txm);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:24px}
+h1{font-size:1.8rem;font-weight:900;letter-spacing:-.03em;margin-bottom:8px}
+.meta{font-size:.78rem;color:var(--txl);margin-bottom:32px}
+h2{font-size:1.05rem;font-weight:800;margin:32px 0 10px;color:var(--tx)}
+p{font-size:.9rem;color:var(--txm);margin-bottom:12px}
+ul{padding-left:20px;margin-bottom:12px}
+li{font-size:.9rem;color:var(--txm);margin-bottom:6px}
+.highlight{background:#EFF6FF;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0}
+.highlight p{margin:0;color:#1e40af;font-size:.88rem}
+.table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.85rem}
+.table th{background:#F1F5F9;padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid var(--border)}
+.table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--txm);vertical-align:top}
+hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center;font-size:.72rem;color:var(--txl)}
+footer a{color:var(--txl)}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><img src="/icon-192.png" alt="AutoCarnet">AutoCarnet</a>
+  <a href="/app.html" class="nav-cta">Essayer gratuitement</a>
+</nav>
+
+<div class="container">
+  <a href="/" class="back">← Retour à l'accueil</a>
+  <h1>Politique de confidentialité</h1>
+  <p class="meta">Dernière mise à jour : avril 2026 · Conforme au RGPD</p>
+
+  <div class="highlight"><p>🔒 AutoCarnet respecte votre vie privée. Nous collectons uniquement les données indispensables au fonctionnement du service et ne les revendons jamais.</p></div>
+
+  <h2>1. Responsable du traitement</h2>
+  <p><strong>AutoCarnet</strong> — Auto-entrepreneur — SIRET 914 511 639 00025<br>
+  Email : <a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a></p>
+
+  <h2>2. Données collectées</h2>
+  <table class="table">
+    <thead><tr><th>Donnée</th><th>Finalité</th><th>Base légale</th><th>Durée</th></tr></thead>
+    <tbody>
+      <tr><td>Adresse email</td><td>Authentification, communications</td><td>Exécution du contrat</td><td>Durée du compte</td></tr>
+      <tr><td>Nom (optionnel)</td><td>Personnalisation</td><td>Consentement</td><td>Durée du compte</td></tr>
+      <tr><td>Données véhicules</td><td>Fonctionnement du service</td><td>Exécution du contrat</td><td>Durée du compte</td></tr>
+      <tr><td>Données entretiens</td><td>Fonctionnement du service</td><td>Exécution du contrat</td><td>Durée du compte</td></tr>
+      <tr><td>Abonnement Stripe</td><td>Gestion des paiements</td><td>Obligation légale</td><td>10 ans (comptabilité)</td></tr>
+      <tr><td>Endpoint push</td><td>Notifications</td><td>Consentement</td><td>Jusqu'au désabonnement</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. Données non collectées</h2>
+  <p>AutoCarnet ne collecte <strong>jamais</strong> :</p>
+  <ul>
+    <li>Coordonnées bancaires (traitées exclusivement par Stripe)</li>
+    <li>Données de localisation GPS permanentes</li>
+    <li>Données de navigation ou cookies publicitaires</li>
+    <li>Données sensibles au sens du RGPD</li>
+  </ul>
+
+  <h2>4. Sous-traitants et hébergement</h2>
+  <table class="table">
+    <thead><tr><th>Prestataire</th><th>Rôle</th><th>Localisation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Supabase</strong></td><td>Base de données et authentification</td><td>UE (AWS Frankfurt)</td></tr>
+      <tr><td><strong>Netlify</strong></td><td>Hébergement web</td><td>USA (Privacy Shield)</td></tr>
+      <tr><td><strong>Stripe</strong></td><td>Paiement en ligne</td><td>USA/UE (Privacy Shield)</td></tr>
+      <tr><td><strong>Google FCM</strong></td><td>Notifications push</td><td>USA (Privacy Shield)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5. Cookies</h2>
+  <p>AutoCarnet utilise uniquement des cookies techniques indispensables au fonctionnement :</p>
+  <ul>
+    <li><strong>Cookie de session</strong> — maintient votre connexion (durée : session)</li>
+    <li><strong>Token d'authentification</strong> — stocké en localStorage, non transmis à des tiers</li>
+  </ul>
+  <p>Aucun cookie publicitaire, de tracking ou analytique n'est utilisé.</p>
+
+  <h2>6. Vos droits</h2>
+  <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+  <ul>
+    <li><strong>Droit d'accès</strong> — obtenir une copie de vos données</li>
+    <li><strong>Droit de rectification</strong> — corriger vos données inexactes</li>
+    <li><strong>Droit à l'effacement</strong> — supprimer votre compte et toutes vos données</li>
+    <li><strong>Droit à la portabilité</strong> — exporter vos données (CSV disponible dans l'app)</li>
+    <li><strong>Droit d'opposition</strong> — vous opposer à certains traitements</li>
+  </ul>
+  <p>Pour exercer ces droits : <a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a> — réponse sous 30 jours.</p>
+  <p>Vous pouvez également déposer une réclamation auprès de la <strong>CNIL</strong> : <a href="https://www.cnil.fr" target="_blank">www.cnil.fr</a></p>
+
+  <h2>7. Sécurité</h2>
+  <p>AutoCarnet met en œuvre les mesures de sécurité suivantes :</p>
+  <ul>
+    <li>Connexion chiffrée HTTPS sur l'ensemble du site</li>
+    <li>Mots de passe hashés (jamais stockés en clair)</li>
+    <li>Accès aux données restreint par utilisateur (Row Level Security)</li>
+    <li>Clés API stockées côté serveur uniquement</li>
+  </ul>
+
+  <h2>8. Transferts hors UE</h2>
+  <p>Certains prestataires (Netlify, Stripe, Google) sont situés aux États-Unis. Ces transferts sont encadrés par des clauses contractuelles types conformes au RGPD.</p>
+
+  <h2>9. Modifications</h2>
+  <p>Cette politique peut être mise à jour. En cas de modification substantielle, vous serez informé par email. La date de dernière mise à jour est indiquée en haut de cette page.</p>
+
+  <hr>
+  <p style="font-size:.8rem;color:var(--txl)">Contact DPO : <a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a></p>
+</div>
+
+<footer>
+  <p>© 2026 AutoCarnet · <a href="/">Accueil</a> · <a href="/cgu.html">CGU</a> · <a href="/mentions-legales.html">Mentions légales</a></p>
+</footer>
+</body>
+</html>
