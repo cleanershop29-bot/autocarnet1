@@ -544,8 +544,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
         <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:8px" onclick="adminCheckUser()">🔍 Vérifier statut</button>
         <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
           <div class="fg" style="margin-bottom:6px">
-            <label class="fl" style="font-size:.72rem">ID abonnement Gumroad</label>
-            <input class="fc" id="admin-sub-id" placeholder="Ex: XQF_0nNDJYJDKyp64In39A==" style="font-size:.78rem">
+            <label class="fl" style="font-size:.72rem">ID abonnement Stripe</label>
+            <input class="fc" id="admin-sub-id" placeholder="Ex: sub_1ABC..." style="font-size:.78rem">
           </div>
           <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()">💾 Enregistrer l'ID abonnement</button>
         </div>
@@ -3381,8 +3381,8 @@ function renderProfil(){
     <div class="prem-name">${esc(name)||'Utilisateur'}</div>
     <div class="prem-email">${esc(email)}</div>
     <div class="prem-badge">${getUserPlan()==="famille"?"👨‍👩‍👧 Plan Famille":"🚀 Plan Pro"}</div>
-    ${(S.user?.user_metadata?.stripe_subscription_id||S.user?.user_metadata?.gumroad_subscription_id)
-      ?`<a href="${S.user.user_metadata.stripe_subscription_id?'https://billing.stripe.com/p/login/5kQfZjc6Ma1F3dI3sz8Zq00':'https://app.gumroad.com/subscriptions/'+S.user.user_metadata.gumroad_subscription_id+'/manage'}" target="_blank" style="display:inline-block;margin-bottom:14px;padding:8px 16px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-size:.78rem;font-weight:600;color:#475569;text-decoration:none">⚙️ Gérer mon abonnement</a>`
+    ${S.user?.user_metadata?.stripe_subscription_id
+      ?`<a href="https://billing.stripe.com/p/login/5kQfZjc6Ma1F3dI3sz8Zq00" target="_blank" style="display:inline-block;margin-bottom:14px;padding:8px 16px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-size:.78rem;font-weight:600;color:#475569;text-decoration:none">⚙️ Gérer mon abonnement</a>`
       :''}
     <div class="prem-stats">
       <div class="prem-stat"><div class="prem-stat-v">${totalVehs}</div><div class="prem-stat-l">Véhicules</div></div>
