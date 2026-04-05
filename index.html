@@ -177,6 +177,14 @@ h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:900;letter-spacing:-.03em;line
 .btn-w{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:.9rem;font-weight:700;background:#fff;color:var(--blue);position:relative;font-family:'Nunito',sans-serif}
 .inst-note{margin-top:16px;font-size:.71rem;color:rgba(255,255,255,.45);line-height:2;position:relative;font-weight:500}
 
+/* FAQ */
+.faq-item{background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.faq-q{padding:16px 18px;font-size:.88rem;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none}
+.faq-arrow{color:var(--blue);font-size:1.2rem;flex-shrink:0;transition:transform .2s;line-height:1}
+.faq-item.open .faq-arrow{transform:rotate(45deg)}
+.faq-a{font-size:.82rem;color:var(--txm);line-height:1.75;font-weight:500;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.faq-item.open .faq-a{max-height:200px;padding:0 18px 16px}
+
 /* FOOTER */
 footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
 .footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
@@ -208,9 +216,19 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <h1>Le carnet d'entretien voiture<br>qui <span class="hi">simplifie tout</span></h1>
   </div>
   <div class="rv d2">
-    <p class="hero-p">Fini les carnets papier perdus. Centralisez vos véhicules, entretiens et rappels dans une application gratuite, installable sur votre téléphone. Idéal pour les particuliers, les familles et les professionnels gérant une flotte de véhicules.</p>
+    <p class="hero-p">Fini les carnets papier perdus. Rappels automatiques, historique complet, gestion de flotte — tout dans une appli gratuite sur votre téléphone.</p>
   </div>
-  <div class="rv d3">
+  <div class="rv d3" style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px">
+    <a href="/app.html" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:var(--blue);color:#fff;box-shadow:0 6px 24px rgba(37,99,235,.35);font-family:'Nunito',sans-serif;width:100%;max-width:300px;margin-bottom:10px">🚀 Essayer gratuitement</a>
+    <div style="font-size:.75rem;color:var(--txl);font-weight:600;margin-bottom:18px">Sans carte bancaire · Accès immédiat</div>
+    <div class="trust">
+      <span>Sans pub</span>
+      <span>Données privées</span>
+      <span>PWA installable</span>
+    </div>
+  </div>
+  <div class="rv d4" style="margin-bottom:8px;font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.08em">Choisissez votre plan</div>
+  <div class="rv d4">
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:480px;margin:0 auto 18px;text-align:left;overflow:hidden;align-items:stretch">
       <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:10px 8px;min-width:0;display:flex;flex-direction:column">
         <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:6px">Gratuit</div>
@@ -218,7 +236,7 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
         <div style="font-size:.68rem;color:var(--txl);margin-bottom:10px">Pour toujours</div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;flex:1">
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>1 véhicule</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>10 entretiens</li>
+          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Entretiens illimités</li>
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Rappels</li>
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>PWA</li>
         </ul>
@@ -230,7 +248,7 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
         <div style="font-size:.68rem;color:var(--txl);margin-bottom:10px">7 jours offerts</div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;flex:1">
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>3 véhicules</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>10 entretiens/véh.</li>
+          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Entretiens illimités/véh.</li>
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Rappels</li>
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Documents</li>
           <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Photos factures</li>
@@ -287,6 +305,34 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
   </div>
 </div>
 
+<!-- PROFILS -->
+<section style="padding:52px 20px;background:var(--bg2)">
+  <div class="rv" style="text-align:center;max-width:700px;margin:0 auto">
+    <div class="sec-lbl">Pour tout le monde</div>
+    <h2>Conçu pour vous,<br>quel que soit votre profil</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-top:28px;max-width:700px;margin-left:auto;margin-right:auto">
+    <style>.profiles-grid-inner{display:grid;grid-template-columns:1fr;gap:12px}@media(min-width:560px){.profiles-grid-inner{grid-template-columns:repeat(3,1fr)}}</style>
+    <div class="profiles-grid-inner">
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center" class="rv">
+        <div style="font-size:2rem;margin-bottom:10px">🚗</div>
+        <div style="font-size:.88rem;font-weight:800;margin-bottom:6px">Particuliers</div>
+        <div style="font-size:.78rem;color:var(--txm);line-height:1.65;font-weight:500">Ne ratez plus jamais un CT ou une vidange. Historique complet de votre voiture, précieux à la revente.</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center" class="rv d1">
+        <div style="font-size:2rem;margin-bottom:10px">👨‍👩‍👧</div>
+        <div style="font-size:.88rem;font-weight:800;margin-bottom:6px">Familles</div>
+        <div style="font-size:.78rem;color:var(--txm);line-height:1.65;font-weight:500">Gérez toutes vos voitures au même endroit. Partagez l'accès avec votre conjoint ou vos enfants.</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center" class="rv d2">
+        <div style="font-size:2rem;margin-bottom:10px">🏢</div>
+        <div style="font-size:.88rem;font-weight:800;margin-bottom:6px">Pros & Flottes</div>
+        <div style="font-size:.78rem;color:var(--txm);line-height:1.65;font-weight:500">Suivez vos véhicules utilitaires, gérez votre équipe et exportez les données pour votre comptable.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- STATS -->
 <div class="stats-band">
   <div class="stats-in">
@@ -332,6 +378,36 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
 </section>
 
 <!-- PRICING déjà dans hero -->
+
+<!-- FAQ -->
+<section style="padding:60px 20px;background:var(--bg2)">
+  <div class="rv" style="text-align:center;max-width:600px;margin:0 auto">
+    <div class="sec-lbl">Questions fréquentes</div>
+    <h2>Vous avez des questions ?</h2>
+  </div>
+  <div style="max-width:600px;margin:28px auto 0;display:flex;flex-direction:column;gap:10px">
+    <div class="faq-item rv">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">C'est vraiment gratuit ? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription. Vous pouvez gérer 1 véhicule avec des entretiens illimités sans jamais payer.</div>
+    </div>
+    <div class="faq-item rv d1">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Mes données sont-elles en sécurité ? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Vos données sont stockées de manière sécurisée et ne sont jamais vendues ni partagées avec des tiers. AutoCarnet ne contient aucune publicité.</div>
+    </div>
+    <div class="faq-item rv d2">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Ça fonctionne sur iPhone et Android ? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur — sans passer par l'App Store ou Google Play.</div>
+    </div>
+    <div class="faq-item rv d3">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Puis-je annuler mon abonnement à tout moment ? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer.</div>
+    </div>
+    <div class="faq-item rv">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Est-ce que ça marche sans internet ? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion.</div>
+    </div>
+  </div>
+</section>
 
 <!-- CTA -->
 <section class="cta-sec">
@@ -400,7 +476,7 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <a href="#pricing">Tarifs</a>
     <a href="#pro">Pros &amp; Flottes</a>
     
-    <a href="mailto:autocarnetpro@gmail.com">Contact</a>
+    <a href="/cdn-cgi/l/email-protection#9bfaeeeff4f8fae9f5feefebe9f4dbfcf6faf2f7b5f8f4f6">Contact</a>
     <a href="/blog.html">Blog</a> · <a href="/faq.html">FAQ</a> · <a href="/calculateur-vidange.html">Calculateur vidange</a> · <a href="/cgu.html">CGU</a> · <a href="/mentions-legales.html">Mentions légales</a>
   </div>
   <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
@@ -408,11 +484,11 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     Auto-entrepreneur · SIRET 914 511 639 00025 · France
   </div>
   <div style="font-size:.68rem;color:var(--txl);margin-top:2px">
-    <a href="mailto:autocarnetpro@gmail.com" style="color:var(--txl)">autocarnetpro@gmail.com</a>
+    <a href="/cdn-cgi/l/email-protection#3b5a4e4f54585a49555e4f4b49547b5c565a525715585456" style="color:var(--txl)"><span class="__cf_email__" data-cfemail="e48591908b8785968a819094968ba48389858d88ca878b89">[email&#160;protected]</span></a>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function(){
   var h=window.location.hash;
   if(h.includes('type=recovery')||h.includes('access_token')){
@@ -480,16 +556,4 @@ async function stripeCheckout(plan){
   try{
     const r=await fetch('/.netlify/functions/create-checkout',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({plan})
-    });
-    const d=await r.json();
-    if(d.url){window.location.href=d.url;}
-    else{alert('Erreur. Veuillez reessayer.');}
-  }catch(e){
-    alert('Erreur reseau. Veuillez reessayer.');
-  }
-}
-</script>
-</body>
-</html>
+      he
