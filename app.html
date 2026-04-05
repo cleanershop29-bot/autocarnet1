@@ -498,9 +498,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <!-- Étape 1 -->
     <div class="ob-step" id="ob-s1">
       <div class="ob-ico">🚗</div>
-      <div class="ob-ttl">Bienvenue sur AutoCarnet</div>
-      <div class="ob-txt">Votre carnet d'entretien digital.<br>Suivez tous vos véhicules en un seul endroit.</div>
-      <button class="btn btn-p" style="width:100%" onclick="showOnboardStep(2)">Suivant →</button>
+      <div class="ob-ttl">Bienvenue sur AutoCarnet !</div>
+      <div class="ob-txt">Fini les carnets papier perdus et les CT ratés.<br><strong>2 minutes</strong> suffisent pour configurer votre premier véhicule.</div>
+      <button class="btn btn-p" style="width:100%;margin-top:8px" onclick="showOnboardStep(2)">Découvrir →</button>
     </div>
     <!-- Étape 2 -->
     <div class="ob-step hidden" id="ob-s2">
@@ -515,10 +515,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <!-- Étape 3 -->
     <div class="ob-step hidden" id="ob-s3">
       <div class="ob-ico">✨</div>
-      <div class="ob-ttl">Prêt à commencer ?</div>
-      <div class="ob-txt">Ajoutez votre premier véhicule pour démarrer le suivi.</div>
-      <button class="btn btn-p" style="width:100%;margin-bottom:10px" onclick="onboardFinish()">+ Ajouter mon véhicule</button>
-      <button class="btn btn-s" style="width:100%" onclick="closeOnboarding()">Plus tard</button>
+      <div class="ob-ttl">C'est parti !</div>
+      <div class="ob-txt">Ajoutez votre premier véhicule maintenant.<br>Ça prend moins de 30 secondes.</div>
+      <button class="btn btn-p" style="width:100%;margin-top:12px;padding:14px;font-size:.95rem" onclick="onboardFinish()">🚗 Ajouter mon véhicule</button>
     </div>
   </div>
 </div>
@@ -1895,7 +1894,16 @@ function renderVehs(){
   const el=S.view==='dash'?g('d-ctn'):g('vh-ctn');
   if(!el)return;
   if(!S.vehicles.length){
-    el.innerHTML=`<div class="empty"><span class="empty-i">🚗</span><div class="empty-t">Bienvenue dans AutoCarnet</div><p class="empty-d">Appuyez sur + pour ajouter votre premier véhicule.</p><button class="btn btn-p" onclick="openVeh()">+ Ajouter un véhicule</button></div>`;
+    el.innerHTML=`<div class="empty" style="padding:48px 20px">
+      <span class="empty-i">🚗</span>
+      <div class="empty-t">Votre garage est vide</div>
+      <p class="empty-d">Ajoutez votre premier véhicule pour commencer à suivre vos entretiens et recevoir vos rappels automatiques.</p>
+      <button class="btn btn-p" style="width:100%;max-width:280px;padding:13px;font-size:.92rem" onclick="openVeh()">🚗 Ajouter mon premier véhicule</button>
+      <div style="margin-top:20px;background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:12px;padding:12px 14px;text-align:left;max-width:280px">
+        <div style="font-size:.75rem;font-weight:800;color:var(--blue);margin-bottom:6px">💡 Le saviez-vous ?</div>
+        <div style="font-size:.78rem;color:var(--txm);line-height:1.6">AutoCarnet vous alertera avant chaque CT, vidange ou révision — plus jamais d'oubli coûteux.</div>
+      </div>
+    </div>`;
     return;
   }
   // Alertes urgentes en haut si existantes
