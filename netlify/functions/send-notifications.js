@@ -77,7 +77,7 @@ exports.handler = async () => {
 
       for (const alert of alerts) {
         try {
-          await webpush.sendNotification(pushSub, JSON.stringify({ title: alert.title, body: alert.body }));
+          await webpush.sendNotification(pushSub, JSON.stringify({ title: alert.title, body: alert.body }), { urgency: 'high' });
           sent++;
         } catch(e) {
           if (e.statusCode === 410 || e.statusCode === 404) {
