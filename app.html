@@ -4063,7 +4063,7 @@ function renderFlotte(){
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
   // Header véhicules
-  h+='<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><button class="sec-lnk" onclick="openVeh()">+ Ajouter</button></div>';
+  h+='<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><div style="display:flex;gap:8px;align-items:center"><button class="sec-lnk" style="color:var(--txm);font-weight:500" onclick="openCarburantPage()">⛽ Carburant</button><button class="sec-lnk" onclick="openVeh()">+ Ajouter</button></div></div>';
   // Une carte par véhicule — tout en un
   const sortedVehs=[...vehs].sort((a,b)=>{const order={danger:0,warn:1,ok:2};return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);});
   sortedVehs.forEach(v=>{
