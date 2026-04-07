@@ -1,5 +1,5 @@
-// AutoCarnet Service Worker v10 — avec support notifications push
-const CACHE = 'autocarnet-v10';
+// AutoCarnet Service Worker v11 — avec support notifications push
+const CACHE = 'autocarnet-v11';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
