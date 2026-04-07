@@ -21,7 +21,7 @@
 <meta name="robots" content="index, follow">
 <meta name="author" content="AutoCarnet">
 <link rel="canonical" href="https://autocarnet.fr">
-<meta name="theme-color" content="#2563EB">
+<meta name="theme-color" content="#0F172A">
 <link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <script type="application/ld+json">
@@ -34,172 +34,239 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web, Android, iOS",
   "offers": [
-    {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "EUR",
-      "name": "Gratuit"
-    },
-    {
-      "@type": "Offer",
-      "price": "1.99",
-      "priceCurrency": "EUR",
-      "name": "Plan Famille",
-      "billingPeriod": "P1M"
-    },
-    {
-      "@type": "Offer",
-      "price": "4.99",
-      "priceCurrency": "EUR",
-      "name": "Plan Pro",
-      "billingPeriod": "P1M"
-    }
+    {"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Gratuit"},
+    {"@type":"Offer","price":"1.99","priceCurrency":"EUR","name":"Plan Famille","billingPeriod":"P1M"},
+    {"@type":"Offer","price":"4.99","priceCurrency":"EUR","name":"Plan Pro","billingPeriod":"P1M"}
   ],
   "featureList": "Suivi entretien voiture, Rappels vidange et CT, Gestion flotte véhicules, Historique entretiens, Export PDF, Notifications push, Prix carburant, Mode équipe"
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --blue:#2563EB;--blue-dk:#1D4ED8;--blue-lt:#EFF6FF;--blue-mid:#BFDBFE;
-  --txt:#0F172A;--txm:#475569;--txl:#94A3B8;--border:#E2E8F0;
-  --bg:#FFFFFF;--bg2:#F8FAFC;--r:14px;
+  --ink:#0A0F1E;
+  --ink2:#1E2740;
+  --slate:#64748B;
+  --muted:#94A3B8;
+  --border:#E2E8F0;
+  --bg:#FFFFFF;
+  --bg2:#F8FAFC;
+  --accent:#2563EB;
+  --accent-glow:rgba(37,99,235,.18);
+  --accent-lt:#EFF6FF;
+  --green:#10B981;
+  --green-lt:#ECFDF5;
+  --r:16px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:60px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:box-shadow .3s}
-nav.scrolled{box-shadow:0 2px 14px rgba(0,0,0,.07)}
-.nav-in{width:100%;max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1rem;letter-spacing:-.02em;color:var(--txt)}
-.nav-logo-ico{width:30px;height:30px;background:linear-gradient(135deg,#2563EB,#60A5FA);border-radius:8px;display:grid;place-items:center;font-size:.82rem;flex-shrink:0}
-.nav-cta{background:var(--blue);color:#fff;padding:9px 18px;border-radius:10px;font-size:.84rem;font-weight:700;transition:.15s}
-.nav-cta:active{background:var(--blue-dk)}
-
-/* REVEAL */
+/* ── REVEAL ── */
 .rv{opacity:1;transform:none}
-.rv.anim{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.rv.anim{opacity:0;transform:translateY(28px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
 .rv.anim.up{opacity:1;transform:none}
 .rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.4s}
 
-/* HERO */
-.hero{padding:96px 12px 52px;text-align:center;background:var(--bg);position:relative;overflow:hidden}
-.hero-glow{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.06) 0%,transparent 65%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-lt);border:1px solid var(--blue-mid);color:var(--blue);padding:5px 13px;border-radius:20px;font-size:.73rem;font-weight:700;margin-bottom:22px;letter-spacing:.01em}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
-h1{font-size:clamp(2rem,6.5vw,3.4rem);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:16px;color:var(--txt)}
-h1 .hi{color:var(--blue)}
-.hero-p{font-size:.97rem;color:var(--txm);line-height:1.8;margin-bottom:30px;max-width:440px;margin-left:auto;margin-right:auto;font-weight:500}
-.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
-.btn-main{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:.9rem;font-weight:700;background:var(--blue);color:#fff;box-shadow:0 4px 18px rgba(37,99,235,.3);font-family:'Nunito',sans-serif}
-.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:12px;font-size:.9rem;font-weight:600;background:var(--bg2);color:var(--txt);border:1.5px solid var(--border);font-family:'Nunito',sans-serif}
-.trust{font-size:.75rem;color:var(--txl);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-weight:600}
-.trust span::before{content:'✓ ';color:var(--blue);font-weight:800}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(226,232,240,.6);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.nav-in{width:100%;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink)}
+.logo-mark{width:32px;height:32px;border-radius:9px;background:var(--ink);display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
+.nav-cta{background:var(--ink);color:#fff;padding:9px 20px;border-radius:10px;font-size:.83rem;font-weight:700;letter-spacing:-.01em;transition:.15s}
+.nav-cta:active{opacity:.85}
 
-/* MOCKUP */
-.mockup-wrap{padding:4px 20px 52px;display:flex;justify-content:center}
-.mockup{background:linear-gradient(155deg,#1E3A8A,#3B82F6);border-radius:22px;padding:18px;max-width:294px;width:100%;box-shadow:0 24px 60px rgba(37,99,235,.24)}
-.m-bar{display:flex;gap:5px;margin-bottom:13px}
-.m-bar span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22)}
-.m-card{background:#fff;border-radius:12px;padding:12px;margin-bottom:8px}
-.m-row{display:flex;align-items:center;gap:9px}
-.m-ico{width:36px;height:36px;background:var(--blue-lt);border-radius:8px;display:grid;place-items:center;font-size:1rem;flex-shrink:0}
-.m-name{font-size:.82rem;font-weight:800}
-.m-sub{font-size:.65rem;color:var(--txm);margin-top:1px;font-weight:500}
-.m-ok{margin-left:auto;background:#ECFDF5;color:#059669;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:20px;flex-shrink:0}
-.m-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:10px}
-.m-st{background:var(--bg2);border-radius:6px;padding:6px;text-align:center}
-.m-sv{font-size:.74rem;font-weight:800}
-.m-sl{font-size:.55rem;color:var(--txm);margin-top:1px;font-weight:600}
-.m-notif{background:rgba(255,255,255,.13);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:9px}
-.m-ntxt{font-size:.7rem;color:#fff;line-height:1.45;font-weight:500}
-.m-ntxt strong{display:block;font-weight:800}
+/* ── HERO ── */
+.hero{padding:100px 20px 0;background:var(--bg);position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55}
+.blob1{width:500px;height:400px;background:radial-gradient(circle,#BFDBFE,transparent 70%);top:-80px;left:-100px}
+.blob2{width:400px;height:350px;background:radial-gradient(circle,#DDD6FE,transparent 70%);top:0;right:-80px}
+.blob3{width:300px;height:300px;background:radial-gradient(circle,#A7F3D0,transparent 70%);top:200px;left:40%}
 
-/* STATS */
-.stats-band{background:var(--blue);padding:32px 20px}
-.stats-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;text-align:center}
-@media(min-width:580px){.stats-in{grid-template-columns:repeat(4,1fr)}}
-.stat-n{font-size:2rem;font-weight:900;color:#fff;line-height:1;letter-spacing:-.03em}
-.stat-l{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:5px;font-weight:600}
+.hero-inner{max-width:680px;margin:0 auto;text-align:center;position:relative}
+.pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--border);color:var(--ink);padding:5px 14px 5px 7px;border-radius:100px;font-size:.72rem;font-weight:700;margin-bottom:28px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.pill-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,.2);animation:pulse 2.2s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2)}50%{box-shadow:0 0 0 6px rgba(34,197,94,.06)}}
 
-/* FEATURES */
-.features{padding:60px 20px}
-.sec-lbl{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:8px}
-h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-bottom:10px}
-.sec-p{font-size:.9rem;color:var(--txm);line-height:1.75;font-weight:500}
-.feat-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:30px}
-@media(min-width:560px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
-.feat{background:var(--bg2);border-radius:var(--r);padding:20px;border:1px solid var(--border)}
-.feat-ico{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font-size:1rem;margin-bottom:11px}
-.fi-b{background:var(--blue-lt)}.fi-g{background:#ECFDF5}.fi-o{background:#FFFBEB}
-.fi-p{background:#F5F3FF}.fi-r{background:#FEF2F2}.fi-c{background:#ECFEFF}
-.feat-t{font-size:.88rem;font-weight:800;margin-bottom:5px}
-.feat-d{font-size:.8rem;color:var(--txm);line-height:1.65;font-weight:500}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2.3rem,7vw,3.8rem);font-weight:800;line-height:1.06;letter-spacing:-.04em;margin-bottom:20px;color:var(--ink)}
+h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:1.02rem;color:var(--slate);line-height:1.75;margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto;font-weight:500}
 
-/* STEPS */
-.steps-sec{padding:60px 20px;background:var(--bg2)}
-.steps-in{max-width:500px;margin:0 auto}
-.steps-list{margin-top:30px;display:flex;flex-direction:column;position:relative}
-.steps-list::before{content:'';position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:linear-gradient(to bottom,var(--blue),var(--blue-mid))}
-.step{display:flex;gap:18px;padding-bottom:26px}
+.cta-group{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:36px}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:var(--ink);color:#fff;box-shadow:0 8px 28px rgba(10,15,30,.22);letter-spacing:-.01em;width:100%;max-width:320px;font-family:'Plus Jakarta Sans',sans-serif;transition:.2s}
+.btn-primary:active{transform:scale(.98)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-size:.9rem;font-weight:600;background:#fff;color:var(--ink);border:1.5px solid var(--border);font-family:'Plus Jakarta Sans',sans-serif;transition:.2s}
+.free-note{font-size:.74rem;color:var(--muted);font-weight:600}
+
+.trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin-bottom:44px}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:var(--slate)}
+.trust-item::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* ── MOCKUP FLOAT ── */
+.mockup-section{display:flex;justify-content:center;padding:0 20px 60px;position:relative}
+.phone-frame{background:#0A0F1E;border-radius:28px;padding:4px;box-shadow:0 32px 80px rgba(10,15,30,.28),0 0 0 1px rgba(255,255,255,.06) inset;max-width:260px;width:100%;position:relative}
+.phone-screen{background:#F1F5F9;border-radius:24px;overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.ps-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.ps-title{font-size:.8rem;font-weight:800;color:var(--ink)}
+.ps-badge{font-size:.6rem;font-weight:800;background:var(--green-lt);color:var(--green);padding:3px 8px;border-radius:20px}
+.ps-card{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ps-car-row{display:flex;align-items:center;gap:10px}
+.ps-car-ico{width:38px;height:38px;background:var(--accent-lt);border-radius:10px;display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+.ps-car-name{font-size:.82rem;font-weight:800;color:var(--ink)}
+.ps-car-sub{font-size:.63rem;color:var(--slate);margin-top:1px;font-weight:500}
+.ps-car-ok{margin-left:auto;font-size:.6rem;font-weight:800;background:var(--green-lt);color:var(--green);padding:2px 7px;border-radius:20px;flex-shrink:0}
+.ps-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.ps-stat{background:var(--bg2);border-radius:8px;padding:7px 5px;text-align:center}
+.ps-sv{font-size:.78rem;font-weight:800;color:var(--ink)}
+.ps-sl{font-size:.54rem;color:var(--slate);margin-top:1px;font-weight:600}
+.ps-notif{background:#0A0F1E;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:9px}
+.ps-notif-ico{font-size:1rem;flex-shrink:0}
+.ps-notif-txt{font-size:.68rem;color:rgba(255,255,255,.85);line-height:1.5;font-weight:500}
+.ps-notif-txt strong{display:block;color:#fff;font-weight:800}
+.ps-mini-card{background:#fff;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:9px}
+.ps-mini-ico{width:30px;height:30px;background:#FFFBEB;border-radius:8px;display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
+.ps-mini-txt{font-size:.72rem;font-weight:700;color:var(--ink)}
+.ps-mini-sub{font-size:.6rem;color:var(--slate);font-weight:500}
+.ps-mini-chip{margin-left:auto;font-size:.58rem;font-weight:800;background:#FEF3C7;color:#D97706;padding:2px 6px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+
+/* ── SOCIAL PROOF BAND ── */
+.proof-band{background:var(--ink);padding:36px 20px}
+.proof-in{max-width:800px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;text-align:center}
+@media(min-width:560px){.proof-in{grid-template-columns:repeat(4,1fr)}}
+.proof-n{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-.04em}
+.proof-l{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
+/* ── WHY SECTION ── */
+.why-sec{padding:72px 20px}
+.why-inner{max-width:700px;margin:0 auto}
+.sec-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px}
+h2{font-family:'Syne',sans-serif;font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:12px;color:var(--ink)}
+.sec-p{font-size:.92rem;color:var(--slate);line-height:1.78;font-weight:500}
+.why-cards{display:grid;grid-template-columns:1fr;gap:10px;margin-top:32px}
+@media(min-width:540px){.why-cards{grid-template-columns:repeat(2,1fr)}}
+.why-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:.2s}
+.why-ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;margin-bottom:14px;flex-shrink:0}
+.why-t{font-size:.9rem;font-weight:800;margin-bottom:6px;color:var(--ink)}
+.why-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
+
+/* ── HOW IT WORKS ── */
+.how-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.how-inner{max-width:500px;margin:0 auto}
+.steps{margin-top:36px;display:flex;flex-direction:column;position:relative}
+.steps::before{content:'';position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:linear-gradient(to bottom,var(--accent),#BFDBFE)}
+.step{display:flex;gap:20px;padding-bottom:28px}
 .step:last-child{padding-bottom:0}
-.step-n{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900;font-size:.86rem;flex-shrink:0;z-index:1;box-shadow:0 0 0 5px rgba(37,99,235,.1)}
-.step-t{font-size:.9rem;font-weight:800;margin-bottom:4px;padding-top:9px}
-.step-d{font-size:.8rem;color:var(--txm);line-height:1.65;font-weight:500}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.84rem;flex-shrink:0;z-index:1;box-shadow:0 0 0 5px rgba(37,99,235,.12)}
+.step-t{font-size:.92rem;font-weight:800;margin-bottom:4px;padding-top:8px;color:var(--ink)}
+.step-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
 
-/* PRICING */
-.pricing-sec{padding:60px 20px;text-align:center}
-.pricing-grid{max-width:540px;margin:28px auto 0;display:grid;grid-template-columns:1fr;gap:12px}
-@media(min-width:460px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
-.price-c{background:var(--bg);border:1.5px solid var(--border);border-radius:18px;padding:22px;position:relative;text-align:left}
-.price-c.hot{border-color:var(--blue);background:var(--blue-lt)}
-.p-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:.65rem;font-weight:800;padding:3px 12px;border-radius:20px;white-space:nowrap}
-.p-plan{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--txm);margin-bottom:8px}
-.p-amt{font-size:2.3rem;font-weight:900;letter-spacing:-.04em;margin-bottom:2px}
-.p-amt sup{font-size:.88rem;vertical-align:super}
-.p-per{font-size:.74rem;color:var(--txm);margin-bottom:16px;font-weight:500}
-.p-feats{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:18px;flex:1}
-.p-feats li{font-size:.8rem;color:var(--txm);display:flex;align-items:center;gap:7px;font-weight:500}
-.ck{color:var(--blue);font-weight:800;font-size:.8rem;flex-shrink:0}
-.p-cta{display:block;text-align:center;padding:11px;border-radius:10px;font-size:.84rem;font-weight:700;font-family:'Nunito',sans-serif}
-.p-cta.full{background:var(--blue);color:#fff}
+/* ── FEATURES ── */
+.feat-sec{padding:72px 20px}
+.feat-inner{max-width:720px;margin:0 auto}
+.feat-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:32px}
+@media(min-width:540px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
+.feat{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:22px;transition:.18s}
+.feat-ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1rem;margin-bottom:14px}
+.fi-b{background:var(--accent-lt)}
+.fi-g{background:var(--green-lt)}
+.fi-o{background:#FFFBEB}
+.fi-p{background:#F5F3FF}
+.fi-r{background:#FEF2F2}
+.fi-c{background:#ECFEFF}
+.feat-t{font-size:.9rem;font-weight:800;margin-bottom:5px;color:var(--ink)}
+.feat-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
 
-/* CTA */
-.cta-sec{padding:68px 20px;text-align:center;background:linear-gradient(155deg,#1E3A8A,#2563EB);overflow:hidden;position:relative}
-.cta-sec::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-250px;right:-150px}
-.cta-sec h2{color:#fff;margin-bottom:12px;position:relative}
-.cta-sec p{font-size:.9rem;color:rgba(255,255,255,.7);margin-bottom:26px;line-height:1.75;font-weight:500;position:relative}
-.btn-w{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:.9rem;font-weight:700;background:#fff;color:var(--blue);position:relative;font-family:'Nunito',sans-serif}
-.inst-note{margin-top:16px;font-size:.71rem;color:rgba(255,255,255,.45);line-height:2;position:relative;font-weight:500}
+/* ── PROFILES ── */
+.profile-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border)}
+.profile-inner{max-width:720px;margin:0 auto}
+.profile-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:32px}
+@media(min-width:540px){.profile-grid{grid-template-columns:repeat(3,1fr)}}
+.profile-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:24px;text-align:center}
+.profile-emoji{font-size:2.2rem;margin-bottom:12px}
+.profile-t{font-size:.9rem;font-weight:800;margin-bottom:6px;color:var(--ink)}
+.profile-d{font-size:.78rem;color:var(--slate);line-height:1.65;font-weight:500}
 
-/* FAQ */
+/* ── PRICING ── */
+.price-sec{padding:72px 20px;text-align:center}
+.price-inner{max-width:720px;margin:0 auto}
+.price-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:36px;max-width:660px;margin-left:auto;margin-right:auto}
+@media(min-width:540px){.price-grid{grid-template-columns:repeat(3,1fr)}}
+.p-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:24px;text-align:left;display:flex;flex-direction:column;position:relative}
+.p-card.featured{border-color:var(--accent);background:var(--accent-lt)}
+.p-card.popular{border-color:var(--green);background:var(--green-lt)}
+.p-chip{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:.65rem;font-weight:800;padding:3px 12px;border-radius:100px;white-space:nowrap;letter-spacing:.03em}
+.chip-blue{background:var(--accent);color:#fff}
+.chip-green{background:var(--green);color:#fff}
+.p-plan{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--slate);margin-bottom:10px}
+.p-amt{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;letter-spacing:-.04em;margin-bottom:2px;color:var(--ink)}
+.p-amt span{font-size:.85rem;font-weight:600;color:var(--slate);font-family:'Plus Jakarta Sans',sans-serif}
+.p-trial{font-size:.7rem;color:var(--slate);margin-bottom:18px;font-weight:500}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;flex:1}
+.p-feats li{font-size:.8rem;color:var(--slate);display:flex;align-items:flex-start;gap:8px;font-weight:500}
+.p-ck{font-size:.78rem;font-weight:800;flex-shrink:0;line-height:1.4}
+.ck-blue{color:var(--accent)}
+.ck-green{color:var(--green)}
+.p-btn{display:block;text-align:center;padding:12px;border-radius:12px;font-size:.86rem;font-weight:800;margin-top:auto;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.01em}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+
+/* ── PRO ── */
+.pro-sec{padding:72px 20px;background:var(--ink);color:#fff}
+.pro-inner{max-width:700px;margin:0 auto}
+.pro-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#93C5FD;margin-bottom:10px}
+.pro-cards{display:grid;grid-template-columns:1fr;gap:10px;margin-top:28px}
+.pro-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px}
+.pro-card-ico{font-size:1.4rem;margin-bottom:10px}
+.pro-card-t{font-size:.9rem;font-weight:800;color:#fff;margin-bottom:5px}
+.pro-card-d{font-size:.8rem;color:rgba(255,255,255,.55);line-height:1.65;font-weight:500}
+.pro-cta{margin-top:28px;display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:12px;font-size:.9rem;font-weight:800;background:#fff;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.01em}
+
+/* ── FAQ ── */
+.faq-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border)}
+.faq-inner{max-width:640px;margin:0 auto}
+.faq-list{margin-top:32px;display:flex;flex-direction:column;gap:10px}
 .faq-item{background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
-.faq-q{padding:16px 18px;font-size:.88rem;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none}
-.faq-arrow{color:var(--blue);font-size:1.2rem;flex-shrink:0;transition:transform .2s;line-height:1}
+.faq-q{padding:17px 18px;font-size:.88rem;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none;color:var(--ink)}
+.faq-arrow{color:var(--accent);font-size:1.4rem;flex-shrink:0;transition:transform .22s cubic-bezier(.22,1,.36,1);line-height:1;font-weight:400}
 .faq-item.open .faq-arrow{transform:rotate(45deg)}
-.faq-a{font-size:.82rem;color:var(--txm);line-height:1.75;font-weight:500;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
-.faq-item.open .faq-a{max-height:200px;padding:0 18px 16px}
+.faq-a{font-size:.83rem;color:var(--slate);line-height:1.78;font-weight:500;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .32s ease,padding .32s ease}
+.faq-item.open .faq-a{max-height:220px;padding:0 18px 17px}
 
-/* FOOTER */
-footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
-.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
-.footer-links a{font-size:.76rem;color:var(--txm);font-weight:600}
-.footer-copy{font-size:.7rem;color:var(--txl);margin-bottom:3px;font-weight:500}
-.footer-email a{font-size:.7rem;color:var(--txm);font-weight:500}
+/* ── FINAL CTA ── */
+.final-cta{padding:80px 20px;text-align:center;background:var(--ink);position:relative;overflow:hidden}
+.final-cta::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.25),transparent 65%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
+.final-cta::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 65%);bottom:-200px;right:-100px;pointer-events:none}
+.final-cta h2{font-family:'Syne',sans-serif;color:#fff;font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:14px;position:relative}
+.final-cta p{font-size:.92rem;color:rgba(255,255,255,.6);margin-bottom:30px;line-height:1.75;font-weight:500;position:relative}
+.final-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:#fff;color:var(--ink);position:relative;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.01em;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.install-note{margin-top:20px;font-size:.7rem;color:rgba(255,255,255,.35);line-height:2.2;position:relative;font-weight:600}
+
+/* ── SEO TEXT ── */
+.seo-text{padding:44px 20px;background:#F8FAFC;border-top:1px solid var(--border)}
+.seo-text-in{max-width:760px;margin:0 auto}
+.seo-text h3{font-size:.95rem;font-weight:800;color:var(--ink);margin-bottom:8px}
+.seo-text p{font-size:.82rem;color:var(--slate);line-height:1.8;font-weight:500;margin-bottom:18px}
+
+/* ── FOOTER ── */
+footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;background:#fff}
+.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.footer-links a{font-size:.76rem;color:var(--slate);font-weight:600}
+.footer-copy{font-size:.7rem;color:var(--muted);margin-bottom:3px;font-weight:500}
 </style>
-
 </head>
 <body>
 
+<!-- NAV -->
 <nav id="navbar">
   <div class="nav-in">
     <a href="/" class="nav-logo">
-      <div class="nav-logo-ico">🚗</div>
+      <div class="logo-mark">🚗</div>
       AutoCarnet
     </a>
     <a href="/app.html" class="nav-cta">Connexion / Inscription</a>
@@ -208,264 +275,310 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-glow"></div>
-  <div class="rv">
-    <div class="hero-badge"><div class="badge-dot"></div>PWA · Fonctionne hors ligne</div>
+  <div class="hero-bg">
+    <div class="hero-blob blob1"></div>
+    <div class="hero-blob blob2"></div>
+    <div class="hero-blob blob3"></div>
   </div>
-  <div class="rv d1">
-    <h1>Le carnet d'entretien voiture<br>qui <span class="hi">simplifie tout</span></h1>
-  </div>
-  <div class="rv d2">
-    <p class="hero-p">Fini les carnets papier perdus. Rappels automatiques, historique complet, gestion de flotte — tout dans une appli gratuite sur votre téléphone.</p>
-  </div>
-  <div class="rv d3" style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px">
-    <a href="/app.html" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:var(--blue);color:#fff;box-shadow:0 6px 24px rgba(37,99,235,.35);font-family:'Nunito',sans-serif;width:100%;max-width:300px;margin-bottom:10px">🚀 Essayer gratuitement</a>
-    <div style="font-size:.75rem;color:var(--txl);font-weight:600;margin-bottom:18px">Sans carte bancaire · Accès immédiat</div>
-    <div class="trust">
-      <span>Sans pub</span>
-      <span>Données privées</span>
-      <span>PWA installable</span>
+  <div class="hero-inner">
+    <div class="rv">
+      <div class="pill"><div class="pill-dot"></div>PWA · Fonctionne hors ligne</div>
     </div>
-  </div>
-  <div class="rv d4" style="margin-bottom:8px;font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.08em">Choisissez votre plan</div>
-  <div class="rv d4">
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:480px;margin:0 auto 18px;text-align:left;overflow:hidden;align-items:stretch">
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:10px 8px;min-width:0;display:flex;flex-direction:column">
-        <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:6px">Gratuit</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--txt);letter-spacing:-.03em;margin-bottom:2px">0€</div>
-        <div style="font-size:.68rem;color:var(--txl);margin-bottom:10px">Pour toujours</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;flex:1">
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>1 véhicule</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Entretiens illimités</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Rappels</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>PWA</li>
-        </ul>
-        <a href="/app.html" style="display:block;text-align:center;padding:9px;background:var(--blue);color:#fff;border-radius:9px;font-size:.75rem;font-weight:700;text-decoration:none;margin-top:auto">Commencer</a>
-      </div>
-      <div style="background:#fff;border:1.5px solid #10B981;border-radius:14px;padding:10px 8px;min-width:0;display:flex;flex-direction:column">
-        <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#065F46;margin-bottom:6px">Famille</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--txt);letter-spacing:-.03em;margin-bottom:2px">1,99€<span style="font-size:.7rem;font-weight:600;color:var(--txm)">/mois</span></div>
-        <div style="font-size:.68rem;color:var(--txl);margin-bottom:10px">7 jours offerts</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;flex:1">
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>3 véhicules</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Entretiens illimités/véh.</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Rappels</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Documents</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>Photos factures</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:#10B981;font-weight:800">✓</span>PWA</li>
-        </ul>
-        <a href="#" onclick="event.preventDefault();stripeCheckout('famille')" style="display:block;text-align:center;padding:9px;background:#10B981;color:#fff;border-radius:9px;font-size:.75rem;font-weight:700;text-decoration:none;margin-top:auto">Essayer</a>
-      </div>
-      <div style="background:#fff;border:1.5px solid #2563EB;border-radius:14px;padding:10px 8px;min-width:0;display:flex;flex-direction:column">
-        <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:6px">Pro</div>
-        <div style="font-size:1.5rem;font-weight:900;color:var(--txt);letter-spacing:-.03em;margin-bottom:2px">4,99€<span style="font-size:.7rem;font-weight:600;color:var(--txm)">/mois</span></div>
-        <div style="font-size:.68rem;color:var(--txl);margin-bottom:10px">7 jours offerts</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;flex:1">
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Véhicules illimités</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Entretiens illimités</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Prix carburant</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Export PDF &amp; CSV</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Photos factures</li>
-          <li style="font-size:.68rem;color:var(--txm);display:flex;align-items:center;gap:4px"><span style="color:var(--blue);font-weight:800">✓</span>Mode équipe</li>
-        </ul>
-        <a href="#" onclick="event.preventDefault();stripeCheckout('pro')" style="display:block;text-align:center;padding:9px;background:var(--blue);color:#fff;border-radius:9px;font-size:.75rem;font-weight:700;text-decoration:none;margin-top:auto">Essayer</a>
-      </div>
+    <div class="rv d1">
+      <h1>Ne perdez plus jamais<br>l'histoire de <em>votre voiture</em></h1>
     </div>
-    <div class="trust">
-      <span>Sans pub</span>
-      <span>Données privées</span>
-      <span>PWA installable</span>
+    <div class="rv d2">
+      <p class="hero-sub">Rappels automatiques, historique complet, gestion de flotte — tout dans une app gratuite. Plus de carnet papier perdu, plus de CT raté.</p>
+    </div>
+    <div class="rv d3 cta-group">
+      <a href="/app.html" class="btn-primary">🚀 Créer mon compte gratuit</a>
+      <div class="free-note">Sans carte bancaire · Accès immédiat</div>
+    </div>
+    <div class="rv d4 trust-row">
+      <div class="trust-item">Sans publicité</div>
+      <div class="trust-item">Données privées</div>
+      <div class="trust-item">PWA installable</div>
+      <div class="trust-item">Réseau hors ligne</div>
     </div>
   </div>
 </section>
 
 <!-- MOCKUP -->
-<div class="mockup-wrap">
-  <div class="mockup rv">
-    <div class="m-bar"><span></span><span></span><span></span></div>
-    <div class="m-card">
-      <div class="m-row">
-        <div class="m-ico">🚗</div>
-        <div style="flex:1;min-width:0">
-          <div class="m-name">Renault Clio</div>
-          <div class="m-sub">AB-123-CD · 48 200 km</div>
+<div class="mockup-section">
+  <div class="phone-frame rv">
+    <div class="phone-screen">
+      <div class="ps-topbar">
+        <div class="ps-title">Mes véhicules</div>
+        <div class="ps-badge">✓ À jour</div>
+      </div>
+      <div class="ps-card">
+        <div class="ps-car-row">
+          <div class="ps-car-ico">🚗</div>
+          <div style="flex:1;min-width:0">
+            <div class="ps-car-name">Renault Clio</div>
+            <div class="ps-car-sub">AB-123-CD · 48 200 km</div>
+          </div>
+          <div class="ps-car-ok">✓ À jour</div>
         </div>
-        <div class="m-ok">✓ À jour</div>
+        <div class="ps-stats">
+          <div class="ps-stat"><div class="ps-sv">12</div><div class="ps-sl">Entretiens</div></div>
+          <div class="ps-stat"><div class="ps-sv">1 240€</div><div class="ps-sl">Coût total</div></div>
+          <div class="ps-stat"><div class="ps-sv">Dans 2m</div><div class="ps-sl">Révision</div></div>
+        </div>
       </div>
-      <div class="m-stats">
-        <div class="m-st"><div class="m-sv">12</div><div class="m-sl">Entretiens</div></div>
-        <div class="m-st"><div class="m-sv">1 240€</div><div class="m-sl">Coût</div></div>
-        <div class="m-st"><div class="m-sv">Dans 2m</div><div class="m-sl">Révision</div></div>
+      <div class="ps-notif">
+        <div class="ps-notif-ico">🔔</div>
+        <div class="ps-notif-txt"><strong>Rappel vidange</strong>Dans 500 km — Peugeot 308</div>
       </div>
-    </div>
-    <div class="m-notif">
-      <span style="font-size:1.1rem">🔔</span>
-      <div class="m-ntxt"><strong>Rappel vidange</strong>Dans 500 km — Peugeot 308</div>
+      <div class="ps-mini-card">
+        <div class="ps-mini-ico">⛽</div>
+        <div>
+          <div class="ps-mini-txt">Station la moins chère</div>
+          <div class="ps-mini-sub">Total Acces · 0,3 km</div>
+        </div>
+        <div class="ps-mini-chip">1,74€/L</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- PROFILS -->
-<section style="padding:52px 20px;background:var(--bg2)">
-  <div class="rv" style="text-align:center;max-width:700px;margin:0 auto">
-    <div class="sec-lbl">Pour tout le monde</div>
-    <h2>Conçu pour vous,<br>quel que soit votre profil</h2>
+<!-- PROOF BAND -->
+<div class="proof-band">
+  <div class="proof-in">
+    <div class="rv"><div class="proof-n" data-count="44">0</div><div class="proof-l">Types d'interventions</div></div>
+    <div class="rv d1"><div class="proof-n" data-count="200" data-suffix="+">0</div><div class="proof-l">Modèles de véhicules</div></div>
+    <div class="rv d2"><div class="proof-n" data-count="3">0</div><div class="proof-l">Plans disponibles</div></div>
+    <div class="rv d3"><div class="proof-n" data-count="100" data-suffix="%">0</div><div class="proof-l">Données privées</div></div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-top:28px;max-width:700px;margin-left:auto;margin-right:auto">
-    <style>.profiles-grid-inner{display:grid;grid-template-columns:1fr;gap:12px}@media(min-width:560px){.profiles-grid-inner{grid-template-columns:repeat(3,1fr)}}</style>
-    <div class="profiles-grid-inner">
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center" class="rv">
-        <div style="font-size:2rem;margin-bottom:10px">🚗</div>
-        <div style="font-size:.88rem;font-weight:800;margin-bottom:6px">Particuliers</div>
-        <div style="font-size:.78rem;color:var(--txm);line-height:1.65;font-weight:500">Ne ratez plus jamais un CT ou une vidange. Historique complet de votre voiture, précieux à la revente.</div>
-      </div>
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center" class="rv d1">
-        <div style="font-size:2rem;margin-bottom:10px">👨‍👩‍👧</div>
-        <div style="font-size:.88rem;font-weight:800;margin-bottom:6px">Familles</div>
-        <div style="font-size:.78rem;color:var(--txm);line-height:1.65;font-weight:500">Gérez toutes vos voitures au même endroit. Partagez l'accès avec votre conjoint ou vos enfants.</div>
-      </div>
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px;text-align:center" class="rv d2">
-        <div style="font-size:2rem;margin-bottom:10px">🏢</div>
-        <div style="font-size:.88rem;font-weight:800;margin-bottom:6px">Pros & Flottes</div>
-        <div style="font-size:.78rem;color:var(--txm);line-height:1.65;font-weight:500">Suivez vos véhicules utilitaires, gérez votre équipe et exportez les données pour votre comptable.</div>
-      </div>
+</div>
+
+<!-- WHY -->
+<section class="why-sec" id="features">
+  <div class="why-inner">
+    <div class="rv" style="text-align:center;max-width:480px;margin:0 auto 32px">
+      <div class="sec-eyebrow">Fonctionnalités</div>
+      <h2>Tout ce qu'il faut,<br>rien de superflu</h2>
+      <p class="sec-p">Un outil pensé pour gérer ses véhicules sans prise de tête.</p>
+    </div>
+    <div class="why-cards">
+      <div class="why-card rv"><div class="why-ico fi-b">🔧</div><div class="why-t">44 types d'interventions</div><div class="why-d">Vidange, freins, pneus, contrôle technique, courroie… Tous les entretiens courants organisés par catégorie pour un suivi complet.</div></div>
+      <div class="why-card rv d1"><div class="why-ico fi-g">🔔</div><div class="why-t">Rappels intelligents</div><div class="why-d">Alertes automatiques par date et kilométrage. Plus jamais de CT raté, de vidange oubliée ou d'assurance expirée.</div></div>
+      <div class="why-card rv"><div class="why-ico fi-o">⛽</div><div class="why-t">Prix carburant en direct</div><div class="why-d">Trouvez les stations les moins chères autour de vous. Données officielles du gouvernement, mises à jour en temps réel.</div></div>
+      <div class="why-card rv d1"><div class="why-ico fi-p">📄</div><div class="why-t">Gestion des documents</div><div class="why-d">Carte grise, assurance, certificats CT, garanties — tout centralisé avec alertes d'expiration automatiques.</div></div>
+      <div class="why-card rv"><div class="why-ico fi-c">👥</div><div class="why-t">Mode équipe & famille</div><div class="why-d">Partagez vos véhicules avec votre famille ou votre équipe. Chacun consulte l'historique et ajoute des entretiens.</div></div>
+      <div class="why-card rv d1"><div class="why-ico fi-r">📊</div><div class="why-t">Stats & export PDF/CSV</div><div class="why-d">Coût par kilomètre, dépenses annuelles, valeur résiduelle. Export complet en PDF ou CSV — utile pour la comptabilité.</div></div>
+      <div class="why-card rv"><div class="why-ico fi-b">📷</div><div class="why-t">Photos de factures</div><div class="why-d">Photographiez vos factures et retrouvez-les dans chaque intervention. Précieux pour les garanties et la revente.</div></div>
     </div>
   </div>
 </section>
 
-<!-- STATS -->
-<div class="stats-band">
-  <div class="stats-in">
-    <div class="rv"><div class="stat-n" data-count="44">0</div><div class="stat-l">Types d'interventions</div></div>
-    <div class="rv d1"><div class="stat-n" data-count="200" data-suffix="+">0</div><div class="stat-l">Modèles de véhicules</div></div>
-    <div class="rv d2"><div class="stat-n" data-count="3">0</div><div class="stat-l">Plans disponibles</div></div>
-    <div class="rv d3"><div class="stat-n" data-count="100" data-suffix="%">0</div><div class="stat-l">Données privées</div></div>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-  <div class="rv" style="text-align:center">
-    <div class="sec-lbl">Fonctionnalités</div>
-    <h2>Tout ce qu'il faut,<br>rien de superflu</h2>
-    <p class="sec-p" style="max-width:380px;margin:0 auto">Un outil pensé pour gérer ses véhicules sans prise de tête.</p>
-  </div>
-  <div class="feat-grid">
-    <div class="feat rv"><div class="feat-ico fi-b">🔧</div><div class="feat-t">44 types d'interventions</div><div class="feat-d">Vidange, freins, pneus, contrôle technique, courroie de distribution… Tous les entretiens courants organisés par catégorie pour un suivi complet de chaque véhicule de votre flotte.</div></div>
-    <div class="feat rv d1"><div class="feat-ico fi-g">🔔</div><div class="feat-t">Rappels intelligents</div><div class="feat-d">Alertes automatiques par date et kilométrage. Plus jamais de contrôle technique raté, de vidange oubliée ou d'assurance expirée — pour particuliers et gestionnaires de flotte professionnelle.</div></div>
-    <div class="feat rv"><div class="feat-ico fi-o">⛽</div><div class="feat-t">Prix carburant en direct</div><div class="feat-d">Trouvez les stations-service les moins chères autour de vous. Données officielles du gouvernement français, mises à jour en temps réel.</div></div>
-    <div class="feat rv d1"><div class="feat-ico fi-p">📄</div><div class="feat-t">Gestion des documents</div><div class="feat-d">Carte grise, assurance, certificats de contrôle technique, garanties — tout centralisé avec alertes d'expiration automatiques. Indispensable pour les véhicules professionnels.</div></div>
-    <div class="feat rv"><div class="feat-ico fi-c">👥</div><div class="feat-t">Mode équipe</div><div class="feat-d">Partagez vos véhicules avec votre famille ou votre équipe. Chacun peut consulter l'historique et ajouter des entretiens. Parfait pour les artisans et TPE avec véhicules partagés.</div></div>
-    <div class="feat rv d1"><div class="feat-ico fi-r">📊</div><div class="feat-t">Stats & export PDF/CSV</div><div class="feat-d">Coût par kilomètre, dépenses annuelles par véhicule, valeur résiduelle estimée. Export complet en PDF ou CSV en un tap — utile pour la comptabilité et la revente.</div></div>
-    <div class="feat rv"><div class="feat-ico fi-b">📷</div><div class="feat-t">Photos de factures</div><div class="feat-d">Photographiez vos factures d'entretien et retrouvez-les directement dans chaque intervention. Indispensable pour les garanties constructeur, les remboursements et la revente du véhicule.</div></div>
-  </div>
-</section>
-
-<!-- STEPS -->
-<section class="steps-sec">
-  <div class="steps-in">
+<!-- HOW IT WORKS -->
+<section class="how-sec">
+  <div class="how-inner">
     <div class="rv" style="text-align:center">
-      <div class="sec-lbl">Comment ça marche</div>
+      <div class="sec-eyebrow">Comment ça marche</div>
       <h2>Prêt en 2 minutes</h2>
     </div>
-    <div class="steps-list">
-      <div class="step rv"><div class="step-n">1</div><div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire requise, aucune vérification complexe. Accès immédiat à l'application.</div></div></div>
-      <div class="step rv d1"><div class="step-n">2</div><div><div class="step-t">Ajoutez vos véhicules</div><div class="step-d">38 marques et 200+ modèles disponibles. Immatriculation, kilométrage, type de carburant — votre flotte configurée en quelques secondes.</div></div></div>
-      <div class="step rv d2"><div class="step-n">3</div><div><div class="step-t">Enregistrez vos entretiens</div><div class="step-d">Date, kilométrage, garage, coût, pièces remplacées — tout est tracé dans l'historique de chaque véhicule. Rien n'est oublié.</div></div></div>
-      <div class="step rv d3"><div class="step-n">4</div><div><div class="step-t">Recevez vos alertes</div><div class="step-d">Contrôle technique, révision, vidange, assurance — AutoCarnet vous prévient avant chaque échéance, par notification push sur votre téléphone.</div></div></div>
+    <div class="steps">
+      <div class="step rv"><div class="step-num">1</div><div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire requise. Accès immédiat à l'application.</div></div></div>
+      <div class="step rv d1"><div class="step-num">2</div><div><div class="step-t">Ajoutez vos véhicules</div><div class="step-d">38 marques et 200+ modèles. Immatriculation, kilométrage, type de carburant — configuré en quelques secondes.</div></div></div>
+      <div class="step rv d2"><div class="step-num">3</div><div><div class="step-t">Enregistrez vos entretiens</div><div class="step-d">Date, kilométrage, garage, coût, pièces — tout tracé dans l'historique de chaque véhicule.</div></div></div>
+      <div class="step rv d3"><div class="step-num">4</div><div><div class="step-t">Recevez vos alertes</div><div class="step-d">CT, révision, vidange, assurance — AutoCarnet vous prévient avant chaque échéance par notification push.</div></div></div>
     </div>
   </div>
 </section>
 
-<!-- PRICING déjà dans hero -->
-
-<!-- FAQ -->
-<section style="padding:60px 20px;background:var(--bg2)">
-  <div class="rv" style="text-align:center;max-width:600px;margin:0 auto">
-    <div class="sec-lbl">Questions fréquentes</div>
-    <h2>Vous avez des questions ?</h2>
-  </div>
-  <div style="max-width:600px;margin:28px auto 0;display:flex;flex-direction:column;gap:10px">
-    <div class="faq-item rv">
-      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">C'est vraiment gratuit ? <span class="faq-arrow">+</span></div>
-      <div class="faq-a">Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription. Vous pouvez gérer 1 véhicule avec des entretiens illimités sans jamais payer.</div>
+<!-- PROFILES -->
+<section class="profile-sec">
+  <div class="profile-inner">
+    <div class="rv" style="text-align:center;max-width:480px;margin:0 auto">
+      <div class="sec-eyebrow">Pour tout le monde</div>
+      <h2>Conçu pour vous,<br>quel que soit votre profil</h2>
     </div>
-    <div class="faq-item rv d1">
-      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Mes données sont-elles en sécurité ? <span class="faq-arrow">+</span></div>
-      <div class="faq-a">Vos données sont stockées de manière sécurisée et ne sont jamais vendues ni partagées avec des tiers. AutoCarnet ne contient aucune publicité.</div>
-    </div>
-    <div class="faq-item rv d2">
-      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Ça fonctionne sur iPhone et Android ? <span class="faq-arrow">+</span></div>
-      <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur — sans passer par l'App Store ou Google Play.</div>
-    </div>
-    <div class="faq-item rv d3">
-      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Puis-je annuler mon abonnement à tout moment ? <span class="faq-arrow">+</span></div>
-      <div class="faq-a">Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer.</div>
-    </div>
-    <div class="faq-item rv">
-      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Est-ce que ça marche sans internet ? <span class="faq-arrow">+</span></div>
-      <div class="faq-a">Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion.</div>
+    <div class="profile-grid">
+      <div class="profile-card rv">
+        <div class="profile-emoji">🚗</div>
+        <div class="profile-t">Particuliers</div>
+        <div class="profile-d">Ne ratez plus jamais un CT ou une vidange. Historique complet de votre voiture, précieux à la revente.</div>
+      </div>
+      <div class="profile-card rv d1">
+        <div class="profile-emoji">👨‍👩‍👧</div>
+        <div class="profile-t">Familles</div>
+        <div class="profile-d">Gérez toutes vos voitures au même endroit. Partagez l'accès avec votre conjoint ou vos enfants.</div>
+      </div>
+      <div class="profile-card rv d2">
+        <div class="profile-emoji">🏢</div>
+        <div class="profile-t">Pros & Flottes</div>
+        <div class="profile-d">Suivez vos véhicules utilitaires, gérez votre équipe et exportez les données pour votre comptable.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-sec">
-  <div class="rv">
-    <h2>Commencez dès maintenant</h2>
-    <p>Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
-    <a href="/app.html" class="btn-w">📱 Ouvrir AutoCarnet gratuitement</a>
-    <div class="inst-note">
+<!-- PRICING -->
+<section class="price-sec" id="pricing">
+  <div class="price-inner">
+    <div class="rv">
+      <div class="sec-eyebrow">Tarifs</div>
+      <h2>Simple et transparent</h2>
+      <p class="sec-p" style="max-width:400px;margin:0 auto">Commencez gratuitement, évoluez selon vos besoins.</p>
+    </div>
+    <div class="price-grid">
+      <!-- Gratuit -->
+      <div class="p-card rv">
+        <div class="p-plan">Gratuit</div>
+        <div class="p-amt">0€</div>
+        <div class="p-trial">Pour toujours</div>
+        <ul class="p-feats">
+          <li><span class="p-ck ck-blue">✓</span>1 véhicule</li>
+          <li><span class="p-ck ck-blue">✓</span>Entretiens illimités</li>
+          <li><span class="p-ck ck-blue">✓</span>Rappels automatiques</li>
+          <li><span class="p-ck ck-blue">✓</span>PWA installable</li>
+        </ul>
+        <a href="/app.html" class="p-btn btn-ink">Commencer</a>
+      </div>
+      <!-- Famille -->
+      <div class="p-card popular rv d1">
+        <div class="p-chip chip-green">Le plus populaire</div>
+        <div class="p-plan">Famille</div>
+        <div class="p-amt">1,99€<span>/mois</span></div>
+        <div class="p-trial">7 jours offerts · Sans engagement</div>
+        <ul class="p-feats">
+          <li><span class="p-ck ck-green">✓</span>3 véhicules</li>
+          <li><span class="p-ck ck-green">✓</span>Entretiens illimités/véh.</li>
+          <li><span class="p-ck ck-green">✓</span>Rappels automatiques</li>
+          <li><span class="p-ck ck-green">✓</span>Gestion des documents</li>
+          <li><span class="p-ck ck-green">✓</span>Photos de factures</li>
+          <li><span class="p-ck ck-green">✓</span>Partage famille</li>
+        </ul>
+        <a href="#" onclick="event.preventDefault();stripeCheckout('famille')" class="p-btn btn-green">Essayer 7 jours</a>
+      </div>
+      <!-- Pro -->
+      <div class="p-card featured rv d2">
+        <div class="p-chip chip-blue">Pour les pros</div>
+        <div class="p-plan">Pro</div>
+        <div class="p-amt">4,99€<span>/mois</span></div>
+        <div class="p-trial">7 jours offerts · Sans engagement</div>
+        <ul class="p-feats">
+          <li><span class="p-ck ck-blue">✓</span>Véhicules illimités</li>
+          <li><span class="p-ck ck-blue">✓</span>Entretiens illimités</li>
+          <li><span class="p-ck ck-blue">✓</span>Prix carburant live</li>
+          <li><span class="p-ck ck-blue">✓</span>Export PDF & CSV</li>
+          <li><span class="p-ck ck-blue">✓</span>Photos de factures</li>
+          <li><span class="p-ck ck-blue">✓</span>Mode équipe multi-users</li>
+        </ul>
+        <a href="#" onclick="event.preventDefault();stripeCheckout('pro')" class="p-btn btn-accent">Essayer 7 jours</a>
+      </div>
+    </div>
+    <div class="trust-row" style="margin-top:24px">
+      <div class="trust-item">Sans publicité</div>
+      <div class="trust-item">Données privées</div>
+      <div class="trust-item">Annulation à tout moment</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA MID -->
+<section class="final-cta" style="padding:60px 20px">
+  <div style="position:relative">
+    <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:clamp(1.6rem,4.5vw,2.2rem);margin-bottom:12px">Commencez dès maintenant</h2>
+    <p style="font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:26px;line-height:1.75;font-weight:500">Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
+    <a href="/app.html" class="final-btn">📱 Créer mon compte gratuit</a>
+    <div class="install-note">
       <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
       <div>Android : Menu ⋮ → Installer l'application</div>
     </div>
   </div>
 </section>
 
-
-<!-- PRO / FLOTTE -->
-<section style="padding:60px 20px;background:linear-gradient(155deg,#0F172A,#1E3A8A);color:#fff" id="pro">
-  <div style="max-width:700px;margin:0 auto">
+<!-- PRO -->
+<section class="pro-sec" id="pro">
+  <div class="pro-inner">
     <div class="rv">
-      <div style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#93C5FD;margin-bottom:8px">Pour les professionnels</div>
-      <h2 style="color:#fff;margin-bottom:12px">Gérez votre flotte de véhicules</h2>
-      <p style="font-size:.9rem;color:rgba(255,255,255,.7);line-height:1.75;font-weight:500">AutoCarnet Pro est conçu pour les artisans, TPE et gestionnaires de flotte qui doivent suivre plusieurs véhicules utilitaires. Fini les tableurs Excel et les carnets papier — passez à un suivi centralisé, accessible depuis n'importe quel smartphone.</p>
+      <div class="pro-eyebrow">Pour les professionnels</div>
+      <h2 style="color:#fff;margin-bottom:14px">Gérez votre flotte de véhicules</h2>
+      <p style="font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.78;font-weight:500">AutoCarnet Pro est conçu pour les artisans, TPE et gestionnaires de flotte. Fini les tableurs Excel et les carnets papier — passez à un suivi centralisé, accessible depuis n'importe quel smartphone.</p>
     </div>
-    <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:28px">
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px" class="rv">
-        <div style="font-size:1.3rem;margin-bottom:8px">🚐</div>
-        <div style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:4px">Flotte illimitée de véhicules</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.65;font-weight:500">Ajoutez tous vos véhicules utilitaires, camionnettes et voitures de société sans limite. Chaque véhicule dispose de son propre historique d'entretien complet.</div>
+    <div class="pro-cards">
+      <div class="pro-card rv">
+        <div class="pro-card-ico">🚐</div>
+        <div class="pro-card-t">Flotte illimitée de véhicules</div>
+        <div class="pro-card-d">Ajoutez tous vos véhicules utilitaires, camionnettes et voitures de société sans limite. Chaque véhicule dispose de son propre historique complet.</div>
       </div>
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px" class="rv d1">
-        <div style="font-size:1.3rem;margin-bottom:8px">👷</div>
-        <div style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:4px">Accès multi-utilisateurs</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.65;font-weight:500">Vos chauffeurs, techniciens et responsables accèdent à l'outil depuis leur propre téléphone. Chacun peut signaler un entretien ou consulter les rappels à venir.</div>
+      <div class="pro-card rv d1">
+        <div class="pro-card-ico">👷</div>
+        <div class="pro-card-t">Accès multi-utilisateurs</div>
+        <div class="pro-card-d">Vos chauffeurs, techniciens et responsables accèdent à l'outil depuis leur propre téléphone. Chacun peut signaler un entretien ou consulter les rappels.</div>
       </div>
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px" class="rv">
-        <div style="font-size:1.3rem;margin-bottom:8px">📅</div>
-        <div style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:4px">Rappels CT et révisions obligatoires</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.65;font-weight:500">Recevez une notification avant chaque contrôle technique, révision ou vidange. Ne ratez plus aucune obligation réglementaire sur votre flotte de véhicules professionnels.</div>
+      <div class="pro-card rv d2">
+        <div class="pro-card-ico">📅</div>
+        <div class="pro-card-t">Rappels CT et révisions obligatoires</div>
+        <div class="pro-card-d">Recevez une notification avant chaque contrôle technique, révision ou vidange. Ne ratez plus aucune obligation réglementaire.</div>
       </div>
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px" class="rv d1">
-        <div style="font-size:1.3rem;margin-bottom:8px">📊</div>
-        <div style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:4px">Rapports et export comptable</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.65;font-weight:500">Exportez l'historique complet de chaque véhicule en PDF ou CSV. Pratique pour la comptabilité, les déclarations d'assurance et les audits de flotte.</div>
+      <div class="pro-card rv d3">
+        <div class="pro-card-ico">📊</div>
+        <div class="pro-card-t">Rapports et export comptable</div>
+        <div class="pro-card-d">Exportez l'historique complet de chaque véhicule en PDF ou CSV. Pratique pour la comptabilité, les assurances et les audits de flotte.</div>
       </div>
     </div>
     <div class="rv" style="margin-top:28px">
-      <a href="/app.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-size:.9rem;font-weight:700;background:#fff;color:#2563EB;font-family:'Nunito',sans-serif">🚀 Essayer AutoCarnet Pro — 7 jours gratuits</a>
+      <a href="/app.html" class="pro-cta">🚀 Essayer AutoCarnet Pro — 7 jours gratuits</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec">
+  <div class="faq-inner">
+    <div class="rv" style="text-align:center">
+      <div class="sec-eyebrow">Questions fréquentes</div>
+      <h2>Vous avez des questions ?</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item rv">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">C'est vraiment gratuit ? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription. Vous pouvez gérer 1 véhicule avec des entretiens illimités sans jamais payer.</div>
+      </div>
+      <div class="faq-item rv d1">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Mes données sont-elles en sécurité ? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Vos données sont stockées de manière sécurisée et ne sont jamais vendues ni partagées avec des tiers. AutoCarnet ne contient aucune publicité.</div>
+      </div>
+      <div class="faq-item rv d2">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Ça fonctionne sur iPhone et Android ? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur — sans passer par l'App Store ou Google Play.</div>
+      </div>
+      <div class="faq-item rv d3">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Puis-je annuler mon abonnement à tout moment ? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer.</div>
+      </div>
+      <div class="faq-item rv">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Est-ce que ça marche sans internet ? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div style="position:relative">
+    <h2>Votre voiture mérite mieux<br>qu'un carnet papier</h2>
+    <p>Rejoignez des milliers d'automobilistes qui n'oublient plus jamais<br>un entretien. Gratuit, sans publicité, sans engagement.</p>
+    <a href="/app.html" class="final-btn">🚀 Créer mon compte gratuit</a>
+    <div class="install-note">
+      <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
+      <div>Android : Menu ⋮ → Installer l'application</div>
     </div>
   </div>
 </section>
 
 <!-- SEO TEXT -->
-<div style="padding:40px 20px;background:#F8FAFC;border-top:1px solid #E2E8F0">
-  <div style="max-width:760px;margin:0 auto">
-    <h3 style="font-size:.95rem;font-weight:800;color:#0F172A;margin-bottom:8px">Carnet d'entretien voiture numérique — pour particuliers et professionnels</h3>
-    <p style="font-size:.82rem;color:#475569;line-height:1.8;font-weight:500;margin-bottom:16px">AutoCarnet est une application web de carnet d'entretien voiture accessible depuis votre navigateur, sans téléchargement sur l'App Store. Elle permet de suivre toutes les interventions sur vos véhicules : vidange, freinage, pneus, courroie de distribution, contrôle technique, révision constructeur, et bien plus encore. Les rappels automatiques par date et par kilométrage vous alertent avant chaque échéance pour que votre véhicule reste toujours en règle.</p>
-    <h3 style="font-size:.95rem;font-weight:800;color:#0F172A;margin-bottom:8px">Gestion de flotte pour artisans, TPE et PME</h3>
-    <p style="font-size:.82rem;color:#475569;line-height:1.8;font-weight:500">Pour les professionnels disposant d'une flotte de véhicules utilitaires — plombiers, électriciens, livreurs, transporteurs — AutoCarnet Pro offre une solution de gestion de flotte simple et abordable à 4,99€ par mois. Suivez l'entretien de chaque camionnette, recevez les rappels de contrôle technique, et exportez les historiques pour votre comptable. Un outil conçu pour les artisans et les petites entreprises qui veulent professionnaliser le suivi de leur parc véhicules sans logiciel complexe.</p>
+<div class="seo-text">
+  <div class="seo-text-in">
+    <h3>Carnet d'entretien voiture numérique — pour particuliers et professionnels</h3>
+    <p>AutoCarnet est une application web de carnet d'entretien voiture accessible depuis votre navigateur, sans téléchargement sur l'App Store. Elle permet de suivre toutes les interventions sur vos véhicules : vidange, freinage, pneus, courroie de distribution, contrôle technique, révision constructeur, et bien plus encore. Les rappels automatiques par date et par kilométrage vous alertent avant chaque échéance pour que votre véhicule reste toujours en règle.</p>
+    <h3>Gestion de flotte pour artisans, TPE et PME</h3>
+    <p>Pour les professionnels disposant d'une flotte de véhicules utilitaires — plombiers, électriciens, livreurs, transporteurs — AutoCarnet Pro offre une solution de gestion de flotte simple et abordable à 4,99€ par mois. Suivez l'entretien de chaque camionnette, recevez les rappels de contrôle technique, et exportez les historiques pour votre comptable. Un outil conçu pour les artisans et les petites entreprises qui veulent professionnaliser le suivi de leur parc véhicules sans logiciel complexe.</p>
   </div>
 </div>
 
@@ -474,21 +587,20 @@ footer{padding:22px 20px;border-top:1px solid var(--border);text-align:center}
     <a href="/app.html">Application</a>
     <a href="#features">Fonctionnalités</a>
     <a href="#pricing">Tarifs</a>
-    <a href="#pro">Pros &amp; Flottes</a>
-    
+    <a href="#pro">Pros & Flottes</a>
     <a href="/cdn-cgi/l/email-protection#9bfaeeeff4f8fae9f5feefebe9f4dbfcf6faf2f7b5f8f4f6">Contact</a>
     <a href="/blog.html">Blog</a> · <a href="/faq.html">FAQ</a> · <a href="/calculateur-vidange.html">Calculateur vidange</a> · <a href="/cgu.html">CGU</a> · <a href="/mentions-legales.html">Mentions légales</a>
   </div>
   <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
-  <div style="font-size:.68rem;color:var(--txl);margin-top:4px">
-    Auto-entrepreneur · SIRET 914 511 639 00025 · France
-  </div>
-  <div style="font-size:.68rem;color:var(--txl);margin-top:2px">
-    <a href="/cdn-cgi/l/email-protection#3b5a4e4f54585a49555e4f4b49547b5c565a525715585456" style="color:var(--txl)"><span class="__cf_email__" data-cfemail="e48591908b8785968a819094968ba48389858d88ca878b89">[email&#160;protected]</span></a>
+  <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Auto-entrepreneur · SIRET 914 511 639 00025 · France</div>
+  <div style="font-size:.68rem;color:var(--muted);margin-top:2px">
+    <a href="/cdn-cgi/l/email-protection#3b5a4e4f54585a49555e4f4b49547b5c565a525715585456" style="color:var(--muted)"><span class="__cf_email__" data-cfemail="e48591908b8785968a819094968ba48389858d88ca878b89">[email&#160;protected]</span></a>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<!-- ALL SCRIPTS PRESERVED EXACTLY -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
 (function(){
   var h=window.location.hash;
   if(h.includes('type=recovery')||h.includes('access_token')){
@@ -549,7 +661,6 @@ const cntObs=new IntersectionObserver(entries=>{
   });
 },{threshold:0.3});
 document.querySelectorAll('[data-count]').forEach(el=>cntObs.observe(el));
-
 </script>
 <script>
 async function stripeCheckout(plan){

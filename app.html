@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="AutoCarnet">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -26,7 +26,7 @@
   --ok:#059669;--ok-bg:#ECFDF5;
   --warn:#D97706;--warn-bg:#FFFBEB;
   --err:#DC2626;--err-bg:#FEF2F2;
-  --txt:#0F172A;--txm:#64748B;--txl:#94A3B8;
+  --txt:#0A0F1E;--txm:#64748B;--txl:#94A3B8;
   --sh:0 2px 6px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --sh-lg:0 10px 28px rgba(0,0,0,.10);
   --sh-card:0 4px 12px rgba(37,99,235,.08);
@@ -38,34 +38,34 @@
 .ei-swipe-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--err);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;border-radius:0 var(--r) var(--r) 0}
 .ei-wrap .ei{margin-bottom:0;border-radius:var(--r);position:relative;z-index:1;transition:transform .2s;touch-action:pan-y}
 
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:15px;overscroll-behavior:none}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:15px;overscroll-behavior:none}
 .hidden{display:none!important}
 
 /* SPLASH */
-#ls{position:fixed;inset:0;background:linear-gradient(160deg,#1E40AF,#3B82F6);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
-.ls-logo{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-1px}
-.ls-logo span{opacity:.6}
-.ls-dot{width:8px;height:8px;background:rgba(255,255,255,.6);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+#ls{position:fixed;inset:0;background:#0A0F1E;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
+.ls-logo{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;letter-spacing:-2px}
+.ls-logo span{opacity:.45}
+.ls-dot{width:8px;height:8px;background:rgba(255,255,255,.5);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
-.ls-msg{color:rgba(255,255,255,.65);font-size:.82rem}
+.ls-msg{color:rgba(255,255,255,.5);font-size:.82rem}
 
 /* AUTH */
-#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#1E40AF,#3B82F6)}
-.auth-card{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:380px;box-shadow:var(--sh-lg)}
-.auth-logo{font-size:1.5rem;font-weight:800;color:var(--primary);letter-spacing:-1px;margin-bottom:22px;text-align:center}
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0A0F1E}
+.auth-card{background:#fff;border-radius:24px;padding:28px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.auth-logo{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--txt);letter-spacing:-1px;margin-bottom:22px;text-align:center}
 .atabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:20px}
-.atab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:500;color:var(--txm);cursor:pointer;transition:.2s}
+.atab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--txm);cursor:pointer;transition:.2s}
 .atab.on{background:#fff;color:var(--primary);font-weight:700;box-shadow:var(--sh)}
 
 /* FORM */
 .fg{margin-bottom:13px}
 .fl{display:block;font-size:.75rem;font-weight:600;color:var(--txm);margin-bottom:5px;letter-spacing:.01em}
-.fc{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.93rem;color:var(--txt);background:#fff;transition:.15s;outline:none;-webkit-appearance:none;appearance:none}
+.fc{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Plus Jakarta Sans',sans-serif;font-size:.93rem;color:var(--txt);background:#fff;transition:.15s;outline:none;-webkit-appearance:none;appearance:none}
 .fc:focus{border-color:var(--primary);background:var(--primary-lt)}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* BUTTONS */
-.btn{padding:11px 18px;border:none;border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn{padding:11px 18px;border:none;border-radius:var(--r-sm);font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:active{transform:scale(.96)}
 .btn-p{background:var(--primary);color:#fff}
 .btn-p:hover{background:var(--primary-dk)}
@@ -75,19 +75,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .btn-sm{padding:7px 13px;font-size:.8rem}
 .btn-xs{padding:5px 10px;font-size:.75rem}
 .btn-w{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.3)}
-.btn-out{padding:6px 13px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s}
+.btn-out{padding:6px 13px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s}
 .btn-out:hover{background:var(--err-bg);color:var(--err);border-color:#FECACA}
 
 /* APP SHELL */
 #app-screen{display:flex;flex-direction:column;min-height:100vh}
-.appbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:0 1px 4px rgba(37,99,235,.08)}
-.appbar-logo{font-size:1rem;font-weight:800;color:var(--primary);letter-spacing:-.5px}
+.appbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.appbar-logo{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--txt);letter-spacing:-.5px}
 .content{flex:1;overflow-y:auto;padding:16px 16px 92px;-webkit-overflow-scrolling:touch}
 .tab{display:none}.tab.on{display:block}
 
 /* NAVBAR */
 .navbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:100;padding:2px 0 env(safe-area-inset-bottom,2px)}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 5px;border:none;background:none;font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:500;color:var(--txm);cursor:pointer;position:relative}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 5px;border:none;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.6rem;font-weight:600;color:var(--txm);cursor:pointer;position:relative}
 .nb.on{color:var(--primary)}
 .nb-ico{font-size:1.3rem;line-height:1}
 .rdot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--err);border-radius:50%;border:2px solid #fff}
@@ -101,7 +101,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 #fab.vis{animation:fabpop .3s ease}
 #fab-menu{position:fixed;bottom:140px;right:14px;z-index:98;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s}
 #fab-menu.open{pointer-events:all;opacity:1;transform:translateY(0)}
-.fab-item{display:flex;align-items:center;gap:9px;background:#fff;border-radius:24px;padding:9px 14px 9px 11px;box-shadow:0 4px 14px rgba(0,0,0,.12);cursor:pointer;font-size:.84rem;font-weight:700;color:var(--txt);border:none;font-family:'Outfit',sans-serif;white-space:nowrap}
+.fab-item{display:flex;align-items:center;gap:9px;background:#fff;border-radius:24px;padding:9px 14px 9px 11px;box-shadow:0 4px 14px rgba(0,0,0,.12);cursor:pointer;font-size:.84rem;font-weight:700;color:var(--txt);border:none;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap}
 .fab-item:active{transform:scale(.96)}
 .fab-item-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 
@@ -116,7 +116,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 /* SECTION */
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px}
 .sec-ttl{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm)}
-.sec-lnk{font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif}
+.sec-lnk{font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif}
 
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
@@ -214,7 +214,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 /* FILTRES */
 .filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:11px;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
-.flt{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
+.flt{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.76rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
 .flt.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 
 /* MODALES */
@@ -247,7 +247,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 #install-banner.visible{display:flex}
 .install-copy strong{display:block;font-size:.85rem;font-weight:700;color:var(--primary)}
 .install-copy span{font-size:.75rem;color:var(--txm)}
-.btn-install-now{flex-shrink:0;padding:8px 14px;border-radius:var(--r-sm);border:none;background:var(--primary);color:#fff;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer}
+.btn-install-now{flex-shrink:0;padding:8px 14px;border-radius:var(--r-sm);border:none;background:var(--primary);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer}
 /* iOS hint */
 #ios-hint{display:none;margin:10px 14px 0;padding:12px 14px;background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:var(--r);font-size:.8rem;color:#92400E;line-height:1.5}
 #ios-hint.visible{display:block}
@@ -265,7 +265,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .prem-stat-v{font-size:1.1rem;font-weight:800;color:var(--txt)}
 .prem-stat-l{font-size:.65rem;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;font-weight:600}
 .vc.premium-user{border-left-color:#F59E0B}
-.profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;font-weight:700;margin:0 auto 16px;font-family:'Outfit',sans-serif}
+.profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;font-weight:700;margin:0 auto 16px;font-family:'Plus Jakarta Sans',sans-serif}
 .profil-email{font-size:.82rem;color:var(--txm);text-align:center;margin-bottom:16px}
 /* STATS AVANCÉES */
 .stats-adv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
@@ -274,7 +274,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .stat-adv-l{font-size:.7rem;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
 /* RECHERCHE */
 .search-wrap{position:relative;margin-bottom:12px}
-.search-input{width:100%;padding:11px 14px 11px 40px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:.93rem;outline:none;transition:.15s;background:#fff}
+.search-input{width:100%;padding:11px 14px 11px 40px;border:2px solid var(--border);border-radius:var(--r-sm);font-family:'Plus Jakarta Sans',sans-serif;font-size:.93rem;outline:none;transition:.15s;background:#fff}
 .search-input:focus{border-color:var(--primary)}
 .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none}
 /* LIEN PUBLIC */
@@ -284,7 +284,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 /* UTILS */
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
 /* PHOTO FACTURE */
-.photo-btn{width:100%;padding:12px;border:2px dashed var(--border);border-radius:var(--r-sm);background:var(--bg2);display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s;font-family:'Outfit',sans-serif}
+.photo-btn{width:100%;padding:12px;border:2px dashed var(--border);border-radius:var(--r-sm);background:var(--bg2);display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s;font-family:'Plus Jakarta Sans',sans-serif}
 .photo-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-lt)}
 .photo-btn.has-photo{border-style:solid;border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
 .photo-preview{width:100%;border-radius:var(--r-sm);overflow:hidden;position:relative;margin-top:6px;max-height:100px}
@@ -346,7 +346,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 #offline-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:#1e293b;color:#fff;text-align:center;padding:9px;font-size:.82rem;font-weight:600}
 #offline-banner.visible{display:block}
 /* SECTION REPLIABLE */
-.adv-toggle{width:100%;background:var(--bg);border:1.5px dashed var(--border);border-radius:var(--r-sm);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;transition:.15s}
+.adv-toggle{width:100%;background:var(--bg);border:1.5px dashed var(--border);border-radius:var(--r-sm);padding:9px 13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;transition:.15s}
 .adv-toggle:hover{background:var(--primary-lt);color:var(--primary);border-color:var(--primary)}
 .adv-body{display:none;padding-top:4px}
 .adv-body.open{display:block}
@@ -373,23 +373,35 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 .carb-page-content{flex:1;overflow-y:auto;padding:16px 16px 32px}
 /* SORT BAR */
 .sort-bar{display:flex;gap:5px;margin-bottom:8px;align-items:center}
-.sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
+.sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
 .sort-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 /* ONBOARDING */
-#mo-onboard{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+#mo-onboard{position:fixed;inset:0;background:rgba(10,15,30,.65);z-index:800;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px)}
 #mo-onboard.open{opacity:1;pointer-events:all}
 #mo-onboard.open .ob-sheet{transform:translateY(0)}
-.ob-sheet{background:#fff;border-radius:24px 24px 0 0;width:100%;padding:28px 24px 36px;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.ob-sheet{background:#fff;border-radius:28px 28px 0 0;width:100%;padding:28px 24px 40px;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:90vh;overflow-y:auto}
 .ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:24px}
-.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:.2s}
-.ob-dot.on{background:var(--primary);width:22px;border-radius:4px}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:.25s}
+.ob-dot.on{background:var(--txt);width:24px;border-radius:4px}
 .ob-ico{font-size:3rem;text-align:center;margin-bottom:14px}
-.ob-ttl{font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.02em}
-.ob-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.6;margin-bottom:24px}
-.ob-feat{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
-.ob-feat-row{display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:var(--r-sm);padding:11px 13px}
-.ob-feat-ico{font-size:1.4rem;flex-shrink:0}
-.ob-feat-txt{font-size:.85rem;font-weight:600}
+.ob-ttl{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.03em;color:var(--txt)}
+.ob-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.65;margin-bottom:24px;font-weight:500}
+.ob-feat{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.ob-feat-row{display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:var(--r-sm);padding:12px 14px;border:1px solid var(--border)}
+.ob-feat-ico{font-size:1.3rem;flex-shrink:0}
+.ob-feat-txt{font-size:.85rem;font-weight:600;color:var(--txt)}
+/* Plan cards dans l'onboarding */
+.ob-plan{border-radius:14px;padding:14px;margin-bottom:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:.15s}
+.ob-plan.pop{border-color:#10B981;background:#F0FDF4}
+.ob-plan.feat{border-color:var(--primary);background:var(--primary-lt)}
+.ob-plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.ob-plan-name{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm)}
+.ob-plan-price{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--txt);letter-spacing:-.03em}
+.ob-plan-price span{font-family:'Plus Jakarta Sans',sans-serif;font-size:.7rem;font-weight:500;color:var(--txm)}
+.ob-plan-desc{font-size:.76rem;color:var(--txm);font-weight:500;line-height:1.5}
+.ob-plan-chip{font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:20px}
+.chip-green{background:#10B981;color:#fff}
+.chip-blue{background:var(--primary);color:#fff}
 </style>
 </head>
 <body>
@@ -426,15 +438,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <div class="fg"><label class="fl">Email</label><input class="fc" id="le" type="email" placeholder="vous@email.com" autocomplete="email"></div>
       <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="lp" type="password" placeholder="••••••••" autocomplete="current-password"></div>
       <button class="btn btn-p-full" onclick="doLogin()" id="btn-login">Se connecter</button>
-      <div style="text-align:center;margin-top:12px"><button onclick="showReset()" style="background:none;border:none;color:#2563EB;font-family:Outfit,sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:underline">Mot de passe oublié ?</button></div>
+      <div style="text-align:center;margin-top:12px"><button onclick="showReset()" style="background:none;border:none;color:#2563EB;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:underline">Mot de passe oublié ?</button></div>
       <div style="display:flex;align-items:center;gap:8px;margin:14px 0"><div style="flex:1;height:1px;background:#E2E8F0"></div><span style="font-size:.78rem;color:#94A3B8">ou</span><div style="flex:1;height:1px;background:#E2E8F0"></div></div>
-      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:Outfit,sans-serif;font-size:.9rem;font-weight:600;color:#1E293B"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continuer avec Google</button>
+      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:600;color:#1E293B"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continuer avec Google</button>
     </div>
     <div id="pp" class="hidden">
       <div style="text-align:center;margin-bottom:14px;font-size:.9rem;color:#64748B;line-height:1.5">Entrez votre email pour recevoir un lien de réinitialisation.</div>
       <div class="fg"><label class="fl">Email</label><input class="fc" id="pe" type="email" placeholder="vous@email.com" autocomplete="email"></div>
       <button class="btn btn-p-full" onclick="doReset()" id="btn-reset">Envoyer le lien</button>
-      <div style="text-align:center;margin-top:12px"><button onclick="authTab('l')" style="background:none;border:none;color:#64748B;font-family:Outfit,sans-serif;font-size:.85rem;cursor:pointer">← Retour à la connexion</button></div>
+      <div style="text-align:center;margin-top:12px"><button onclick="authTab('l')" style="background:none;border:none;color:#64748B;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;cursor:pointer">← Retour à la connexion</button></div>
     </div>
     <div id="pr" class="hidden">
       <div class="fg"><label class="fl">Prénom</label><input class="fc" id="rn" type="text" placeholder="Votre prénom"></div>
@@ -446,7 +458,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       </div>
       <button class="btn btn-p-full" onclick="doReg()" id="btn-reg">Créer mon compte</button>
       <div style="display:flex;align-items:center;gap:8px;margin:14px 0"><div style="flex:1;height:1px;background:#E2E8F0"></div><span style="font-size:.78rem;color:#94A3B8">ou</span><div style="flex:1;height:1px;background:#E2E8F0"></div></div>
-      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:Outfit,sans-serif;font-size:.9rem;font-weight:600;color:#1E293B"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>S'inscrire avec Google</button>
+      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:600;color:#1E293B"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>S'inscrire avec Google</button>
     </div>
   </div>
 </div>
@@ -500,30 +512,67 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <div class="ob-dot on"></div>
       <div class="ob-dot"></div>
       <div class="ob-dot"></div>
+      <div class="ob-dot"></div>
     </div>
-    <!-- Étape 1 -->
+    <!-- Étape 1 : Bienvenue -->
     <div class="ob-step" id="ob-s1">
       <div class="ob-ico">🚗</div>
       <div class="ob-ttl">Bienvenue sur AutoCarnet !</div>
       <div class="ob-txt">Fini les carnets papier perdus et les CT ratés.<br><strong>2 minutes</strong> suffisent pour configurer votre premier véhicule.</div>
-      <button class="btn btn-p" style="width:100%;margin-top:8px" onclick="showOnboardStep(2)">Découvrir →</button>
+      <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="showOnboardStep(2)">Découvrir →</button>
     </div>
-    <!-- Étape 2 -->
+    <!-- Étape 2 : Fonctionnalités -->
     <div class="ob-step hidden" id="ob-s2">
+      <div class="ob-ttl">Tout ce dont vous avez besoin</div>
       <div class="ob-feat">
         <div class="ob-feat-row"><div class="ob-feat-ico">🔧</div><div class="ob-feat-txt">Historique complet de chaque entretien</div></div>
         <div class="ob-feat-row"><div class="ob-feat-ico">🔔</div><div class="ob-feat-txt">Rappels automatiques date & kilométrage</div></div>
         <div class="ob-feat-row"><div class="ob-feat-ico">📄</div><div class="ob-feat-txt">Export PDF & CSV en un tap</div></div>
         <div class="ob-feat-row"><div class="ob-feat-ico">⛽</div><div class="ob-feat-txt">Prix carburant autour de vous</div></div>
       </div>
-      <button class="btn btn-p" style="width:100%" onclick="showOnboardStep(3)">Suivant →</button>
+      <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(3)">Suivant →</button>
     </div>
-    <!-- Étape 3 -->
+    <!-- Étape 3 : Les plans -->
     <div class="ob-step hidden" id="ob-s3">
+      <div class="ob-ttl">Choisissez votre formule</div>
+      <div class="ob-txt" style="margin-bottom:16px">Commencez gratuitement, évoluez selon vos besoins.</div>
+      <div class="ob-plan">
+        <div class="ob-plan-header">
+          <div class="ob-plan-name">Gratuit</div>
+          <div class="ob-plan-price">0€ <span>/ toujours</span></div>
+        </div>
+        <div class="ob-plan-desc">1 véhicule · Entretiens illimités · Rappels · PWA</div>
+      </div>
+      <div class="ob-plan pop">
+        <div class="ob-plan-header">
+          <div class="ob-plan-name" style="color:#065F46">Famille</div>
+          <div style="display:flex;align-items:center;gap:7px">
+            <div class="ob-plan-price">1,99€ <span>/mois</span></div>
+            <div class="ob-plan-chip chip-green">7j offerts</div>
+          </div>
+        </div>
+        <div class="ob-plan-desc">3 véhicules · Documents · Photos factures · Partage famille</div>
+      </div>
+      <div class="ob-plan feat">
+        <div class="ob-plan-header">
+          <div class="ob-plan-name" style="color:#1E40AF">Pro</div>
+          <div style="display:flex;align-items:center;gap:7px">
+            <div class="ob-plan-price">4,99€ <span>/mois</span></div>
+            <div class="ob-plan-chip chip-blue">7j offerts</div>
+          </div>
+        </div>
+        <div class="ob-plan-desc">Véhicules illimités · Export · Prix carburant · Mode équipe</div>
+      </div>
+      <div style="font-size:.73rem;color:var(--txm);text-align:center;margin:10px 0 16px;font-weight:500">Sans engagement · Annulation à tout moment</div>
+      <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(4)">Continuer →</button>
+    </div>
+    <!-- Étape 4 : C'est parti -->
+    <div class="ob-step hidden" id="ob-s4">
       <div class="ob-ico">✨</div>
       <div class="ob-ttl">C'est parti !</div>
       <div class="ob-txt">Ajoutez votre premier véhicule maintenant.<br>Ça prend moins de 30 secondes.</div>
-      <button class="btn btn-p" style="width:100%;margin-top:12px;padding:14px;font-size:.95rem" onclick="onboardFinish()">🚗 Ajouter mon véhicule</button>
+      <button class="btn btn-p" style="width:100%;margin-top:12px;padding:15px;font-size:.95rem" onclick="onboardFinish()">🚗 Ajouter mon véhicule</button>
+      <button onclick="closeOnboarding()" style="width:100%;margin-top:10px;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;font-weight:600">Passer →</button>
     </div>
   </div>
 </div>
@@ -3691,7 +3740,7 @@ function showOnboarding(){
 function showOnboardStep(n){
   document.querySelectorAll('.ob-step').forEach(s=>s.classList.add('hidden'));
   g('ob-s'+n)?.classList.remove('hidden');
-  // Points de progression
+  // Points de progression (4 maintenant)
   document.querySelectorAll('.ob-dot').forEach((d,i)=>d.classList.toggle('on',i+1===n));
 }
 function closeOnboarding(){
@@ -3721,7 +3770,7 @@ function showCheckoutSuccess(plan){
     <div style="font-size:2.5rem;margin-bottom:12px">🎉</div>
     <div style="font-size:1.1rem;font-weight:800;margin-bottom:8px;letter-spacing:-.02em">Bienvenue sur le Plan ${planLabel} !</div>
     <div style="font-size:.85rem;color:#475569;line-height:1.6;margin-bottom:20px">Votre abonnement est actif. Profitez de toutes les fonctionnalités AutoCarnet.</div>
-    <button onclick="this.closest('div').parentElement.remove();nav('profil')" style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:Outfit,sans-serif">Découvrir mon compte →</button>
+    <button onclick="this.closest('div').parentElement.remove();nav('profil')" style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Découvrir mon compte →</button>
   </div>`;
   mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
   document.body.appendChild(mo);
@@ -3864,14 +3913,14 @@ function showUpgradeModal(msg){
   txt.textContent=msg+' Choisissez un plan adapté à vos besoins.';
   const btnFam=document.createElement('button');
   btnFam.onclick=()=>goToStripeCheckout('famille');
-  btnFam.style.cssText='display:block;width:100%;padding:11px;background:#F0FDF4;border:1.5px solid #10B981;color:#065F46;border-radius:10px;font-size:.84rem;font-weight:700;margin-bottom:8px;cursor:pointer;text-align:center;font-family:Outfit,sans-serif';
+  btnFam.style.cssText='display:block;width:100%;padding:11px;background:#F0FDF4;border:1.5px solid #10B981;color:#065F46;border-radius:10px;font-size:.84rem;font-weight:700;margin-bottom:8px;cursor:pointer;text-align:center;font-family:sans-serif';
   btnFam.innerHTML='&#x1F46A; Famille &mdash; 1,99&euro;/mois<br><small style="font-weight:500;opacity:.8">3 v&eacute;hicules &middot; Essai 7j</small>';
   const btnPro=document.createElement('button');
   btnPro.onclick=()=>goToStripeCheckout('pro');
-  btnPro.style.cssText='display:block;width:100%;padding:11px;background:#2563EB;color:#fff;border-radius:10px;font-size:.84rem;font-weight:700;margin-bottom:8px;cursor:pointer;text-align:center;font-family:Outfit,sans-serif';
+  btnPro.style.cssText='display:block;width:100%;padding:11px;background:#2563EB;color:#fff;border-radius:10px;font-size:.84rem;font-weight:700;margin-bottom:8px;cursor:pointer;text-align:center;font-family:sans-serif';
   btnPro.innerHTML='&#x1F680; Pro &mdash; 4,99&euro;/mois<br><small style="font-weight:500;opacity:.85">Tout illimit&eacute; &middot; Essai 7j</small>';
   const btnClose=document.createElement('button');
-  btnClose.style.cssText='display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:Outfit,sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569';
+  btnClose.style.cssText='display:block;width:100%;padding:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;font-family:sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;color:#475569';
   btnClose.textContent='Plus tard';
   btnClose.onclick=()=>mo.remove();
   box.appendChild(ico);
