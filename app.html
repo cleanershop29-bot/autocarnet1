@@ -4046,12 +4046,7 @@ function renderFlotte(){
   }
   const vehs=S.vehicles;
   if(!vehs.length){
-    el.innerHTML=`<div class="empty" style="padding:48px 20px">
-      <span class="empty-i">🏢</span>
-      <div class="empty-t">Aucun véhicule</div>
-      <p class="empty-d">Ajoutez votre premier véhicule pour commencer.</p>
-      <button class="btn btn-p" style="width:100%;max-width:280px;padding:13px;font-size:.92rem" onclick="openVeh()">🚗 Ajouter un véhicule</button>
-    </div>`;
+    el.innerHTML=`<div class="empty" style="padding:48px 20px"><span class="empty-i">🏢</span><div class="empty-t">Aucun véhicule</div><p class="empty-d">Ajoutez votre premier véhicule pour commencer.</p><button class="btn btn-p" style="width:100%;max-width:280px;padding:13px;font-size:.92rem" onclick="openVeh()">🚗 Ajouter un véhicule</button></div>`;
     return;
   }
   const alertes=[];
@@ -4061,57 +4056,45 @@ function renderFlotte(){
   });
   const moisCout=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
   let h='';
+  // Métriques
   h+='<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">';
   h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicule'+(vehs.length>1?'s':'')+'</div></div>';
   h+='<div class="stat"><div class="stat-v" style="color:'+(alertes.length?'var(--err)':'var(--ok)')+'">'+alertes.length+'</div><div class="stat-l">Alerte'+(alertes.length>1?'s':'')+' urgentes</div></div>';
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
-  if(alertes.length){
-    h+='<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes urgentes</span></div>';
-    alertes.forEach(({v,r})=>{
-      const sevColor=r.sev==='danger'?'var(--err)':'var(--warn)';
-      const parcLabel=v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.68rem">${esc(v.num_parc)}</span>`:'';
-      h+=`<div class="vc" style="border-left-color:${sevColor};margin-bottom:8px;padding:12px 14px">`;
-      h+=`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">`;
-      h+=`<div style="min-width:0;flex:1">`;
-      h+=`<div style="font-weight:700;font-size:.92rem;margin-bottom:2px">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
-      h+=`<div style="font-size:.78rem;color:var(--txm);margin-bottom:4px">${v.conducteur?'👤 '+esc(v.conducteur):'👤 Non attribué'}</div>`;
-      h+=`<div style="font-size:.8rem;font-weight:600;color:${sevColor}">${esc(r.ti.label)} — ${esc(r.label)}</div>`;
-      h+=`</div>`;
-      h+=`<button class="btn btn-s btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="openVehDetail('${v.id}')">Voir</button>`;
-      h+=`</div></div>`;
-    });
-  } else {
-    h+='<div class="vc" style="padding:16px;text-align:center;margin-bottom:12px"><div style="font-size:1.5rem">✅</div><div style="font-weight:700;margin:4px 0 2px">Aucune alerte</div><div style="font-size:.82rem;color:var(--txm)">Tous les véhicules sont à jour.</div></div>';
-  }
-  h+='<div class="sec-hdr" style="margin-top:4px"><span class="sec-ttl">🚗 Véhicules</span><button class="sec-lnk" onclick="openVeh()">+ Ajouter</button></div>';
-  // Alerte urgentes en haut si existantes
-  const urgentAll=getRappels().filter(r=>r.sev==='danger');
-  if(urgentAll.length){
-    h+=`<div style="background:var(--err-bg);border:1px solid #FECACA;border-radius:var(--r-sm);padding:10px 13px;margin-bottom:8px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="nav('rap')">
-      <span style="font-size:1.1rem">⚠️</span>
-      <span style="font-size:.85rem;font-weight:600;color:var(--err)">${urgentAll.length} alerte${urgentAll.length>1?'s':''} urgente${urgentAll.length>1?'s':''} — voir les rappels</span>
-      <span style="margin-left:auto;color:var(--err)">›</span>
-    </div>`;
-  }
+  // Header véhicules
+  h+='<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><button class="sec-lnk" onclick="openVeh()">+ Ajouter</button></div>';
+  // Une carte par véhicule — tout en un
   const sortedVehs=[...vehs].sort((a,b)=>{const order={danger:0,warn:1,ok:2};return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);});
-  h+=sortedVehs.map(v=>vcCompactHTML(v)).join('');
-  h+='<div class="sec-hdr" style="margin-top:14px"><span class="sec-ttl">⚙️ Vue opérationnelle</span></div>';
-  vehs.forEach(v=>{
+  sortedVehs.forEach(v=>{
+    const st=vStatus(v.id);
     const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
     const nextRap=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.kind==='date')[0];
-    const parcLabel=v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.68rem">${esc(v.num_parc)}</span>`:'';
-    const alertBadge=vRaps.length?`<span style="font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`:'';
-    h+=`<div class="vc" style="margin-bottom:8px;padding:12px 14px">`;
-    h+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">`;
+    const col=v.couleur_carte||v.emoji||'#2563EB';
+    const parcLabel=v.num_parc?` <span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.68rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:'';
+    const borderCol=st==='danger'?'var(--err)':st==='warn'?'var(--warn)':'var(--border)';
+    h+=`<div class="vc" style="border-left-color:${borderCol};margin-bottom:10px;padding:12px 14px">`;
+    // Ligne 1 : couleur + nom + badges + bouton détail
+    h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">`;
+    h+=`<div style="width:34px;height:34px;border-radius:8px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>`;
+    h+=`<div style="flex:1;min-width:0">`;
     h+=`<div style="font-weight:700;font-size:.92rem">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
-    h+=alertBadge;
+    h+=`<div style="font-size:.75rem;color:var(--txm)">${fmtKm(v.km_actuel)}${v.immatriculation?' · '+esc(v.immatriculation):''}</div>`;
     h+=`</div>`;
-    h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
-    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">👤 Conducteur</div><input class="fc" style="font-size:.8rem;padding:5px 8px;height:auto" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
-    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">🔄 Statut</div><select class="fc" style="font-size:.8rem;padding:5px 8px;height:auto" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Disponible</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 En intervention</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ En panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Au garage</option></select></div>`;
-    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">📍 Km actuel</div><input class="fc" type="number" inputmode="numeric" style="font-size:.8rem;padding:5px 8px;height:auto" placeholder="0" value="${v.km_actuel||''}" onchange="saveFlotteField('${v.id}','km_actuel',parseInt(this.value)||0)"></div>`;
-    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">🔔 Prochain rappel</div><div style="font-size:.8rem;font-weight:600;padding:5px 0;color:${nextRap&&nextRap.sev!=='ok'?'var(--warn)':'var(--ok)'}">${nextRap?nextRap.label:'Aucun rappel'}</div></div>`;
+    if(vRaps.length) h+=`<span style="font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`;
+    h+=`<button class="btn btn-s btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="openVehDetail('${v.id}')">→</button>`;
+    h+=`</div>`;
+    // Ligne 2 : prochain rappel (lecture seule, sur toute la largeur)
+    const rapColor=nextRap&&nextRap.sev==='danger'?'var(--err)':nextRap&&nextRap.sev==='warn'?'var(--warn)':'var(--ok)';
+    h+=`<div style="font-size:.75rem;padding:5px 8px;background:var(--bg2);border-radius:6px;margin-bottom:8px;display:flex;align-items:center;gap:6px">`;
+    h+=`<span style="color:var(--txm)">🔔 Prochain rappel :</span>`;
+    h+=`<span style="font-weight:700;color:${rapColor}">${nextRap?nextRap.ti.label+' — '+nextRap.label:'Aucun rappel planifié'}</span>`;
+    h+=`</div>`;
+    // Ligne 3 : champs inline — conducteur, statut, km
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">`;
+    h+=`<div><div style="font-size:.65rem;color:var(--txm);margin-bottom:2px">👤 Conducteur</div><input class="fc" style="font-size:.78rem;padding:4px 7px;height:auto" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
+    h+=`<div><div style="font-size:.65rem;color:var(--txm);margin-bottom:2px">🔄 Statut</div><select class="fc" style="font-size:.78rem;padding:4px 7px;height:auto" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Dispo</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 Intervention</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ Panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Garage</option></select></div>`;
+    h+=`<div><div style="font-size:.65rem;color:var(--txm);margin-bottom:2px">📍 Km actuel</div><input class="fc" type="number" inputmode="numeric" style="font-size:.78rem;padding:4px 7px;height:auto" placeholder="0" value="${v.km_actuel||''}" onchange="saveFlotteField('${v.id}','km_actuel',parseInt(this.value)||0)"></div>`;
     h+=`</div></div>`;
   });
   el.innerHTML=h;
