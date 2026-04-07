@@ -156,7 +156,7 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
     <div class="hero-plan famille">
       <div class="hero-plan-lbl">👨‍👩‍👧 Famille</div>
       <div class="hero-plan-price">1<span class="cents">,99€</span></div>
-      <div class="hero-plan-sub">par mois · 3 véhicules · 10 entretiens/véhicule · documents & photos</div>
+      <div class="hero-plan-sub">par mois · 3 véhicules · entretiens illimités · documents & photos</div>
       <button class="btn-famille" onclick="stripeCheckout('famille')">Essayer 7 jours →</button>
     </div>
     <div class="hero-plan pro">
@@ -188,7 +188,7 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
         <div class="compare-price">0<sup>€</sup><span class="per"> / mois</span></div>
         <ul class="compare-feats">
           <li><span class="ck-ok">✓</span>1 véhicule</li>
-          <li><span class="ck-ok">✓</span>10 entretiens</li>
+          <li><span class="ck-ok">✓</span>Entretiens illimités</li>
           <li><span class="ck-ok">✓</span>Rappels date &amp; km</li>
           <li><span class="ck-ok">✓</span>PWA installable</li>
           <li class="muted"><span class="ck-no">✕</span>Documents</li>
@@ -207,7 +207,7 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
         <div class="compare-price">1,99<sup>€</sup><span class="per"> / mois</span></div>
         <ul class="compare-feats">
           <li><span class="ck-green">✓</span>3 véhicules</li>
-          <li><span class="ck-green">✓</span>10 entretiens/véhicule</li>
+          <li><span class="ck-green">✓</span>Entretiens illimités</li>
           <li><span class="ck-green">✓</span>Rappels date &amp; km</li>
           <li><span class="ck-green">✓</span>PWA installable</li>
           <li><span class="ck-green">✓</span>Documents véhicule</li>
@@ -317,7 +317,7 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
     </div>
     <div class="faq-item">
       <div class="faq-q">Quelle est la différence entre Famille et Pro ?</div>
-      <div class="faq-a">Le plan Famille permet 3 véhicules avec 10 entretiens chacun, les documents et photos de factures. Le plan Pro débloque tout sans limite : véhicules illimités, entretiens illimités, prix carburant, export PDF/CSV et mode équipe multi-utilisateurs.</div>
+      <div class="faq-a">Le plan Famille permet 3 véhicules avec des entretiens illimités, les documents et photos de factures. Le plan Pro débloque tout sans limite : véhicules illimités, entretiens illimités, prix carburant, export PDF/CSV et mode équipe multi-utilisateurs.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">Mes données sont-elles en sécurité ?</div>
@@ -349,12 +349,12 @@ footer{padding:20px;border-top:1px solid var(--border);text-align:center}
     <a href="/faq.html">FAQ</a>
     <a href="/cgu.html">CGU</a>
     <a href="/mentions-legales.html">Mentions légales</a>
-    <a href="mailto:autocarnetpro@gmail.com">Contact</a>
+    <a href="/cdn-cgi/l/email-protection#5a3b2f2e35393b28343f2e2a28351a3d373b333674393537">Contact</a>
   </div>
   <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 async function stripeCheckout(plan){
   try{
     const r=await fetch('/.netlify/functions/create-checkout',{
@@ -363,12 +363,4 @@ async function stripeCheckout(plan){
       body:JSON.stringify({plan})
     });
     const d=await r.json();
-    if(d.url){window.location.href=d.url;}
-    else{alert('Erreur. Veuillez réessayer.');}
-  }catch(e){
-    alert('Erreur réseau. Veuillez réessayer.');
-  }
-}
-</script>
-</body>
-</html>
+    if(d.url){window.location.href

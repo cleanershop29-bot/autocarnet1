@@ -556,4 +556,16 @@ async function stripeCheckout(plan){
   try{
     const r=await fetch('/.netlify/functions/create-checkout',{
       method:'POST',
-      he
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan})
+    });
+    const d=await r.json();
+    if(d.url)window.location.href=d.url;
+    else alert('Erreur : '+d.error);
+  }catch(e){
+    alert('Erreur de connexion.');
+  }
+}
+</script>
+</body>
+</html>
