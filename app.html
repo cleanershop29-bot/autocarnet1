@@ -4031,52 +4031,52 @@ function renderFlotte(){
   }
   const vehs=S.vehicles;
   if(!vehs.length){el.innerHTML='<div class="empty"><span class="empty-i">🏢</span><div class="empty-t">Aucun véhicule</div><p class="empty-d">Ajoutez des véhicules pour voir le tableau de bord flotte.</p></div>';return;}
-  const statLabel={disponible:'✅ Disponible',intervention:'🔧 En intervention',panne:'❌ En panne',garage:'🏠 Au garage'};
-  const statClass={disponible:'ok',intervention:'warn',panne:'err',garage:'info'};
-  const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   const alertes=[];
   vehs.forEach(v=>{
     const raps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
     raps.forEach(r=>alertes.push({v,r}));
   });
   const moisCout=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
+  const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   let h='';
-  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">';
-  h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicules</div></div>';
-  const dispo=vehs.filter(v=>!v.statut_vehicule||v.statut_vehicule==='disponible').length;
-  h+='<div class="stat"><div class="stat-v" style="color:var(--ok)">'+dispo+'</div><div class="stat-l">Disponibles</div></div>';
-  h+='<div class="stat"><div class="stat-v" style="color:var(--warn)">'+alertes.length+'</div><div class="stat-l">Alertes</div></div>';
+  // Métriques
+  h+='<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">';
+  h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicule'+(vehs.length>1?'s':'')+'</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="color:var(--err)">'+alertes.length+'</div><div class="stat-l">Alerte'+(alertes.length>1?'s':'')+' urgentes</div></div>';
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
+  // Alertes
   if(alertes.length){
-    h+='<div style="font-size:.8rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Alertes urgentes</div>';
+    h+='<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes urgentes</span></div>';
     alertes.forEach(({v,r})=>{
-      const st=v.statut_vehicule||'disponible';
-      h+='<div class="vc" style="border-left:3px solid var(--err);margin-bottom:8px">';
-      h+='<div style="display:flex;align-items:center;justify-content:space-between">';
-      h+='<div><div style="font-weight:700;font-size:.95rem">'+esc(v.marque)+' '+esc(v.modele)+(v.num_parc?' <span style="font-size:.7rem;background:var(--bg2);padding:1px 5px;border-radius:3px">'+esc(v.num_parc)+'</span>':'')+'</div>';
-      h+='<div style="font-size:.78rem;color:var(--txm)">'+(v.conducteur?'👤 '+esc(v.conducteur):'Non attribué')+'</div></div>';
-      h+='<span style="font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:6px;background:#FEF2F2;color:#DC2626">'+esc(r.ti.label)+' — '+esc(r.label)+'</span>';
-      h+='</div></div>';
+      const sevColor=r.sev==='danger'?'var(--err)':'var(--warn)';
+      const parcLabel=v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.68rem">${esc(v.num_parc)}</span>`:'';
+      h+=`<div class="vc" style="border-left-color:${sevColor};margin-bottom:8px;padding:12px 14px">`;
+      h+=`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">`;
+      h+=`<div style="min-width:0">`;
+      h+=`<div style="font-weight:700;font-size:.92rem;margin-bottom:2px">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
+      h+=`<div style="font-size:.78rem;color:var(--txm);margin-bottom:4px">${v.conducteur?'👤 '+esc(v.conducteur):'👤 Non attribué'}</div>`;
+      h+=`<div style="font-size:.8rem;font-weight:600;color:${sevColor}">${esc(r.ti.label)} — ${esc(r.label)}</div>`;
+      h+=`</div>`;
+      h+=`<button class="btn btn-s btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="openVehDetail('${v.id}')">Voir</button>`;
+      h+=`</div></div>`;
+    });
+  } else {
+    h+='<div class="vc" style="padding:16px;text-align:center"><div style="font-size:1.5rem">✅</div><div style="font-weight:700;margin:4px 0 2px">Aucune alerte</div><div style="font-size:.82rem;color:var(--txm)">Tous les véhicules sont à jour.</div></div>';
+  }
+  // Conducteurs
+  const avecConducteur=vehs.filter(v=>v.conducteur);
+  if(avecConducteur.length){
+    h+='<div class="sec-hdr" style="margin-top:14px"><span class="sec-ttl">👤 Conducteurs</span></div>';
+    avecConducteur.forEach(v=>{
+      const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
+      const parcLabel=v.num_parc?` · ${esc(v.num_parc)}`:'';
+      h+=`<div class="vc" style="padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">`;
+      h+=`<div><div style="font-size:.88rem;font-weight:700">${esc(v.conducteur)}</div><div style="font-size:.75rem;color:var(--txm)">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div></div>`;
+      h+=vRaps.length?`<span style="font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#FEF2F2;color:#DC2626">⚠️ ${vRaps.length} alerte${vRaps.length>1?'s':''}</span>`:`<span style="font-size:.72rem;color:var(--ok);font-weight:600">✅ RAS</span>`;
+      h+=`</div>`;
     });
   }
-  h+='<div style="font-size:.8rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">Tous les véhicules</div>';
-  vehs.forEach(v=>{
-    const st=v.statut_vehicule||'disponible';
-    const raps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
-    const nextOk=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev==='ok'&&r.kind==='date')[0];
-    const stColors={disponible:'#DCFCE7;color:#15803D',intervention:'#FEF9C3;color:#A16207',panne:'#FEE2E2;color:#DC2626',garage:'#EFF6FF;color:#1D4ED8'};
-    h+='<div class="vc" style="margin-bottom:8px">';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
-    h+='<div><div style="font-weight:700;font-size:.95rem">'+esc(v.marque)+' '+esc(v.modele)+(v.num_parc?' <span style="font-size:.7rem;background:var(--bg2);padding:1px 5px;border-radius:3px">'+esc(v.num_parc)+'</span>':'')+'</div>';
-    h+='<div style="font-size:.78rem;color:var(--txm)">'+(v.conducteur?'👤 '+esc(v.conducteur):'Non attribué')+'</div></div>';
-    h+='<span style="font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:6px;background:'+stColors[st]+'">'+statLabel[st]+'</span>';
-    h+='</div>';
-    h+='<div style="display:flex;gap:16px;font-size:.78rem;color:var(--txm);border-top:1px solid var(--border);padding-top:6px">';
-    h+='<span>📍 '+(v.km_actuel?fmtKm(v.km_actuel):'— km')+'</span>';
-    h+='<span>'+(raps.length?'⚠️ '+raps.length+' alerte'+(raps.length>1?'s':''):nextOk?'✅ '+nextOk.label:'✅ RAS')+'</span>';
-    h+='</div></div>';
-  });
   el.innerHTML=h;
 }
 document.addEventListener("DOMContentLoaded", ()=>{init();});
