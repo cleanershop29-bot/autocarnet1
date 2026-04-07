@@ -1608,6 +1608,7 @@ async function saveEnt(){
     await sb.from('entretiens').update({photo_url:null}).eq('id',id).eq('user_id',S.user.id);
   }
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
+  if(p.rappel_date){const vv=S.vehicles.find(x=>x.id===vehicle_id);const vehName=vv?(vv.num_parc?`${vv.marque} ${vv.modele} (${vv.num_parc})`:`${vv.marque} ${vv.modele}`):'Véhicule';const t=encodeURIComponent('🔔 Rappel enregistré');const b=encodeURIComponent(`${p.type||'Entretien'} — ${vehName} le ${p.rappel_date}`);fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${t}&body=${b}`).catch(()=>{});}
   g('e-id').value='';
   removePhoto();
   cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
@@ -2407,6 +2408,7 @@ async function saveRappelCustom(){
   const{error}=id?await sb.from('rappels_custom').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('rappels_custom').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   toast(id?'Rappel mis à jour !':'Rappel créé !','s');
+  if(p.date_rappel){const t=encodeURIComponent('📌 Rappel enregistré');const b=encodeURIComponent(`${p.titre}${p.date_rappel?' — le '+p.date_rappel:''}`);fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${t}&body=${b}`).catch(()=>{});}
   cm('rcus');await loadRappelsCustom();renderView();
 }
 async function delRappelCustom(){
