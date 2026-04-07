@@ -16,7 +16,30 @@ exports.handler = async (event) => {
     return { statusCode: 403, headers, body: JSON.stringify({ error: 'Forbidden' }) };
   }
 
-  const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=*`, { headers: SB_HEADERS });
+  const userId = params.get('user_id') || null;
+  const title  = params.get('title')   || null;
+  const body   = params.get('body')    || null;
+
+  // Mode instantané : title + body + user_id fournis directement
+  if (userId && title && body) {
+    const subRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${userId}&select=*`, { headers: SB_HEADERS });
+    const subArr = await subRes.json();
+    if (!Array.isArray(subArr) || !subArr.length) {
+      return { statusCode: 200, headers, body: JSON.stringify({ message: 'Pas de souscription' }) };
+    }
+    const sub = subArr[0];
+    const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
+    try {
+      await webpush.sendNotification(pushSub, JSON.stringify({ title, body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
+      return { statusCode: 200, headers, body: JSON.stringify({ sent: 1 }) };
+    } catch(e) {
+      return { statusCode: 200, headers, body: JSON.stringify({ error: e.message }) };
+    }
+  }
+
+  // Mode complet : scan de tous les rappels du jour
+  const subsFilter = userId ? `user_id=eq.${userId}&select=*` : `select=*`;
+  const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?${subsFilter}`, { headers: SB_HEADERS });
   const subs = await subsRes.json();
   if (!Array.isArray(subs) || !subs.length) {
     return { statusCode: 200, headers, body: JSON.stringify({ message: 'Aucun abonné', subs: 0 }) };
@@ -76,16 +99,15 @@ exports.handler = async (event) => {
         if (diff === 30) alerts.push({ title: `📄 ${label} expire dans 30j`, body: veh });
       });
 
-      // Si pas de rappels du jour, envoyer quand même un test
       if (!alerts.length) {
-        alerts.push({ title: '🔔 AutoCarnet', body: 'Aucun rappel pour aujourd\'hui ✓' });
+        alerts.push({ title: '🔔 AutoCarnet', body: "Aucun rappel pour aujourd'hui ✓" });
       }
 
       const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
 
       for (const alert of alerts) {
         try {
-          await webpush.sendNotification(pushSub, JSON.stringify({ title: alert.title, body: alert.body }));
+          await webpush.sendNotification(pushSub, JSON.stringify({ title: alert.title, body: alert.body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
           sent++;
         } catch(e) {
           if (e.statusCode === 410 || e.statusCode === 404) {
