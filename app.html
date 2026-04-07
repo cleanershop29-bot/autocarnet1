@@ -459,11 +459,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
     <div class="tab" id="t-rap"><div id="rp-ctn"></div></div>
     <div class="tab" id="t-fam"><div id="fm-ctn"></div></div>
     <div class="tab" id="t-profil"><div id="pr-ctn"></div></div>
+    <div class="tab" id="t-flotte"><div id="fl-ctn"></div></div>
   </div>
   <nav class="navbar">
     <button class="nb on" id="nb-dash" onclick="nav('dash')"><span class="nb-ico">🚗</span>Garage</button>
     <button class="nb" id="nb-rap"  onclick="nav('rap')"><span class="nb-ico">🔔</span>Rappels<div class="rdot hidden" id="rdot"></div></button>
     <button class="nb" id="nb-fam"  onclick="nav('fam')"><span class="nb-ico">👥</span>Équipe</button>
+    <button class="nb hidden" id="nb-flotte" onclick="nav('flotte')"><span class="nb-ico">🏢</span>Flotte</button>
     <button class="nb" id="nb-profil" onclick="nav('profil')"><span class="nb-ico">👤</span>Profil<span id="nb-prem" class="hidden" style="position:absolute;top:5px;right:calc(50% - 16px);font-size:.55rem;color:#F59E0B">⭐</span></button>
   </nav>
 </div>
@@ -589,6 +591,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
       <div class="fg"><label class="fl">VIN (optionnel)</label><input class="fc" id="v-vn" placeholder="Numéro de châssis"></div>
       <div class="fr">
         <div class="fg"><label class="fl">N° de parc</label><input class="fc" id="v-np2" placeholder="Ex: VH-042"></div>
+        <div class="fr"><div class="fg"><label class="fl">Conducteur</label><input class="fc" id="v-cond" placeholder="Nom du conducteur"></div><div class="fg"><label class="fl">Statut</label><select class="fc" id="v-stat"><option value="disponible">✅ Disponible</option><option value="intervention">🔧 En intervention</option><option value="panne">❌ En panne</option><option value="garage">🏠 Au garage</option></select></div></div>
         <div class="fg"><label class="fl">Rejet CO2 (g/km)</label><input class="fc" id="v-co2" type="number" inputmode="numeric" placeholder="120" min="0"></div>
       </div>
       <!-- SECTION AVANCÉE VÉHICULE -->
@@ -1480,6 +1483,8 @@ async function saveVeh(){
     assurance_echeance:g('v-as').value||null,
     assurance_compagnie:g('v-ac').value.trim()||null,
     num_parc:g('v-np2').value.trim()||null,
+    conducteur:g('v-cond').value.trim()||null,
+    statut_vehicule:g('v-stat').value||'disponible',
     co2:parseInt(g('v-co2').value)||null,
   };
   let error,payload_id_temp=id||null;
@@ -1746,6 +1751,9 @@ function updateDot(){
   });
   g('rdot').classList.toggle('hidden',!hasUrgent&&!hasRcusUrgent&&!hasDocExp);
 }
+  const isPro=getUserPlan()==='pro';
+  const flotteBtn=g('nb-flotte');
+  if(flotteBtn)flotteBtn.classList.toggle('hidden',!isPro);
 
 /* GRAPHIQUE */
 function getCostsByYear(vid){
@@ -1776,6 +1784,7 @@ function renderView(){
   if(v==='dash')renderVehs(); // Accueil = liste véhicules
   else if(v==='rap')renderRap();
   else if(v==='fam')renderFam();
+  else if(v==='flotte')renderFlotte();
   else if(v==='profil'){
     renderProfil();
     setTimeout(()=>{
@@ -3265,6 +3274,7 @@ async function openVeh(id){
     if(ct2){if(g('vdoc-ct-nom'))g('vdoc-ct-nom').value=ct2.nom||'';if(g('vdoc-ct-emission'))g('vdoc-ct-emission').value=ct2.date_emission||'';}
     g('v-va').value=v.valeur_achat||'';g('v-vact').value=v.valeur_actuelle||'';
     g('v-as').value=v.assurance_echeance||'';g('v-ac').value=v.assurance_compagnie||'';
+    g('v-cond').value=v.conducteur||'';g('v-stat').value=v.statut_vehicule||'disponible';
     // Ouvrir section avancée si des données existent
     if(v.transmission||v.traction||v.assurance_echeance||v.valeur_achat){
       const btn=g('adv-veh-btn'),body=g('adv-veh-body');
@@ -3274,7 +3284,7 @@ async function openVeh(id){
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===v.emoji));
   }else{
     g('mt-veh').textContent='Ajouter un véhicule';
-    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac','v-np2','v-co2','vdoc-cg-nom','vdoc-cg-emission','vdoc-as-num','vdoc-as-emission','vdoc-ct-nom','vdoc-ct-emission'].forEach(x=>{if(g(x))g(x).value='';});g('v-em').value='#2563EB';buildEpicker();
+    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac','v-np2','v-co2','v-cond','vdoc-cg-nom','vdoc-cg-emission','vdoc-as-num','vdoc-as-emission','vdoc-ct-nom','vdoc-ct-emission'].forEach(x=>{if(g(x))g(x).value='';});g('v-em').value='#2563EB';buildEpicker();
     const advBtn=g('adv-veh-btn'),advBody=g('adv-veh-body');if(advBtn&&advBody){advBtn.classList.remove('open');advBody.classList.remove('open');}
     g('v-cb').value='essence';g('v-em').value='🚗';
     g('btn-del-v').classList.add('hidden');
@@ -4011,6 +4021,63 @@ function checkAdminCode(){
     toast('Code incorrect.','e');
     g('admin-code').value='';
   }
+}
+function renderFlotte(){
+  const el=g('fl-ctn');
+  if(!el)return;
+  if(getUserPlan()!=='pro'){
+    el.innerHTML='<div class="empty"><span class="empty-i">🏢</span><div class="empty-t">Tableau de bord Flotte</div><p class="empty-d">Cette fonctionnalité est réservée au plan Pro.</p><button class="btn btn-p" onclick="navToPremium()">Passer au plan Pro</button></div>';
+    return;
+  }
+  const vehs=S.vehicles;
+  if(!vehs.length){el.innerHTML='<div class="empty"><span class="empty-i">🏢</span><div class="empty-t">Aucun véhicule</div><p class="empty-d">Ajoutez des véhicules pour voir le tableau de bord flotte.</p></div>';return;}
+  const statLabel={disponible:'✅ Disponible',intervention:'🔧 En intervention',panne:'❌ En panne',garage:'🏠 Au garage'};
+  const statClass={disponible:'ok',intervention:'warn',panne:'err',garage:'info'};
+  const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
+  const alertes=[];
+  vehs.forEach(v=>{
+    const raps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
+    raps.forEach(r=>alertes.push({v,r}));
+  });
+  const moisCout=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
+  let h='';
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">';
+  h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicules</div></div>';
+  const dispo=vehs.filter(v=>!v.statut_vehicule||v.statut_vehicule==='disponible').length;
+  h+='<div class="stat"><div class="stat-v" style="color:var(--ok)">'+dispo+'</div><div class="stat-l">Disponibles</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="color:var(--warn)">'+alertes.length+'</div><div class="stat-l">Alertes</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
+  h+='</div>';
+  if(alertes.length){
+    h+='<div style="font-size:.8rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Alertes urgentes</div>';
+    alertes.forEach(({v,r})=>{
+      const st=v.statut_vehicule||'disponible';
+      h+='<div class="vc" style="border-left:3px solid var(--err);margin-bottom:8px">';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between">';
+      h+='<div><div style="font-weight:700;font-size:.95rem">'+esc(v.marque)+' '+esc(v.modele)+(v.num_parc?' <span style="font-size:.7rem;background:var(--bg2);padding:1px 5px;border-radius:3px">'+esc(v.num_parc)+'</span>':'')+'</div>';
+      h+='<div style="font-size:.78rem;color:var(--txm)">'+(v.conducteur?'👤 '+esc(v.conducteur):'Non attribué')+'</div></div>';
+      h+='<span style="font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:6px;background:#FEF2F2;color:#DC2626">'+esc(r.ti.label)+' — '+esc(r.label)+'</span>';
+      h+='</div></div>';
+    });
+  }
+  h+='<div style="font-size:.8rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">Tous les véhicules</div>';
+  vehs.forEach(v=>{
+    const st=v.statut_vehicule||'disponible';
+    const raps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
+    const nextOk=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev==='ok'&&r.kind==='date')[0];
+    const stColors={disponible:'#DCFCE7;color:#15803D',intervention:'#FEF9C3;color:#A16207',panne:'#FEE2E2;color:#DC2626',garage:'#EFF6FF;color:#1D4ED8'};
+    h+='<div class="vc" style="margin-bottom:8px">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
+    h+='<div><div style="font-weight:700;font-size:.95rem">'+esc(v.marque)+' '+esc(v.modele)+(v.num_parc?' <span style="font-size:.7rem;background:var(--bg2);padding:1px 5px;border-radius:3px">'+esc(v.num_parc)+'</span>':'')+'</div>';
+    h+='<div style="font-size:.78rem;color:var(--txm)">'+(v.conducteur?'👤 '+esc(v.conducteur):'Non attribué')+'</div></div>';
+    h+='<span style="font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:6px;background:'+stColors[st]+'">'+statLabel[st]+'</span>';
+    h+='</div>';
+    h+='<div style="display:flex;gap:16px;font-size:.78rem;color:var(--txm);border-top:1px solid var(--border);padding-top:6px">';
+    h+='<span>📍 '+(v.km_actuel?fmtKm(v.km_actuel):'— km')+'</span>';
+    h+='<span>'+(raps.length?'⚠️ '+raps.length+' alerte'+(raps.length>1?'s':''):nextOk?'✅ '+nextOk.label:'✅ RAS')+'</span>';
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
 }
 document.addEventListener("DOMContentLoaded", ()=>{init();});
 </script>
