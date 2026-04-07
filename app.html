@@ -473,7 +473,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-h
 <button id="fab" onclick="handleFab()">+</button>
 <div id="fab-menu">
   <button class="fab-item" onclick="fabAction('veh')"><div class="fab-item-ico" style="background:var(--primary-lt)">🚗</div>Ajouter un véhicule</button>
-  <button class="fab-item" onclick="fabAction('ent')"><div class="fab-item-ico" style="background:#ECFDF5">🔧</div>Ajouter un entretien</button>
+  <button class="fab-item" id="fab-ent" onclick="fabAction('ent')"><div class="fab-item-ico" style="background:#ECFDF5">🔧</div>Ajouter un entretien</button>
   <button class="fab-item" onclick="fabAction('rap')"><div class="fab-item-ico" style="background:#FFFBEB">📌</div>Ajouter un rappel</button>
 </div>
 <div id="fab-overlay" onclick="closeFabMenu()" style="position:fixed;inset:0;z-index:97;display:none"></div>
@@ -1752,7 +1752,17 @@ function updateDot(){
   g("rdot").classList.toggle("hidden",!hasUrgent&&!hasRcusUrgent&&!hasDocExp);
   const isPro=getUserPlan()==="pro";
   const flotteBtn=g("nb-flotte");
-  if(flotteBtn)flotteBtn.classList.toggle("hidden",!isPro);
+  const dashBtn=g("nb-dash");
+  if(isPro){
+    if(flotteBtn)flotteBtn.classList.remove("hidden");
+    if(dashBtn)dashBtn.classList.add("hidden");
+  } else {
+    if(flotteBtn)flotteBtn.classList.add("hidden");
+    if(dashBtn)dashBtn.classList.remove("hidden");
+  }
+  // FAB entretien : visible seulement si pas Pro (en Pro on passe par Rappels)
+  const fabEnt=g("fab-ent");
+  if(fabEnt)fabEnt.style.display=isPro?'none':'';
 }
 
 /* GRAPHIQUE */
@@ -1781,7 +1791,10 @@ function exportPDF(vid){
 /* RENDER */
 function renderView(){
   const v=S.view;
-  if(v==='dash')renderVehs(); // Accueil = liste véhicules
+  if(v==='dash'){
+    if(getUserPlan()==='pro'){nav('flotte');return;}
+    renderVehs();
+  }
   else if(v==='rap')renderRap();
   else if(v==='fam')renderFam();
   else if(v==='flotte')renderFlotte();
@@ -1969,8 +1982,7 @@ function vcCompactHTML(v){
     <div class="vc-compact-acts">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
-        :`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-        <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>`
+        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>`
       }
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">→ Détail</button>
     </div>
@@ -3001,8 +3013,11 @@ function renderRap(){
     h+=`</div>`;
   }
 
-  // Bouton + rappel
-  h+=`<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-p btn-sm" onclick="openRappelCustom()">+ Rappel</button></div>`;
+  // Boutons actions
+  h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
+    <button class="btn btn-s btn-sm" onclick="openEnt()">🔧 + Entretien</button>
+    <button class="btn btn-p btn-sm" onclick="openRappelCustom()">📌 + Rappel</button>
+  </div>`;
 
   function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
   function filterVid(vid){return S.rapFilterVeh==='all'||vid===S.rapFilterVeh;}
@@ -3204,7 +3219,7 @@ function nav(view){
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
   const tabEl=g('t-'+view); if(tabEl) tabEl.classList.add('on');
   const nbEl=g('nb-'+view); if(nbEl) nbEl.classList.add('on');
-  g('fab').classList.toggle('vis',['dash','ent'].includes(view));
+  g('fab').classList.toggle('vis',['dash','flotte','rap'].includes(view));
   renderView();
 }
 
@@ -4030,7 +4045,15 @@ function renderFlotte(){
     return;
   }
   const vehs=S.vehicles;
-  if(!vehs.length){el.innerHTML='<div class="empty"><span class="empty-i">🏢</span><div class="empty-t">Aucun véhicule</div><p class="empty-d">Ajoutez des véhicules pour voir le tableau de bord flotte.</p></div>';return;}
+  if(!vehs.length){
+    el.innerHTML=`<div class="empty" style="padding:48px 20px">
+      <span class="empty-i">🏢</span>
+      <div class="empty-t">Aucun véhicule</div>
+      <p class="empty-d">Ajoutez votre premier véhicule pour commencer.</p>
+      <button class="btn btn-p" style="width:100%;max-width:280px;padding:13px;font-size:.92rem" onclick="openVeh()">🚗 Ajouter un véhicule</button>
+    </div>`;
+    return;
+  }
   const alertes=[];
   vehs.forEach(v=>{
     const raps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
@@ -4061,7 +4084,19 @@ function renderFlotte(){
   } else {
     h+='<div class="vc" style="padding:16px;text-align:center;margin-bottom:12px"><div style="font-size:1.5rem">✅</div><div style="font-weight:700;margin:4px 0 2px">Aucune alerte</div><div style="font-size:.82rem;color:var(--txm)">Tous les véhicules sont à jour.</div></div>';
   }
-  h+='<div class="sec-hdr" style="margin-top:4px"><span class="sec-ttl">🚗 Véhicules</span></div>';
+  h+='<div class="sec-hdr" style="margin-top:4px"><span class="sec-ttl">🚗 Véhicules</span><button class="sec-lnk" onclick="openVeh()">+ Ajouter</button></div>';
+  // Alerte urgentes en haut si existantes
+  const urgentAll=getRappels().filter(r=>r.sev==='danger');
+  if(urgentAll.length){
+    h+=`<div style="background:var(--err-bg);border:1px solid #FECACA;border-radius:var(--r-sm);padding:10px 13px;margin-bottom:8px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="nav('rap')">
+      <span style="font-size:1.1rem">⚠️</span>
+      <span style="font-size:.85rem;font-weight:600;color:var(--err)">${urgentAll.length} alerte${urgentAll.length>1?'s':''} urgente${urgentAll.length>1?'s':''} — voir les rappels</span>
+      <span style="margin-left:auto;color:var(--err)">›</span>
+    </div>`;
+  }
+  const sortedVehs=[...vehs].sort((a,b)=>{const order={danger:0,warn:1,ok:2};return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);});
+  h+=sortedVehs.map(v=>vcCompactHTML(v)).join('');
+  h+='<div class="sec-hdr" style="margin-top:14px"><span class="sec-ttl">⚙️ Vue opérationnelle</span></div>';
   vehs.forEach(v=>{
     const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
     const nextRap=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.kind==='date')[0];
