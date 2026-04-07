@@ -1749,11 +1749,11 @@ function updateDot(){
     if(!d.date_expiration)return false;
     return Math.ceil((new Date(d.date_expiration)-now)/86400000)<=30;
   });
-  g('rdot').classList.toggle('hidden',!hasUrgent&&!hasRcusUrgent&&!hasDocExp);
+  g("rdot").classList.toggle("hidden",!hasUrgent&&!hasRcusUrgent&&!hasDocExp);
+  const isPro=getUserPlan()==="pro";
+  const flotteBtn=g("nb-flotte");
+  if(flotteBtn)flotteBtn.classList.toggle("hidden",!isPro);
 }
-  const isPro=getUserPlan()==='pro';
-  const flotteBtn=g('nb-flotte');
-  if(flotteBtn)flotteBtn.classList.toggle('hidden',!isPro);
 
 /* GRAPHIQUE */
 function getCostsByYear(vid){
