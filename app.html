@@ -4037,15 +4037,12 @@ function renderFlotte(){
     raps.forEach(r=>alertes.push({v,r}));
   });
   const moisCout=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
-  const totalCout=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   let h='';
-  // Métriques
   h+='<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">';
   h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicule'+(vehs.length>1?'s':'')+'</div></div>';
-  h+='<div class="stat"><div class="stat-v" style="color:var(--err)">'+alertes.length+'</div><div class="stat-l">Alerte'+(alertes.length>1?'s':'')+' urgentes</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="color:'+(alertes.length?'var(--err)':'var(--ok)')+'">'+alertes.length+'</div><div class="stat-l">Alerte'+(alertes.length>1?'s':'')+' urgentes</div></div>';
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
-  // Alertes
   if(alertes.length){
     h+='<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes urgentes</span></div>';
     alertes.forEach(({v,r})=>{
@@ -4053,7 +4050,7 @@ function renderFlotte(){
       const parcLabel=v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.68rem">${esc(v.num_parc)}</span>`:'';
       h+=`<div class="vc" style="border-left-color:${sevColor};margin-bottom:8px;padding:12px 14px">`;
       h+=`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">`;
-      h+=`<div style="min-width:0">`;
+      h+=`<div style="min-width:0;flex:1">`;
       h+=`<div style="font-weight:700;font-size:.92rem;margin-bottom:2px">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
       h+=`<div style="font-size:.78rem;color:var(--txm);margin-bottom:4px">${v.conducteur?'👤 '+esc(v.conducteur):'👤 Non attribué'}</div>`;
       h+=`<div style="font-size:.8rem;font-weight:600;color:${sevColor}">${esc(r.ti.label)} — ${esc(r.label)}</div>`;
@@ -4062,22 +4059,33 @@ function renderFlotte(){
       h+=`</div></div>`;
     });
   } else {
-    h+='<div class="vc" style="padding:16px;text-align:center"><div style="font-size:1.5rem">✅</div><div style="font-weight:700;margin:4px 0 2px">Aucune alerte</div><div style="font-size:.82rem;color:var(--txm)">Tous les véhicules sont à jour.</div></div>';
+    h+='<div class="vc" style="padding:16px;text-align:center;margin-bottom:12px"><div style="font-size:1.5rem">✅</div><div style="font-weight:700;margin:4px 0 2px">Aucune alerte</div><div style="font-size:.82rem;color:var(--txm)">Tous les véhicules sont à jour.</div></div>';
   }
-  // Conducteurs
-  const avecConducteur=vehs.filter(v=>v.conducteur);
-  if(avecConducteur.length){
-    h+='<div class="sec-hdr" style="margin-top:14px"><span class="sec-ttl">👤 Conducteurs</span></div>';
-    avecConducteur.forEach(v=>{
-      const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
-      const parcLabel=v.num_parc?` · ${esc(v.num_parc)}`:'';
-      h+=`<div class="vc" style="padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">`;
-      h+=`<div><div style="font-size:.88rem;font-weight:700">${esc(v.conducteur)}</div><div style="font-size:.75rem;color:var(--txm)">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div></div>`;
-      h+=vRaps.length?`<span style="font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#FEF2F2;color:#DC2626">⚠️ ${vRaps.length} alerte${vRaps.length>1?'s':''}</span>`:`<span style="font-size:.72rem;color:var(--ok);font-weight:600">✅ RAS</span>`;
-      h+=`</div>`;
-    });
-  }
+  h+='<div class="sec-hdr" style="margin-top:4px"><span class="sec-ttl">🚗 Véhicules</span></div>';
+  vehs.forEach(v=>{
+    const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
+    const nextRap=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.kind==='date')[0];
+    const parcLabel=v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.68rem">${esc(v.num_parc)}</span>`:'';
+    const alertBadge=vRaps.length?`<span style="font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`:'';
+    h+=`<div class="vc" style="margin-bottom:8px;padding:12px 14px">`;
+    h+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">`;
+    h+=`<div style="font-weight:700;font-size:.92rem">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
+    h+=alertBadge;
+    h+=`</div>`;
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">👤 Conducteur</div><input class="fc" style="font-size:.8rem;padding:5px 8px;height:auto" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
+    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">🔄 Statut</div><select class="fc" style="font-size:.8rem;padding:5px 8px;height:auto" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Disponible</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 En intervention</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ En panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Au garage</option></select></div>`;
+    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">📍 Km actuel</div><input class="fc" type="number" inputmode="numeric" style="font-size:.8rem;padding:5px 8px;height:auto" placeholder="0" value="${v.km_actuel||''}" onchange="saveFlotteField('${v.id}','km_actuel',parseInt(this.value)||0)"></div>`;
+    h+=`<div><div style="font-size:.68rem;color:var(--txm);margin-bottom:2px">🔔 Prochain rappel</div><div style="font-size:.8rem;font-weight:600;padding:5px 0;color:${nextRap&&nextRap.sev!=='ok'?'var(--warn)':'var(--ok)'}">${nextRap?nextRap.label:'Aucun rappel'}</div></div>`;
+    h+=`</div></div>`;
+  });
   el.innerHTML=h;
+}
+async function saveFlotteField(vid,field,value){
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(!v)return;
+  v[field]=value;
+  await sb.from('vehicles').update({[field]:value}).eq('id',vid).eq('user_id',S.user.id);
 }
 document.addEventListener("DOMContentLoaded", ()=>{init();});
 </script>
