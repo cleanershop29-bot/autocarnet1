@@ -168,7 +168,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .ei-nt{font-size:.76rem;color:var(--txm);margin-top:4px;font-style:italic}
 .ei-rp{font-size:.72rem;color:var(--primary);font-weight:600;margin-top:4px;background:var(--primary-lt);padding:2px 8px;border-radius:4px;display:inline-block}
 .ei-ct{font-size:.88rem;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:2px}
-.ei-inline{background:var(--bg);border-radius:9px;padding:10px;display:flex;align-items:flex-start;gap:9px;margin-bottom:6px;cursor:pointer;border:1px solid var(--border)}
+.ei-inline{background:#fff;border-radius:9px;padding:11px 12px;display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;cursor:pointer;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .ei-inline:active{opacity:.85}
 
 /* VEHICLE PICKER */
@@ -220,6 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 /* MODALES */
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:500;display:none;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
 #mo-cfm{z-index:600}
+#mo-lightbox.open{display:flex!important}
 .mo.open{display:flex;opacity:1;pointer-events:all}
 .mo.open .modal{transform:translateY(0)}
 .modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);overflow:hidden}
@@ -886,6 +887,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
   </div>
 </div>
 
+<!-- Lightbox Photo -->
+<div id="mo-lightbox" onclick="this.classList.remove('open');document.body.style.overflow=''" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:16px;flex-direction:column;gap:12px">
+  <button onclick="document.getElementById('mo-lightbox').classList.remove('open');document.body.style.overflow=''" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.4rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+  <img id="lightbox-img" src="" style="max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px" onclick="event.stopPropagation()">
+  <div id="lightbox-label" style="color:rgba(255,255,255,.7);font-size:.85rem;text-align:center"></div>
+</div>
+
 <!-- Modal Confirmation -->
 <div class="mo" id="mo-cfm" onclick="if(event.target===this)cm('cfm')">
   <div class="modal modal-c">
@@ -973,6 +981,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <!-- Champs dynamiques selon le type -->
       <div id="doc-fields-dynamic"></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fc" id="doc-note" rows="2" placeholder="Informations complémentaires..."></textarea></div>
+      <div id="doc-photo-preview"></div>
       <div class="mft" style="padding:10px 0 0">
         <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-doc" onclick="delDocument()">Supprimer</button></div>
         <button class="btn btn-s btn-sm" onclick="cm('doc')">Annuler</button>
@@ -2646,6 +2655,15 @@ function openDocument(vid, docId){
       if(g('doc-emission'))g('doc-emission').value=d.date_emission||'';
       if(g('doc-expiration'))g('doc-expiration').value=d.date_expiration||'';
       g('doc-note').value=d.note||'';
+      // Afficher la photo si elle existe
+      const prevZone=document.getElementById('doc-photo-preview');
+      if(prevZone){
+        if(d.photo_url){
+          prevZone.innerHTML=`<img src="${d.photo_url}" onclick="openLightbox('${d.photo_url}','${esc(d.type)}')" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;cursor:zoom-in;border:1px solid var(--border);margin-top:8px">`;
+        } else {
+          prevZone.innerHTML='';
+        }
+      }
     },10);
     g('btn-del-doc').classList.remove('hidden');
     g('mt-doc').textContent='Modifier le document';
@@ -2947,7 +2965,7 @@ function openVehDetail(vid){
       const dcolor=ddays===null?'var(--txm)':ddays<0?'var(--err)':ddays<=30?'var(--warn)':'var(--ok)';
       const dlabel=ddays===null?'':ddays<0?'Expiré':ddays===0?"Expire auj.":'Dans '+ddays+'j';
       return`<div class="ei-inline" onclick="openDocument('${vid}','${d.id}')">
-        ${d.photo_url?`<img src="${d.photo_url}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;border:1px solid var(--border)" loading="lazy">`:`<span style="font-size:1rem">📄</span>`}
+        ${d.photo_url?`<img src="${d.photo_url}" onclick="event.stopPropagation();openLightbox('${d.photo_url}','${esc(d.type)}${d.nom?' — '+esc(d.nom):''}')" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in" loading="lazy">`:`<span style="font-size:1rem">📄</span>`}
         <div style="flex:1;min-width:0">
           <div style="font-size:.82rem;font-weight:600">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
           ${d.date_expiration?`<div style="font-size:.7rem;color:${dcolor}">${dlabel} · Expire ${fmtDate(d.date_expiration)}</div>`:''}
@@ -3021,6 +3039,14 @@ function showAllEntsInDetail(vid){
   el.innerHTML=h;
   el.scrollTop=0;
 }
+function openLightbox(url, label){
+  const lb=document.getElementById('mo-lightbox');
+  document.getElementById('lightbox-img').src=url;
+  document.getElementById('lightbox-label').textContent=label||'';
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
 function closeVehDetail(){
   document.getElementById('mo-veh-detail').classList.remove('open');
   document.body.style.overflow='';
