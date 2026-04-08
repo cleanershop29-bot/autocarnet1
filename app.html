@@ -2695,13 +2695,34 @@ async function saveDocument(){
   const{error}=id?await sb.from('documents').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('documents').insert(p);
   if(error)return toast('Erreur : '+error.message,'e');
   toast(id?'Document mis à jour !':'Document ajouté !','s');
+  const _vid=g('doc-vid').value;
   cm('doc');await loadDocuments();renderView();
+  if(_vid&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
+    openVehDetail(_vid);
+  }
 }
 async function delDocument(){
   const id=g('doc-id').value;if(!id)return;
+  const vid=g('doc-vid').value;
   cfm('Supprimer ce document ?','Action irréversible.',async()=>{
+    // Supprimer aussi la photo du storage si elle existe
+    const doc=S.documents.find(x=>x.id===id);
+    if(doc?.photo_url){
+      try{
+        const url=new URL(doc.photo_url);
+        const path=url.pathname.split('/documents-vehicule/')[1];
+        if(path) await sb.storage.from('documents-vehicule').remove([decodeURIComponent(path)]);
+      }catch(e){console.warn('Suppression photo storage:',e);}
+    }
     await sb.from('documents').delete().eq('id',id).eq('user_id',S.user.id);
-    toast('Document supprimé.','i');cm('doc');await loadDocuments();renderView();
+    toast('Document supprimé.','i');
+    cm('doc');
+    await loadDocuments();
+    renderView();
+    // Rafraîchir la fiche si ouverte
+    if(vid&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
+      openVehDetail(vid);
+    }
   });
 }
 
