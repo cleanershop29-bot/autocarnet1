@@ -1590,14 +1590,26 @@ async function saveVeh(){
   cm('veh');await loadVehs();await loadEnts();await loadDocuments();nav('dash');
 }
 
+async function uploadDocPhoto(file, uid, vid, type){
+  if(!file||!file.size)return null;
+  const ext=file.name.split('.').pop().toLowerCase()||'jpg';
+  const slug=type.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const path=`${uid}/${vid}/${slug}.${ext}`;
+  const{error}=await sb.storage.from('documents-vehicule').upload(path,file,{upsert:true,contentType:file.type||'image/jpeg'});
+  if(error){console.error('upload doc photo:',error);return null;}
+  return sb.storage.from('documents-vehicule').getPublicUrl(path).data.publicUrl;
+}
+
 async function saveVehDocs(vid, uid){
   // Carte grise
   const cgNom=g('vdoc-cg-nom')?.value.trim()||null;
   const cgEmission=g('vdoc-cg-emission')?.value||null;
-  if(cgNom||cgEmission){
+  const cgPhoto=g('vdoc-cg-photo')?.files?.[0]||null;
+  if(cgNom||cgEmission||cgPhoto){
     const v=S.vehicles.find(x=>x.id===vid)||{immatriculation:null};
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Carte grise');
-    const p={user_id:uid,vehicle_id:vid,type:'Carte grise',nom:cgNom,numero:v.immatriculation||null,date_emission:cgEmission,date_expiration:null,note:null};
+    const photoUrl=cgPhoto?await uploadDocPhoto(cgPhoto,uid,vid,'carte-grise'):(existing?.photo_url||null);
+    const p={user_id:uid,vehicle_id:vid,type:'Carte grise',nom:cgNom,numero:v.immatriculation||null,date_emission:cgEmission,date_expiration:null,note:null,photo_url:photoUrl};
     if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
     else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
   }
@@ -1606,9 +1618,11 @@ async function saveVehDocs(vid, uid){
   const asEmission=g('vdoc-as-emission')?.value||null;
   const asEcheance=g('v-as')?.value||null;
   const asCompagnie=g('v-ac')?.value.trim()||null;
-  if(asNum||asEmission||asEcheance||asCompagnie){
+  const asPhoto=g('vdoc-as-photo')?.files?.[0]||null;
+  if(asNum||asEmission||asEcheance||asCompagnie||asPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Assurance');
-    const p={user_id:uid,vehicle_id:vid,type:'Assurance',nom:asCompagnie,numero:asNum,date_emission:asEmission,date_expiration:asEcheance,note:null};
+    const photoUrl=asPhoto?await uploadDocPhoto(asPhoto,uid,vid,'assurance'):(existing?.photo_url||null);
+    const p={user_id:uid,vehicle_id:vid,type:'Assurance',nom:asCompagnie,numero:asNum,date_emission:asEmission,date_expiration:asEcheance,note:null,photo_url:photoUrl};
     if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
     else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
   }
@@ -1616,11 +1630,22 @@ async function saveVehDocs(vid, uid){
   const ctNom=g('vdoc-ct-nom')?.value.trim()||null;
   const ctEmission=g('vdoc-ct-emission')?.value||null;
   const ctEcheance=g('v-ct')?.value||null;
-  if(ctNom||ctEmission||ctEcheance){
+  const ctPhoto=g('vdoc-ct-photo')?.files?.[0]||null;
+  if(ctNom||ctEmission||ctEcheance||ctPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Contrôle technique');
-    const p={user_id:uid,vehicle_id:vid,type:'Contrôle technique',nom:ctNom,numero:null,date_emission:ctEmission,date_expiration:ctEcheance,note:null};
+    const photoUrl=ctPhoto?await uploadDocPhoto(ctPhoto,uid,vid,'ct'):(existing?.photo_url||null);
+    const p={user_id:uid,vehicle_id:vid,type:'Contrôle technique',nom:ctNom,numero:null,date_emission:ctEmission,date_expiration:ctEcheance,note:null,photo_url:photoUrl};
     if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
     else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
+  }
+  // Autre document
+  const autreNom=g('vdoc-autre-nom')?.value.trim()||null;
+  const autrePhoto=g('vdoc-autre-photo')?.files?.[0]||null;
+  if(autreNom||autrePhoto){
+    const slug='autre-'+(autreNom||'doc').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').slice(0,20);
+    const photoUrl=autrePhoto?await uploadDocPhoto(autrePhoto,uid,vid,slug):null;
+    const p={user_id:uid,vehicle_id:vid,type:'Autre',nom:autreNom,numero:null,date_emission:null,date_expiration:null,note:null,photo_url:photoUrl};
+    await sb.from('documents').insert({...p,id:crypto.randomUUID()});
   }
 }
 async function delVeh(){
@@ -2922,10 +2947,11 @@ function openVehDetail(vid){
       const dcolor=ddays===null?'var(--txm)':ddays<0?'var(--err)':ddays<=30?'var(--warn)':'var(--ok)';
       const dlabel=ddays===null?'':ddays<0?'Expiré':ddays===0?"Expire auj.":'Dans '+ddays+'j';
       return`<div class="ei-inline" onclick="openDocument('${vid}','${d.id}')">
-        <span style="font-size:1rem">📄</span>
+        ${d.photo_url?`<img src="${d.photo_url}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;border:1px solid var(--border)" loading="lazy">`:`<span style="font-size:1rem">📄</span>`}
         <div style="flex:1;min-width:0">
           <div style="font-size:.82rem;font-weight:600">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
           ${d.date_expiration?`<div style="font-size:.7rem;color:${dcolor}">${dlabel} · Expire ${fmtDate(d.date_expiration)}</div>`:''}
+          ${d.photo_url?`<div style="font-size:.68rem;color:var(--txm)">📷 Photo disponible</div>`:''}
         </div>
       </div>`;
     }).join('');
