@@ -17,7 +17,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#EEF2F7;
+  --bg:#E4EAF2;
   --surface:#FFFFFF;
   --border:#E2E8F0;
   --primary:#2563EB;
@@ -1970,7 +1970,7 @@ function vcDashHTML(v){
     <div class="vc-main">
       <div style="width:36px;height:36px;border-radius:8px;background:${vehCardColor(v)};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
-        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
+        <div class="vc-name" onclick="event.stopPropagation();openVehDetail('${v.id}')" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
           ${st!=='ok'?`<span style="color:${stColors[st]};font-size:.72rem;font-weight:600">${st==='danger'?'En retard':'À surveiller'}</span>`:''}
           ${totalCost?`<span style="color:var(--ok);font-size:.72rem;font-weight:600">${fmtCout(totalCost)}</span>`:''}
@@ -2054,7 +2054,7 @@ function vcCompactHTML(v){
     <div class="vc-compact-main">
       <div style="width:38px;height:38px;border-radius:9px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-compact-info">
-        <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
+        <div class="vc-compact-name" onclick="event.stopPropagation();openVehDetail('${v.id}')" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-compact-sub">
           <span class="vc-compact-km">${fmtKm(v.km_actuel)}</span>
           ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem">${esc(v.immatriculation)}</span>`:''}
@@ -2842,7 +2842,6 @@ function openVehDetail(vid){
     </div>`;
   } else {
     h+=`<div class="g6 mb8">
-      <button class="btn btn-p btn-sm" onclick="openAddMenu('${vid}')">+ Ajouter</button>
       <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
       <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
@@ -2853,7 +2852,7 @@ function openVehDetail(vid){
   h+=statsHTML(vid);
   // Derniers entretiens
   if(es.length){
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span>${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}</div>`;
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><div style="display:flex;gap:6px">${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}<button class="sec-lnk" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div></div>`;
     h+=es.slice(0,5).map(e=>{
       const ti=getType(e.type);
       return`<div class="ei-inline" onclick="openEnt('${e.id}')">
@@ -2868,6 +2867,9 @@ function openVehDetail(vid){
         </div>
       </div>`;
     }).join('');
+  } else {
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (0)</span><button class="sec-lnk" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div>`;
+    h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun entretien.</div>`;
   }
   // Infos avancées
   const advInfos=[];
