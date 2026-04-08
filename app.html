@@ -1202,7 +1202,7 @@ const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
 const fmtKm=n=>n!=null?Number(n).toLocaleString('fr')+' km':'— km';
 const fmtCout=n=>n?Number(n).toLocaleString('fr',{style:'currency',currency:'EUR'}):'—';
-const vehCardColor=v=>(['panne','garage','intervention'].includes(v.statut_vehicule)?'#FECACA':(v.couleur_carte||v.emoji||'#2563EB'));
+const vehCardColor=v=>(v.couleur_carte||v.emoji||'#2563EB');
 const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
 const getType=id=>TYPES.find(t=>t.id===id)||{id:'autre',label:id,ico:'🔨',ikm:null,imo:null,cat:'Divers'};
 
@@ -4247,11 +4247,12 @@ function renderFlotte(){
     const col=vehCardColor(v);
     const parcLabel=v.num_parc?` <span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.68rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:'';
     const borderCol=st==='danger'?'var(--err)':st==='warn'?'var(--warn)':'var(--border)';
-    h+=`<div class="vc" style="border-left-color:${borderCol};margin-bottom:10px;padding:12px 14px">`;
+    const bgCol=(['panne','garage','intervention'].includes(v.statut_vehicule))?'background:#FEF2F2;':''
+    h+=`<div class="vc" style="${bgCol}border-left-color:${borderCol};margin-bottom:10px;padding:12px 14px">`;
     // Ligne 1 : couleur + nom + badges + bouton détail
     h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">`;
     h+=`<div style="width:34px;height:34px;border-radius:8px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>`;
-    h+=`<div style="flex:1;min-width:0">`;
+    h+=`<div style="flex:1;min-width:0;cursor:pointer" onclick="openVehDetail('${v.id}')">`;
     h+=`<div style="font-weight:700;font-size:.92rem">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
     h+=`<div style="font-size:.75rem;color:var(--txm)">${fmtKm(v.km_actuel)}${v.immatriculation?' · '+esc(v.immatriculation):''}</div>`;
     h+=`</div>`;
