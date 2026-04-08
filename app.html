@@ -17,7 +17,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#F8FAFC;
+  --bg:#EEF2F7;
   --surface:#FFFFFF;
   --border:#E2E8F0;
   --primary:#2563EB;
@@ -636,6 +636,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         <div class="fg"><label class="fl">Date d'achat</label><input class="fc" id="v-da" type="date"></div>
         <div class="fg"><label class="fl">Prochain CT</label><input class="fc" id="v-ct" type="date"></div>
       </div>
+      <div class="fg"><label class="fl">🪪 Carte carburant</label><input class="fc" id="v-fcard" placeholder="N° ou nom de la carte (ex: Total, Shell…)"></div>
       <div class="fr">
         <div class="fg"><label class="fl">Couleur</label><input class="fc" id="v-cl" placeholder="Blanc nacré"></div>
         <div class="fg"><label class="fl">Puissance (ch)</label><input class="fc" id="v-pw" type="number" inputmode="numeric" placeholder="90" min="0"></div>
@@ -701,26 +702,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
             <input class="fc" id="v-ac" placeholder="Maif, AXA…">
           </div>
         </div>
-      </div>
-      <!-- SECTION DOCUMENTS VÉHICULE -->
-      <button type="button" class="adv-toggle" id="adv-docs-btn" onclick="toggleAdv('docs')" style="margin-top:8px">
-        📄 Documents du véhicule <span class="adv-arrow">›</span>
-      </button>
-      <div class="adv-body" id="adv-docs-body">
+        <!-- SECTION DOCUMENTS VÉHICULE (dans Informations avancées) -->
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:14px 0 8px;border-top:1px solid var(--border);padding-top:12px">📄 Documents du véhicule</div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:8px 0 6px">🪪 Carte grise</div>
         <div class="fr">
           <div class="fg"><label class="fl">Titulaire</label><input class="fc" id="vdoc-cg-nom" placeholder="Nom du propriétaire"></div>
           <div class="fg"><label class="fl">Mise en circulation</label><input class="fc" id="vdoc-cg-emission" type="date"></div>
         </div>
+        <div class="fg"><label class="fl">Photo carte grise</label><input class="fc" type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">🛡️ Assurance</div>
         <div class="fr">
           <div class="fg"><label class="fl">N° contrat</label><input class="fc" id="vdoc-as-num" placeholder="Numéro de contrat"></div>
           <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
         </div>
+        <div class="fg"><label class="fl">Photo assurance</label><input class="fc" type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">✅ Contrôle technique</div>
         <div class="fr">
           <div class="fg"><label class="fl">Centre CT</label><input class="fc" id="vdoc-ct-nom" placeholder="Nom du centre"></div>
           <div class="fg"><label class="fl">Date du CT</label><input class="fc" id="vdoc-ct-emission" type="date"></div>
+        </div>
+        <div class="fg"><label class="fl">Photo CT</label><input class="fc" type="file" id="vdoc-ct-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-ct-preview" style="margin-top:4px"></div></div>
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">📎 Autre document</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Nom</label><input class="fc" id="vdoc-autre-nom" placeholder="Ex: Malus, Leasing…"></div>
+          <div class="fg"><label class="fl">Photo</label><input class="fc" type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"></div>
         </div>
       </div>
     </div>
@@ -859,6 +864,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fc" id="np-pass" type="password" placeholder="8 caractères minimum"></div>
       <div class="fg"><label class="fl">Confirmer</label><input class="fc" id="np-pass2" type="password" placeholder="Répétez le mot de passe"></div>
       <button class="btn btn-p" style="width:100%;margin-top:4px" onclick="saveNewPass()">Enregistrer le mot de passe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Note Véhicule -->
+<div class="mo" id="mo-veh-note" onclick="if(event.target===this)cm('veh-note')">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit">📝 Notes</div><button class="mcls" onclick="cm('veh-note')">✕</button></div>
+    <div class="mbdy">
+      <input type="hidden" id="note-vid">
+      <input type="hidden" id="note-id">
+      <div class="fg"><label class="fl">Titre</label><input class="fc" id="note-titre" placeholder="Ex: Bruit suspect, travaux à faire…"></div>
+      <div class="fg"><label class="fl">Note</label><textarea class="fc" id="note-contenu" rows="5" placeholder="Détails de la note…" style="resize:vertical"></textarea></div>
+    </div>
+    <div class="mft">
+      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-note" onclick="delVehNote()">🗑 Supprimer</button></div>
+      <button class="btn btn-s btn-sm" onclick="cm('veh-note')">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="saveVehNote()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -1179,6 +1202,7 @@ const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
 const fmtKm=n=>n!=null?Number(n).toLocaleString('fr')+' km':'— km';
 const fmtCout=n=>n?Number(n).toLocaleString('fr',{style:'currency',currency:'EUR'}):'—';
+const vehCardColor=v=>(['panne','garage','intervention'].includes(v.statut_vehicule)?'#FECACA':(vehCardColor(v)));
 const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
 const getType=id=>TYPES.find(t=>t.id===id)||{id:'autre',label:id,ico:'🔨',ikm:null,imo:null,cat:'Divers'};
 
@@ -1206,7 +1230,7 @@ function showApp(){
 }
 function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
 function buildEpicker(){
-  const colors=['#DC2626', '#EA580C', '#D97706', '#16A34A', '#0891B2', '#2563EB', '#7C3AED', '#DB2777', '#374151', '#78716C', '#FFFFFF'];
+  const colors=['#DC2626','#EF4444','#F97316','#EA580C','#F59E0B','#D97706','#EAB308','#84CC16','#16A34A','#059669','#0891B2','#0284C7','#2563EB','#4F46E5','#7C3AED','#9333EA','#DB2777','#EC4899','#374151','#6B7280','#78716C','#A16207','#92400E','#1E3A5F','#0F172A','#FFFFFF'];
   g('ep').innerHTML=colors.map(c=>`<button type="button" class="epb" data-em="${c}" onclick="pickColor('${c}')" style="background:${c};border-color:${c==='#FFFFFF'?'#E2E8F0':c}"></button>`).join('');
 }
 function pickColor(c){
@@ -1327,7 +1351,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -1440,7 +1464,7 @@ function showRGPD(){
 async function loadAll(){
   const dc=document.getElementById('d-ctn'),vc=document.getElementById('vh-ctn');
   if(dc)showSkeleton(dc);if(vc)showSkeleton(vc);
-  await loadVehs();await Promise.all([loadEnts(),loadPartages(),loadRappelsCustom(),loadDocuments()]);
+  await loadVehs();await Promise.all([loadEnts(),loadPartages(),loadRappelsCustom(),loadDocuments(),loadVehNotes()]);
 }
 async function loadVehs(){
   if(!S.user?.id)return;
@@ -1491,6 +1515,14 @@ async function loadDocuments(){
   S.documents=data||[];
 }
 
+async function loadVehNotes(){
+  if(!S.user?.id||!S.vehicles.length)return;
+  const vids=S.vehicles.map(v=>v.id);
+  const{data,error}=await sb.from('veh_notes').select('*').eq('user_id',S.user.id).in('vehicle_id',vids).order('created_at',{ascending:false});
+  if(error){console.error('veh_notes:',error);S.veh_notes=[];return;}
+  S.veh_notes=data||[];
+}
+
 /* CT */
 function ctStatus(d){
   if(!d)return null;
@@ -1539,6 +1571,7 @@ async function saveVeh(){
     conducteur:g('v-cond').value.trim()||null,
     statut_vehicule:g('v-stat').value||'disponible',
     co2:parseInt(g('v-co2').value)||null,
+    carte_carburant:g('v-fcard')?.value.trim()||null,
   };
   let error,payload_id_temp=id||null;
   try{
@@ -1935,7 +1968,7 @@ function vcDashHTML(v){
   const totalCost=es.reduce((s,e)=>s+(e.cout||0),0);
   return`<div class="vc ${st}" style="cursor:pointer" onclick="nav('vehs');expandVeh('${v.id}')">
     <div class="vc-main">
-      <div style="width:36px;height:36px;border-radius:8px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
+      <div style="width:36px;height:36px;border-radius:8px;background:${vehCardColor(v)};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
         <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
@@ -2013,7 +2046,7 @@ function vcCompactHTML(v){
   const total=es.reduce((s,e)=>s+(e.cout||0),0);
   const isOwner=v.user_id===S.user.id;
   const ct=ctStatus(v.ct_date);
-  const col=v.couleur_carte||v.emoji||'#2563EB';
+  const col=vehCardColor(v);
   const premClass=isPremium()?' premium-user':'';
   const rapCount=getRappels().filter(r=>r.v?.id===v.id&&r.sev!=='ok').length;
 
@@ -2054,9 +2087,9 @@ function vcFullHTML(v){
 
   const premClass=isPremium()?" premium-user":"";let h=`<div class="vc ${st}${isExp?' expanded':''} ${premClass}" id="vc-${v.id}">
     <div class="vc-main" onclick="toggleVeh('${v.id}')">
-      <div style="width:36px;height:36px;border-radius:8px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
+      <div style="width:36px;height:36px;border-radius:8px;background:${vehCardColor(v)};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-info">
-        <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
+        <div class="vc-name" onclick="event.stopPropagation();openVehDetail('${v.id}')" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub">
           ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:3px;font-size:.72rem">${esc(v.immatriculation)}</span>`:''}
           ${ct?`<span class="badge ${ct.cls}">${ct.label}</span>`:''}
@@ -2774,7 +2807,7 @@ function expandVeh(vid){S.expandedVeh=vid;renderView();setTimeout(()=>openVehDet
 function openVehDetail(vid){
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   S.expandedVeh=vid;
-  const col=v.couleur_carte||v.emoji||'#2563EB';
+  const col=vehCardColor(v);
   const isOwner=v.user_id===S.user.id;
   g('vd-title').innerHTML=`<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${col};margin-right:6px;vertical-align:middle"></span>${esc(v.marque)} ${esc(v.modele)}`;
   g('vd-edit-btn').style.display=isOwner?'':'none';
@@ -2809,7 +2842,7 @@ function openVehDetail(vid){
     </div>`;
   } else {
     h+=`<div class="g6 mb8">
-      <button class="btn btn-p btn-sm" onclick="openEnt(null,'${vid}')">+ Entretien</button>
+      <button class="btn btn-p btn-sm" onclick="openAddMenu('${vid}')">+ Ajouter</button>
       <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
       <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
@@ -2852,6 +2885,20 @@ function openVehDetail(vid){
     advInfos.push({ico:'📋',val:'Assurance : '+fmtDate(v.assurance_echeance),color});
   }
   if(advInfos.length)h+=`<div class="detail-pills" style="margin-bottom:12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
+  // Notes
+  const vnotes=(S.veh_notes||[]).filter(n=>n.vehicle_id===vid);
+  h+=`<div class="sec-hdr"><span class="sec-ttl">📝 Notes (${vnotes.length})</span><button class="sec-lnk" onclick="openVehNote('${vid}')">+ Ajouter</button></div>`;
+  if(vnotes.length){
+    h+=vnotes.map(n=>`<div class="ei-inline" onclick="openVehNote('${vid}','${n.id}')">
+      <span style="font-size:1rem">📝</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.82rem;font-weight:600">${esc(n.titre||'Note')}</div>
+        ${n.contenu?`<div style="font-size:.72rem;color:var(--txm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.contenu)}</div>`:''}
+      </div>
+    </div>`).join('');
+  } else {
+    h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucune note.</div>`;
+  }
   // Documents
   const vdocs=S.documents.filter(d=>d.vehicle_id===vid);
   h+=`<div class="sec-hdr"><span class="sec-ttl">📄 Documents (${vdocs.length})</span><button class="sec-lnk" onclick="openDocument('${vid}')">+ Ajouter</button></div>`;
@@ -2877,13 +2924,24 @@ function openVehDetail(vid){
   h+=`<div class="sec-hdr"><span class="sec-ttl">📌 Rappels (${vrapps.length})</span><button class="sec-lnk" onclick="openRappelCustomVeh('${vid}')">+ Ajouter</button></div>`;
   if(vrapps.length){
     const today2=new Date();today2.setHours(0,0,0,0);
-    h+=vrapps.map(r=>{
+    // Tri : en retard d'abord (par date asc), puis sans date, puis à venir (par date asc)
+    const sorted=vrapps.slice().sort((a,b)=>{
+      const da=a.date_rappel?Math.ceil((new Date(a.date_rappel)-today2)/86400000):null;
+      const db=b.date_rappel?Math.ceil((new Date(b.date_rappel)-today2)/86400000):null;
+      const sevA=da===null?1:da<0?0:2;
+      const sevB=db===null?1:db<0?0:2;
+      if(sevA!==sevB)return sevA-sevB;
+      if(da===null&&db===null)return 0;
+      if(da===null)return 1;if(db===null)return -1;
+      return da-db;
+    });
+    h+=sorted.map(r=>{
       const days2=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today2)/86400000):null;
       const sev2=days2===null?'ok':days2<0?'danger':days2<=7?'warn':'ok';
       const col2=sev2==='danger'?'var(--err)':sev2==='warn'?'var(--warn)':'var(--txm)';
-      const lbl2=days2===null?'Sans date':days2<0?'En retard':days2===0?"Aujourd'hui":'Dans '+days2+'j';
+      const lbl2=days2===null?'Sans date':days2<0?'En retard ('+Math.abs(days2)+'j)':days2===0?"Aujourd'hui":'Dans '+days2+'j';
       return`<div class="ei-inline" onclick="openRappelCustom('${r.id}')">
-        <span style="font-size:1rem">📌</span>
+        <span style="font-size:1rem">${sev2==='danger'?'🔴':sev2==='warn'?'🟡':'📌'}</span>
         <div style="flex:1"><div style="font-size:.82rem;font-weight:600">${esc(r.titre)}</div><div style="font-size:.7rem;color:${col2}">${lbl2}${r.date_rappel?' · '+fmtDate(r.date_rappel):''}</div></div>
       </div>`;
     }).join('');
@@ -2929,6 +2987,64 @@ function closeVehDetail(){
   document.body.style.overflow='';
 }
 
+function openAddMenu(vid){
+  cfm('➕ Que voulez-vous ajouter ?','',null);
+  setTimeout(()=>{
+    const b=document.querySelector('#mo-cfm .mbdy');
+    if(!b)return;
+    b.innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+        <button class="btn btn-p btn-sm" style="padding:14px 8px;font-size:.88rem" onclick="cm('cfm');openEnt(null,'${vid}')">🔧 Entretien</button>
+        <button class="btn btn-s btn-sm" style="padding:14px 8px;font-size:.88rem" onclick="cm('cfm');openDocument('${vid}')">📄 Document</button>
+        <button class="btn btn-s btn-sm" style="padding:14px 8px;font-size:.88rem" onclick="cm('cfm');openRappelCustomVeh('${vid}')">📌 Rappel</button>
+        <button class="btn btn-s btn-sm" style="padding:14px 8px;font-size:.88rem" onclick="cm('cfm');openVehNote('${vid}')">📝 Note</button>
+      </div>`;
+    // Cacher le bouton confirmer par défaut
+    const footer=document.querySelector('#mo-cfm .mft');
+    if(footer)footer.style.display='none';
+    const mo=document.getElementById('mo-cfm');
+    if(mo)mo.addEventListener('click',()=>{if(footer)footer.style.display='';},{once:true});
+  },30);
+}
+
+function openVehNote(vid,nid){
+  g('note-vid').value=vid||'';
+  g('note-id').value=nid||'';
+  if(nid){
+    const n=(S.veh_notes||[]).find(x=>x.id===nid);
+    if(n){g('note-titre').value=n.titre||'';g('note-contenu').value=n.contenu||'';}
+    g('btn-del-note').classList.remove('hidden');
+  } else {
+    g('note-titre').value='';g('note-contenu').value='';
+    g('btn-del-note').classList.add('hidden');
+  }
+  om('veh-note');
+}
+
+async function saveVehNote(){
+  const vid=g('note-vid').value;const nid=g('note-id').value;
+  const titre=g('note-titre').value.trim();const contenu=g('note-contenu').value.trim();
+  if(!titre&&!contenu)return toast('Saisissez un titre ou une note.','e');
+  const payload={vehicle_id:vid,user_id:S.user.id,titre,contenu};
+  let error;
+  if(nid){({error}=await sb.from('veh_notes').update(payload).eq('id',nid));}
+  else{({error}=await sb.from('veh_notes').insert({...payload,id:crypto.randomUUID()}));}
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast('Note enregistrée !','s');cm('veh-note');await loadVehNotes();openVehDetail(vid);
+}
+
+async function delVehNote(){
+  const nid=g('note-id').value;const vid=g('note-vid').value;
+  if(!nid)return;
+  cfm('Supprimer cette note ?','',async()=>{
+    const{error}=await sb.from('veh_notes').delete().eq('id',nid);
+    if(error)return toast('Erreur : '+error.message,'e');
+    toast('Note supprimée.','i');cm('veh-note');await loadVehNotes();openVehDetail(vid);
+  });
+}
+
+
+
 function openVehDetailEdit(){
   const v=S.vehicles.find(x=>x.id===S.expandedVeh);if(!v)return;
   openVeh(v.id);
@@ -2941,7 +3057,7 @@ function renderEnt(){
     return;
   }
   // Picker véhicule
-  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div style="width:28px;height:28px;border-radius:6px;background:${v.couleur_carte||v.emoji||'#2563EB'};margin:0 auto 3px;border:1px solid rgba(0,0,0,.08)"></div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
+  let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div style="width:28px;height:28px;border-radius:6px;background:${vehCardColor(v)};margin:0 auto 3px;border:1px solid rgba(0,0,0,.08)"></div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
   h+=`<div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="ent-search" placeholder="Rechercher un entretien…" oninput="S.searchEnt=this.value;renderEnt()" value="${esc(S.searchEnt||'')}"></div>`;
   h+=`<div class="sort-bar"><span style="font-size:.72rem;color:var(--txm);font-weight:600">Trier :</span><button class="sort-btn ${S.sortEnt==='date'?'on':''}" onclick="S.sortEnt='date';renderEnt()">📅 Date</button><button class="sort-btn ${S.sortEnt==='cout'?'on':''}" onclick="S.sortEnt='cout';renderEnt()">💶 Coût</button><button class="sort-btn ${S.sortEnt==='km'?'on':''}" onclick="S.sortEnt='km';renderEnt()">📍 Km</button></div>`;
 
@@ -2969,7 +3085,7 @@ function renderEnt(){
   const total=ents.reduce((s,e)=>s+(e.cout||0),0);
   // Mini header véhicule sélectionné
   h+=`<div style="background:var(--primary);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;color:#fff;display:flex;align-items:center;gap:10px">
-    <div style="width:40px;height:40px;border-radius:10px;background:${v.couleur_carte||v.emoji||'#2563EB'};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
+    <div style="width:40px;height:40px;border-radius:10px;background:${vehCardColor(v)};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
     <div style="flex:1">
       <div style="font-size:.95rem;font-weight:700">${esc(v.marque)} ${esc(v.modele)}</div>
       <div style="font-size:.76rem;opacity:.8">${fmtKm(v.km_actuel)} · ${ents.length} entretien${ents.length>1?'s':''} · ${fmtCout(total)}</div>
@@ -2994,7 +3110,7 @@ function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';renderEnt(
 
 function getRapItem(r){
   const v=r.v;
-  const vColor=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+  const vColor=v?vehCardColor(v):'#2563EB';
   const vLabel=v?(esc(v.marque)+' '+esc(v.modele)):'';
   const parcLabel=v&&v.num_parc?` <span style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:.62rem">${esc(v.num_parc)}</span>`:'';
   return `<div class="ri2 ${r.sev}" onclick="${r.e?`openEnt('${r.e.id}')`:r.v?`openVehDetail('${r.v.id}')`:''}" >
@@ -3088,8 +3204,8 @@ function renderRap(){
     h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 90 prochains jours.</p></div>`;
   }
 
-  function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="font-size:.62rem;color:var(--txl)">📌</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
-  function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
+  function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="font-size:.62rem;color:var(--txl)">📌</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
+  function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
 
   // ── EN RETARD ──
   if(urgentF.length||rcUrgentF.length||docsUrgentF.length){
@@ -3126,7 +3242,7 @@ function renderRap(){
   if(garanties.length){
     h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🛡️ Garanties actives (${garanties.length})</span></div>`;
     h+=garanties.map(({e,v,days})=>{
-      const ti=getType(e.type);const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      const ti=getType(e.type);const col=v?vehCardColor(v):'#2563EB';
       return`<div class="ri2 ok" onclick="openEnt('${e.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span></div><div style="font-size:.87rem;font-weight:700">🛡️ ${esc(ti.label)}</div><div style="font-size:.72rem;color:var(--txm)">Expire le ${(()=>{const d=new Date(e.date);d.setMonth(d.getMonth()+e.garantie_mois);return fmtDate(d.toISOString());})()} </div></div><div class="ri2-badge ok">Dans ${days}j</div></div>`;
     }).join('');
   }
@@ -3140,7 +3256,7 @@ function renderRap(){
       const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;
       const sev=days===null?'ok':days<0?'danger':days<=30?'warn':'ok';
       const label=days===null?'Sans date':days<0?'En retard':days===0?"Aujourd'hui":'Dans '+days+'j';
-      const col=v?(v.couleur_carte||'#2563EB'):'#2563EB';
+      const col=v?vehCardColor(v):'#2563EB';
       return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous véhicules'}</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${label}${r.date_rappel?' · '+fmtDate(r.date_rappel):''}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;
     }).join('');
   } else {
@@ -3328,7 +3444,7 @@ async function openVeh(id){
     g('v-cb').value=v.carburant||'essence';g('v-im').value=v.immatriculation||'';
     g('v-km').value=v.km_actuel||'';g('v-da').value=v.date_achat||'';
     g('v-ct').value=v.ct_date||'';g('v-cl').value=v.couleur||'';
-    g('v-pw').value=v.puissance||'';g('v-em').value=v.couleur_carte||v.emoji||'#2563EB';g('v-vn').value=v.vin||'';
+    g('v-pw').value=v.puissance||'';g('v-em').value=vehCardColor(v);g('v-vn').value=v.vin||'';
     g('v-tr').value=v.transmission||'';g('v-trc').value=v.traction||'';
     g('v-np').value=v.nb_portes||'';g('v-pkw').value=v.puissance_kw||'';g('v-np2').value=v.num_parc||'';g('v-co2').value=v.co2||'';
     // Pre-remplir docs
@@ -3343,6 +3459,7 @@ async function openVeh(id){
     g('v-va').value=v.valeur_achat||'';g('v-vact').value=v.valeur_actuelle||'';
     g('v-as').value=v.assurance_echeance||'';g('v-ac').value=v.assurance_compagnie||'';
     g('v-cond').value=v.conducteur||'';g('v-stat').value=v.statut_vehicule||'disponible';
+    if(g('v-fcard'))g('v-fcard').value=v.carte_carburant||'';
     // Ouvrir section avancée si des données existent
     if(v.transmission||v.traction||v.assurance_echeance||v.valeur_achat){
       const btn=g('adv-veh-btn'),body=g('adv-veh-body');
@@ -3352,7 +3469,7 @@ async function openVeh(id){
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em===v.emoji));
   }else{
     g('mt-veh').textContent='Ajouter un véhicule';
-    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac','v-np2','v-co2','v-cond','vdoc-cg-nom','vdoc-cg-emission','vdoc-as-num','vdoc-as-emission','vdoc-ct-nom','vdoc-ct-emission'].forEach(x=>{if(g(x))g(x).value='';});g('v-em').value='#2563EB';buildEpicker();
+    ['v-mk','v-mo','v-yr','v-im','v-km','v-da','v-ct','v-cl','v-pw','v-vn','v-tr','v-trc','v-np','v-pkw','v-va','v-vact','v-as','v-ac','v-np2','v-co2','v-cond','v-fcard','vdoc-cg-nom','vdoc-cg-emission','vdoc-as-num','vdoc-as-emission','vdoc-ct-nom','vdoc-ct-emission'].forEach(x=>{if(g(x))g(x).value='';});g('v-em').value='#2563EB';buildEpicker();
     const advBtn=g('adv-veh-btn'),advBody=g('adv-veh-body');if(advBtn&&advBody){advBtn.classList.remove('open');advBody.classList.remove('open');}
     g('v-cb').value='essence';g('v-em').value='🚗';
     g('btn-del-v').classList.add('hidden');
@@ -3512,7 +3629,15 @@ function renderProfil(){
 
   <div class="profil-card">
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Modifier le profil</div>
-    <div class="fg"><label class="fl">Prénom</label><input class="fc" id="prof-name" value="${esc(name)}" placeholder="Votre prénom"></div>
+    ${_plan==='pro'?`
+    <div class="fg"><label class="fl">Société</label><input class="fc" id="prof-societe" value="${esc(S.user.user_metadata?.societe||'')}" placeholder="Nom de votre société"></div>
+    <div class="fg"><label class="fl">Adresse</label><input class="fc" id="prof-adresse" value="${esc(S.user.user_metadata?.adresse||'')}" placeholder="Adresse complète"></div>
+    `:`
+    <div class="fr">
+      <div class="fg"><label class="fl">Prénom</label><input class="fc" id="prof-prenom" value="${esc(S.user.user_metadata?.prenom||S.user.user_metadata?.name||'')}" placeholder="Votre prénom"></div>
+      <div class="fg"><label class="fl">Nom</label><input class="fc" id="prof-nom" value="${esc(S.user.user_metadata?.nom||'')}" placeholder="Votre nom"></div>
+    </div>
+    `}
     <div class="fg"><label class="fl">Email</label><input class="fc" id="prof-email" value="${esc(email)}" type="email"></div>
     <div class="fg"><label class="fl">Nouveau mot de passe (laisser vide pour ne pas changer)</label><input class="fc" id="prof-pass" type="password" placeholder="Nouveau mot de passe"></div>
     <button class="btn btn-p btn-sm" onclick="saveProfil()">Enregistrer</button>
@@ -3544,15 +3669,23 @@ function renderProfil(){
 }
 
 async function saveProfil(){
-  const name=g('prof-name').value.trim();
-  const email=g('prof-email').value.trim();
-  const pass=g('prof-pass').value;
+  const _plan=getUserPlan();
+  const email=g('prof-email')?.value.trim()||'';
+  const pass=g('prof-pass')?.value||'';
   const updates={};
   if(email && email!==S.user.email) updates.email=email;
   if(pass && pass.length>=8) updates.password=pass;
-  if(name) updates.data={name};
-  if(Object.keys(updates).length===0&&name===S.user.user_metadata?.name) return toast('Aucune modification.','i');
-  const{error}=await sb.auth.updateUser({...updates,data:{name}});
+  let meta={...S.user.user_metadata};
+  if(_plan==='pro'){
+    meta.societe=g('prof-societe')?.value.trim()||'';
+    meta.adresse=g('prof-adresse')?.value.trim()||'';
+  } else {
+    meta.prenom=g('prof-prenom')?.value.trim()||'';
+    meta.nom=g('prof-nom')?.value.trim()||'';
+    meta.name=(meta.prenom+' '+meta.nom).trim()||meta.name||'';
+  }
+  updates.data=meta;
+  const{error}=await sb.auth.updateUser(updates);
   if(error) return toast('Erreur : '+error.message,'e');
   S.user=( await sb.auth.getUser() ).data.user;
   toast('Profil mis à jour !','s');
@@ -3670,28 +3803,7 @@ function getStatsAvancees(vid){
 }
 
 function statsHTML(vid){
-  const st=getStatsAvancees(vid);
-  if(!st.nbEnts) return '';
-  let h=`<div class="stats-adv">
-    <div class="stat-adv"><div class="stat-adv-v">${fmtCout(st.totalCout)}</div><div class="stat-adv-l">Coût total</div></div>
-    <div class="stat-adv"><div class="stat-adv-v">${fmtCout(st.avgCout)}</div><div class="stat-adv-l">Coût moyen</div></div>
-    ${st.coutParKm?`<div class="stat-adv"><div class="stat-adv-v">${st.coutParKm}€</div><div class="stat-adv-l">€ / km</div></div>`:''}
-    <div class="stat-adv"><div class="stat-adv-v">${st.nbEnts}</div><div class="stat-adv-l">Interventions</div></div>
-  </div>`;
-  if(st.topTypes.length){
-    h+=`<div style="background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border);margin-bottom:12px">
-      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:10px">Top interventions par coût</div>`;
-    const max=st.topTypes[0][1];
-    st.topTypes.forEach(([label,total])=>{
-      const pct=Math.round(total/max*100);
-      h+=`<div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span>${label}</span><span style="font-weight:700;color:var(--ok)">${fmtCout(total)}</span></div>
-        <div style="height:6px;background:var(--bg);border-radius:3px"><div style="height:6px;width:${pct}%;background:var(--primary);border-radius:3px;transition:.5s"></div></div>
-      </div>`;
-    });
-    h+=`</div>`;
-  }
-  return h;
+  return '';
 }
 
 /* ══ LIEN PUBLIC ══ */
@@ -4123,7 +4235,7 @@ function renderFlotte(){
     const st=vStatus(v.id);
     const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
     const nextRap=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.kind==='date')[0];
-    const col=v.couleur_carte||v.emoji||'#2563EB';
+    const col=vehCardColor(v);
     const parcLabel=v.num_parc?` <span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.68rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:'';
     const borderCol=st==='danger'?'var(--err)':st==='warn'?'var(--warn)':'var(--border)';
     h+=`<div class="vc" style="border-left-color:${borderCol};margin-bottom:10px;padding:12px 14px">`;
