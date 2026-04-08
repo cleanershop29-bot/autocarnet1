@@ -323,16 +323,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .ri2-badge.warn{background:var(--warn);color:#fff}
 .ri2-badge.ok{background:var(--ok-bg);color:var(--ok);border:1px solid #A7F3D0}
 /* CARTE VEHICULE COMPACTE */
-.vc-compact{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:8px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden}
+.vc-compact{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden}
 .vc-compact.ok{border-left-color:var(--ok)}
 .vc-compact.warn{border-left-color:var(--warn)}
 .vc-compact.danger{border-left-color:var(--err);background:#FEF2F2}
-.vc-compact-main{padding:12px 14px;display:flex;align-items:center;gap:11px}
+.vc-compact-main{padding:14px 14px 0;display:flex;align-items:center;gap:11px}
 .vc-compact-info{flex:1;min-width:0}
-.vc-compact-name{font-size:.95rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em;position:relative;z-index:2}
+.vc-compact-name{font-size:.97rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em;position:relative;z-index:2}
 .vc-compact-sub{font-size:.73rem;color:var(--txm);margin-top:2px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .vc-compact-km{font-size:.8rem;font-weight:600;color:var(--txt)}
 .vc-compact-acts{padding:0 14px 10px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:8px}
+/* NOUVEAU : alert pill + chips meta */
+.vc-alert-pill{display:flex;align-items:center;gap:6px;margin:10px 14px 0;padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:500}
+.vc-alert-pill.amber{background:#FEF3C7;color:#D97706}
+.vc-alert-pill.green{background:#DCFCE7;color:#16A34A}
+.vc-alert-pill.red{background:#FEE2E2;color:#DC2626}
+.vc-alert-pill-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vc-alert-pill-days{font-weight:700;flex-shrink:0}
+.vc-meta-chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px 14px 12px}
+.vc-chip{background:#F7F8FB;border-radius:10px;padding:8px 9px}
+.vc-chip-label{font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px}
+.vc-chip-value{font-size:.8rem;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vc-chip-value.status-ok{color:var(--ok)}
+.vc-chip-value.status-warn{color:var(--warn)}
+.vc-chip-value.status-err{color:var(--err)}
+.vc-status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;display:inline-block}
 /* MODAL DETAIL VEHICULE */
 #mo-veh-detail{position:fixed;inset:0;z-index:450;background:var(--bg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
 #mo-veh-detail.open{transform:translateX(0)}
@@ -2088,34 +2103,68 @@ function renderVehs(){
 function vcCompactHTML(v){
   const st=vStatus(v.id);
   const es=S.ents.filter(e=>e.vehicle_id===v.id);
-  const total=es.reduce((s,e)=>s+(e.cout||0),0);
   const isOwner=v.user_id===S.user.id;
-  const ct=ctStatus(v.ct_date);
   const col=vehCardColor(v);
   const premClass=isPremium()?' premium-user':'';
-  const rapCount=getRappels().filter(r=>r.v?.id===v.id&&r.sev!=='ok').length;
+  const allRaps=getRappels().filter(r=>r.v?.id===v.id);
+  const nextRap=allRaps.find(r=>r.kind==='date');
+  const alertRap=allRaps.find(r=>r.sev!=='ok');
+  // Pill couleur selon sévérité
+  let pillClass='green', pillLabel='Aucun rappel planifié', pillDays='✓';
+  if(alertRap){
+    pillClass=alertRap.sev==='danger'?'red':'amber';
+    pillLabel=alertRap.ti.label;
+    pillDays=alertRap.label;
+  } else if(nextRap){
+    pillClass='green';
+    pillLabel=nextRap.ti.label;
+    pillDays=nextRap.label;
+  }
+  // Statut véhicule
+  const statutV=v.statut_vehicule||'disponible';
+  const statutLabel=statutV==='disponible'?'Disponible':statutV==='intervention'?'Intervention':statutV==='panne'?'Panne':'Garage';
+  const statutClass=statutV==='disponible'?'status-ok':statutV==='intervention'?'status-warn':'status-err';
+  const emoji=v.emoji||'🚗';
 
-  return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}">
-    <div class="vc-compact-main" onclick="openVehDetail('${v.id}')" style="cursor:pointer">
-      <div style="width:38px;height:38px;border-radius:9px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
+  return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}" style="margin-bottom:12px;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">
+    <div class="vc-compact-main" onclick="openVehDetail('${v.id}')" style="cursor:pointer;padding:14px 14px 0">
+      <div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:1.4rem">${emoji}</div>
       <div class="vc-compact-info">
         <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-compact-sub">
           <span class="vc-compact-km">${fmtKm(v.km_actuel)}</span>
           ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem">${esc(v.immatriculation)}</span>`:''}
-          ${v.num_parc?`<span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.7rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:''}
-          ${ct?`<span class="badge ${ct.cls}" style="font-size:.65rem">${ct.label}</span>`:''}
-          ${rapCount>0?`<span style="background:var(--err-bg);color:var(--err);font-size:.7rem;font-weight:700;padding:1px 6px;border-radius:10px">⚠️ ${rapCount} rappel${rapCount>1?'s':''}</span>`:''}
           ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
         </div>
       </div>
+      <button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>
     </div>
-    <div class="vc-compact-acts">
+    <div class="vc-alert-pill ${pillClass}">
+      <span>🔔</span>
+      <span class="vc-alert-pill-text">${esc(pillLabel)}</span>
+      <span class="vc-alert-pill-days">${esc(pillDays)}</span>
+    </div>
+    <div class="vc-meta-chips">
+      <div class="vc-chip">
+        <span class="vc-chip-label">Conducteur</span>
+        <span class="vc-chip-value">${v.conducteur?`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(v.conducteur)}`:'—'}</span>
+      </div>
+      <div class="vc-chip">
+        <span class="vc-chip-label">Statut</span>
+        <span class="vc-chip-value ${statutClass}"><span class="vc-status-dot"></span>${statutLabel}</span>
+      </div>
+      <div class="vc-chip">
+        <span class="vc-chip-label">Kilométrage</span>
+        <span class="vc-chip-value">${fmtKm(v.km_actuel)}</span>
+      </div>
+    </div>
+    <div class="vc-compact-acts" style="border-top:1px solid var(--border);margin:0 14px;padding:8px 0 12px;border-top-width:1px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
-        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>`
+        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">📍 Km</button>`
       }
-      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">→ Détail</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+      <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
   </div>`;
 }
@@ -4325,33 +4374,48 @@ function renderFlotte(){
     const st=vStatus(v.id);
     const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
     const nextRap=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.kind==='date')[0];
+    const alertRap=getRappels().filter(r=>r.v&&r.v.id===v.id).find(r=>r.sev!=='ok');
     const col=vehCardColor(v);
-    const parcLabel=v.num_parc?` <span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.68rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:'';
     const borderCol=st==='danger'?'var(--err)':st==='warn'?'var(--warn)':'var(--border)';
-    const bgCol=(['panne','garage','intervention'].includes(v.statut_vehicule))?'background:#FEF2F2;':''
-    h+=`<div class="vc" style="${bgCol}border-left-color:${borderCol};margin-bottom:10px;padding:12px 14px">`;
-    // Ligne 1 : couleur + nom + badges + bouton détail
-    h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">`;
-    h+=`<div style="width:34px;height:34px;border-radius:8px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>`;
-    h+=`<div style="flex:1;min-width:0;cursor:pointer" onclick="openVehDetail('${v.id}')">`;
-    h+=`<div style="font-weight:700;font-size:.92rem">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
-    h+=`<div style="font-size:.75rem;color:var(--txm)">${fmtKm(v.km_actuel)}${v.immatriculation?' · '+esc(v.immatriculation):''}</div>`;
+    const bgCol=(['panne','garage','intervention'].includes(v.statut_vehicule))?'background:#FEF2F2;':'';
+    const emoji=v.emoji||'🚗';
+    const parcLabel=v.num_parc?` <span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.68rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:'';
+    // Alert pill
+    let pillClass='green', pillLabel='Aucun rappel planifié', pillDays='✓';
+    if(alertRap){pillClass=alertRap.sev==='danger'?'red':'amber';pillLabel=alertRap.ti.label;pillDays=alertRap.label;}
+    else if(nextRap){pillClass='green';pillLabel=nextRap.ti.label;pillDays=nextRap.label;}
+    // Statut
+    const statutV=v.statut_vehicule||'disponible';
+    const statutLabel=statutV==='disponible'?'Disponible':statutV==='intervention'?'Intervention':statutV==='panne'?'Panne':'Garage';
+    const statutClass=statutV==='disponible'?'status-ok':statutV==='intervention'?'status-warn':'status-err';
+
+    h+=`<div style="${bgCol}border:1px solid var(--border);border-left:4px solid ${borderCol};border-radius:18px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:12px;overflow:hidden">`;
+    // Ligne 1 : avatar + nom + bouton
+    h+=`<div style="display:flex;align-items:center;gap:11px;padding:14px 14px 0;cursor:pointer" onclick="openVehDetail('${v.id}')">`;
+    h+=`<div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:1.4rem">${emoji}</div>`;
+    h+=`<div style="flex:1;min-width:0">`;
+    h+=`<div style="font-weight:800;font-size:.97rem;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
+    h+=`<div style="font-size:.75rem;color:var(--txm);margin-top:2px">${fmtKm(v.km_actuel)}${v.immatriculation?' · <span style="font-family:monospace">'+esc(v.immatriculation)+'</span>':''}</div>`;
     h+=`</div>`;
-    if(vRaps.length) h+=`<span style="font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`;
-    h+=`<button class="btn btn-s btn-sm" style="flex-shrink:0;font-size:.72rem" onclick="openVehDetail('${v.id}')">→</button>`;
+    if(vRaps.length) h+=`<span style="font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:8px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`;
+    h+=`<button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer;font-size:1rem" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>`;
     h+=`</div>`;
-    // Ligne 2 : prochain rappel (lecture seule, sur toute la largeur)
-    const rapColor=nextRap&&nextRap.sev==='danger'?'var(--err)':nextRap&&nextRap.sev==='warn'?'var(--warn)':'var(--ok)';
-    h+=`<div style="font-size:.75rem;padding:5px 8px;background:var(--bg2);border-radius:6px;margin-bottom:8px;display:flex;align-items:center;gap:6px">`;
-    h+=`<span style="color:var(--txm)">🔔 Prochain rappel :</span>`;
-    h+=`<span style="font-weight:700;color:${rapColor}">${nextRap?nextRap.ti.label+' — '+nextRap.label:'Aucun rappel planifié'}</span>`;
+    // Alert pill
+    h+=`<div style="display:flex;align-items:center;gap:6px;margin:10px 14px 0;padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:500;${pillClass==='red'?'background:#FEE2E2;color:#DC2626':pillClass==='amber'?'background:#FEF3C7;color:#D97706':'background:#DCFCE7;color:#16A34A'}">`;
+    h+=`<span>🔔</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(pillLabel)}</span><span style="font-weight:700;flex-shrink:0">${esc(pillDays)}</span>`;
     h+=`</div>`;
-    // Ligne 3 : champs inline — conducteur, statut, km
-    h+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">`;
-    h+=`<div><div style="font-size:.65rem;color:var(--txm);margin-bottom:2px">👤 Conducteur</div><input class="fc" style="font-size:.78rem;padding:4px 7px;height:auto" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
-    h+=`<div><div style="font-size:.65rem;color:var(--txm);margin-bottom:2px">🔄 Statut</div><select class="fc" style="font-size:.78rem;padding:4px 7px;height:auto" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Dispo</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 Intervention</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ Panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Garage</option></select></div>`;
-    h+=`<div><div style="font-size:.65rem;color:var(--txm);margin-bottom:2px">📍 Km actuel</div><input class="fc" type="number" inputmode="numeric" style="font-size:.78rem;padding:4px 7px;height:auto" placeholder="0" value="${v.km_actuel||''}" onchange="saveFlotteField('${v.id}','km_actuel',parseInt(this.value)||0)"></div>`;
-    h+=`</div></div>`;
+    // Meta chips — conducteur éditable, statut select, km input
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px 14px 0">`;
+    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Conducteur</span><input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
+    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Statut</span><select style="width:100%;border:none;background:none;font-family:inherit;font-size:.78rem;font-weight:600;color:${statutClass==='status-ok'?'var(--ok)':statutClass==='status-warn'?'var(--warn)':'var(--err)'};outline:none;padding:0;-webkit-appearance:none" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Dispo</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 Interv.</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ Panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Garage</option></select></div>`;
+    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Kilométrage</span><input type="number" inputmode="numeric" style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="0" value="${v.km_actuel||''}" onchange="saveFlotteField('${v.id}','km_actuel',parseInt(this.value)||0)"></div>`;
+    h+=`</div>`;
+    // Actions
+    h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
+    h+=`<button class="btn btn-s btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
+    h+=`<button class="btn btn-p btn-sm" onclick="openVehDetail('${v.id}')">Détail →</button>`;
+    h+=`</div>`;
+    h+=`</div>`;
   });
   el.innerHTML=h;
 }
