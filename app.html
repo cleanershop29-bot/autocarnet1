@@ -17,7 +17,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#E4EAF2;
+  --bg:#F0F4F9;
   --surface:#FFFFFF;
   --border:#E2E8F0;
   --primary:#2563EB;
@@ -1921,6 +1921,10 @@ function renderView(){
 function renderDash(){
   const el=g('d-ctn');
   const raps=getRappels(),urgent=raps.filter(r=>r.sev!=='ok');
+  const today=new Date();today.setHours(0,0,0,0);
+  const rcUrgentDash=S.rappels_custom.filter(r=>r.statut==='actif'&&r.date_rappel&&Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0);
+  const docsUrgentDash=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0);
+  const totalUrgent=urgent.length+rcUrgentDash.length+docsUrgentDash.length;
   const total=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   if(!S.vehicles.length){
     el.innerHTML=`<div class="empty"><span class="empty-i">🚗</span><div class="empty-t">Bienvenue dans AutoCarnet</div><p class="empty-d">Ajoutez votre premier véhicule pour commencer le suivi d'entretien.</p><button class="btn btn-p" onclick="openVeh()">+ Ajouter un véhicule</button></div>`;
@@ -1933,10 +1937,10 @@ function renderDash(){
     <div class="stat"><div class="stat-v">${S.vehicles.length}</div><div class="stat-l">Véhicule${S.vehicles.length>1?'s':''}</div></div>
     <div class="stat"><div class="stat-v">${S.ents.length}</div><div class="stat-l">Entretiens</div></div>
     <div class="stat"><div class="stat-v" style="font-size:1.1rem;color:var(--ok)">${fmtCout(total)}</div><div class="stat-l">Coût total</div></div>
-    <div class="stat"><div class="stat-v" style="color:${urgent.length?'var(--err)':'var(--ok)'}">${urgent.length}</div><div class="stat-l">Alerte${urgent.length>1?'s':''}</div></div>
+    <div class="stat"><div class="stat-v" style="color:${totalUrgent?'var(--err)':'var(--ok)'}">${totalUrgent}</div><div class="stat-l">Alerte${totalUrgent>1?'s':''}</div></div>
     ${nextDays!==null?`<div class="stat"><div class="stat-v" style="font-size:1rem;color:var(--warn)">${nextDays===0?"Auj.":nextDays+'j'}</div><div class="stat-l">Proch. échéance</div></div>`:''}
   </div>`;
-  if(urgent.length){
+  if(totalUrgent){
     h+=`<div class="sec-hdr"><span class="sec-ttl">⚠️ Alertes actives</span><button class="sec-lnk" onclick="nav('rap')">Tout voir</button></div>`;
     h+=urgent.slice(0,3).map(r=>riHTML(r)).join('');
   }
@@ -4228,12 +4232,16 @@ function renderFlotte(){
     const raps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
     raps.forEach(r=>alertes.push({v,r}));
   });
+  const todayF=new Date();todayF.setHours(0,0,0,0);
+  const rcUrgentFlotte=S.rappels_custom.filter(r=>r.statut==='actif'&&r.date_rappel&&Math.ceil((new Date(r.date_rappel)-todayF)/86400000)<=0).length;
+  const docsUrgentFlotte=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-todayF)/86400000)<=0).length;
+  const totalAlertesFlotte=alertes.length+rcUrgentFlotte+docsUrgentFlotte;
   const moisCout=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
   let h='';
   // Métriques
   h+='<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">';
   h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicule'+(vehs.length>1?'s':'')+'</div></div>';
-  h+='<div class="stat"><div class="stat-v" style="color:'+(alertes.length?'var(--err)':'var(--ok)')+'">'+alertes.length+'</div><div class="stat-l">Alerte'+(alertes.length>1?'s':'')+' urgentes</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="color:'+(totalAlertesFlotte?'var(--err)':'var(--ok)')+'">'+totalAlertesFlotte+'</div><div class="stat-l">Alerte'+(totalAlertesFlotte>1?'s':'')+' urgentes</div></div>';
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
   // Header véhicules
