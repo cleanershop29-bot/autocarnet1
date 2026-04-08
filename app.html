@@ -1702,6 +1702,10 @@ async function saveEnt(){
   if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type d\'intervention.','e');
   if(!date)return toast('La date est requise.','e');
+  // Bloquer si le véhicule dépasse la limite du plan
+  if(isVehExces(vehicle_id)){
+    return showUpgradeModal('Ce véhicule dépasse la limite de votre plan. Passez à un plan supérieur pour ajouter des entretiens.');
+  }
   // Limite entretiens selon plan (par vehicule)
   if(!id){
     const myEntsForVeh=S.ents.filter(e=>e.vehicle_id===vehicle_id&&S.vehicles.find(v=>v.id===e.vehicle_id&&v.user_id===S.user.id));
@@ -2777,8 +2781,8 @@ async function delDocument(){
 
 /* ══ PAGE CARBURANT ══ */
 function openCarburantPage(){
-  if(getUserPlan()==='free'||getUserPlan()==='famille'){
-    return showUpgradeModal('Le comparateur de prix carburant est réservé au plan Pro.');
+  if(getUserPlan()==='free'){
+    return showUpgradeModal('Le comparateur de prix carburant est réservé aux plans Famille et Pro.');
   }
   document.getElementById('carb-page').classList.add('open');
   document.body.style.overflow='hidden';
