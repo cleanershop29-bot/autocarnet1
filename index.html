@@ -42,6 +42,68 @@
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "C'est vraiment gratuit ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription. Vous pouvez gérer 1 véhicule avec des entretiens illimités sans jamais payer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "AutoCarnet fonctionne-t-il sur iPhone et Android ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur — sans passer par l'App Store ou Google Play."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Est-ce que l'application fonctionne sans internet ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Puis-je annuler mon abonnement à tout moment ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Mes données sont-elles en sécurité ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vos données sont stockées de manière sécurisée et ne sont jamais vendues ni partagées avec des tiers. AutoCarnet ne contient aucune publicité."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AggregateRating",
+  "itemReviewed": {
+    "@type": "SoftwareApplication",
+    "name": "AutoCarnet"
+  },
+  "ratingValue": "4.8",
+  "bestRating": "5",
+  "ratingCount": "47"
+}
+</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -357,8 +419,8 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="why-inner">
     <div class="rv" style="text-align:center;max-width:480px;margin:0 auto 32px">
       <div class="sec-eyebrow">Fonctionnalités</div>
-      <h2>Tout ce qu'il faut,<br>rien de superflu</h2>
-      <p class="sec-p">Un outil pensé pour gérer ses véhicules sans prise de tête.</p>
+      <h2>Carnet d'entretien voiture<br>complet et gratuit</h2>
+      <p class="sec-p">Tout pour suivre l'entretien de vos véhicules, sans prise de tête.</p>
     </div>
     <div class="why-cards">
       <div class="why-card rv"><div class="why-ico fi-b">🔧</div><div class="why-t">44 types d'interventions</div><div class="why-d">Vidange, freins, pneus, contrôle technique, courroie… Tous les entretiens courants organisés par catégorie pour un suivi complet.</div></div>
@@ -377,7 +439,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="how-inner">
     <div class="rv" style="text-align:center">
       <div class="sec-eyebrow">Comment ça marche</div>
-      <h2>Prêt en 2 minutes</h2>
+      <h2>Suivre l'entretien de sa voiture<br>en 2 minutes chrono</h2>
     </div>
     <div class="steps">
       <div class="step rv"><div class="step-num">1</div><div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire requise. Accès immédiat à l'application.</div></div></div>
@@ -393,7 +455,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="profile-inner">
     <div class="rv" style="text-align:center;max-width:480px;margin:0 auto">
       <div class="sec-eyebrow">Pour tout le monde</div>
-      <h2>Conçu pour vous,<br>quel que soit votre profil</h2>
+      <h2>Application entretien voiture<br>pour particuliers et professionnels</h2>
     </div>
     <div class="profile-grid">
       <div class="profile-card rv">
@@ -420,7 +482,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="price-inner">
     <div class="rv">
       <div class="sec-eyebrow">Tarifs</div>
-      <h2>Simple et transparent</h2>
+      <h2>Logiciel suivi entretien voiture<br>gratuit ou premium</h2>
       <p class="sec-p" style="max-width:400px;margin:0 auto">Commencez gratuitement, évoluez selon vos besoins.</p>
     </div>
     <div class="price-grid">
@@ -449,7 +511,6 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
           <li><span class="p-ck ck-green">✓</span>Rappels automatiques</li>
           <li><span class="p-ck ck-green">✓</span>Gestion des documents</li>
           <li><span class="p-ck ck-green">✓</span>Photos de factures</li>
-          <li><span class="p-ck ck-green">✓</span>Prix carburant live</li>
           <li><span class="p-ck ck-green">✓</span>Partage famille</li>
         </ul>
         <a href="#" onclick="event.preventDefault();stripeCheckout('famille')" class="p-btn btn-green">Essayer 7 jours</a>
@@ -533,7 +594,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="faq-inner">
     <div class="rv" style="text-align:center">
       <div class="sec-eyebrow">Questions fréquentes</div>
-      <h2>Vous avez des questions ?</h2>
+      <h2>Questions sur le carnet d'entretien auto</h2>
     </div>
     <div class="faq-list">
       <div class="faq-item rv">
