@@ -1202,7 +1202,7 @@ const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
 const fmtKm=n=>n!=null?Number(n).toLocaleString('fr')+' km':'— km';
 const fmtCout=n=>n?Number(n).toLocaleString('fr',{style:'currency',currency:'EUR'}):'—';
-const vehCardColor=v=>(['panne','garage','intervention'].includes(v.statut_vehicule)?'#FECACA':(vehCardColor(v)));
+const vehCardColor=v=>(['panne','garage','intervention'].includes(v.statut_vehicule)?'#FECACA':(v.couleur_carte||v.emoji||'#2563EB'));
 const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
 const getType=id=>TYPES.find(t=>t.id===id)||{id:'autre',label:id,ico:'🔨',ikm:null,imo:null,cat:'Divers'};
 
