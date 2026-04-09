@@ -97,7 +97,6 @@ h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-
 .ccard{background:#fff;border-radius:var(--r);padding:22px;border:1.5px solid var(--border);display:flex;flex-direction:column}
 .ccard.famille{border-color:var(--green)}
 .ccard.pro{border-color:var(--gold);box-shadow:0 4px 20px rgba(245,158,11,.14);position:relative}
-.ccard.pro::before{content:'🚀 Recommandé';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:#fff;font-size:.62rem;font-weight:800;padding:3px 12px;border-radius:100px;white-space:nowrap}
 .cplan{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--slate);margin-bottom:10px}
 .cprice{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:2rem;font-weight:800;letter-spacing:-.05em;margin-bottom:16px;line-height:1.1;color:var(--ink)}
 .cprice span{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.7rem;font-weight:500;color:var(--slate);letter-spacing:0}
@@ -182,7 +181,7 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
     <div class="blob b3"></div>
   </div>
   <div class="hero-inner">
-    <div class="pill"><span class="pill-star">⭐</span> Plans Premium</div>
+    <div class="pill"><span class="pill-star">✨</span> Plans Premium · 7 jours offerts</div>
     <h1>Choisissez le plan<br>qui vous <em>correspond</em></h1>
     <p class="hero-p">Essai gratuit 7 jours. Annulable à tout moment. Aucune carte bancaire requise pour commencer.</p>
 
@@ -194,7 +193,6 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
         <button class="btn-famille" onclick="stripeCheckout('famille')">Essayer 7 jours →</button>
       </div>
       <div class="hplan pro">
-        <div class="hplan-chip chip-gold">⭐ Recommandé</div>
         <div class="hplan-name">🚀 Pro</div>
         <div class="hplan-price">4,99€<span>/mois</span></div>
         <div class="hplan-sub">tout illimité · toutes les fonctionnalités</div>
@@ -316,26 +314,26 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
   </div>
 </section>
 
-<!-- TÉMOIGNAGES -->
+<!-- VALEURS -->
 <section class="testi-sec">
   <div class="testi-inner">
-    <div class="sec-eyebrow">Ils nous font confiance</div>
-    <h2>Ce qu'ils en pensent</h2>
+    <div class="sec-eyebrow">Pourquoi AutoCarnet</div>
+    <h2>Un projet honnête,<br>fait pour durer</h2>
     <div class="testi-grid">
       <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-txt">"J'ai 3 voitures et une moto. Avant je notais tout dans un carnet papier que je perdais tout le temps. Avec AutoCarnet tout est centralisé, les rappels arrivent automatiquement. Je ne loupe plus aucun entretien."</div>
-        <div class="testi-author"><div class="testi-avatar">T</div><div><div class="testi-name">Thomas M.</div><div class="testi-role">Plan Famille · 3 véhicules</div></div></div>
+        <div style="font-size:1.5rem;margin-bottom:10px">🇫🇷</div>
+        <div class="feat-t" style="margin-bottom:6px">Fait en Bretagne, France</div>
+        <div class="feat-d">AutoCarnet est un projet indépendant, créé et maintenu par un seul développeur. Pas de VC, pas d'investisseur, pas d'agenda caché.</div>
       </div>
       <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-txt">"Je gère une petite flotte de 6 véhicules pour mon activité. L'export PDF me fait gagner un temps fou pour les rapports. À ce prix-là c'est vraiment imbattable."</div>
-        <div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Sophie L.</div><div class="testi-role">Plan Pro · Flotte illimitée</div></div></div>
+        <div style="font-size:1.5rem;margin-bottom:10px">🚫</div>
+        <div class="feat-t" style="margin-bottom:6px">Zéro publicité, toujours</div>
+        <div class="feat-d">Vos données ne sont jamais vendues ni partagées. Le modèle économique c'est l'abonnement — pas la pub. C'est aussi simple que ça.</div>
       </div>
       <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-txt">"Simple, rapide, efficace. J'ai testé d'autres applications mais aucune n'est aussi complète pour le prix. Le mode équipe avec mon associé est parfait."</div>
-        <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Michel D.</div><div class="testi-role">Plan Pro · Artisan plombier</div></div></div>
+        <div style="font-size:1.5rem;margin-bottom:10px">💳</div>
+        <div class="feat-t" style="margin-bottom:6px">Paiement via Stripe</div>
+        <div class="feat-d">Les paiements sont traités par Stripe, référence mondiale du paiement sécurisé. AutoCarnet ne stocke aucune information bancaire.</div>
       </div>
     </div>
   </div>
@@ -392,7 +390,8 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
     <a href="/mentions-legales.html">Mentions légales</a>
     <a href="/cdn-cgi/l/email-protection#5a3b2f2e35393b28343f2e2a28351a3d373b333674393537">Contact</a>
   </div>
-  <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
+  <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en Bretagne, France</div>
+  <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Projet indépendant · Auto-entrepreneur · SIRET 914 511 639 00025</div>
 </footer>
 
 <!-- JS INTACT -->
