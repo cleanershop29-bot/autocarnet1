@@ -17,7 +17,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#F0F4F9;
+  --bg:#E4E9F2;
   --surface:#FFFFFF;
   --border:#E2E8F0;
   --primary:#2563EB;
@@ -310,6 +310,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 /* FILTRE RAPPELS */
 .rap-filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
 .rap-filters::-webkit-scrollbar{display:none}
+/* CALENDRIER RAPPELS */
+.rap-cal{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin-bottom:12px;border:1px solid var(--border)}
+.rap-cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rap-cal-title{font-size:.88rem;font-weight:800;color:var(--txt)}
+.rap-cal-nav{width:28px;height:28px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--txm)}
+.rap-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.rap-cal-day-lbl{font-size:.62rem;font-weight:700;color:var(--txl);text-align:center;padding:3px 0;text-transform:uppercase}
+.rap-cal-day{min-height:34px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.75rem;font-weight:500;color:var(--txm)}
+.rap-cal-day.today{background:var(--primary-lt);color:var(--primary);font-weight:800}
+.rap-cal-day.has-rap{font-weight:700;color:var(--txt)}
+.rap-cal-day.other-month{opacity:.3}
+.rap-cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px}
+.rap-cal-dot.danger{background:var(--err)}
+.rap-cal-dot.warn{background:var(--warn)}
+.rap-cal-dot.ok{background:var(--ok)}
 /* CARTE RAPPEL ENRICHIE */
 .ri2{background:#fff;border-radius:var(--r);padding:12px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);margin-bottom:7px;cursor:pointer;border:1px solid var(--border);border-left:4px solid var(--border)}
 .ri2.danger{border-left-color:var(--err);background:var(--err-bg)}
@@ -710,14 +725,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
             <input class="fc" id="v-vact" type="number" inputmode="decimal" placeholder="10000" min="0">
           </div>
         </div>
-        <div class="fr">
-          <div class="fg"><label class="fl">Assurance — échéance</label>
-            <input class="fc" id="v-as" type="date">
-          </div>
-          <div class="fg"><label class="fl">Compagnie assurance</label>
-            <input class="fc" id="v-ac" placeholder="Maif, AXA…">
-          </div>
-        </div>
         <!-- SECTION DOCUMENTS VÉHICULE (dans Informations avancées) -->
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:14px 0 8px;border-top:1px solid var(--border);padding-top:12px">📄 Documents du véhicule</div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:8px 0 6px">🪪 Carte grise</div>
@@ -727,6 +734,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         </div>
         <div class="fg"><label class="fl">Photo carte grise</label><input class="fc" type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">🛡️ Assurance</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Compagnie</label><input class="fc" id="v-ac" placeholder="Maif, AXA…"></div>
+          <div class="fg"><label class="fl">Échéance</label><input class="fc" id="v-as" type="date"></div>
+        </div>
         <div class="fr">
           <div class="fg"><label class="fl">N° contrat</label><input class="fc" id="vdoc-as-num" placeholder="Numéro de contrat"></div>
           <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
@@ -1139,7 +1150,6 @@ const TYPES=[
   {id:'essuie_gl',label:'Essuie-glaces',ico:'🌧️',ikm:null,imo:12,cat:'Divers'},
   {id:'vitres',label:'Vitres / pare-brise',ico:'🪟',ikm:null,imo:null,cat:'Divers'},
   {id:'carrosserie',label:'Carrosserie / peinture',ico:'🎨',ikm:null,imo:null,cat:'Divers'},
-  {id:'autre',label:'Autre intervention',ico:'🔨',ikm:null,imo:null,cat:'Divers'},
   // MOTO
   {id:'chaine_moto',label:'Chaîne / pignon / couronne',ico:'⛓️',ikm:10000,imo:null,cat:'Moto'},
   {id:'fourche_moto',label:'Vidange de fourche',ico:'🔧',ikm:null,imo:36,cat:'Moto'},
@@ -1162,6 +1172,7 @@ const TYPES=[
   {id:'gps_tracker',label:'GPS / tracker installé',ico:'📍',ikm:null,imo:null,cat:'Équipement'},
   {id:'dashcam',label:'Dashcam installée',ico:'📸',ikm:null,imo:null,cat:'Équipement'},
   {id:'attelage',label:'Attelage / crochet de remorque',ico:'🔗',ikm:null,imo:null,cat:'Équipement'},
+  {id:'autre',label:'Autre intervention',ico:'🔨',ikm:null,imo:null,cat:'Divers'},
 ];
 
 const CAR_DB={
@@ -2121,7 +2132,7 @@ function vcCompactHTML(v){
 
   return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}" style="margin-bottom:12px;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">
     <div class="vc-compact-main" onclick="openVehDetail('${v.id}')" style="cursor:pointer;padding:14px 14px 0">
-      <div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:1.4rem">${emoji}</div>
+      <div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-compact-info">
         <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-compact-sub">
@@ -2146,7 +2157,8 @@ function vcCompactHTML(v){
     <div class="vc-compact-acts" style="border-top:1px solid var(--border);margin:0 14px;padding:8px 0 12px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
-        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>`
+        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
@@ -2243,33 +2255,6 @@ function vcFullHTML(v){
   }
   if(advInfos.length){
     h+=`<div class="detail-pills" style="padding:0 14px 12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
-  }
-  // Section documents
-  if(isOwner){
-    const vdocs=S.documents.filter(d=>d.vehicle_id===v.id);
-    h+=`<div style="border-top:1px solid var(--border);padding:10px 14px 12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:.78rem;font-weight:700;color:var(--txm)">📄 DOCUMENTS (${vdocs.length})</span>
-        <button class="sec-lnk" onclick="event.stopPropagation();openDocument('${v.id}')">+ Ajouter</button>
-      </div>`;
-    if(vdocs.length){
-      h+=vdocs.map(d=>{
-        const nowD=new Date();
-        const ddays=d.date_expiration?Math.ceil((new Date(d.date_expiration)-nowD)/86400000):null;
-        const dcolor=ddays===null?'var(--txm)':ddays<0?'var(--err)':ddays<=30?'var(--warn)':'var(--ok)';
-        const dlabel=ddays===null?'':ddays<0?'Expiré':ddays===0?"Expire auj.":'Dans '+ddays+'j';
-        return`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="event.stopPropagation();openDocument('${v.id}','${d.id}')">
-          <span style="font-size:.85rem">📄</span>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.8rem;font-weight:600">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
-            ${d.date_expiration?`<div style="font-size:.7rem;color:${dcolor}">${dlabel} · Expire ${fmtDate(d.date_expiration)}</div>`:''}
-          </div>
-        </div>`;
-      }).join('');
-    } else {
-      h+=`<div style="font-size:.78rem;color:var(--txl)">Aucun document enregistré.</div>`;
-    }
-    h+=`</div>`;
   }
   if(isOwner){
     const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===v.id);
@@ -3004,6 +2989,7 @@ function openVehDetail(vid){
       <div style="flex:1;min-width:0">
         <div style="font-size:.82rem;font-weight:600">${esc(n.titre||'Note')}</div>
         ${n.contenu?`<div style="font-size:.72rem;color:var(--txm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.contenu)}</div>`:''}
+        ${n.created_at?`<div style="font-size:.68rem;color:var(--txl);margin-top:2px">${fmtDate(n.created_at)}</div>`:''}
       </div>
     </div>`).join('');
   } else {
@@ -3291,6 +3277,9 @@ function renderRap(){
     </div>
   </div>`;
 
+  // Mini calendrier
+  h+=buildRapCalendar();
+
   // Filtre vehicule
   if(S.vehicles.length>1){
     h+=`<div class="rap-filters"><button class="flt ${S.rapFilterVeh==='all'?'on':''}" onclick="S.rapFilterVeh='all';renderRap()">Tous</button>`;
@@ -3406,6 +3395,49 @@ function renderRap(){
 
   el.innerHTML=h;
 }
+function buildRapCalendar(){
+  if(!S._rapCalYear)S._rapCalYear=new Date().getFullYear();
+  if(!S._rapCalMonth&&S._rapCalMonth!==0)S._rapCalMonth=new Date().getMonth();
+  const year=S._rapCalYear, month=S._rapCalMonth;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const mois=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  // Collecter toutes les dates de rappel
+  const rapDates={};
+  getRappels().forEach(r=>{
+    const d=r.e?.rappel_date||r.rappel_date;
+    if(d)rapDates[d]=(rapDates[d]||[]).concat(r.sev);
+  });
+  S.rappels_custom.forEach(r=>{if(r.date_rappel)rapDates[r.date_rappel]=(rapDates[r.date_rappel]||[]).concat('rc');});
+  S.documents.forEach(d=>{if(d.date_expiration)rapDates[d.date_expiration]=(rapDates[d.date_expiration]||[]).concat('doc');});
+  // Construire le calendrier
+  const firstDay=new Date(year,month,1);
+  const lastDay=new Date(year,month+1,0);
+  let startDow=firstDay.getDay(); if(startDow===0)startDow=7; // lundi=1
+  let h=`<div class="rap-cal">`;
+  h+=`<div class="rap-cal-hdr">
+    <button class="rap-cal-nav" onclick="S._rapCalMonth--;if(S._rapCalMonth<0){S._rapCalMonth=11;S._rapCalYear--;}renderRap()">‹</button>
+    <span class="rap-cal-title">${mois[month]} ${year}</span>
+    <button class="rap-cal-nav" onclick="S._rapCalMonth++;if(S._rapCalMonth>11){S._rapCalMonth=0;S._rapCalYear++;}renderRap()">›</button>
+  </div>`;
+  h+=`<div class="rap-cal-grid">`;
+  ['Lu','Ma','Me','Je','Ve','Sa','Di'].forEach(j=>h+=`<div class="rap-cal-day-lbl">${j}</div>`);
+  // Cases vides avant le 1er
+  for(let i=1;i<startDow;i++) h+=`<div class="rap-cal-day other-month"></div>`;
+  // Jours du mois
+  for(let d=1;d<=lastDay.getDate();d++){
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=new Date(year,month,d).getTime()===today.getTime();
+    const raps=rapDates[dateStr]||[];
+    const sev=raps.includes('danger')?'danger':raps.includes('warn')?'warn':raps.length?'ok':'';
+    h+=`<div class="rap-cal-day${isToday?' today':''}${raps.length?' has-rap':''}">`;
+    h+=`<span>${d}</span>`;
+    if(sev) h+=`<div class="rap-cal-dot ${sev}"></div>`;
+    h+=`</div>`;
+  }
+  h+=`</div></div>`;
+  return h;
+}
+
 function scrollToRapSection(id){
   const el=document.getElementById(id);
   if(!el)return;
@@ -3771,6 +3803,10 @@ function renderProfil(){
   <div class="profil-card">
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Modifier le profil</div>
     ${_plan==='pro'?`
+    <div class="fr">
+      <div class="fg"><label class="fl">Prénom</label><input class="fc" id="prof-prenom" value="${esc(S.user.user_metadata?.prenom||S.user.user_metadata?.name||'')}" placeholder="Votre prénom"></div>
+      <div class="fg"><label class="fl">Nom</label><input class="fc" id="prof-nom" value="${esc(S.user.user_metadata?.nom||'')}" placeholder="Votre nom"></div>
+    </div>
     <div class="fg"><label class="fl">Société</label><input class="fc" id="prof-societe" value="${esc(S.user.user_metadata?.societe||'')}" placeholder="Nom de votre société"></div>
     <div class="fg"><label class="fl">Adresse</label><input class="fc" id="prof-adresse" value="${esc(S.user.user_metadata?.adresse||'')}" placeholder="Adresse complète"></div>
     `:`
@@ -3818,6 +3854,9 @@ async function saveProfil(){
   if(pass && pass.length>=8) updates.password=pass;
   let meta={...S.user.user_metadata};
   if(_plan==='pro'){
+    meta.prenom=g('prof-prenom')?.value.trim()||'';
+    meta.nom=g('prof-nom')?.value.trim()||'';
+    meta.name=(meta.prenom+' '+meta.nom).trim()||meta.name||'';
     meta.societe=g('prof-societe')?.value.trim()||'';
     meta.adresse=g('prof-adresse')?.value.trim()||'';
   } else {
@@ -4398,7 +4437,7 @@ function renderFlotte(){
     h+=`<div style="border:1px solid var(--border);border-left:4px solid ${borderCol};border-radius:18px;${bgCol||'background:#fff;'}box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:12px;overflow:hidden">`;
     // Ligne 1 : avatar + nom + bouton
     h+=`<div style="display:flex;align-items:center;gap:11px;padding:14px 14px 0;cursor:pointer" onclick="openVehDetail('${v.id}')">`;
-    h+=`<div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:1.4rem">${emoji}</div>`;
+    h+=`<div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>`;
     h+=`<div style="flex:1;min-width:0">`;
     h+=`<div style="font-weight:800;font-size:.97rem;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
     h+=`<div style="font-size:.75rem;color:var(--txm);margin-top:2px">${fmtKm(v.km_actuel)}${v.immatriculation?' · <span style="font-family:monospace">'+esc(v.immatriculation)+'</span>':''}</div>`;
