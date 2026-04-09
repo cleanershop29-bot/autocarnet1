@@ -32,6 +32,32 @@
   --sh-card:0 4px 12px rgba(37,99,235,.08);
   --r:18px;--r-sm:12px;
 }
+body.dark{
+  --bg:#1A1F2E;
+  --surface:#242938;
+  --border:#2E3548;
+  --primary:#4B8EF1;
+  --primary-lt:#1E2D4A;
+  --primary-dk:#3B7AE0;
+  --ok:#34D399;--ok-bg:#0D2E24;
+  --warn:#FBBF24;--warn-bg:#2C2000;
+  --err:#F87171;--err-bg:#2C1010;
+  --txt:#E8EAF0;--txm:#8B96AE;--txl:#4A5568;
+  --sh:0 2px 8px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.2);
+  --sh-lg:0 10px 28px rgba(0,0,0,.4);
+  --sh-card:0 4px 12px rgba(0,0,0,.3);
+}
+body.dark .appbar,body.dark .navbar,body.dark .modal,body.dark .auth-card{background:var(--surface)}
+body.dark .fc{background:var(--surface);color:var(--txt);border-color:var(--border)}
+body.dark .fc:focus{background:var(--primary-lt)}
+body.dark .btn-s{background:var(--surface);color:var(--txt);border-color:var(--border)}
+body.dark .btn-out{background:var(--surface);color:var(--txm);border-color:var(--border)}
+body.dark .ei,body.dark .ri,body.dark .ri2,body.dark .vc,body.dark .vc-compact,body.dark .stat,body.dark .chart,body.dark .si,body.dark .profil-card,body.dark .profil-card-premium,body.dark .faq-item,body.dark .info-box,body.dark .callout{background:var(--surface);border-color:var(--border)}
+body.dark .vc-chip,body.dark .vpi{background:#2E3548}
+body.dark .atab.on{background:var(--bg)}
+body.dark .fab-item{background:var(--surface)}
+body.dark #ls{background:#0A0F1E}
+body.dark .search-input{background:var(--surface);color:var(--txt);border-color:var(--border)}
 
 /* SWIPE */
 .ei-wrap{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:8px}
@@ -90,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 5px;border:none;background:none;font-family:inherit;font-size:.6rem;font-weight:600;color:var(--txm);cursor:pointer;position:relative}
 .nb.on{color:var(--primary)}
 .nb-ico{font-size:1.3rem;line-height:1}
-.rdot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--err);border-radius:50%;border:2px solid #fff}
+.rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid var(--bg);font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px}
 
 /* FAB */
 #fab{position:fixed;bottom:78px;right:14px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.45);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300;transition:transform .2s}
@@ -482,7 +508,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <div id="app-screen" class="hidden">
   <div class="appbar">
     <div class="appbar-logo">🚗 AutoCarnet</div>
-
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="btn-search-toggle" onclick="toggleSearch()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)">🔍</button>
+      <button id="btn-dark-toggle" onclick="toggleDark()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">🌙</button>
+    </div>
+  </div>
+  <div id="search-bar" style="display:none;padding:8px 16px 0;background:var(--surface);border-bottom:1px solid var(--border)">
+    <div class="search-wrap" style="margin-bottom:8px">
+      <span class="search-ico">🔍</span>
+      <input class="search-input" id="global-search" placeholder="Rechercher un véhicule, entretien, rappel…" oninput="renderGlobalSearch(this.value)" autocomplete="off">
+    </div>
+    <div id="global-search-results"></div>
   </div>
   <div class="content">
     <div class="tab on" id="t-dash"><div id="d-ctn"></div></div>
@@ -1216,7 +1252,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all'};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte'};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -1881,17 +1917,16 @@ function updatePremStar(){
   if(star) star.classList.toggle('hidden',!isPremium());
 }
 function updateDot(){
-  const hasUrgent=getRappels().some(x=>x.sev!=='ok');
-  const now=new Date();
-  const hasRcusUrgent=S.rappels_custom.some(r=>{
-    if(!r.date_rappel)return false;
-    return Math.ceil((new Date(r.date_rappel)-now)/86400000)<=0;
-  });
-  const hasDocExp=S.documents.some(d=>{
-    if(!d.date_expiration)return false;
-    return Math.ceil((new Date(d.date_expiration)-now)/86400000)<=30;
-  });
-  g("rdot").classList.toggle("hidden",!hasUrgent&&!hasRcusUrgent&&!hasDocExp);
+  const today=new Date();today.setHours(0,0,0,0);
+  const urgentRaps=getRappels().filter(x=>x.sev==='danger').length;
+  const urgentRcus=S.rappels_custom.filter(r=>r.date_rappel&&Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0).length;
+  const urgentDocs=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0).length;
+  const total=urgentRaps+urgentRcus+urgentDocs;
+  const rdot=g("rdot");
+  if(rdot){
+    rdot.classList.toggle("hidden",total===0);
+    rdot.textContent=total>9?'9+':total>0?total:'';
+  }
   const isPro=getUserPlan()==="pro";
   const flotteBtn=g("nb-flotte");
   const dashBtn=g("nb-dash");
@@ -2093,9 +2128,17 @@ function renderVehs(){
     +'<div style="color:#D97706;font-size:1rem">›</div>'
     +'</div>';
   const sortedVehs=[...S.vehicles].sort((a,b)=>{
-    const order={danger:0,warn:1,ok:2};
-    return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);
+    const sortMode=S.vehSort||'alerte';
+    if(sortMode==='alerte'){const order={danger:0,warn:1,ok:2};return(order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);}
+    if(sortMode==='km')return(b.km_actuel||0)-(a.km_actuel||0);
+    if(sortMode==='nom')return(a.marque+' '+a.modele).localeCompare(b.marque+' '+b.modele);
+    return 0;
   });
+  h+=`<div style="display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none">
+    <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderVehs()">⚠️ Alerte</button>
+    <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderVehs()">📍 Km</button>
+    <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderVehs()">🔤 Nom</button>
+  </div>`;
   h+=sortedVehs.map(v=>vcCompactHTML(v)).join('');
   el.innerHTML=h;
 }
@@ -2122,7 +2165,7 @@ function vcCompactHTML(v){
         <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-compact-sub">
           <span class="vc-compact-km">${fmtKm(v.km_actuel)}</span>
-          ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem">${esc(v.immatriculation)}</span>`:''}
+          ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem;cursor:pointer" title="Appui long pour copier" oncontextmenu="event.preventDefault();navigator.clipboard.writeText('${esc(v.immatriculation)}').then(()=>toast('Immatriculation copiée !','s'))" onclick="navigator.clipboard.writeText('${esc(v.immatriculation)}').then(()=>toast('Immatriculation copiée !','s'))">${esc(v.immatriculation)}</span>`:''}
           ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
         </div>
       </div>
@@ -2908,6 +2951,8 @@ function openVehDetail(vid){
     const max=Math.max(...costData.map(d=>d.total),1);
     h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
   }
+  // Graphique historique km
+  h+=buildKmChart(vid);
   // Actions — bloquees si vehicule en exces
   const _exces=isVehExces(vid);
   if(_exces){
@@ -4398,7 +4443,113 @@ async function doGoogleLogin(){
   });
   if(error)toast('Erreur Google : '+error.message,'e');
 }
-document.addEventListener("DOMContentLoaded", ()=>{init();});
+/* ══ MODE SOMBRE ══ */
+function toggleDark(){
+  const isDark=document.body.classList.toggle('dark');
+  localStorage.setItem('ac_dark',isDark?'1':'0');
+  g('btn-dark-toggle').textContent=isDark?'☀️':'🌙';
+}
+function initDark(){
+  const saved=localStorage.getItem('ac_dark');
+  const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if(saved==='1'||(saved===null&&prefersDark)){
+    document.body.classList.add('dark');
+    const btn=g('btn-dark-toggle');
+    if(btn)btn.textContent='☀️';
+  }
+}
+
+/* ══ RECHERCHE GLOBALE ══ */
+function toggleSearch(){
+  const bar=g('search-bar');
+  const input=g('global-search');
+  if(bar.style.display==='none'){
+    bar.style.display='block';
+    setTimeout(()=>input.focus(),50);
+  } else {
+    bar.style.display='none';
+    input.value='';
+    g('global-search-results').innerHTML='';
+  }
+}
+function renderGlobalSearch(q){
+  const el=g('global-search-results');
+  if(!q||q.length<2){el.innerHTML='';return;}
+  const ql=q.toLowerCase();
+  let h='';
+  // Véhicules
+  const vehs=S.vehicles.filter(v=>(v.marque+' '+v.modele).toLowerCase().includes(ql)||(v.immatriculation||'').toLowerCase().includes(ql));
+  if(vehs.length){
+    h+=`<div style="font-size:.7rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 4px">Véhicules</div>`;
+    h+=vehs.map(v=>`<div onclick="toggleSearch();openVehDetail('${v.id}')" style="padding:8px 10px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--bg);margin-bottom:4px">
+      <div style="width:28px;height:28px;border-radius:8px;background:${vehCardColor(v)};flex-shrink:0"></div>
+      <div><div style="font-size:.85rem;font-weight:600">${esc(v.marque)} ${esc(v.modele)}</div><div style="font-size:.72rem;color:var(--txm)">${fmtKm(v.km_actuel)}</div></div>
+    </div>`).join('');
+  }
+  // Entretiens
+  const ents=S.ents.filter(e=>{const ti=getType(e.type);return ti.label.toLowerCase().includes(ql)||(e.garage||'').toLowerCase().includes(ql)||(e.note||'').toLowerCase().includes(ql);}).slice(0,5);
+  if(ents.length){
+    h+=`<div style="font-size:.7rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 4px">Entretiens</div>`;
+    h+=ents.map(e=>{const ti=getType(e.type);const v=S.vehicles.find(x=>x.id===e.vehicle_id);return`<div onclick="toggleSearch();openEnt('${e.id}')" style="padding:8px 10px;border-radius:10px;cursor:pointer;background:var(--bg);margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:1.1rem">${ti.ico}</span>
+      <div><div style="font-size:.85rem;font-weight:600">${esc(ti.label)}</div><div style="font-size:.72rem;color:var(--txm)">${v?esc(v.marque)+' '+esc(v.modele)+' · ':''} ${fmtDate(e.date)}</div></div>
+    </div>`;}).join('');
+  }
+  // Rappels
+  const raps=S.rappels_custom.filter(r=>r.titre.toLowerCase().includes(ql)).slice(0,3);
+  if(raps.length){
+    h+=`<div style="font-size:.7rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 4px">Rappels</div>`;
+    h+=raps.map(r=>`<div onclick="toggleSearch();nav('rap')" style="padding:8px 10px;border-radius:10px;cursor:pointer;background:var(--bg);margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <span>📌</span><div style="font-size:.85rem;font-weight:600">${esc(r.titre)}</div>
+    </div>`).join('');
+  }
+  if(!h)h=`<div style="font-size:.85rem;color:var(--txm);padding:8px 0">Aucun résultat pour "${esc(q)}"</div>`;
+  el.innerHTML=h;
+}
+
+/* ══ HISTORIQUE KM ══ */
+async function saveKmHistory(vid,km){
+  try{
+    await sb.from('km_history').insert({vehicle_id:vid,user_id:S.user.id,km,date:new Date().toISOString().split('T')[0]});
+  }catch(e){/* table optionnelle */}
+}
+function buildKmChart(vid){
+  // Reconstituer historique depuis les entretiens (km saisis)
+  const ents=S.ents.filter(e=>e.vehicle_id===vid&&e.km).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(!ents.length&&!v?.km_actuel)return'';
+  const points=[...ents.map(e=>({date:e.date,km:e.km}))];
+  if(v?.km_actuel&&(!points.length||v.km_actuel>points[points.length-1]?.km)){
+    points.push({date:new Date().toISOString().split('T')[0],km:v.km_actuel,today:true});
+  }
+  if(points.length<2)return`<div style="font-size:.8rem;color:var(--txm);margin-bottom:12px">Ajoutez des entretiens avec kilométrage pour voir l'évolution.</div>`;
+  const minKm=Math.min(...points.map(p=>p.km));
+  const maxKm=Math.max(...points.map(p=>p.km));
+  const range=maxKm-minKm||1;
+  const W=300,H=60;
+  const pts=points.map((p,i)=>{
+    const x=10+(i/(points.length-1))*(W-20);
+    const y=H-10-((p.km-minKm)/range)*(H-20);
+    return{x,y,p};
+  });
+  const path=pts.map((p,i)=>(i===0?`M${p.x},${p.y}`:`L${p.x},${p.y}`)).join(' ');
+  const area=`M${pts[0].x},${H} ${pts.map(p=>`L${p.x},${p.y}`).join(' ')} L${pts[pts.length-1].x},${H} Z`;
+  return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:12px">
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:8px">📈 Évolution kilométrage</div>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible">
+      <defs><linearGradient id="kmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity=".2"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/></linearGradient></defs>
+      <path d="${area}" fill="url(#kmg)"/>
+      <path d="${path}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="${p.p.today?4:2.5}" fill="${p.p.today?'var(--primary)':'var(--surface)'}" stroke="var(--primary)" stroke-width="1.5"/>`).join('')}
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--txl);margin-top:4px">
+      <span>${fmtDate(points[0].date)} · ${fmtKm(points[0].km)}</span>
+      <span>${fmtDate(points[points.length-1].date)} · ${fmtKm(points[points.length-1].km)}</span>
+    </div>
+  </div>`;
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{initDark();init();});
 </script>
 </body>
 </html>
