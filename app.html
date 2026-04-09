@@ -27,12 +27,11 @@
   --warn:#D97706;--warn-bg:#FFFBEB;
   --err:#DC2626;--err-bg:#FEF2F2;
   --txt:#0A0F1E;--txm:#64748B;--txl:#94A3B8;
-  --sh:0 2px 6px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --sh-lg:0 10px 28px rgba(0,0,0,.10);
-  --sh-card:0 4px 12px rgba(37,99,235,.08);
+  --sh:0 4px 14px rgba(0,0,0,.10),0 1px 4px rgba(0,0,0,.06);
+  --sh-lg:0 12px 32px rgba(0,0,0,.14);
+  --sh-card:0 6px 18px rgba(37,99,235,.12);
   --r:18px;--r-sm:12px;
 }
-
 /* SWIPE */
 .ei-wrap{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:8px}
 .ei-swipe-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--err);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;border-radius:0 var(--r) var(--r) 0}
@@ -2158,8 +2157,8 @@ function vcCompactHTML(v){
     <div class="vc-compact-acts" style="border-top:1px solid var(--border);margin:0 14px;padding:8px 0 12px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
-        :`<button class="btn btn-s btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-         <button class="btn btn-s btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
+        :`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+         <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
@@ -4395,7 +4394,7 @@ function renderFlotte(){
     h+=`</div>`;
     // Actions
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
-    h+=`<button class="btn btn-s btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
+    h+=`<button class="btn btn-p btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
     h+=`<button class="btn btn-p btn-sm" onclick="openVehDetail('${v.id}')">Détail →</button>`;
     h+=`</div>`;
     h+=`</div>`;
@@ -4416,6 +4415,7 @@ async function doGoogleLogin(){
   });
   if(error)toast('Erreur Google : '+error.message,'e');
 }
+
 /* ══ RECHERCHE GLOBALE ══ */
 function toggleSearch(){
   const bar=g('search-bar');
@@ -4478,23 +4478,46 @@ function buildKmChart(vid){
     points.push({date:new Date().toISOString().split('T')[0],km:v.km_actuel});
   }
   if(points.length<2)return'';
+  return`<button class="btn btn-s btn-sm" style="font-size:.78rem;color:var(--txm)" onclick="openKmChart('${vid}')">📈 Évolution km</button>`;
+}
+function openKmChart(vid){
+  const ents=S.ents.filter(e=>e.vehicle_id===vid&&e.km).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const v=S.vehicles.find(x=>x.id===vid);
+  const points=[...ents.map(e=>({date:e.date,km:e.km}))];
+  if(v?.km_actuel&&(!points.length||v.km_actuel>points[points.length-1]?.km)){
+    points.push({date:new Date().toISOString().split('T')[0],km:v.km_actuel});
+  }
+  if(points.length<2)return;
   const minKm=Math.min(...points.map(p=>p.km));
   const maxKm=Math.max(...points.map(p=>p.km));
   const range=maxKm-minKm||1;
-  const W=280,H=36;
+  const W=300,H=90;
   const pts=points.map((p,i)=>({
-    x:Math.round(4+(i/(points.length-1))*(W-8)),
-    y:Math.round(H-4-((p.km-minKm)/range)*(H-8)),
-    km:p.km
+    x:Math.round(10+(i/(points.length-1))*(W-20)),
+    y:Math.round(H-10-((p.km-minKm)/range)*(H-20)),
+    date:p.date,km:p.km
   }));
   const path=pts.map((p,i)=>(i===0?`M${p.x},${p.y}`:`L${p.x},${p.y}`)).join(' ');
-  return`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border-radius:var(--r-sm);margin-bottom:12px">
-    <div style="font-size:.68rem;color:var(--txm);font-weight:600;white-space:nowrap">📈 ${fmtKm(minKm)} → ${fmtKm(maxKm)}</div>
-    <svg viewBox="0 0 ${W} ${H}" style="flex:1;height:28px;overflow:visible">
-      <path d="${path}" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
-      <circle cx="${pts[pts.length-1].x}" cy="${pts[pts.length-1].y}" r="3" fill="var(--primary)"/>
-    </svg>
-  </div>`;
+  const area=`M${pts[0].x},${H} ${pts.map(p=>`L${p.x},${p.y}`).join(' ')} L${pts[pts.length-1].x},${H} Z`;
+  cfm(`📈 Évolution km — ${esc(v.marque)} ${esc(v.modele)}`,'',null);
+  setTimeout(()=>{
+    const b=document.querySelector('#mo-cfm .mbdy');
+    if(!b)return;
+    b.innerHTML=`
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin-bottom:12px;overflow:visible">
+        <defs><linearGradient id="kmg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563EB" stop-opacity=".15"/><stop offset="100%" stop-color="#2563EB" stop-opacity="0"/></linearGradient></defs>
+        <path d="${area}" fill="url(#kmg2)"/>
+        <path d="${path}" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>`).join('')}
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#64748B">
+        <span>${fmtDate(points[0].date)}<br><strong>${fmtKm(points[0].km)}</strong></span>
+        <span style="text-align:right">${fmtDate(points[points.length-1].date)}<br><strong>${fmtKm(points[points.length-1].km)}</strong></span>
+      </div>
+    `;
+    const f=document.querySelector('#mo-cfm .mft');
+    if(f)f.style.display='none';
+  },30);
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{init();});
