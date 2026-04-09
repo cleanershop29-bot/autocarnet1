@@ -310,21 +310,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 /* FILTRE RAPPELS */
 .rap-filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
 .rap-filters::-webkit-scrollbar{display:none}
-/* CALENDRIER RAPPELS */
-.rap-cal{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin-bottom:12px;border:1px solid var(--border)}
-.rap-cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.rap-cal-title{font-size:.88rem;font-weight:800;color:var(--txt)}
-.rap-cal-nav{width:28px;height:28px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--txm)}
-.rap-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.rap-cal-day-lbl{font-size:.62rem;font-weight:700;color:var(--txl);text-align:center;padding:3px 0;text-transform:uppercase}
-.rap-cal-day{min-height:34px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.75rem;font-weight:500;color:var(--txm)}
-.rap-cal-day.today{background:var(--primary-lt);color:var(--primary);font-weight:800}
-.rap-cal-day.has-rap{font-weight:700;color:var(--txt)}
-.rap-cal-day.other-month{opacity:.3}
-.rap-cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px}
-.rap-cal-dot.danger{background:var(--err)}
-.rap-cal-dot.warn{background:var(--warn)}
-.rap-cal-dot.ok{background:var(--ok)}
+/* CALENDRIER RDV — discret */
+.rap-rdv-strip{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:var(--r-sm);padding:10px 14px;margin-bottom:10px;border:1px solid var(--border);box-shadow:var(--sh)}
+.rap-rdv-strip-left{font-size:.82rem;color:var(--txm);font-weight:500}
+.rap-rdv-strip-left strong{color:var(--txt);font-weight:700}
+.rap-rdv-btn{display:inline-flex;align-items:center;gap:5px;background:var(--primary-lt);color:var(--primary);border:1px solid var(--blue-mid,#BFDBFE);border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;border-color:#BFDBFE}
 /* CARTE RAPPEL ENRICHIE */
 .ri2{background:#fff;border-radius:var(--r);padding:12px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);margin-bottom:7px;cursor:pointer;border:1px solid var(--border);border-left:4px solid var(--border)}
 .ri2.danger{border-left-color:var(--err);background:var(--err-bg)}
@@ -979,6 +969,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         <button class="btn btn-p btn-sm" onclick="saveRappelCustom()">Enregistrer</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL RDV -->
+<div class="mo" id="mo-rdv" onclick="if(event.target===this)cm('rdv')">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit">📅 Nouveau rendez-vous</div><button class="mcls" onclick="cm('rdv')">✕</button></div>
+    <div class="mbdy">
+      <div class="fg"><label class="fl">Titre *</label><input class="fc" id="rdv-titre" placeholder="Ex: Révision garage, RDV carrosserie…"></div>
+      <div class="fg"><label class="fl">Date *</label><input class="fc" id="rdv-date" type="date"></div>
+      <div class="fg"><label class="fl">Véhicule (optionnel)</label>
+        <select class="fc" id="rdv-vid"><option value="">— Tous les véhicules —</option></select>
+      </div>
+      <div class="fg"><label class="fl">Note</label><input class="fc" id="rdv-note" placeholder="Informations complémentaires…"></div>
+    </div>
+    <div class="mft"><button class="btn btn-s" onclick="cm('rdv')">Annuler</button><button class="btn btn-p" onclick="saveRdv()">Enregistrer</button></div>
   </div>
 </div>
 
@@ -2939,7 +2945,6 @@ function openVehDetail(vid){
       <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
       <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')">🔗 Lien</button>
-      <button class="btn btn-s btn-sm" onclick="openCarburantPage()">⛽ Carburant</button>
     </div>`;
   }
   h+=statsHTML(vid);
@@ -2994,27 +2999,6 @@ function openVehDetail(vid){
     </div>`).join('');
   } else {
     h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucune note.</div>`;
-  }
-  // Documents
-  const vdocs=S.documents.filter(d=>d.vehicle_id===vid);
-  h+=`<div class="sec-hdr"><span class="sec-ttl">📄 Documents (${vdocs.length})</span><button class="sec-lnk" onclick="openDocument('${vid}')">+ Ajouter</button></div>`;
-  if(vdocs.length){
-    h+=vdocs.map(d=>{
-      const nowD=new Date();
-      const ddays=d.date_expiration?Math.ceil((new Date(d.date_expiration)-nowD)/86400000):null;
-      const dcolor=ddays===null?'var(--txm)':ddays<0?'var(--err)':ddays<=30?'var(--warn)':'var(--ok)';
-      const dlabel=ddays===null?'':ddays<0?'Expiré':ddays===0?"Expire auj.":'Dans '+ddays+'j';
-      return`<div class="ei-inline" onclick="openDocument('${vid}','${d.id}')">
-        ${d.photo_url?`<img src="${d.photo_url}" onclick="event.stopPropagation();openLightbox('${d.photo_url}','${esc(d.type)}${d.nom?' — '+esc(d.nom):''}')" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in" loading="lazy">`:`<span style="font-size:1rem">📄</span>`}
-        <div style="flex:1;min-width:0">
-          <div style="font-size:.82rem;font-weight:600">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div>
-          ${d.date_expiration?`<div style="font-size:.7rem;color:${dcolor}">${dlabel} · Expire ${fmtDate(d.date_expiration)}</div>`:''}
-          ${d.photo_url?`<div style="font-size:.68rem;color:var(--txm)">📷 Photo disponible</div>`:''}
-        </div>
-      </div>`;
-    }).join('');
-  } else {
-    h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun document.</div>`;
   }
   // Rappels
   const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===vid);
@@ -3396,46 +3380,46 @@ function renderRap(){
   el.innerHTML=h;
 }
 function buildRapCalendar(){
-  if(!S._rapCalYear)S._rapCalYear=new Date().getFullYear();
-  if(!S._rapCalMonth&&S._rapCalMonth!==0)S._rapCalMonth=new Date().getMonth();
-  const year=S._rapCalYear, month=S._rapCalMonth;
-  const today=new Date(); today.setHours(0,0,0,0);
-  const mois=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  // Collecter toutes les dates de rappel
-  const rapDates={};
-  getRappels().forEach(r=>{
-    const d=r.e?.rappel_date||r.rappel_date;
-    if(d)rapDates[d]=(rapDates[d]||[]).concat(r.sev);
-  });
-  S.rappels_custom.forEach(r=>{if(r.date_rappel)rapDates[r.date_rappel]=(rapDates[r.date_rappel]||[]).concat('rc');});
-  S.documents.forEach(d=>{if(d.date_expiration)rapDates[d.date_expiration]=(rapDates[d.date_expiration]||[]).concat('doc');});
-  // Construire le calendrier
-  const firstDay=new Date(year,month,1);
-  const lastDay=new Date(year,month+1,0);
-  let startDow=firstDay.getDay(); if(startDow===0)startDow=7; // lundi=1
-  let h=`<div class="rap-cal">`;
-  h+=`<div class="rap-cal-hdr">
-    <button class="rap-cal-nav" onclick="S._rapCalMonth--;if(S._rapCalMonth<0){S._rapCalMonth=11;S._rapCalYear--;}renderRap()">‹</button>
-    <span class="rap-cal-title">${mois[month]} ${year}</span>
-    <button class="rap-cal-nav" onclick="S._rapCalMonth++;if(S._rapCalMonth>11){S._rapCalMonth=0;S._rapCalYear++;}renderRap()">›</button>
+  const today=new Date();
+  const jours=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const mois=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  const dateStr=`${jours[today.getDay()]} ${today.getDate()} ${mois[today.getMonth()]} ${today.getFullYear()}`;
+  // Prochain RDV dans les rappels custom
+  const t=new Date();t.setHours(0,0,0,0);
+  const prochainRdv=S.rappels_custom
+    .filter(r=>r.date_rappel&&Math.ceil((new Date(r.date_rappel)-t)/86400000)>0)
+    .sort((a,b)=>new Date(a.date_rappel)-new Date(b.date_rappel))[0];
+  const rdvLabel=prochainRdv
+    ?`Prochain RDV : <strong>${esc(prochainRdv.titre)}</strong> le ${fmtDate(prochainRdv.date_rappel)}`
+    :`Aucun RDV à venir`;
+  return`<div class="rap-rdv-strip">
+    <div class="rap-rdv-strip-left">📅 ${dateStr} &nbsp;·&nbsp; ${rdvLabel}</div>
+    <button class="rap-rdv-btn" onclick="openRdv()">+ RDV</button>
   </div>`;
-  h+=`<div class="rap-cal-grid">`;
-  ['Lu','Ma','Me','Je','Ve','Sa','Di'].forEach(j=>h+=`<div class="rap-cal-day-lbl">${j}</div>`);
-  // Cases vides avant le 1er
-  for(let i=1;i<startDow;i++) h+=`<div class="rap-cal-day other-month"></div>`;
-  // Jours du mois
-  for(let d=1;d<=lastDay.getDate();d++){
-    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday=new Date(year,month,d).getTime()===today.getTime();
-    const raps=rapDates[dateStr]||[];
-    const sev=raps.includes('danger')?'danger':raps.includes('warn')?'warn':raps.length?'ok':'';
-    h+=`<div class="rap-cal-day${isToday?' today':''}${raps.length?' has-rap':''}">`;
-    h+=`<span>${d}</span>`;
-    if(sev) h+=`<div class="rap-cal-dot ${sev}"></div>`;
-    h+=`</div>`;
-  }
-  h+=`</div></div>`;
-  return h;
+}
+
+function openRdv(date){
+  g('rdv-titre').value='';
+  g('rdv-date').value=date||new Date().toISOString().split('T')[0];
+  g('rdv-note').value='';
+  const sel=g('rdv-vid');
+  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  om('rdv');
+}
+async function saveRdv(){
+  const titre=g('rdv-titre').value.trim();
+  const date=g('rdv-date').value;
+  if(!titre)return toast('Le titre est requis.','e');
+  if(!date)return toast('La date est requise.','e');
+  const note=g('rdv-note').value.trim()||null;
+  const vid=g('rdv-vid').value||null;
+  const p={id:crypto.randomUUID(),user_id:S.user.id,vehicle_id:vid,titre,description:note,date_rappel:date,recurrent:false,intervalle_mois:null,statut:'actif'};
+  const{error}=await sb.from('rappels_custom').insert(p);
+  if(error)return toast('Erreur : '+error.message,'e');
+  toast('RDV enregistré !','s');
+  cm('rdv');
+  await loadRappelsCustom();
+  renderView();
 }
 
 function scrollToRapSection(id){
