@@ -2239,23 +2239,6 @@ function vcFullHTML(v){
     h+=`</div>`;
   }
 
-  // Infos avancées véhicule — affichées si renseignées
-  const advInfos=[];
-  if(v.transmission)advInfos.push({ico:'⚙️',val:v.transmission});
-  if(v.traction)advInfos.push({ico:'🔀',val:v.traction});
-  if(v.nb_portes)advInfos.push({ico:'🚪',val:v.nb_portes+' portes'});
-  if(v.puissance_kw)advInfos.push({ico:'⚡',val:v.puissance_kw+' kW'});
-  if(v.valeur_achat)advInfos.push({ico:'💰',val:'Achat : '+fmtCout(v.valeur_achat)});
-  if(v.valeur_actuelle)advInfos.push({ico:'📈',val:'Valeur : '+fmtCout(v.valeur_actuelle)});
-  if(v.assurance_compagnie)advInfos.push({ico:'🛡️',val:v.assurance_compagnie});
-  if(v.assurance_echeance){
-    const days=Math.ceil((new Date(v.assurance_echeance)-new Date())/86400000);
-    const color=days<0?'var(--err)':days<=30?'var(--warn)':'var(--ok)';
-    advInfos.push({ico:'📋',val:'Assurance : '+fmtDate(v.assurance_echeance),color});
-  }
-  if(advInfos.length){
-    h+=`<div class="detail-pills" style="padding:0 14px 12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
-  }
   if(isOwner){
     const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===v.id);
     const today2=new Date();today2.setHours(0,0,0,0);
@@ -2911,7 +2894,7 @@ function openVehDetail(vid){
   const costData=getCostsByYear(vid);
   let h='';
   // Stats
-  h+=`<div class="vc-stats-row" style="border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px">
+  h+=`<div class="vc-stats-row" style="border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px;background:#fff;box-shadow:var(--sh)">
     <div><span class="vs-v">${fmtKm(v.km_actuel)}</span><span class="vs-l">Kilométrage</span></div>
     <div><span class="vs-v">${es.length}</span><span class="vs-l">Entretiens</span></div>
     <div><span class="vs-v" style="font-size:.82rem">${fmtCout(total)}</span><span class="vs-l">Coût total</span></div>
@@ -2920,7 +2903,8 @@ function openVehDetail(vid){
   </div>`;
   // Graphique
   if(costData.length>1){
-    h+=`<button class="btn btn-s btn-sm" style="font-size:.78rem;color:var(--txm);margin-bottom:8px" onclick="openCostChart('${vid}')">💶 Coûts par année</button>`;
+    const max=Math.max(...costData.map(d=>d.total),1);
+    h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
   }
   // Graphique historique km
   h+=buildKmChart(vid);
@@ -2965,21 +2949,6 @@ function openVehDetail(vid){
     h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun entretien.</div>`;
   }
   // Infos avancées
-  const advInfos=[];
-  if(v.transmission)advInfos.push({ico:'⚙️',val:v.transmission});
-  if(v.traction)advInfos.push({ico:'🔀',val:v.traction});
-  if(v.nb_portes)advInfos.push({ico:'🚪',val:v.nb_portes+' portes'});
-  if(v.puissance_kw)advInfos.push({ico:'⚡',val:v.puissance_kw+' kW'});
-  if(v.co2)advInfos.push({ico:'💨',val:v.co2+' g/km CO₂'});
-  if(v.valeur_achat)advInfos.push({ico:'💰',val:'Achat : '+fmtCout(v.valeur_achat)});
-  if(v.valeur_actuelle)advInfos.push({ico:'📈',val:'Valeur : '+fmtCout(v.valeur_actuelle)});
-  if(v.assurance_compagnie)advInfos.push({ico:'🛡️',val:v.assurance_compagnie});
-  if(v.assurance_echeance){
-    const days=Math.ceil((new Date(v.assurance_echeance)-new Date())/86400000);
-    const color=days<0?'var(--err)':days<=30?'var(--warn)':'var(--ok)';
-    advInfos.push({ico:'📋',val:'Assurance : '+fmtDate(v.assurance_echeance),color});
-  }
-  if(advInfos.length)h+=`<div class="detail-pills" style="margin-bottom:12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
   // Notes
   const vnotes=(S.veh_notes||[]).filter(n=>n.vehicle_id===vid);
   h+=`<div class="sec-hdr"><span class="sec-ttl">📝 Notes (${vnotes.length})</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openVehNote('${vid}')">+ Ajouter</button></div>`;
@@ -4514,31 +4483,6 @@ function openKmChart(vid){
         <span style="text-align:right">${fmtDate(points[points.length-1].date)}<br><strong>${fmtKm(points[points.length-1].km)}</strong></span>
       </div>
     `;
-    const f=document.querySelector('#mo-cfm .mft');
-    if(f)f.style.display='none';
-  },30);
-}
-
-function openCostChart(vid){
-  const data=getCostsByYear(vid);
-  const v=S.vehicles.find(x=>x.id===vid);
-  if(!data.length)return;
-  const max=Math.max(...data.map(d=>d.total),1);
-  const W=300,H=90;
-  const barW=Math.floor((W-20)/data.length)-6;
-  const bars=data.map((d,i)=>{
-    const h=Math.max(Math.round(d.total/max*(H-20)),4);
-    const x=10+i*((W-20)/data.length);
-    const y=H-10-h;
-    return`<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="3" fill="#2563EB" opacity=".8"/>
-      <text x="${x+barW/2}" y="${y-4}" text-anchor="middle" font-size="8" fill="#64748B">${Math.round(d.total)}€</text>
-      <text x="${x+barW/2}" y="${H-1}" text-anchor="middle" font-size="8" fill="#94A3B8">${d.year}</text>`;
-  }).join('');
-  cfm(`💶 Coûts par année — ${esc(v.marque)} ${esc(v.modele)}`,'',null);
-  setTimeout(()=>{
-    const b=document.querySelector('#mo-cfm .mbdy');
-    if(!b)return;
-    b.innerHTML=`<svg viewBox="0 0 ${W} ${H+12}" style="width:100%;height:auto;overflow:visible;margin-bottom:8px">${bars}</svg>`;
     const f=document.querySelector('#mo-cfm .mft');
     if(f)f.style.display='none';
   },30);
