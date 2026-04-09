@@ -310,11 +310,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 /* FILTRE RAPPELS */
 .rap-filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
 .rap-filters::-webkit-scrollbar{display:none}
-/* CALENDRIER RDV — discret */
-.rap-rdv-strip{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:var(--r-sm);padding:10px 14px;margin-bottom:10px;border:1px solid var(--border);box-shadow:var(--sh)}
-.rap-rdv-strip-left{font-size:.82rem;color:var(--txm);font-weight:500}
-.rap-rdv-strip-left strong{color:var(--txt);font-weight:700}
-.rap-rdv-btn{display:inline-flex;align-items:center;gap:5px;background:var(--primary-lt);color:var(--primary);border:1px solid var(--blue-mid,#BFDBFE);border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;border-color:#BFDBFE}
 /* CARTE RAPPEL ENRICHIE */
 .ri2{background:#fff;border-radius:var(--r);padding:12px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);margin-bottom:7px;cursor:pointer;border:1px solid var(--border);border-left:4px solid var(--border)}
 .ri2.danger{border-left-color:var(--err);background:var(--err-bg)}
@@ -969,22 +964,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         <button class="btn btn-p btn-sm" onclick="saveRappelCustom()">Enregistrer</button>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- MODAL RDV -->
-<div class="mo" id="mo-rdv" onclick="if(event.target===this)cm('rdv')">
-  <div class="modal">
-    <div class="mhdr"><div class="mtit">📅 Nouveau rendez-vous</div><button class="mcls" onclick="cm('rdv')">✕</button></div>
-    <div class="mbdy">
-      <div class="fg"><label class="fl">Titre *</label><input class="fc" id="rdv-titre" placeholder="Ex: Révision garage, RDV carrosserie…"></div>
-      <div class="fg"><label class="fl">Date *</label><input class="fc" id="rdv-date" type="date"></div>
-      <div class="fg"><label class="fl">Véhicule (optionnel)</label>
-        <select class="fc" id="rdv-vid"><option value="">— Tous les véhicules —</option></select>
-      </div>
-      <div class="fg"><label class="fl">Note</label><input class="fc" id="rdv-note" placeholder="Informations complémentaires…"></div>
-    </div>
-    <div class="mft"><button class="btn btn-s" onclick="cm('rdv')">Annuler</button><button class="btn btn-p" onclick="saveRdv()">Enregistrer</button></div>
   </div>
 </div>
 
@@ -3262,8 +3241,6 @@ function renderRap(){
   </div>`;
 
   // Mini calendrier
-  h+=buildRapCalendar();
-
   // Filtre vehicule
   if(S.vehicles.length>1){
     h+=`<div class="rap-filters"><button class="flt ${S.rapFilterVeh==='all'?'on':''}" onclick="S.rapFilterVeh='all';renderRap()">Tous</button>`;
@@ -3277,7 +3254,7 @@ function renderRap(){
   // Boutons actions
   h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
     <button class="btn btn-s btn-sm" onclick="openEnt()">🔧 + Entretien</button>
-    <button class="btn btn-p btn-sm" onclick="openRappelCustom()">📌 + Rappel</button>
+    <button class="btn btn-p btn-sm" onclick="openRappelCustom()">📌 + Rappel / RDV</button>
   </div>`;
 
   function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
@@ -3379,49 +3356,6 @@ function renderRap(){
 
   el.innerHTML=h;
 }
-function buildRapCalendar(){
-  const today=new Date();
-  const jours=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-  const mois=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
-  const dateStr=`${jours[today.getDay()]} ${today.getDate()} ${mois[today.getMonth()]} ${today.getFullYear()}`;
-  // Prochain RDV dans les rappels custom
-  const t=new Date();t.setHours(0,0,0,0);
-  const prochainRdv=S.rappels_custom
-    .filter(r=>r.date_rappel&&Math.ceil((new Date(r.date_rappel)-t)/86400000)>0)
-    .sort((a,b)=>new Date(a.date_rappel)-new Date(b.date_rappel))[0];
-  const rdvLabel=prochainRdv
-    ?`Prochain RDV : <strong>${esc(prochainRdv.titre)}</strong> le ${fmtDate(prochainRdv.date_rappel)}`
-    :`Aucun RDV à venir`;
-  return`<div class="rap-rdv-strip">
-    <div class="rap-rdv-strip-left">📅 ${dateStr} &nbsp;·&nbsp; ${rdvLabel}</div>
-    <button class="rap-rdv-btn" onclick="openRdv()">+ RDV</button>
-  </div>`;
-}
-
-function openRdv(date){
-  g('rdv-titre').value='';
-  g('rdv-date').value=date||new Date().toISOString().split('T')[0];
-  g('rdv-note').value='';
-  const sel=g('rdv-vid');
-  sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
-  om('rdv');
-}
-async function saveRdv(){
-  const titre=g('rdv-titre').value.trim();
-  const date=g('rdv-date').value;
-  if(!titre)return toast('Le titre est requis.','e');
-  if(!date)return toast('La date est requise.','e');
-  const note=g('rdv-note').value.trim()||null;
-  const vid=g('rdv-vid').value||null;
-  const p={id:crypto.randomUUID(),user_id:S.user.id,vehicle_id:vid,titre,description:note,date_rappel:date,recurrent:false,intervalle_mois:null,statut:'actif'};
-  const{error}=await sb.from('rappels_custom').insert(p);
-  if(error)return toast('Erreur : '+error.message,'e');
-  toast('RDV enregistré !','s');
-  cm('rdv');
-  await loadRappelsCustom();
-  renderView();
-}
-
 function scrollToRapSection(id){
   const el=document.getElementById(id);
   if(!el)return;
