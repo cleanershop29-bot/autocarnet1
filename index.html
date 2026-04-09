@@ -91,20 +91,6 @@
 }
 </script>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "AggregateRating",
-  "itemReviewed": {
-    "@type": "SoftwareApplication",
-    "name": "AutoCarnet"
-  },
-  "ratingValue": "4.8",
-  "bestRating": "5",
-  "ratingCount": "47"
-}
-</script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -347,10 +333,10 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       <div class="pill"><div class="pill-dot"></div>PWA · Fonctionne hors ligne</div>
     </div>
     <div class="rv d1">
-      <h1>Ne perdez plus jamais<br>l'histoire de <em>votre voiture</em></h1>
+      <h1>Plus jamais de CT raté,<br>de vidange oubliée,<br>de <em>facture perdue</em></h1>
     </div>
     <div class="rv d2">
-      <p class="hero-sub">Rappels automatiques, historique complet, gestion de flotte — tout dans une app gratuite. Plus de carnet papier perdu, plus de CT raté.</p>
+      <p class="hero-sub">AutoCarnet enregistre chaque entretien et vous alerte avant chaque échéance. Gratuit, sans publicité, sans application à télécharger.</p>
     </div>
     <div class="rv d3 cta-group">
       <a href="/app.html" class="btn-primary">🚀 Créer mon compte gratuit</a>
@@ -407,10 +393,10 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
 <!-- PROOF BAND -->
 <div class="proof-band">
   <div class="proof-in">
-    <div class="rv"><div class="proof-n" data-count="44">0</div><div class="proof-l">Types d'interventions</div></div>
-    <div class="rv d1"><div class="proof-n" data-count="200" data-suffix="+">0</div><div class="proof-l">Modèles de véhicules</div></div>
-    <div class="rv d2"><div class="proof-n" data-count="3">0</div><div class="proof-l">Plans disponibles</div></div>
-    <div class="rv d3"><div class="proof-n" data-count="100" data-suffix="%">0</div><div class="proof-l">Données privées</div></div>
+    <div class="rv"><div class="proof-n">44</div><div class="proof-l">Types d'interventions</div></div>
+    <div class="rv d1"><div class="proof-n">200+</div><div class="proof-l">Modèles de véhicules</div></div>
+    <div class="rv d2"><div class="proof-n">0€</div><div class="proof-l">Pour commencer</div></div>
+    <div class="rv d3"><div class="proof-n">0</div><div class="proof-l">Publicité</div></div>
   </div>
 </div>
 
@@ -501,7 +487,6 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       </div>
       <!-- Famille -->
       <div class="p-card popular rv d1">
-        <div class="p-chip chip-green">Le plus populaire</div>
         <div class="p-plan">Famille</div>
         <div class="p-amt">1,99€<span>/mois</span></div>
         <div class="p-trial">7 jours offerts · Sans engagement</div>
@@ -607,11 +592,15 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       </div>
       <div class="faq-item rv d2">
         <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Ça fonctionne sur iPhone et Android ? <span class="faq-arrow">+</span></div>
-        <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur — sans passer par l'App Store ou Google Play.</div>
+        <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une application web — vous l'ouvrez dans votre navigateur comme un site, et vous pouvez l'installer sur votre écran d'accueil en un tap, sans passer par l'App Store ou Google Play. Aucun téléchargement requis.</div>
       </div>
       <div class="faq-item rv d3">
         <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Puis-je annuler mon abonnement à tout moment ? <span class="faq-arrow">+</span></div>
         <div class="faq-a">Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer.</div>
+      </div>
+      <div class="faq-item rv">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Pourquoi ce n'est pas sur l'App Store ? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">AutoCarnet est une application web progressive (PWA). Ça signifie qu'elle fonctionne directement dans votre navigateur, sans intermédiaire. Avantage : aucune mise à jour manuelle, aucune commission à l'App Store, et un accès immédiat depuis n'importe quel appareil. Elle est installable sur votre écran d'accueil en quelques secondes.</div>
       </div>
       <div class="faq-item rv">
         <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Est-ce que ça marche sans internet ? <span class="faq-arrow">+</span></div>
@@ -625,7 +614,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
 <section class="final-cta">
   <div style="position:relative">
     <h2>Votre voiture mérite mieux<br>qu'un carnet papier</h2>
-    <p>Rejoignez des milliers d'automobilistes qui n'oublient plus jamais<br>un entretien. Gratuit, sans publicité, sans engagement.</p>
+    <p>Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
     <a href="/app.html" class="final-btn">🚀 Créer mon compte gratuit</a>
     <div class="install-note">
       <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
@@ -653,8 +642,8 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
     <a href="/cdn-cgi/l/email-protection#9bfaeeeff4f8fae9f5feefebe9f4dbfcf6faf2f7b5f8f4f6">Contact</a>
     <a href="/blog.html">Blog</a> · <a href="/faq.html">FAQ</a> · <a href="/calculateur-vidange.html">Calculateur vidange</a> · <a href="/cgu.html">CGU</a> · <a href="/mentions-legales.html">Mentions légales</a>
   </div>
-  <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en France</div>
-  <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Auto-entrepreneur · SIRET 914 511 639 00025 · France</div>
+  <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en Bretagne, France</div>
+  <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Projet indépendant · Auto-entrepreneur · SIRET 914 511 639 00025</div>
   <div style="font-size:.68rem;color:var(--muted);margin-top:2px">
     <a href="/cdn-cgi/l/email-protection#3b5a4e4f54585a49555e4f4b49547b5c565a525715585456" style="color:var(--muted)"><span class="__cf_email__" data-cfemail="e48591908b8785968a819094968ba48389858d88ca878b89">[email&#160;protected]</span></a>
   </div>
