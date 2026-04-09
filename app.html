@@ -2920,8 +2920,7 @@ function openVehDetail(vid){
   </div>`;
   // Graphique
   if(costData.length>1){
-    const max=Math.max(...costData.map(d=>d.total),1);
-    h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
+    h+=`<button class="btn btn-s btn-sm" style="font-size:.78rem;color:var(--txm);margin-bottom:8px" onclick="openCostChart('${vid}')">💶 Coûts par année</button>`;
   }
   // Graphique historique km
   h+=buildKmChart(vid);
@@ -4515,6 +4514,31 @@ function openKmChart(vid){
         <span style="text-align:right">${fmtDate(points[points.length-1].date)}<br><strong>${fmtKm(points[points.length-1].km)}</strong></span>
       </div>
     `;
+    const f=document.querySelector('#mo-cfm .mft');
+    if(f)f.style.display='none';
+  },30);
+}
+
+function openCostChart(vid){
+  const data=getCostsByYear(vid);
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(!data.length)return;
+  const max=Math.max(...data.map(d=>d.total),1);
+  const W=300,H=90;
+  const barW=Math.floor((W-20)/data.length)-6;
+  const bars=data.map((d,i)=>{
+    const h=Math.max(Math.round(d.total/max*(H-20)),4);
+    const x=10+i*((W-20)/data.length);
+    const y=H-10-h;
+    return`<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="3" fill="#2563EB" opacity=".8"/>
+      <text x="${x+barW/2}" y="${y-4}" text-anchor="middle" font-size="8" fill="#64748B">${Math.round(d.total)}€</text>
+      <text x="${x+barW/2}" y="${H-1}" text-anchor="middle" font-size="8" fill="#94A3B8">${d.year}</text>`;
+  }).join('');
+  cfm(`💶 Coûts par année — ${esc(v.marque)} ${esc(v.modele)}`,'',null);
+  setTimeout(()=>{
+    const b=document.querySelector('#mo-cfm .mbdy');
+    if(!b)return;
+    b.innerHTML=`<svg viewBox="0 0 ${W} ${H+12}" style="width:100%;height:auto;overflow:visible;margin-bottom:8px">${bars}</svg>`;
     const f=document.querySelector('#mo-cfm .mft');
     if(f)f.style.display='none';
   },30);
