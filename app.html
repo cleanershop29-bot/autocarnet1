@@ -32,32 +32,6 @@
   --sh-card:0 4px 12px rgba(37,99,235,.08);
   --r:18px;--r-sm:12px;
 }
-body.dark{
-  --bg:#1A1F2E;
-  --surface:#242938;
-  --border:#2E3548;
-  --primary:#4B8EF1;
-  --primary-lt:#1E2D4A;
-  --primary-dk:#3B7AE0;
-  --ok:#34D399;--ok-bg:#0D2E24;
-  --warn:#FBBF24;--warn-bg:#2C2000;
-  --err:#F87171;--err-bg:#2C1010;
-  --txt:#E8EAF0;--txm:#8B96AE;--txl:#4A5568;
-  --sh:0 2px 8px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.2);
-  --sh-lg:0 10px 28px rgba(0,0,0,.4);
-  --sh-card:0 4px 12px rgba(0,0,0,.3);
-}
-body.dark .appbar,body.dark .navbar,body.dark .modal,body.dark .auth-card{background:var(--surface)}
-body.dark .fc{background:var(--surface);color:var(--txt);border-color:var(--border)}
-body.dark .fc:focus{background:var(--primary-lt)}
-body.dark .btn-s{background:var(--surface);color:var(--txt);border-color:var(--border)}
-body.dark .btn-out{background:var(--surface);color:var(--txm);border-color:var(--border)}
-body.dark .ei,body.dark .ri,body.dark .ri2,body.dark .vc,body.dark .vc-compact,body.dark .stat,body.dark .chart,body.dark .si,body.dark .profil-card,body.dark .profil-card-premium,body.dark .faq-item,body.dark .info-box,body.dark .callout{background:var(--surface);border-color:var(--border)}
-body.dark .vc-chip,body.dark .vpi{background:#2E3548}
-body.dark .atab.on{background:var(--bg)}
-body.dark .fab-item{background:var(--surface)}
-body.dark #ls{background:#0A0F1E}
-body.dark .search-input{background:var(--surface);color:var(--txt);border-color:var(--border)}
 
 /* SWIPE */
 .ei-wrap{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:8px}
@@ -510,7 +484,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
     <div class="appbar-logo">🚗 AutoCarnet</div>
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btn-search-toggle" onclick="toggleSearch()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)">🔍</button>
-      <button id="btn-dark-toggle" onclick="toggleDark()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">🌙</button>
     </div>
   </div>
   <div id="search-bar" style="display:none;padding:8px 16px 0;background:var(--surface);border-bottom:1px solid var(--border)">
@@ -2185,8 +2158,8 @@ function vcCompactHTML(v){
     <div class="vc-compact-acts" style="border-top:1px solid var(--border);margin:0 14px;padding:8px 0 12px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
-        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
+        :`<button class="btn btn-s btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+         <button class="btn btn-s btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
@@ -4422,7 +4395,7 @@ function renderFlotte(){
     h+=`</div>`;
     // Actions
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
-    h+=`<button class="btn btn-s btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
+    h+=`<button class="btn btn-s btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
     h+=`<button class="btn btn-p btn-sm" onclick="openVehDetail('${v.id}')">Détail →</button>`;
     h+=`</div>`;
     h+=`</div>`;
@@ -4443,22 +4416,6 @@ async function doGoogleLogin(){
   });
   if(error)toast('Erreur Google : '+error.message,'e');
 }
-/* ══ MODE SOMBRE ══ */
-function toggleDark(){
-  const isDark=document.body.classList.toggle('dark');
-  localStorage.setItem('ac_dark',isDark?'1':'0');
-  g('btn-dark-toggle').textContent=isDark?'☀️':'🌙';
-}
-function initDark(){
-  const saved=localStorage.getItem('ac_dark');
-  const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if(saved==='1'||(saved===null&&prefersDark)){
-    document.body.classList.add('dark');
-    const btn=g('btn-dark-toggle');
-    if(btn)btn.textContent='☀️';
-  }
-}
-
 /* ══ RECHERCHE GLOBALE ══ */
 function toggleSearch(){
   const bar=g('search-bar');
@@ -4514,42 +4471,33 @@ async function saveKmHistory(vid,km){
   }catch(e){/* table optionnelle */}
 }
 function buildKmChart(vid){
-  // Reconstituer historique depuis les entretiens (km saisis)
   const ents=S.ents.filter(e=>e.vehicle_id===vid&&e.km).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const v=S.vehicles.find(x=>x.id===vid);
-  if(!ents.length&&!v?.km_actuel)return'';
   const points=[...ents.map(e=>({date:e.date,km:e.km}))];
   if(v?.km_actuel&&(!points.length||v.km_actuel>points[points.length-1]?.km)){
-    points.push({date:new Date().toISOString().split('T')[0],km:v.km_actuel,today:true});
+    points.push({date:new Date().toISOString().split('T')[0],km:v.km_actuel});
   }
-  if(points.length<2)return`<div style="font-size:.8rem;color:var(--txm);margin-bottom:12px">Ajoutez des entretiens avec kilométrage pour voir l'évolution.</div>`;
+  if(points.length<2)return'';
   const minKm=Math.min(...points.map(p=>p.km));
   const maxKm=Math.max(...points.map(p=>p.km));
   const range=maxKm-minKm||1;
-  const W=300,H=60;
-  const pts=points.map((p,i)=>{
-    const x=10+(i/(points.length-1))*(W-20);
-    const y=H-10-((p.km-minKm)/range)*(H-20);
-    return{x,y,p};
-  });
+  const W=280,H=36;
+  const pts=points.map((p,i)=>({
+    x:Math.round(4+(i/(points.length-1))*(W-8)),
+    y:Math.round(H-4-((p.km-minKm)/range)*(H-8)),
+    km:p.km
+  }));
   const path=pts.map((p,i)=>(i===0?`M${p.x},${p.y}`:`L${p.x},${p.y}`)).join(' ');
-  const area=`M${pts[0].x},${H} ${pts.map(p=>`L${p.x},${p.y}`).join(' ')} L${pts[pts.length-1].x},${H} Z`;
-  return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:12px">
-    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:8px">📈 Évolution kilométrage</div>
-    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible">
-      <defs><linearGradient id="kmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity=".2"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/></linearGradient></defs>
-      <path d="${area}" fill="url(#kmg)"/>
-      <path d="${path}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="${p.p.today?4:2.5}" fill="${p.p.today?'var(--primary)':'var(--surface)'}" stroke="var(--primary)" stroke-width="1.5"/>`).join('')}
+  return`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border-radius:var(--r-sm);margin-bottom:12px">
+    <div style="font-size:.68rem;color:var(--txm);font-weight:600;white-space:nowrap">📈 ${fmtKm(minKm)} → ${fmtKm(maxKm)}</div>
+    <svg viewBox="0 0 ${W} ${H}" style="flex:1;height:28px;overflow:visible">
+      <path d="${path}" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+      <circle cx="${pts[pts.length-1].x}" cy="${pts[pts.length-1].y}" r="3" fill="var(--primary)"/>
     </svg>
-    <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--txl);margin-top:4px">
-      <span>${fmtDate(points[0].date)} · ${fmtKm(points[0].km)}</span>
-      <span>${fmtDate(points[points.length-1].date)} · ${fmtKm(points[points.length-1].km)}</span>
-    </div>
   </div>`;
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{initDark();init();});
+document.addEventListener("DOMContentLoaded", ()=>{init();});
 </script>
 </body>
 </html>
