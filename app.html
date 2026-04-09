@@ -3346,28 +3346,53 @@ function renderRap(){
   function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="font-size:.62rem;color:var(--txl)">📌</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
   function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div><div class="ri2-badge ${sev}">${label}</div></div>`;}
 
-  // ── EN RETARD ──
+  // Helpers tri par date croissante
+  function rapDate(r){return r.e?.rappel_date||r.rappel_date||r.date_expiration||'9999-99-99';}
+  function sortByDate(arr){return [...arr].sort((a,b)=>rapDate(a).localeCompare(rapDate(b)));}
+
+  // ── EN RETARD ── trié par date croissante (le plus en retard d'abord)
   if(urgentF.length||rcUrgentF.length||docsUrgentF.length){
     h+=`<div class="sec-hdr" id="rap-section-danger"><span class="sec-ttl">⚠️ En retard (${urgentF.length+rcUrgentF.length+docsUrgentF.length})</span></div>`;
-    h+=urgentF.map(r=>getRapItem(r)).join('');
-    h+=rcUrgentF.map(r=>rcCard(r,'danger','En retard')).join('');
-    h+=docsUrgentF.map(d=>docCard(d,'danger','Expiré le '+fmtDate(d.date_expiration))).join('');
+    const dangerAll=[
+      ...urgentF.map(r=>({_type:'rap',_date:rapDate(r),r})),
+      ...rcUrgentF.map(r=>({_type:'rc',_date:r.date_rappel||'',r})),
+      ...docsUrgentF.map(d=>({_type:'doc',_date:d.date_expiration||'',d}))
+    ].sort((a,b)=>a._date.localeCompare(b._date));
+    dangerAll.forEach(item=>{
+      if(item._type==='rap')h+=getRapItem(item.r);
+      else if(item._type==='rc')h+=rcCard(item.r,'danger','En retard');
+      else h+=docCard(item.d,'danger','Expiré le '+fmtDate(item.d.date_expiration));
+    });
   }
 
-  // ── DANS 30 JOURS ──
+  // ── DANS 30 JOURS ── trié par date croissante
   if(soon30F.length||rcSoon30F.length||docsSoon30F.length){
     h+=`<div class="sec-hdr mt12" id="rap-section-30"><span class="sec-ttl">📅 Dans 30 jours (${soon30F.length+rcSoon30F.length+docsSoon30F.length})</span></div>`;
-    h+=soon30F.map(r=>getRapItem(r)).join('');
-    h+=rcSoon30F.map(r=>{const days=Math.ceil((new Date(r.date_rappel)-today)/86400000);return rcCard(r,'warn','Dans '+days+'j');}).join('');
-    h+=docsSoon30F.map(d=>{const days=Math.ceil((new Date(d.date_expiration)-today)/86400000);return docCard(d,'warn','Dans '+days+'j');}).join('');
+    const soon30All=[
+      ...soon30F.map(r=>({_type:'rap',_date:rapDate(r),r})),
+      ...rcSoon30F.map(r=>({_type:'rc',_date:r.date_rappel||'',r})),
+      ...docsSoon30F.map(d=>({_type:'doc',_date:d.date_expiration||'',d}))
+    ].sort((a,b)=>a._date.localeCompare(b._date));
+    soon30All.forEach(item=>{
+      if(item._type==='rap')h+=getRapItem(item.r);
+      else if(item._type==='rc'){const days=Math.ceil((new Date(item.r.date_rappel)-today)/86400000);h+=rcCard(item.r,'warn','Dans '+days+'j');}
+      else{const days=Math.ceil((new Date(item.d.date_expiration)-today)/86400000);h+=docCard(item.d,'warn','Dans '+days+'j');}
+    });
   }
 
-  // ── DANS 90 JOURS ──
+  // ── DANS 90 JOURS ── trié par date croissante
   if(soon90F.length||rcSoon90F.length||docsSoon90F.length){
     h+=`<div class="sec-hdr mt12" id="rap-section-90"><span class="sec-ttl">🔵 Dans 90 jours (${soon90F.length+rcSoon90F.length+docsSoon90F.length})</span></div>`;
-    h+=soon90F.map(r=>getRapItem(r)).join('');
-    h+=rcSoon90F.map(r=>{const days=Math.ceil((new Date(r.date_rappel)-today)/86400000);return rcCard(r,'ok','Dans '+days+'j');}).join('');
-    h+=docsSoon90F.map(d=>{const days=Math.ceil((new Date(d.date_expiration)-today)/86400000);return docCard(d,'ok','Dans '+days+'j');}).join('');
+    const soon90All=[
+      ...soon90F.map(r=>({_type:'rap',_date:rapDate(r),r})),
+      ...rcSoon90F.map(r=>({_type:'rc',_date:r.date_rappel||'',r})),
+      ...docsSoon90F.map(d=>({_type:'doc',_date:d.date_expiration||'',d}))
+    ].sort((a,b)=>a._date.localeCompare(b._date));
+    soon90All.forEach(item=>{
+      if(item._type==='rap')h+=getRapItem(item.r);
+      else if(item._type==='rc'){const days=Math.ceil((new Date(item.r.date_rappel)-today)/86400000);h+=rcCard(item.r,'ok','Dans '+days+'j');}
+      else{const days=Math.ceil((new Date(item.d.date_expiration)-today)/86400000);h+=docCard(item.d,'ok','Dans '+days+'j');}
+    });
   }
 
   // Garanties actives
