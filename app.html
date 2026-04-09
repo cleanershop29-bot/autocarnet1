@@ -2106,29 +2106,18 @@ function renderVehs(){
 
 function vcCompactHTML(v){
   const st=vStatus(v.id);
-  const es=S.ents.filter(e=>e.vehicle_id===v.id);
   const isOwner=v.user_id===S.user.id;
   const col=vehCardColor(v);
   const premClass=isPremium()?' premium-user':'';
   const allRaps=getRappels().filter(r=>r.v?.id===v.id);
-  const nextRap=allRaps.find(r=>r.kind==='date');
-  const alertRap=allRaps.find(r=>r.sev!=='ok');
-  // Pill couleur selon sévérité
-  let pillClass='green', pillLabel='Aucun rappel planifié', pillDays='✓';
-  if(alertRap){
-    pillClass=alertRap.sev==='danger'?'red':'amber';
-    pillLabel=alertRap.ti.label;
-    pillDays=alertRap.label;
-  } else if(nextRap){
-    pillClass='green';
-    pillLabel=nextRap.ti.label;
-    pillDays=nextRap.label;
-  }
-  // Statut véhicule
+  const alertRap=allRaps.find(r=>r.sev==='danger'||r.sev==='warn');
   const statutV=v.statut_vehicule||'disponible';
   const statutLabel=statutV==='disponible'?'Disponible':statutV==='intervention'?'Intervention':statutV==='panne'?'Panne':'Garage';
   const statutClass=statutV==='disponible'?'status-ok':statutV==='intervention'?'status-warn':'status-err';
   const emoji=v.emoji||'🚗';
+  const pillHTML=alertRap
+    ?`<div class="vc-alert-pill ${alertRap.sev==='danger'?'red':'amber'}"><span>🔔</span><span class="vc-alert-pill-text">${esc(alertRap.ti.label)}</span><span class="vc-alert-pill-days">${esc(alertRap.label)}</span></div>`
+    :'';
 
   return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}" style="margin-bottom:12px;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">
     <div class="vc-compact-main" onclick="openVehDetail('${v.id}')" style="cursor:pointer;padding:14px 14px 0">
@@ -2143,11 +2132,7 @@ function vcCompactHTML(v){
       </div>
       <button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>
     </div>
-    <div class="vc-alert-pill ${pillClass}">
-      <span>🔔</span>
-      <span class="vc-alert-pill-text">${esc(pillLabel)}</span>
-      <span class="vc-alert-pill-days">${esc(pillDays)}</span>
-    </div>
+    ${pillHTML}
     <div class="vc-meta-chips" style="grid-template-columns:1fr 1fr">
       <div class="vc-chip">
         <span class="vc-chip-label">Conducteur</span>
@@ -4424,10 +4409,13 @@ function renderFlotte(){
     if(vRaps.length) h+=`<span style="font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:8px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`;
     h+=`<button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer;font-size:1rem" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>`;
     h+=`</div>`;
-    // Alert pill
-    h+=`<div style="display:flex;align-items:center;gap:6px;margin:10px 14px 0;padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:500;${pillClass==='red'?'background:#FEE2E2;color:#DC2626':pillClass==='amber'?'background:#FEF3C7;color:#D97706':'background:#DCFCE7;color:#16A34A'}">`;
-    h+=`<span>🔔</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(pillLabel)}</span><span style="font-weight:700;flex-shrink:0">${esc(pillDays)}</span>`;
-    h+=`</div>`;
+    // Alert pill — seulement si urgent ou dans 30j
+    if(alertRap){
+      const pillStyle=alertRap.sev==='danger'?'background:#FEE2E2;color:#DC2626':'background:#FEF3C7;color:#D97706';
+      h+=`<div style="display:flex;align-items:center;gap:6px;margin:10px 14px 0;padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:500;${pillStyle}">`;
+      h+=`<span>🔔</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(pillLabel)}</span><span style="font-weight:700;flex-shrink:0">${esc(pillDays)}</span>`;
+      h+=`</div>`;
+    }
     // Meta chips — conducteur éditable, statut select, km input
     h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 14px 0">`;
     h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Conducteur</span><input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
