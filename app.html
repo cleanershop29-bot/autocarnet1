@@ -2157,8 +2157,8 @@ function vcCompactHTML(v){
     <div class="vc-compact-acts" style="border-top:1px solid var(--border);margin:0 14px;padding:8px 0 12px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
-        :`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-         <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
+        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
@@ -2208,7 +2208,7 @@ function vcFullHTML(v){
     h+=`<div class="vc-acts">`;
   }
 
-  h+=`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+  h+=`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>
 
       ${isOwner?`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVeh('${v.id}')">Modifier</button>`:''}
@@ -2946,7 +2946,7 @@ function openVehDetail(vid){
   h+=statsHTML(vid);
   // Derniers entretiens
   if(es.length){
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><div style="display:flex;gap:6px">${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}<button class="sec-lnk" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div></div>`;
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><div style="display:flex;gap:6px">${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}<button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div></div>`;
     h+=es.slice(0,5).map(e=>{
       const ti=getType(e.type);
       return`<div class="ei-inline" onclick="openEnt('${e.id}')">
@@ -2962,7 +2962,7 @@ function openVehDetail(vid){
       </div>`;
     }).join('');
   } else {
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (0)</span><button class="sec-lnk" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div>`;
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (0)</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div>`;
     h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun entretien.</div>`;
   }
   // Infos avancées
@@ -2983,7 +2983,7 @@ function openVehDetail(vid){
   if(advInfos.length)h+=`<div class="detail-pills" style="margin-bottom:12px">${advInfos.map(i=>`<div class="detail-pill" style="${i.color?'color:'+i.color+';border-color:'+i.color+';background:'+i.color+'22':''}">${i.ico} ${esc(i.val)}</div>`).join('')}</div>`;
   // Notes
   const vnotes=(S.veh_notes||[]).filter(n=>n.vehicle_id===vid);
-  h+=`<div class="sec-hdr"><span class="sec-ttl">📝 Notes (${vnotes.length})</span><button class="sec-lnk" onclick="openVehNote('${vid}')">+ Ajouter</button></div>`;
+  h+=`<div class="sec-hdr"><span class="sec-ttl">📝 Notes (${vnotes.length})</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openVehNote('${vid}')">+ Ajouter</button></div>`;
   if(vnotes.length){
     h+=vnotes.map(n=>`<div class="ei-inline" onclick="openVehNote('${vid}','${n.id}')">
       <span style="font-size:1rem">📝</span>
@@ -2998,7 +2998,7 @@ function openVehDetail(vid){
   }
   // Rappels
   const vrapps=S.rappels_custom.filter(r=>r.vehicle_id===vid);
-  h+=`<div class="sec-hdr"><span class="sec-ttl">📌 Rappels (${vrapps.length})</span><button class="sec-lnk" onclick="openRappelCustomVeh('${vid}')">+ Ajouter</button></div>`;
+  h+=`<div class="sec-hdr"><span class="sec-ttl">📌 Rappels (${vrapps.length})</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openRappelCustomVeh('${vid}')">+ Ajouter</button></div>`;
   if(vrapps.length){
     const today2=new Date();today2.setHours(0,0,0,0);
     // Tri : en retard d'abord (par date asc), puis sans date, puis à venir (par date asc)
@@ -4394,7 +4394,7 @@ function renderFlotte(){
     h+=`</div>`;
     // Actions
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
-    h+=`<button class="btn btn-p btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
+    h+=`<button class="btn btn-s btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
     h+=`<button class="btn btn-p btn-sm" onclick="openVehDetail('${v.id}')">Détail →</button>`;
     h+=`</div>`;
     h+=`</div>`;
