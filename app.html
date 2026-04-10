@@ -1282,7 +1282,7 @@ function plaqueHTML(immat){
   return`<span class="plaque"><span class="plaque-eu"><span>🇪🇺</span><span style="font-size:.42rem">F</span></span><span class="plaque-num">${esc(immat)}</span></span>`;
 }
 function catClass(cat){
-  const map={'Moteur':'cat-moteur','Filtres':'cat-filtres','Freinage':'cat-freinage','Pneus':'cat-pneus','Transmission':'cat-transmission','Suspension':'cat-suspension','Électrique':'cat-electrique','Refroid.':'cat-refroid','Climatisation':'cat-climatisation','Administratif':'cat-administratif','Divers':'cat-divers','Moto':'cat-moto','Carrosserie':'cat-carrosserie'};
+  const map={'Moteur':'cat-moteur','Filtres':'cat-filtres','Freinage':'cat-freinage','Pneus':'cat-pneus','Transmission':'cat-transmission','Suspension':'cat-suspension','Électrique':'cat-electrique','Refroid.':'cat-refroid','Climatisation':'cat-climatisation','Administratif':'cat-administratif','Divers':'cat-divers','Moto':'cat-moto','Carrosserie':'cat-carrosserie','Équipement':'cat-administratif','Camping-car':'cat-divers'};
   return map[cat]||'';
 }
 
@@ -2280,7 +2280,7 @@ function vcFullHTML(v){
     h+=es.slice(0,3).map(e=>{
       const ti=getType(e.type);
       return`<div class="ei-inline" onclick="event.stopPropagation();openEnt('${e.id}')">
-        <div style="font-size:1.1rem">${ti.ico}</div>
+        <div class="ei-ico ${catClass(ti.cat)}" style="width:32px;height:32px;border-radius:8px;font-size:.95rem">${ti.ico}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
           <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
@@ -2984,7 +2984,7 @@ function openVehDetail(vid){
     h+=es.slice(0,5).map(e=>{
       const ti=getType(e.type);
       return`<div class="ei-inline" onclick="openEnt('${e.id}')">
-        <div style="font-size:1.1rem">${ti.ico}</div>
+        <div class="ei-ico ${catClass(ti.cat)}" style="width:32px;height:32px;border-radius:8px;font-size:.95rem">${ti.ico}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
           <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
