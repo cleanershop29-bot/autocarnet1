@@ -4387,7 +4387,7 @@ function renderFlotte(){
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
   // Header véhicules
-  h+='<div class="sec-hdr"><span class="sec-ttl">Véhicules</span><div style="display:flex;gap:8px;align-items:center"><button class="sec-lnk" onclick="openCarburantPage()" style="background:#FFF7ED;color:#B45309;border:1px solid #FDE68A;padding:3px 8px;border-radius:6px;font-weight:600">⛽ Prix carburant</button><button class="sec-lnk" onclick="openVeh()">+ Ajouter véhicule</button></div></div>';
+  h+='<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="sec-lnk" onclick="openCarburantPage()" style="background:#FFF7ED;color:#B45309;border:1px solid #FDE68A;padding:3px 8px;border-radius:6px;font-weight:600">⛽ Prix carburant</button></div>';
   // Filtres tri — mêmes que Garage
   h+=`<div class="filters">
     <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderFlotte()">⚠️ Alerte</button>
