@@ -550,7 +550,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
     <button class="nb on" id="nb-dash" onclick="nav('dash')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Garage</button>
     <button class="nb hidden" id="nb-flotte" onclick="nav('flotte')">
-      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span>Flotte</button>
+      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="15" height="8" rx="2"/><circle cx="5.5" cy="18" r="1.5"/><circle cx="11.5" cy="18" r="1.5"/><path d="M16 13h3l2 3v2h-5"/><circle cx="19.5" cy="18" r="1.5"/></svg></span>Flotte</button>
     <button class="nb" id="nb-rap" onclick="nav('rap')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Rappels<div class="rdot hidden" id="rdot"></div></button>
     <button class="nb" id="nb-fam" onclick="nav('fam')">
@@ -3285,20 +3285,33 @@ function renderRap(){
 
   let h='';
 
-  // Compteurs cliquables — 3 périodes
-  h+=`<div class="rap-counters">
-    <div class="rap-counter danger" style="cursor:pointer" onclick="scrollToRapSection('rap-section-danger')">
-      <div class="rap-count danger">${totalDanger}</div>
-      <div class="rap-lbl danger">En retard</div>
-    </div>
-    <div class="rap-counter warn" style="cursor:pointer" onclick="scrollToRapSection('rap-section-30')">
-      <div class="rap-count warn">${total30}</div>
-      <div class="rap-lbl warn">Dans 30 jours</div>
-    </div>
-    <div class="rap-counter blue" style="cursor:pointer" onclick="scrollToRapSection('rap-section-90')">
-      <div class="rap-count blue">${total90}</div>
-      <div class="rap-lbl blue">Dans 90 jours</div>
-    </div>
+  // Compteurs SVG circulaires
+  const total=totalDanger+total30+total90||1;
+  function rapCircle(count,label,color,bg,onclick){
+    const r=28,circ=2*Math.PI*r;
+    const pct=Math.min(count/Math.max(total,1),1);
+    const dash=pct*circ;
+    return`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px" onclick="${onclick}">
+      <div style="position:relative;width:72px;height:72px">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="${r}" fill="${bg}" stroke="${color}" stroke-opacity=".15" stroke-width="5"/>
+          <circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="5"
+            stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
+            stroke-dashoffset="${(circ/4).toFixed(1)}"
+            stroke-linecap="round"
+            style="transition:stroke-dasharray .6s ease"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.45rem;font-weight:900;color:${color};line-height:1">${count}</div>
+      </div>
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${color};text-align:center">${label}</div>
+    </div>`;
+  }
+  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:14px;background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border)">
+    ${rapCircle(totalDanger,'En retard','#DC2626','#FEF2F2',"scrollToRapSection('rap-section-danger')")}
+    <div style="width:1px;background:var(--border);margin:12px 0"></div>
+    ${rapCircle(total30,'30 jours','#D97706','#FFFBEB',"scrollToRapSection('rap-section-30')")}
+    <div style="width:1px;background:var(--border);margin:12px 0"></div>
+    ${rapCircle(total90,'90 jours','#2563EB','#EFF6FF',"scrollToRapSection('rap-section-90')")}
   </div>`;
 
   // Mini calendrier
