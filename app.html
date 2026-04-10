@@ -562,9 +562,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 <button id="fab" onclick="handleFab()">+</button>
 <div id="fab-menu">
-  <button class="fab-item" onclick="fabAction('veh')"><div class="fab-item-ico" style="background:var(--primary-lt)">🚗</div>Ajouter un véhicule</button>
-  <button class="fab-item" id="fab-ent" onclick="fabAction('ent')"><div class="fab-item-ico" style="background:#ECFDF5">🔧</div>Ajouter un entretien</button>
-  <button class="fab-item" onclick="fabAction('rap')"><div class="fab-item-ico" style="background:#FFFBEB">📌</div>Ajouter un rappel</button>
+  <button class="fab-item" onclick="fabAction('veh')"><div class="fab-item-ico" style="background:var(--primary-lt)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="8.5" cy="13.5" r="1.5"/><circle cx="15.5" cy="13.5" r="1.5"/></svg></div>Ajouter un véhicule</button>
+  <button class="fab-item" id="fab-ent" onclick="fabAction('ent')"><div class="fab-item-ico" style="background:#ECFDF5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>Ajouter un entretien</button>
+  <button class="fab-item" onclick="fabAction('rap')"><div class="fab-item-ico" style="background:#FFFBEB"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>Ajouter un rappel</button>
 </div>
 <div id="fab-overlay" onclick="closeFabMenu()" style="position:fixed;inset:0;z-index:97;display:none"></div>
 
@@ -2060,7 +2060,7 @@ function renderDash(){
   const totalUrgent=urgent.length+rcUrgentDash.length+docsUrgentDash.length;
   const total=S.ents.reduce((s,e)=>s+(e.cout||0),0);
   if(!S.vehicles.length){
-    el.innerHTML=`<div class="empty"><span class="empty-i">🚗</span><div class="empty-t">Bienvenue dans AutoCarnet</div><p class="empty-d">Ajoutez votre premier véhicule pour commencer le suivi d'entretien.</p><button class="btn btn-p" onclick="openVeh()">+ Ajouter un véhicule</button></div>`;
+    el.innerHTML=`<div class="empty"><span class="empty-i"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="8.5" cy="13.5" r="1.5"/><circle cx="15.5" cy="13.5" r="1.5"/></svg></span><div class="empty-t">Bienvenue dans AutoCarnet</div><p class="empty-d">Ajoutez votre premier véhicule pour commencer le suivi d'entretien.</p><button class="btn btn-p" onclick="openVeh()">+ Ajouter un véhicule</button></div>`;
     return;
   }
   // Prochaine échéance globale
@@ -2148,10 +2148,10 @@ function renderVehs(){
   if(!el)return;
   if(!S.vehicles.length){
     el.innerHTML=`<div class="empty" style="padding:48px 20px">
-      <span class="empty-i">🚗</span>
+      <span class="empty-i"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="8.5" cy="13.5" r="1.5"/><circle cx="15.5" cy="13.5" r="1.5"/></svg></span>
       <div class="empty-t">Votre garage est vide</div>
       <p class="empty-d">Ajoutez votre premier véhicule pour commencer à suivre vos entretiens et recevoir vos rappels automatiques.</p>
-      <button class="btn btn-p" style="width:100%;max-width:280px;padding:13px;font-size:.92rem" onclick="openVeh()">🚗 Ajouter mon premier véhicule</button>
+      <button class="btn btn-p" style="width:100%;max-width:280px;padding:13px;font-size:.92rem" onclick="openVeh()">+ Ajouter mon premier véhicule</button>
       <div style="margin-top:20px;background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:12px;padding:12px 14px;text-align:left;max-width:280px">
         <div style="font-size:.75rem;font-weight:800;color:var(--blue);margin-bottom:6px">💡 Le saviez-vous ?</div>
         <div style="font-size:.78rem;color:var(--txm);line-height:1.6">AutoCarnet vous alertera avant chaque CT, vidange ou révision — plus jamais d'oubli coûteux.</div>
@@ -2171,7 +2171,7 @@ function renderVehs(){
   }
   // Carte carburant sur le dashboard
   h+='<div style="background:linear-gradient(135deg,#FFF7ED,#FFFBEB);border:1.5px solid #FDE68A;border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="openCarburantPage()">'
-    +'<div style="font-size:1.8rem">⛽</div>'
+    +'<div style="width:38px;height:38px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M10 22v-6h4v6"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 1-2 2h-1"/><line x1="17" y1="6" x2="17" y2="12"/></svg></div>'
     +'<div style="flex:1"><div style="font-size:.92rem;font-weight:700;color:#92400E">Prix carburant autour de moi</div>'
     +'<div style="font-size:.78rem;color:#B45309;margin-top:2px">Trouvez les stations les moins chères</div></div>'
     +'<div style="color:#D97706;font-size:1rem">›</div>'
@@ -2185,7 +2185,7 @@ function renderVehs(){
   });
   h+=`<div style="display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none">
     <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderVehs()">⚠️ Alerte</button>
-    <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderVehs()">📍 Km</button>
+    <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderVehs()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Km</button>
     <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderVehs()">🔤 Nom</button>
   </div>`;
   h+=sortedVehs.map(v=>vcCompactHTML(v)).join('');
@@ -2204,7 +2204,7 @@ function vcCompactHTML(v){
   const statutClass=statutV==='disponible'?'status-ok':statutV==='intervention'?'status-warn':'status-err';
   const emoji=v.emoji||'🚗';
   const pillHTML=alertRap
-    ?`<div class="vc-alert-pill ${alertRap.sev==='danger'?'red':'amber'}"><span>🔔</span><span class="vc-alert-pill-text">${esc(alertRap.ti.label)}</span><span class="vc-alert-pill-days">${esc(alertRap.label)}</span></div>`
+    ?`<div class="vc-alert-pill ${alertRap.sev==='danger'?'red':'amber'}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="vc-alert-pill-text">${esc(alertRap.ti.label)}</span><span class="vc-alert-pill-days">${esc(alertRap.label)}</span></div>`
     :'';
 
   return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}" style="margin-bottom:12px;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">
@@ -2999,7 +2999,7 @@ function openVehDetail(vid){
       <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
       <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
-      <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')">🔗 Lien</button>
+      <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Lien</button>
     </div>`;
   }
   h+=statsHTML(vid);
@@ -3188,7 +3188,7 @@ function renderEnt(){
   // Picker véhicule
   let h=`<div class="vp">${S.vehicles.map(v=>`<div class="vpi ${S.selVeh===v.id?'on':''}" onclick="selV('${v.id}')"><div style="width:28px;height:28px;border-radius:6px;background:${vehCardColor(v)};margin:0 auto 3px;border:1px solid rgba(0,0,0,.08)"></div><div class="vpi-n">${esc(v.marque)} ${esc(v.modele)}</div></div>`).join('')}</div>`;
   h+=`<div class="search-wrap"><span class="search-ico">🔍</span><input class="search-input" id="ent-search" placeholder="Rechercher un entretien…" oninput="S.searchEnt=this.value;renderEnt()" value="${esc(S.searchEnt||'')}"></div>`;
-  h+=`<div class="sort-bar"><span style="font-size:.72rem;color:var(--txm);font-weight:600">Trier :</span><button class="sort-btn ${S.sortEnt==='date'?'on':''}" onclick="S.sortEnt='date';renderEnt()">📅 Date</button><button class="sort-btn ${S.sortEnt==='cout'?'on':''}" onclick="S.sortEnt='cout';renderEnt()">💶 Coût</button><button class="sort-btn ${S.sortEnt==='km'?'on':''}" onclick="S.sortEnt='km';renderEnt()">📍 Km</button></div>`;
+  h+=`<div class="sort-bar"><span style="font-size:.72rem;color:var(--txm);font-weight:600">Trier :</span><button class="sort-btn ${S.sortEnt==='date'?'on':''}" onclick="S.sortEnt='date';renderEnt()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Date</button><button class="sort-btn ${S.sortEnt==='cout'?'on':''}" onclick="S.sortEnt='cout';renderEnt()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Coût</button><button class="sort-btn ${S.sortEnt==='km'?'on':''}" onclick="S.sortEnt='km';renderEnt()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Km</button></div>`;
 
   if(!S.selVeh){
     h+=`<div class="empty" style="padding:32px 16px"><span class="empty-i" style="font-size:2.2rem">☝️</span><div class="empty-t">Sélectionnez un véhicule</div></div>`;
@@ -3219,13 +3219,13 @@ function renderEnt(){
       <div style="font-size:.95rem;font-weight:700">${esc(v.marque)} ${esc(v.modele)}</div>
       <div style="font-size:.76rem;opacity:.8">${fmtKm(v.km_actuel)} · ${ents.length} entretien${ents.length>1?'s':''} · ${fmtCout(total)}</div>
     </div>
-    <button class="btn btn-w btn-sm" onclick="openKm('${v.id}')">📍 Km</button>
+    <button class="btn btn-s btn-sm" onclick="openKm('${v.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Km</button>
   </div>`;
   h+=statsHTML(S.selVeh);
   h+=`<div class="g6 mb8">
-    <button class="btn btn-s btn-sm" onclick="exportCSV('${S.selVeh}')">📊 CSV</button>
-    <button class="btn btn-s btn-sm" onclick="exportPDF('${S.selVeh}')">📄 PDF</button>
-    <button class="btn btn-s btn-sm" onclick="showShareLink('${S.selVeh}')">🔗 Partager</button>
+    <button class="btn btn-s btn-sm" onclick="exportCSV('${S.selVeh}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> CSV</button>
+    <button class="btn btn-s btn-sm" onclick="exportPDF('${S.selVeh}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h1a2 2 0 0 1 0 4H9v-4"/></svg> PDF</button>
+    <button class="btn btn-s btn-sm" onclick="showShareLink('${S.selVeh}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Partager</button>
   </div>`;
 
   if(!ents.length)h+=`<div class="empty" style="padding:28px"><span class="empty-i" style="font-size:2rem">📋</span><div class="empty-t">Aucun entretien</div><p class="empty-d">Appuyez sur + pour ajouter le premier.</p></div>`;
@@ -3314,8 +3314,8 @@ function renderRap(){
 
   // Boutons actions
   h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
-    <button class="btn btn-s btn-sm" onclick="openEnt()">🔧 + Entretien</button>
-    <button class="btn btn-p btn-sm" onclick="openRappelCustom()">📌 + Rappel / RDV</button>
+    <button class="btn btn-s btn-sm" onclick="openEnt()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> + Entretien</button>
+    <button class="btn btn-p btn-sm" onclick="openRappelCustom()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> + Rappel / RDV</button>
   </div>`;
 
   function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
@@ -3331,7 +3331,7 @@ function renderRap(){
   const docsSoon90F=docsSoon90.filter(d=>filterVid(d.vehicle_id));
 
   if(!urgentF.length&&!rcUrgentF.length&&!docsUrgentF.length&&!soon30F.length&&!rcSoon30F.length&&!docsSoon30F.length&&!soon90F.length&&!rcSoon90F.length&&!docsSoon90F.length){
-    h+=`<div class="empty"><span class="empty-i">✅</span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 90 prochains jours.</p></div>`;
+    h+=`<div class="empty"><span class="empty-i"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 90 prochains jours.</p></div>`;
   }
 
   function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="font-size:.62rem;color:var(--txl)">📌</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div>${daysBadge(label,sev)}</div>`;}
@@ -3802,7 +3802,7 @@ function renderProfil(){
   <div class="profil-card">
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Données</div>
     <div class="g6">
-      <button class="btn btn-s btn-sm" onclick="exportAllCSV()">📊 Exporter tout en CSV</button>
+      <button class="btn btn-s btn-sm" onclick="exportAllCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Exporter tout en CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportAllPDF()">📄 Exporter tout en PDF</button>
     </div>
   </div>
@@ -4416,7 +4416,7 @@ function renderFlotte(){
   // Filtres tri — mêmes que Garage
   h+=`<div class="filters">
     <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderFlotte()">⚠️ Alerte</button>
-    <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderFlotte()">📍 Km</button>
+    <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Km</button>
     <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderFlotte()">abc Nom</button>
   </div>`;
   // Tri véhicules
@@ -4461,7 +4461,7 @@ function renderFlotte(){
     if(alertRap){
       const pillStyle=alertRap.sev==='danger'?'background:#FEE2E2;color:#DC2626':'background:#FEF3C7;color:#D97706';
       h+=`<div style="display:flex;align-items:center;gap:6px;margin:10px 14px 0;padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:500;${pillStyle}">`;
-      h+=`<span>🔔</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(alertRap.ti?.label||'')}</span><span style="font-weight:700;flex-shrink:0">${esc(alertRap.label)}</span>`;
+      h+=`<span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(alertRap.ti?.label||'')}</span><span style="font-weight:700;flex-shrink:0">${esc(alertRap.label)}</span>`;
       h+=`</div>`;
     }
     // Meta chips — conducteur éditable, statut select, km éditable
