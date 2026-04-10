@@ -4340,7 +4340,7 @@ function renderFlotte(){
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
   // Header véhicules
-  h+='<div class="sec-hdr"><span class="sec-ttl">🚗 Véhicules</span><div style="display:flex;gap:8px;align-items:center"><button class="sec-lnk" onclick="openCarburantPage()" style="background:#FFF7ED;color:#B45309;border:1px solid #FDE68A;padding:3px 8px;border-radius:6px;font-weight:600">⛽ Prix carburant</button><button class="sec-lnk" onclick="openVeh()">+ Ajouter véhicule</button></div></div>';
+  h+='<div class="sec-hdr"><span class="sec-ttl">Véhicules</span><div style="display:flex;gap:8px;align-items:center"><button class="sec-lnk" onclick="openCarburantPage()" style="background:#FFF7ED;color:#B45309;border:1px solid #FDE68A;padding:3px 8px;border-radius:6px;font-weight:600">⛽ Prix carburant</button><button class="sec-lnk" onclick="openVeh()">+ Ajouter véhicule</button></div></div>';
   // Une carte par véhicule — tout en un
   const sortedVehs=[...vehs].sort((a,b)=>{const order={danger:0,warn:1,ok:2};return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);});
   sortedVehs.forEach(v=>{
@@ -4373,17 +4373,19 @@ function renderFlotte(){
     if(vRaps.length) h+=`<span style="font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:8px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`;
     h+=`<button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer;font-size:1rem" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>`;
     h+=`</div>`;
-    // Alert pill — seulement si urgent ou dans 30j
+    // Alert pill
     if(alertRap){
       const pillStyle=alertRap.sev==='danger'?'background:#FEE2E2;color:#DC2626':'background:#FEF3C7;color:#D97706';
       h+=`<div style="display:flex;align-items:center;gap:6px;margin:10px 14px 0;padding:7px 10px;border-radius:10px;font-size:.75rem;font-weight:500;${pillStyle}">`;
-      h+=`<span>🔔</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(pillLabel)}</span><span style="font-weight:700;flex-shrink:0">${esc(pillDays)}</span>`;
+      h+=`<span>🔔</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(alertRap.ti?.label||'')}</span><span style="font-weight:700;flex-shrink:0">${esc(alertRap.label)}</span>`;
       h+=`</div>`;
     }
-    // Meta chips — conducteur éditable, statut select, km input
+    // Meta chips — conducteur éditable, statut select, km éditable
     h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 14px 0">`;
     h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Conducteur</span><input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
     h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Statut</span><select style="width:100%;border:none;background:none;font-family:inherit;font-size:.78rem;font-weight:600;color:${statutClass==='status-ok'?'var(--ok)':statutClass==='status-warn'?'var(--warn)':'var(--err)'};outline:none;padding:0;-webkit-appearance:none" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Dispo</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 Interv.</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ Panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Garage</option></select></div>`;
+    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Kilométrage</span><input type="number" inputmode="numeric" style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="—" value="${v.km_actuel||''}" onchange="saveFlotteKm('${v.id}',this.value)"></div>`;
+    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">N° Parc</span><input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="—" value="${esc(v.num_parc||'')}" onchange="saveFlotteField('${v.id}','num_parc',this.value)"></div>`;
     h+=`</div>`;
     // Actions
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
@@ -4394,6 +4396,16 @@ function renderFlotte(){
     h+=`</div>`;
   });
   el.innerHTML=h;
+}
+async function saveFlotteKm(vid,val){
+  const km=parseInt(val);
+  if(!km||km<0)return;
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(!v)return;
+  v.km_actuel=km;
+  await sb.from('vehicles').update({km_actuel:km}).eq('id',vid).eq('user_id',S.user.id);
+  await saveKmHistory(vid,km);
+  renderView();
 }
 async function saveFlotteField(vid,field,value){
   const v=S.vehicles.find(x=>x.id===vid);
