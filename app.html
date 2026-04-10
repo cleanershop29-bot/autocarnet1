@@ -4341,8 +4341,20 @@ function renderFlotte(){
   h+='</div>';
   // Header véhicules
   h+='<div class="sec-hdr"><span class="sec-ttl">Véhicules</span><div style="display:flex;gap:8px;align-items:center"><button class="sec-lnk" onclick="openCarburantPage()" style="background:#FFF7ED;color:#B45309;border:1px solid #FDE68A;padding:3px 8px;border-radius:6px;font-weight:600">⛽ Prix carburant</button><button class="sec-lnk" onclick="openVeh()">+ Ajouter véhicule</button></div></div>';
-  // Une carte par véhicule — tout en un
-  const sortedVehs=[...vehs].sort((a,b)=>{const order={danger:0,warn:1,ok:2};return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);});
+  // Filtres tri — mêmes que Garage
+  h+=`<div class="filters">
+    <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderFlotte()">⚠️ Alerte</button>
+    <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderFlotte()">📍 Km</button>
+    <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderFlotte()">abc Nom</button>
+  </div>`;
+  // Tri véhicules
+  const sortedVehs=[...vehs].sort((a,b)=>{
+    const sortMode=S.vehSort||'alerte';
+    if(sortMode==='km') return (b.km_actuel||0)-(a.km_actuel||0);
+    if(sortMode==='nom') return (a.marque+' '+a.modele).localeCompare(b.marque+' '+b.modele);
+    const order={danger:0,warn:1,ok:2};
+    return (order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);
+  });
   sortedVehs.forEach(v=>{
     const st=vStatus(v.id);
     const vRaps=getRappels().filter(r=>r.v&&r.v.id===v.id&&r.sev!=='ok');
@@ -4384,8 +4396,6 @@ function renderFlotte(){
     h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 14px 0">`;
     h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Conducteur</span><input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onchange="saveFlotteField('${v.id}','conducteur',this.value)"></div>`;
     h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Statut</span><select style="width:100%;border:none;background:none;font-family:inherit;font-size:.78rem;font-weight:600;color:${statutClass==='status-ok'?'var(--ok)':statutClass==='status-warn'?'var(--warn)':'var(--err)'};outline:none;padding:0;-webkit-appearance:none" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Dispo</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 Interv.</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ Panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Garage</option></select></div>`;
-    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Kilométrage</span><input type="number" inputmode="numeric" style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="—" value="${v.km_actuel||''}" onchange="saveFlotteKm('${v.id}',this.value)"></div>`;
-    h+=`<div style="background:#F7F8FB;border-radius:10px;padding:8px 9px"><span style="font-size:.62rem;font-weight:600;color:var(--txl);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">N° Parc</span><input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="—" value="${esc(v.num_parc||'')}" onchange="saveFlotteField('${v.id}','num_parc',this.value)"></div>`;
     h+=`</div>`;
     // Actions
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
