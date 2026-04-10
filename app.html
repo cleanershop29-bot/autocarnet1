@@ -2214,6 +2214,7 @@ function vcFullHTML(v){
   }
 
   h+=`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+      <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>
 
       ${isOwner?`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openVeh('${v.id}')">Modifier</button>`:''}
