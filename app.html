@@ -3291,7 +3291,7 @@ function renderRap(){
     const r=28,circ=2*Math.PI*r;
     const pct=Math.min(count/Math.max(total,1),1);
     const dash=pct*circ;
-    return`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px" onclick="${onclick}">
+    return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:14px 4px;width:100%" onclick="${onclick}">
       <div style="position:relative;width:72px;height:72px">
         <svg width="72" height="72" viewBox="0 0 72 72">
           <circle cx="36" cy="36" r="${r}" fill="${bg}" stroke="${color}" stroke-opacity=".15" stroke-width="5"/>
@@ -3306,12 +3306,10 @@ function renderRap(){
       <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${color};text-align:center">${label}</div>
     </div>`;
   }
-  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:14px;background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border)">
-    ${rapCircle(totalDanger,'En retard','#DC2626','#FEF2F2',"scrollToRapSection('rap-section-danger')")}
-    <div style="width:1px;background:var(--border);margin:12px 0"></div>
-    ${rapCircle(total30,'30 jours','#D97706','#FFFBEB',"scrollToRapSection('rap-section-30')")}
-    <div style="width:1px;background:var(--border);margin:12px 0"></div>
-    ${rapCircle(total90,'90 jours','#2563EB','#EFF6FF',"scrollToRapSection('rap-section-90')")}
+  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:14px;background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);overflow:hidden">
+    <div style="border-right:1px solid var(--border)">${rapCircle(totalDanger,'En retard','#DC2626','#FEF2F2',"scrollToRapSection('rap-section-danger')")}</div>
+    <div style="border-right:1px solid var(--border)">${rapCircle(total30,'30 jours','#D97706','#FFFBEB',"scrollToRapSection('rap-section-30')")}</div>
+    <div>${rapCircle(total90,'90 jours','#2563EB','#EFF6FF',"scrollToRapSection('rap-section-90')")}</div>
   </div>`;
 
   // Mini calendrier
