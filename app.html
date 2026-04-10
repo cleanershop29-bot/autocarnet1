@@ -2163,7 +2163,7 @@ function vcCompactHTML(v){
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600">⚠️ Plan limité</span>'
         :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">📌 Rappel</button>`
+         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">+ Rappel</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
@@ -2907,11 +2907,9 @@ function openVehDetail(vid){
     <div><span class="vs-v" style="font-size:.78rem;color:var(--ok)">${getNextRevision(v,es)}</span><span class="vs-l">Prochaine révision</span></div>
     ${total&&v.km_actuel?`<div><span class="vs-v" style="font-size:.78rem">${(total/v.km_actuel).toFixed(2)}€</span><span class="vs-l">€/km</span></div>`:''}
   </div>`;
-  // Graphique
-  if(costData.length>1){
-    const max=Math.max(...costData.map(d=>d.total),1);
-    h+=`<div class="chart" style="margin-bottom:12px"><div class="chart-ttl">💶 Coûts par année</div><div class="chart-bars">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
-  }
+  // Graphique — remplacé par bouton modal coûts
+  h+=`<button class="btn btn-s" style="width:100%;margin-bottom:12px;justify-content:center;gap:8px" onclick="openCostModal('${vid}')">💶 Voir les coûts par année</button>`;
+  
   // Graphique historique km
   h+=buildKmChart(vid);
   // Actions — bloquees si vehicule en exces
@@ -3961,6 +3959,27 @@ const ADMIN_CODE = "AC2026admin";
 /* ══ FREEMIUM ══ */
 const STRIPE_PUBLIC_KEY=typeof process!=='undefined'?process.env.STRIPE_PUBLIC_KEY:'pk_live_51THVbnPILh21QVYHWIlwpTLZxOmk3ET3R6VV6sR2UUVPY3kdRwZaJDnug5CIpeZ81UtnDkldUj9klSY2BsCcVWKU00W8EAHjq6';
 
+function openCostModal(vid){
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(!v)return;
+  const costData=getCostsByYear(vid);
+  const title=`💶 Coûts — ${v.marque} ${v.modele}`;
+  if(!costData.length){cfm(title,'Aucun coût enregistré pour ce véhicule.',null);setTimeout(()=>{const f=document.querySelector('#mo-cfm .mft');if(f)f.style.display='none';},30);return;}
+  cfm(title,'',null);
+  setTimeout(()=>{
+    const b=document.querySelector('#mo-cfm .mbdy');
+    if(!b)return;
+    const max=Math.max(...costData.map(d=>d.total),1);
+    const total=costData.reduce((s,d)=>s+d.total,0);
+    b.innerHTML=`
+      <div class="chart-bars" style="height:80px;margin-bottom:14px">${costData.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar on" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:6px">
+        ${costData.map(d=>`<div style="display:flex;justify-content:space-between;font-size:.85rem"><span style="color:var(--txm)">${d.year}</span><span style="font-weight:700">${fmtCout(d.total)}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;font-size:.88rem;border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><span style="font-weight:700">Total</span><span style="font-weight:800;color:var(--primary)">${fmtCout(total)}</span></div>
+      </div>`;
+    const f=document.querySelector('#mo-cfm .mft');if(f)f.style.display='none';
+  },30);
+}
 function navToPremium(){ window.location.href='/premium.html'; }
 
 function showCheckoutSuccess(plan){
