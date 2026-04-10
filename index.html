@@ -21,287 +21,211 @@
 <meta name="robots" content="index, follow">
 <meta name="author" content="AutoCarnet">
 <link rel="canonical" href="https://autocarnet.fr">
-<meta name="theme-color" content="#0F172A">
+<meta name="theme-color" content="#0A0F1E">
 <link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "AutoCarnet",
-  "url": "https://autocarnet.fr",
-  "description": "Application gratuite de suivi et carnet d'entretien pour voitures. Rappels automatiques, historique complet, export PDF.",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Web, Android, iOS",
-  "offers": [
-    {"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Gratuit"},
-    {"@type":"Offer","price":"1.99","priceCurrency":"EUR","name":"Plan Famille","billingPeriod":"P1M"},
-    {"@type":"Offer","price":"4.99","priceCurrency":"EUR","name":"Plan Pro","billingPeriod":"P1M"}
-  ],
-  "featureList": "Suivi entretien voiture, Rappels vidange et CT, Gestion flotte véhicules, Historique entretiens, Export PDF, Notifications push, Prix carburant, Mode équipe"
-}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AutoCarnet","url":"https://autocarnet.fr","description":"Application gratuite de suivi et carnet d'entretien pour voitures. Rappels automatiques, historique complet, export PDF.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web, Android, iOS","offers":[{"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Gratuit"},{"@type":"Offer","price":"1.99","priceCurrency":"EUR","name":"Plan Famille","billingPeriod":"P1M"},{"@type":"Offer","price":"4.99","priceCurrency":"EUR","name":"Plan Pro","billingPeriod":"P1M"}],"featureList":"Suivi entretien voiture, Rappels vidange et CT, Gestion flotte véhicules, Historique entretiens, Export PDF, Notifications push, Prix carburant, Mode équipe"}
 </script>
-
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "C'est vraiment gratuit ?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription. Vous pouvez gérer 1 véhicule avec des entretiens illimités sans jamais payer."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "AutoCarnet fonctionne-t-il sur iPhone et Android ?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur — sans passer par l'App Store ou Google Play."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Est-ce que l'application fonctionne sans internet ?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Puis-je annuler mon abonnement à tout moment ?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Mes données sont-elles en sécurité ?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Vos données sont stockées de manière sécurisée et ne sont jamais vendues ni partagées avec des tiers. AutoCarnet ne contient aucune publicité."
-      }
-    }
-  ]
-}
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"C'est vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription."}},{"@type":"Question","name":"AutoCarnet fonctionne-t-il sur iPhone et Android ?","acceptedAnswer":{"@type":"Answer","text":"Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une PWA installable depuis votre navigateur."}},{"@type":"Question","name":"Est-ce que l'application fonctionne sans internet ?","acceptedAnswer":{"@type":"Answer","text":"Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion."}},{"@type":"Question","name":"Puis-je annuler mon abonnement à tout moment ?","acceptedAnswer":{"@type":"Answer","text":"Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit."}}]}
 </script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
+  --bg:#D8DEE9;
+  --surface:#fff;
   --ink:#0A0F1E;
   --ink2:#1E2740;
   --slate:#64748B;
   --muted:#94A3B8;
-  --border:#E2E8F0;
-  --bg:#FFFFFF;
-  --bg2:#F8FAFC;
-  --accent:#2563EB;
-  --accent-glow:rgba(37,99,235,.18);
-  --accent-lt:#EFF6FF;
-  --green:#10B981;
-  --green-lt:#ECFDF5;
+  --border:#B8C4D8;
+  --primary:#2563EB;
+  --primary-lt:#EFF6FF;
+  --primary-dk:#1D4ED8;
+  --ok:#059669;--ok-bg:#ECFDF5;
+  --warn:#D97706;--warn-bg:#FFFBEB;
   --r:16px;
 }
 html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--surface);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
 
-/* ── REVEAL ── */
+/* REVEAL */
 .rv{opacity:1;transform:none}
-.rv.anim{opacity:0;transform:translateY(28px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+.rv.anim{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
 .rv.anim.up{opacity:1;transform:none}
 .rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.4s}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(226,232,240,.6);transition:box-shadow .3s}
-nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06)}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(184,196,216,.5);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 20px rgba(0,0,0,.07)}
 .nav-in{width:100%;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink)}
-.logo-mark{width:32px;height:32px;border-radius:9px;background:var(--ink);display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
-.nav-cta{background:var(--ink);color:#fff;padding:9px 20px;border-radius:10px;font-size:.83rem;font-weight:700;letter-spacing:-.01em;transition:.15s}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1rem;letter-spacing:-.02em;color:var(--ink)}
+.nav-logo-text span{color:var(--primary)}
+.nav-cta{background:var(--ink);color:#fff;padding:7px 16px;border-radius:9px;font-size:.78rem;font-weight:700;transition:.15s;display:inline-flex;align-items:center;justify-content:center}
 .nav-cta:active{opacity:.85}
 
-/* ── HERO ── */
-.hero{padding:100px 20px 0;background:var(--bg);position:relative;overflow:hidden}
+/* HERO */
+.hero{padding:96px 20px 0;background:linear-gradient(160deg,#EEF2FF 0%,#fff 50%,#F0FDF4 100%);position:relative;overflow:hidden}
 .hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
 .blob1{width:500px;height:400px;background:radial-gradient(circle,#BFDBFE,transparent 70%);top:-80px;left:-100px}
 .blob2{width:400px;height:350px;background:radial-gradient(circle,#DDD6FE,transparent 70%);top:0;right:-80px}
 .blob3{width:300px;height:300px;background:radial-gradient(circle,#A7F3D0,transparent 70%);top:200px;left:40%}
-
 .hero-inner{max-width:680px;margin:0 auto;text-align:center;position:relative}
+
 .pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--border);color:var(--ink);padding:5px 14px 5px 7px;border-radius:100px;font-size:.72rem;font-weight:700;margin-bottom:28px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.pill-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,.2);animation:pulse 2.2s ease infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2)}50%{box-shadow:0 0 0 6px rgba(34,197,94,.06)}}
+.pill-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,.2);animation:blink 2.2s ease infinite}
+@keyframes blink{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2)}50%{box-shadow:0 0 0 6px rgba(34,197,94,.06)}}
 
-h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:clamp(2.3rem,7vw,3.8rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:20px;color:var(--ink)}
-h1 em{font-style:normal;color:var(--accent)}
-.hero-sub{font-size:1.02rem;color:var(--slate);line-height:1.75;margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto;font-weight:500}
+h1{font-size:clamp(2.2rem,7vw,3.6rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:20px;color:var(--ink)}
+h1 em{font-style:normal;color:var(--primary)}
+.hero-sub{font-size:1rem;color:var(--slate);line-height:1.75;margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto;font-weight:500}
 
-.cta-group{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:36px}
-.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:var(--ink);color:#fff;box-shadow:0 8px 28px rgba(10,15,30,.22);letter-spacing:-.01em;width:100%;max-width:320px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;transition:.2s}
+.cta-group{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:32px}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;box-shadow:0 8px 28px rgba(37,99,235,.35);letter-spacing:-.01em;width:100%;max-width:320px;transition:.2s}
 .btn-primary:active{transform:scale(.98)}
-.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-size:.9rem;font-weight:600;background:#fff;color:var(--ink);border:1.5px solid var(--border);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;transition:.2s}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-size:.9rem;font-weight:600;background:#fff;color:var(--ink);border:1.5px solid var(--border);transition:.2s}
 .free-note{font-size:.74rem;color:var(--muted);font-weight:600}
-
 .trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin-bottom:44px}
 .trust-item{display:flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:var(--slate)}
-.trust-item::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.trust-item::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0}
 
-/* ── MOCKUP FLOAT ── */
+/* MOCKUP */
 .mockup-section{display:flex;justify-content:center;padding:0 20px 60px;position:relative}
-.phone-frame{background:#0A0F1E;border-radius:28px;padding:4px;box-shadow:0 32px 80px rgba(10,15,30,.28),0 0 0 1px rgba(255,255,255,.06) inset;max-width:260px;width:100%;position:relative}
-.phone-screen{background:#F1F5F9;border-radius:24px;overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.phone-frame{background:#0A0F1E;border-radius:32px;padding:5px;box-shadow:0 32px 80px rgba(10,15,30,.3),0 0 0 1px rgba(255,255,255,.06) inset;max-width:260px;width:100%}
+.phone-screen{background:linear-gradient(160deg,#D0D8EC,#D8DEE9);border-radius:27px;overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
 .ps-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
-.ps-title{font-size:.8rem;font-weight:800;color:var(--ink)}
-.ps-badge{font-size:.6rem;font-weight:800;background:var(--green-lt);color:var(--green);padding:3px 8px;border-radius:20px}
-.ps-card{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ps-title{font-size:.78rem;font-weight:800;color:var(--ink)}
+.ps-badge{font-size:.58rem;font-weight:800;background:var(--ok-bg);color:var(--ok);padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px}
+.ps-card{background:#fff;border-radius:16px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid rgba(184,196,216,.4)}
 .ps-car-row{display:flex;align-items:center;gap:10px}
-.ps-car-ico{width:38px;height:38px;background:var(--accent-lt);border-radius:10px;display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+.ps-car-ico{width:38px;height:38px;background:var(--primary-lt);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ps-car-name{font-size:.82rem;font-weight:800;color:var(--ink)}
-.ps-car-sub{font-size:.63rem;color:var(--slate);margin-top:1px;font-weight:500}
-.ps-car-ok{margin-left:auto;font-size:.6rem;font-weight:800;background:var(--green-lt);color:var(--green);padding:2px 7px;border-radius:20px;flex-shrink:0}
+.ps-car-sub{font-size:.62rem;color:var(--slate);margin-top:2px;font-weight:500;display:flex;align-items:center;gap:5px}
+.ps-car-ok{margin-left:auto;font-size:.58rem;font-weight:800;background:var(--ok-bg);color:var(--ok);padding:2px 7px;border-radius:20px;flex-shrink:0;display:flex;align-items:center;gap:3px}
 .ps-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
-.ps-stat{background:var(--bg2);border-radius:8px;padding:7px 5px;text-align:center}
+.ps-stat{background:#F7F8FB;border-radius:9px;padding:7px 5px;text-align:center}
 .ps-sv{font-size:.78rem;font-weight:800;color:var(--ink)}
-.ps-sl{font-size:.54rem;color:var(--slate);margin-top:1px;font-weight:600}
-.ps-notif{background:#0A0F1E;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:9px}
-.ps-notif-ico{font-size:1rem;flex-shrink:0}
-.ps-notif-txt{font-size:.68rem;color:rgba(255,255,255,.85);line-height:1.5;font-weight:500}
+.ps-sl{font-size:.52rem;color:var(--slate);margin-top:1px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.ps-notif{background:#0A0F1E;border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:9px}
+.ps-notif-ico{width:30px;height:30px;background:rgba(255,255,255,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ps-notif-txt{font-size:.68rem;color:rgba(255,255,255,.8);line-height:1.5;font-weight:500}
 .ps-notif-txt strong{display:block;color:#fff;font-weight:800}
-.ps-mini-card{background:#fff;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:9px}
-.ps-mini-ico{width:30px;height:30px;background:#FFFBEB;border-radius:8px;display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
+.ps-mini-card{background:#fff;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:9px;border:1px solid rgba(184,196,216,.4)}
+.ps-mini-ico{width:30px;height:30px;background:#FEF3C7;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ps-mini-txt{font-size:.72rem;font-weight:700;color:var(--ink)}
 .ps-mini-sub{font-size:.6rem;color:var(--slate);font-weight:500}
-.ps-mini-chip{margin-left:auto;font-size:.58rem;font-weight:800;background:#FEF3C7;color:#D97706;padding:2px 6px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.ps-mini-chip{margin-left:auto;font-size:.58rem;font-weight:800;background:#FEF3C7;color:#D97706;padding:2px 6px;border-radius:20px;flex-shrink:0}
 
-/* ── SOCIAL PROOF BAND ── */
+/* PROOF BAND */
 .proof-band{background:var(--ink);padding:36px 20px}
 .proof-in{max-width:800px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;text-align:center}
 @media(min-width:560px){.proof-in{grid-template-columns:repeat(4,1fr)}}
-.proof-n{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:2.2rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-.04em}
-.proof-l{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.proof-n{font-size:2.2rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-.04em}
+.proof-l{font-size:.7rem;color:rgba(255,255,255,.45);margin-top:5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 
-/* ── WHY SECTION ── */
-.why-sec{padding:72px 20px}
-.why-inner{max-width:700px;margin:0 auto}
-.sec-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px}
-h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:12px;color:var(--ink)}
+/* SECTIONS */
+.sec-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--primary);margin-bottom:10px}
+h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:12px;color:var(--ink)}
 .sec-p{font-size:.92rem;color:var(--slate);line-height:1.78;font-weight:500}
+
+/* WHY */
+.why-sec{padding:72px 20px;background:#fff}
+.why-inner{max-width:700px;margin:0 auto}
 .why-cards{display:grid;grid-template-columns:1fr;gap:10px;margin-top:32px}
 @media(min-width:540px){.why-cards{grid-template-columns:repeat(2,1fr)}}
-.why-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:.2s}
-.why-ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;margin-bottom:14px;flex-shrink:0}
+.why-card{background:#F8FAFC;border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:.2s}
+.why-card:hover{border-color:rgba(37,99,235,.25);box-shadow:0 4px 16px rgba(37,99,235,.08)}
+.why-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
 .why-t{font-size:.9rem;font-weight:800;margin-bottom:6px;color:var(--ink)}
 .why-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
 
-/* ── HOW IT WORKS ── */
-.how-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.how-inner{max-width:500px;margin:0 auto}
-.steps{margin-top:36px;display:flex;flex-direction:column;position:relative}
-.steps::before{content:'';position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:linear-gradient(to bottom,var(--accent),#BFDBFE)}
-.step{display:flex;gap:20px;padding-bottom:28px}
-.step:last-child{padding-bottom:0}
-.step-num{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.84rem;flex-shrink:0;z-index:1;box-shadow:0 0 0 5px rgba(37,99,235,.12)}
-.step-t{font-size:.92rem;font-weight:800;margin-bottom:4px;padding-top:8px;color:var(--ink)}
-.step-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
+/* HOW */
+.how-sec{padding:72px 20px;background:#F8FAFC;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.how-inner{max-width:600px;margin:0 auto}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:32px}
+.step{display:flex;align-items:flex-start;gap:18px;padding:22px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-num{width:38px;height:38px;border-radius:12px;background:var(--ink);color:#fff;font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-.02em}
+.step-t{font-size:.9rem;font-weight:800;color:var(--ink);margin-bottom:5px}
+.step-d{font-size:.8rem;color:var(--slate);line-height:1.65;font-weight:500}
 
-/* ── FEATURES ── */
-.feat-sec{padding:72px 20px}
-.feat-inner{max-width:720px;margin:0 auto}
-.feat-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:32px}
-@media(min-width:540px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
-.feat{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:22px;transition:.18s}
-.feat-ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1rem;margin-bottom:14px}
-.fi-b{background:var(--accent-lt)}
-.fi-g{background:var(--green-lt)}
-.fi-o{background:#FFFBEB}
-.fi-p{background:#F5F3FF}
-.fi-r{background:#FEF2F2}
-.fi-c{background:#ECFEFF}
-.feat-t{font-size:.9rem;font-weight:800;margin-bottom:5px;color:var(--ink)}
-.feat-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
-
-/* ── PROFILES ── */
-.profile-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border)}
-.profile-inner{max-width:720px;margin:0 auto}
-.profile-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:32px}
-@media(min-width:540px){.profile-grid{grid-template-columns:repeat(3,1fr)}}
-.profile-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:24px;text-align:center}
-.profile-emoji{font-size:2.2rem;margin-bottom:12px}
+/* PROFILES */
+.profile-sec{padding:72px 20px;background:#fff}
+.profile-inner{max-width:700px;margin:0 auto}
+.profile-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:28px}
+@media(min-width:480px){.profile-grid{grid-template-columns:repeat(3,1fr)}}
+.profile-card{background:#F8FAFC;border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:.2s}
+.profile-card:hover{border-color:rgba(37,99,235,.25);box-shadow:0 4px 16px rgba(37,99,235,.08)}
+.profile-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
 .profile-t{font-size:.9rem;font-weight:800;margin-bottom:6px;color:var(--ink)}
-.profile-d{font-size:.78rem;color:var(--slate);line-height:1.65;font-weight:500}
+.profile-d{font-size:.8rem;color:var(--slate);line-height:1.65;font-weight:500}
 
-/* ── PRICING ── */
-.price-sec{padding:72px 20px;text-align:center}
-.price-inner{max-width:720px;margin:0 auto}
-.price-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:36px;max-width:660px;margin-left:auto;margin-right:auto}
+/* PRICING */
+.price-sec{padding:72px 20px;background:#F8FAFC;border-top:1px solid var(--border)}
+.price-inner{max-width:700px;margin:0 auto;text-align:center}
+.price-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:32px;text-align:left}
 @media(min-width:540px){.price-grid{grid-template-columns:repeat(3,1fr)}}
-.p-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:24px;text-align:left;display:flex;flex-direction:column;position:relative}
-.p-card.featured{border-color:var(--accent);background:var(--accent-lt)}
-.p-card.popular{border-color:var(--green);background:var(--green-lt)}
+.p-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:24px;display:flex;flex-direction:column;position:relative}
+.p-card.featured{border-color:var(--primary);background:var(--primary-lt)}
+.p-card.popular{border-color:var(--ok);background:var(--ok-bg)}
 .p-chip{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:.65rem;font-weight:800;padding:3px 12px;border-radius:100px;white-space:nowrap;letter-spacing:.03em}
-.chip-blue{background:var(--accent);color:#fff}
-.chip-green{background:var(--green);color:#fff}
+.chip-blue{background:var(--primary);color:#fff}
+.chip-green{background:var(--ok);color:#fff}
 .p-plan{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--slate);margin-bottom:10px}
-.p-amt{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:2.5rem;font-weight:800;letter-spacing:-.04em;margin-bottom:2px;color:var(--ink)}
-.p-amt span{font-size:.85rem;font-weight:600;color:var(--slate);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+.p-amt{font-size:2.4rem;font-weight:800;letter-spacing:-.04em;margin-bottom:2px;color:var(--ink)}
+.p-amt span{font-size:.85rem;font-weight:600;color:var(--slate)}
 .p-trial{font-size:.7rem;color:var(--slate);margin-bottom:18px;font-weight:500}
 .p-feats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;flex:1}
 .p-feats li{font-size:.8rem;color:var(--slate);display:flex;align-items:flex-start;gap:8px;font-weight:500}
-.p-ck{font-size:.78rem;font-weight:800;flex-shrink:0;line-height:1.4}
-.ck-blue{color:var(--accent)}
-.ck-green{color:var(--green)}
-.p-btn{display:block;text-align:center;padding:12px;border-radius:12px;font-size:.86rem;font-weight:800;margin-top:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:-.01em}
+.p-ck{flex-shrink:0;display:flex;align-items:center;margin-top:1px}
+.p-btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;border-radius:12px;font-size:.86rem;font-weight:800;margin-top:auto;letter-spacing:-.01em}
 .btn-ink{background:var(--ink);color:#fff}
-.btn-accent{background:var(--accent);color:#fff}
-.btn-green{background:var(--green);color:#fff}
-.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+.btn-accent{background:var(--primary);color:#fff}
+.btn-green{background:var(--ok);color:#fff}
 
-/* ── PRO ── */
+/* PRO */
 .pro-sec{padding:72px 20px;background:var(--ink);color:#fff}
 .pro-inner{max-width:700px;margin:0 auto}
 .pro-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#93C5FD;margin-bottom:10px}
 .pro-cards{display:grid;grid-template-columns:1fr;gap:10px;margin-top:28px}
-.pro-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px}
-.pro-card-ico{font-size:1.4rem;margin-bottom:10px}
-.pro-card-t{font-size:.9rem;font-weight:800;color:#fff;margin-bottom:5px}
+@media(min-width:480px){.pro-cards{grid-template-columns:repeat(2,1fr)}}
+.pro-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.pro-card-ico{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pro-card-t{font-size:.9rem;font-weight:800;color:#fff}
 .pro-card-d{font-size:.8rem;color:rgba(255,255,255,.55);line-height:1.65;font-weight:500}
-.pro-cta{margin-top:28px;display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:12px;font-size:.9rem;font-weight:800;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:-.01em}
+.pro-cta{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:12px;font-size:.9rem;font-weight:800;background:#fff;color:var(--ink);letter-spacing:-.01em}
 
-/* ── FAQ ── */
-.faq-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border)}
+/* FAQ */
+.faq-sec{padding:72px 20px;background:#F8FAFC;border-top:1px solid var(--border)}
 .faq-inner{max-width:640px;margin:0 auto}
-.faq-list{margin-top:32px;display:flex;flex-direction:column;gap:10px}
+.faq-list{margin-top:32px;display:flex;flex-direction:column;gap:8px}
 .faq-item{background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
-.faq-q{padding:17px 18px;font-size:.88rem;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none;color:var(--ink)}
-.faq-arrow{color:var(--accent);font-size:1.4rem;flex-shrink:0;transition:transform .22s cubic-bezier(.22,1,.36,1);line-height:1;font-weight:400}
+.faq-q{padding:17px 18px;font-size:.88rem;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none;color:var(--ink)}
+.faq-arrow{color:var(--primary);flex-shrink:0;transition:transform .22s cubic-bezier(.22,1,.36,1);display:flex;align-items:center}
 .faq-item.open .faq-arrow{transform:rotate(45deg)}
 .faq-a{font-size:.83rem;color:var(--slate);line-height:1.78;font-weight:500;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .32s ease,padding .32s ease}
 .faq-item.open .faq-a{max-height:220px;padding:0 18px 17px}
 
-/* ── FINAL CTA ── */
+/* FINAL CTA */
 .final-cta{padding:80px 20px;text-align:center;background:var(--ink);position:relative;overflow:hidden}
 .final-cta::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.25),transparent 65%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
-.final-cta::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 65%);bottom:-200px;right:-100px;pointer-events:none}
-.final-cta h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#fff;font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:14px;position:relative}
+.final-cta::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.12),transparent 65%);bottom:-200px;right:-100px;pointer-events:none}
+.final-cta h2{color:#fff;font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:14px;position:relative}
 .final-cta p{font-size:.92rem;color:rgba(255,255,255,.6);margin-bottom:30px;line-height:1.75;font-weight:500;position:relative}
-.final-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:#fff;color:var(--ink);position:relative;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:-.01em;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.final-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:800;background:#fff;color:var(--ink);position:relative;letter-spacing:-.01em;box-shadow:0 8px 32px rgba(0,0,0,.3)}
 .install-note{margin-top:20px;font-size:.7rem;color:rgba(255,255,255,.35);line-height:2.2;position:relative;font-weight:600}
 
-/* ── SEO TEXT ── */
+/* SEO */
 .seo-text{padding:44px 20px;background:#F8FAFC;border-top:1px solid var(--border)}
 .seo-text-in{max-width:760px;margin:0 auto}
 .seo-text h3{font-size:.95rem;font-weight:800;color:var(--ink);margin-bottom:8px}
 .seo-text p{font-size:.82rem;color:var(--slate);line-height:1.8;font-weight:500;margin-bottom:18px}
 
-/* ── FOOTER ── */
+/* FOOTER */
 footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;background:#fff}
 .footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
 .footer-links a{font-size:.76rem;color:var(--slate);font-weight:600}
@@ -314,8 +238,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
 <nav id="navbar">
   <div class="nav-in">
     <a href="/" class="nav-logo">
-      <div class="logo-mark">🚗</div>
-      AutoCarnet
+      <span class="nav-logo-text">Auto<span>Carnet</span></span>
     </a>
     <a href="/app.html" class="nav-cta">Connexion / Inscription</a>
   </div>
@@ -339,7 +262,10 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       <p class="hero-sub">AutoCarnet enregistre chaque entretien et vous alerte avant chaque échéance. Gratuit, sans publicité, sans application à télécharger.</p>
     </div>
     <div class="rv d3 cta-group">
-      <a href="/app.html" class="btn-primary">🚀 Créer mon compte gratuit</a>
+      <a href="/app.html" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        Créer mon compte gratuit
+      </a>
       <div class="free-note">Sans carte bancaire · Accès immédiat</div>
     </div>
     <div class="rv d4 trust-row">
@@ -352,34 +278,49 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
 </section>
 
 <!-- MOCKUP -->
-<div class="mockup-section">
+<div class="mockup-section" style="background:linear-gradient(180deg,#EEF2FF 0%,#fff 100%)">
   <div class="phone-frame rv">
     <div class="phone-screen">
       <div class="ps-topbar">
-        <div class="ps-title">Mes véhicules</div>
-        <div class="ps-badge">✓ À jour</div>
+        <span style="font-size:.75rem;font-weight:800;color:var(--ink)">Auto<span style="color:var(--primary)">Carnet</span></span>
+        <div class="ps-badge">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          À jour
+        </div>
       </div>
       <div class="ps-card">
         <div class="ps-car-row">
-          <div class="ps-car-ico">🚗</div>
+          <div class="ps-car-ico">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+          </div>
           <div style="flex:1;min-width:0">
             <div class="ps-car-name">Renault Clio</div>
-            <div class="ps-car-sub">AB-123-CD · 48 200 km</div>
+            <div class="ps-car-sub">
+              <span style="font-family:monospace;background:#F0F2F7;padding:1px 4px;border-radius:3px;font-size:.58rem">AB-123-CD</span>
+              48 200 km
+            </div>
           </div>
-          <div class="ps-car-ok">✓ À jour</div>
+          <div class="ps-car-ok">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            À jour
+          </div>
         </div>
         <div class="ps-stats">
           <div class="ps-stat"><div class="ps-sv">12</div><div class="ps-sl">Entretiens</div></div>
           <div class="ps-stat"><div class="ps-sv">1 240€</div><div class="ps-sl">Coût total</div></div>
-          <div class="ps-stat"><div class="ps-sv">Dans 2m</div><div class="ps-sl">Révision</div></div>
+          <div class="ps-stat"><div class="ps-sv">2 mois</div><div class="ps-sl">Révision</div></div>
         </div>
       </div>
       <div class="ps-notif">
-        <div class="ps-notif-ico">🔔</div>
+        <div class="ps-notif-ico">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
         <div class="ps-notif-txt"><strong>Rappel vidange</strong>Dans 500 km — Peugeot 308</div>
       </div>
       <div class="ps-mini-card">
-        <div class="ps-mini-ico">⛽</div>
+        <div class="ps-mini-ico">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M10 22v-6h4v6"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 1-2 2h-1"/><line x1="17" y1="6" x2="17" y2="12"/></svg>
+        </div>
         <div>
           <div class="ps-mini-txt">Station la moins chère</div>
           <div class="ps-mini-sub">Total Acces · 0,3 km</div>
@@ -409,13 +350,55 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       <p class="sec-p">Tout pour suivre l'entretien de vos véhicules, sans prise de tête.</p>
     </div>
     <div class="why-cards">
-      <div class="why-card rv"><div class="why-ico fi-b">🔧</div><div class="why-t">44 types d'interventions</div><div class="why-d">Vidange, freins, pneus, contrôle technique, courroie… Tous les entretiens courants organisés par catégorie pour un suivi complet.</div></div>
-      <div class="why-card rv d1"><div class="why-ico fi-g">🔔</div><div class="why-t">Rappels intelligents</div><div class="why-d">Alertes automatiques par date et kilométrage. Plus jamais de CT raté, de vidange oubliée ou d'assurance expirée.</div></div>
-      <div class="why-card rv"><div class="why-ico fi-o">⛽</div><div class="why-t">Prix carburant en direct</div><div class="why-d">Trouvez les stations les moins chères autour de vous. Données officielles du gouvernement, mises à jour en temps réel.</div></div>
-      <div class="why-card rv d1"><div class="why-ico fi-p">📄</div><div class="why-t">Gestion des documents</div><div class="why-d">Carte grise, assurance, certificats CT, garanties — tout centralisé avec alertes d'expiration automatiques.</div></div>
-      <div class="why-card rv"><div class="why-ico fi-c">👥</div><div class="why-t">Mode équipe & famille</div><div class="why-d">Partagez vos véhicules avec votre famille ou votre équipe. Chacun consulte l'historique et ajoute des entretiens.</div></div>
-      <div class="why-card rv d1"><div class="why-ico fi-r">📊</div><div class="why-t">Stats & export PDF/CSV</div><div class="why-d">Coût par kilomètre, dépenses annuelles, valeur résiduelle. Export complet en PDF ou CSV — utile pour la comptabilité.</div></div>
-      <div class="why-card rv"><div class="why-ico fi-b">📷</div><div class="why-t">Photos de factures</div><div class="why-d">Photographiez vos factures et retrouvez-les dans chaque intervention. Précieux pour les garanties et la revente.</div></div>
+      <div class="why-card rv">
+        <div class="why-ico" style="background:#FFF7ED">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <div class="why-t">44 types d'interventions</div>
+        <div class="why-d">Vidange, freins, pneus, contrôle technique, courroie… Tous les entretiens courants organisés par catégorie.</div>
+      </div>
+      <div class="why-card rv d1">
+        <div class="why-ico" style="background:#FFFBEB">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="why-t">Rappels intelligents</div>
+        <div class="why-d">Alertes automatiques par date et kilométrage. Plus jamais de CT raté, de vidange oubliée ou d'assurance expirée.</div>
+      </div>
+      <div class="why-card rv">
+        <div class="why-ico" style="background:#FEF3C7">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M10 22v-6h4v6"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 1-2 2h-1"/><line x1="17" y1="6" x2="17" y2="12"/></svg>
+        </div>
+        <div class="why-t">Prix carburant en direct</div>
+        <div class="why-d">Trouvez les stations les moins chères autour de vous. Données officielles du gouvernement, mises à jour en temps réel.</div>
+      </div>
+      <div class="why-card rv d1">
+        <div class="why-ico" style="background:#EFF6FF">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="why-t">Gestion des documents</div>
+        <div class="why-d">Carte grise, assurance, certificats CT, garanties — tout centralisé avec alertes d'expiration automatiques.</div>
+      </div>
+      <div class="why-card rv">
+        <div class="why-ico" style="background:#F0FDF4">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="why-t">Mode équipe & famille</div>
+        <div class="why-d">Partagez vos véhicules avec votre famille ou votre équipe. Chacun consulte l'historique et ajoute des entretiens.</div>
+      </div>
+      <div class="why-card rv d1">
+        <div class="why-ico" style="background:#F0FDF4">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div class="why-t">Stats & export PDF/CSV</div>
+        <div class="why-d">Coût par kilomètre, dépenses annuelles. Export complet en PDF ou CSV — utile pour la comptabilité.</div>
+      </div>
+      <div class="why-card rv">
+        <div class="why-ico" style="background:#EFF6FF">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div class="why-t">Photos de factures</div>
+        <div class="why-d">Photographiez vos factures et retrouvez-les dans chaque intervention. Précieux pour les garanties et la revente.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -428,10 +411,22 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       <h2>Suivre l'entretien de sa voiture<br>en 2 minutes chrono</h2>
     </div>
     <div class="steps">
-      <div class="step rv"><div class="step-num">1</div><div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire requise. Accès immédiat à l'application.</div></div></div>
-      <div class="step rv d1"><div class="step-num">2</div><div><div class="step-t">Ajoutez vos véhicules</div><div class="step-d">38 marques et 200+ modèles. Immatriculation, kilométrage, type de carburant — configuré en quelques secondes.</div></div></div>
-      <div class="step rv d2"><div class="step-num">3</div><div><div class="step-t">Enregistrez vos entretiens</div><div class="step-d">Date, kilométrage, garage, coût, pièces — tout tracé dans l'historique de chaque véhicule.</div></div></div>
-      <div class="step rv d3"><div class="step-num">4</div><div><div class="step-t">Recevez vos alertes</div><div class="step-d">CT, révision, vidange, assurance — AutoCarnet vous prévient avant chaque échéance par notification push.</div></div></div>
+      <div class="step rv">
+        <div class="step-num">1</div>
+        <div><div class="step-t">Créez votre compte</div><div class="step-d">Email + mot de passe. Aucune carte bancaire requise. Accès immédiat à l'application.</div></div>
+      </div>
+      <div class="step rv d1">
+        <div class="step-num">2</div>
+        <div><div class="step-t">Ajoutez vos véhicules</div><div class="step-d">38 marques et 200+ modèles. Immatriculation, kilométrage, type de carburant — configuré en quelques secondes.</div></div>
+      </div>
+      <div class="step rv d2">
+        <div class="step-num">3</div>
+        <div><div class="step-t">Enregistrez vos entretiens</div><div class="step-d">Date, kilométrage, garage, coût, pièces — tout tracé dans l'historique de chaque véhicule.</div></div>
+      </div>
+      <div class="step rv d3">
+        <div class="step-num">4</div>
+        <div><div class="step-t">Recevez vos alertes</div><div class="step-d">CT, révision, vidange, assurance — AutoCarnet vous prévient avant chaque échéance par notification push.</div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -441,21 +436,27 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="profile-inner">
     <div class="rv" style="text-align:center;max-width:480px;margin:0 auto">
       <div class="sec-eyebrow">Pour tout le monde</div>
-      <h2>Application entretien voiture<br>pour particuliers et professionnels</h2>
+      <h2>Pour particuliers<br>et professionnels</h2>
     </div>
     <div class="profile-grid">
       <div class="profile-card rv">
-        <div class="profile-emoji">🚗</div>
+        <div class="profile-ico" style="background:#EFF6FF">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        </div>
         <div class="profile-t">Particuliers</div>
         <div class="profile-d">Ne ratez plus jamais un CT ou une vidange. Historique complet de votre voiture, précieux à la revente.</div>
       </div>
       <div class="profile-card rv d1">
-        <div class="profile-emoji">👨‍👩‍👧</div>
+        <div class="profile-ico" style="background:#F0FDF4">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
         <div class="profile-t">Familles</div>
         <div class="profile-d">Gérez toutes vos voitures au même endroit. Partagez l'accès avec votre conjoint ou vos enfants.</div>
       </div>
       <div class="profile-card rv d2">
-        <div class="profile-emoji">🏢</div>
+        <div class="profile-ico" style="background:#FFFBEB">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="15" height="8" rx="2"/><circle cx="5.5" cy="18" r="1.5"/><circle cx="11.5" cy="18" r="1.5"/><path d="M16 13h3l2 3v2h-5"/><circle cx="19.5" cy="18" r="1.5"/></svg>
+        </div>
         <div class="profile-t">Pros & Flottes</div>
         <div class="profile-d">Suivez vos véhicules utilitaires, gérez votre équipe et exportez les données pour votre comptable.</div>
       </div>
@@ -468,51 +469,49 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div class="price-inner">
     <div class="rv">
       <div class="sec-eyebrow">Tarifs</div>
-      <h2>Logiciel suivi entretien voiture<br>gratuit ou premium</h2>
+      <h2>Gratuit ou premium</h2>
       <p class="sec-p" style="max-width:400px;margin:0 auto">Commencez gratuitement, évoluez selon vos besoins.</p>
     </div>
     <div class="price-grid">
-      <!-- Gratuit -->
       <div class="p-card rv">
         <div class="p-plan">Gratuit</div>
         <div class="p-amt">0€</div>
         <div class="p-trial">Pour toujours</div>
         <ul class="p-feats">
-          <li><span class="p-ck ck-blue">✓</span>1 véhicule</li>
-          <li><span class="p-ck ck-blue">✓</span>Entretiens illimités</li>
-          <li><span class="p-ck ck-blue">✓</span>Rappels automatiques</li>
-          <li><span class="p-ck ck-blue">✓</span>PWA installable</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>1 véhicule</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Entretiens illimités</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Rappels automatiques</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>PWA installable</li>
         </ul>
         <a href="/app.html" class="p-btn btn-ink">Commencer</a>
       </div>
-      <!-- Famille -->
       <div class="p-card popular rv d1">
+        <div class="p-chip chip-green">Le plus populaire</div>
         <div class="p-plan">Famille</div>
         <div class="p-amt">1,99€<span>/mois</span></div>
         <div class="p-trial">7 jours offerts · Sans engagement</div>
         <ul class="p-feats">
-          <li><span class="p-ck ck-green">✓</span>3 véhicules</li>
-          <li><span class="p-ck ck-green">✓</span>Entretiens illimités/véh.</li>
-          <li><span class="p-ck ck-green">✓</span>Rappels automatiques</li>
-          <li><span class="p-ck ck-green">✓</span>Gestion des documents</li>
-          <li><span class="p-ck ck-green">✓</span>Photos de factures</li>
-          <li><span class="p-ck ck-green">✓</span>Partage famille</li>
+          <li><span class="p-ck" style="color:var(--ok)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>3 véhicules</li>
+          <li><span class="p-ck" style="color:var(--ok)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Entretiens illimités/véh.</li>
+          <li><span class="p-ck" style="color:var(--ok)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Rappels automatiques</li>
+          <li><span class="p-ck" style="color:var(--ok)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Gestion des documents</li>
+          <li><span class="p-ck" style="color:var(--ok)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Photos de factures</li>
+          <li><span class="p-ck" style="color:var(--ok)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Partage famille</li>
         </ul>
         <a href="#" onclick="event.preventDefault();stripeCheckout('famille')" class="p-btn btn-green">Essayer 7 jours</a>
       </div>
-      <!-- Pro -->
       <div class="p-card featured rv d2">
         <div class="p-chip chip-blue">Pour les pros</div>
         <div class="p-plan">Pro</div>
         <div class="p-amt">4,99€<span>/mois</span></div>
         <div class="p-trial">7 jours offerts · Sans engagement</div>
         <ul class="p-feats">
-          <li><span class="p-ck ck-blue">✓</span>Véhicules illimités</li>
-          <li><span class="p-ck ck-blue">✓</span>Entretiens illimités</li>
-          <li><span class="p-ck ck-blue">✓</span>Prix carburant live</li>
-          <li><span class="p-ck ck-blue">✓</span>Export PDF & CSV</li>
-          <li><span class="p-ck ck-blue">✓</span>Photos de factures</li>
-          <li><span class="p-ck ck-blue">✓</span>Mode équipe multi-users</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Véhicules illimités</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Entretiens illimités</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Prix carburant live</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Export PDF & CSV</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Photos de factures</li>
+          <li><span class="p-ck" style="color:var(--primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Mode équipe multi-users</li>
         </ul>
         <a href="#" onclick="event.preventDefault();stripeCheckout('pro')" class="p-btn btn-accent">Essayer 7 jours</a>
       </div>
@@ -528,9 +527,12 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
 <!-- CTA MID -->
 <section class="final-cta" style="padding:60px 20px">
   <div style="position:relative">
-    <h2 style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#fff;font-size:clamp(1.6rem,4.5vw,2.2rem);margin-bottom:12px">Commencez dès maintenant</h2>
+    <h2 style="color:#fff;font-size:clamp(1.6rem,4.5vw,2.2rem);margin-bottom:12px">Commencez dès maintenant</h2>
     <p style="font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:26px;line-height:1.75;font-weight:500">Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
-    <a href="/app.html" class="final-btn">📱 Créer mon compte gratuit</a>
+    <a href="/app.html" class="final-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      Créer mon compte gratuit
+    </a>
     <div class="install-note">
       <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
       <div>Android : Menu ⋮ → Installer l'application</div>
@@ -548,28 +550,39 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
     </div>
     <div class="pro-cards">
       <div class="pro-card rv">
-        <div class="pro-card-ico">🚐</div>
+        <div class="pro-card-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="15" height="8" rx="2"/><circle cx="5.5" cy="18" r="1.5"/><circle cx="11.5" cy="18" r="1.5"/><path d="M16 13h3l2 3v2h-5"/><circle cx="19.5" cy="18" r="1.5"/></svg>
+        </div>
         <div class="pro-card-t">Flotte illimitée de véhicules</div>
         <div class="pro-card-d">Ajoutez tous vos véhicules utilitaires, camionnettes et voitures de société sans limite. Chaque véhicule dispose de son propre historique complet.</div>
       </div>
       <div class="pro-card rv d1">
-        <div class="pro-card-ico">👷</div>
+        <div class="pro-card-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
         <div class="pro-card-t">Accès multi-utilisateurs</div>
         <div class="pro-card-d">Vos chauffeurs, techniciens et responsables accèdent à l'outil depuis leur propre téléphone. Chacun peut signaler un entretien ou consulter les rappels.</div>
       </div>
       <div class="pro-card rv d2">
-        <div class="pro-card-ico">📅</div>
+        <div class="pro-card-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
         <div class="pro-card-t">Rappels CT et révisions obligatoires</div>
         <div class="pro-card-d">Recevez une notification avant chaque contrôle technique, révision ou vidange. Ne ratez plus aucune obligation réglementaire.</div>
       </div>
       <div class="pro-card rv d3">
-        <div class="pro-card-ico">📊</div>
+        <div class="pro-card-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
         <div class="pro-card-t">Rapports et export comptable</div>
         <div class="pro-card-d">Exportez l'historique complet de chaque véhicule en PDF ou CSV. Pratique pour la comptabilité, les assurances et les audits de flotte.</div>
       </div>
     </div>
     <div class="rv" style="margin-top:28px">
-      <a href="/app.html" class="pro-cta">🚀 Essayer AutoCarnet Pro — 7 jours gratuits</a>
+      <a href="/app.html" class="pro-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+        Essayer AutoCarnet Pro — 7 jours gratuits
+      </a>
     </div>
   </div>
 </section>
@@ -583,27 +596,39 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
     </div>
     <div class="faq-list">
       <div class="faq-item rv">
-        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">C'est vraiment gratuit ? <span class="faq-arrow">+</span></div>
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">C'est vraiment gratuit ?
+          <span class="faq-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">Oui, le plan gratuit est gratuit pour toujours. Aucune carte bancaire n'est demandée à l'inscription. Vous pouvez gérer 1 véhicule avec des entretiens illimités sans jamais payer.</div>
       </div>
       <div class="faq-item rv d1">
-        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Mes données sont-elles en sécurité ? <span class="faq-arrow">+</span></div>
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Mes données sont-elles en sécurité ?
+          <span class="faq-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">Vos données sont stockées de manière sécurisée et ne sont jamais vendues ni partagées avec des tiers. AutoCarnet ne contient aucune publicité.</div>
       </div>
       <div class="faq-item rv d2">
-        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Ça fonctionne sur iPhone et Android ? <span class="faq-arrow">+</span></div>
-        <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une application web — vous l'ouvrez dans votre navigateur comme un site, et vous pouvez l'installer sur votre écran d'accueil en un tap, sans passer par l'App Store ou Google Play. Aucun téléchargement requis.</div>
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Ça fonctionne sur iPhone et Android ?
+          <span class="faq-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-a">Oui, AutoCarnet fonctionne sur tous les smartphones. C'est une application web — vous l'ouvrez dans votre navigateur comme un site, et vous pouvez l'installer sur votre écran d'accueil en un tap, sans passer par l'App Store ou Google Play.</div>
       </div>
       <div class="faq-item rv d3">
-        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Puis-je annuler mon abonnement à tout moment ? <span class="faq-arrow">+</span></div>
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Puis-je annuler mon abonnement à tout moment ?
+          <span class="faq-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">Oui, vous pouvez annuler à tout moment sans frais. L'essai de 7 jours est gratuit et vous ne serez débité qu'après cette période si vous choisissez de continuer.</div>
       </div>
       <div class="faq-item rv">
-        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Pourquoi ce n'est pas sur l'App Store ? <span class="faq-arrow">+</span></div>
-        <div class="faq-a">AutoCarnet est une application web progressive (PWA). Ça signifie qu'elle fonctionne directement dans votre navigateur, sans intermédiaire. Avantage : aucune mise à jour manuelle, aucune commission à l'App Store, et un accès immédiat depuis n'importe quel appareil. Elle est installable sur votre écran d'accueil en quelques secondes.</div>
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Pourquoi ce n'est pas sur l'App Store ?
+          <span class="faq-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-a">AutoCarnet est une application web progressive (PWA). Ça signifie qu'elle fonctionne directement dans votre navigateur, sans intermédiaire. Aucune mise à jour manuelle, aucune commission à l'App Store, et un accès immédiat depuis n'importe quel appareil.</div>
       </div>
       <div class="faq-item rv">
-        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Est-ce que ça marche sans internet ? <span class="faq-arrow">+</span></div>
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Est-ce que ça marche sans internet ?
+          <span class="faq-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">Oui, AutoCarnet fonctionne hors ligne. Vos données sont synchronisées automatiquement dès que vous retrouvez une connexion.</div>
       </div>
     </div>
@@ -615,7 +640,10 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   <div style="position:relative">
     <h2>Votre voiture mérite mieux<br>qu'un carnet papier</h2>
     <p>Gratuit, sans publicité, sans carte bancaire.<br>Vos données restent privées et vous appartiennent.</p>
-    <a href="/app.html" class="final-btn">🚀 Créer mon compte gratuit</a>
+    <a href="/app.html" class="final-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+      Créer mon compte gratuit
+    </a>
     <div class="install-note">
       <div>iPhone : Safari → Partager → Sur l'écran d'accueil</div>
       <div>Android : Menu ⋮ → Installer l'application</div>
@@ -629,11 +657,15 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
     <h3>Carnet d'entretien voiture numérique — pour particuliers et professionnels</h3>
     <p>AutoCarnet est une application web de carnet d'entretien voiture accessible depuis votre navigateur, sans téléchargement sur l'App Store. Elle permet de suivre toutes les interventions sur vos véhicules : vidange, freinage, pneus, courroie de distribution, contrôle technique, révision constructeur, et bien plus encore. Les rappels automatiques par date et par kilométrage vous alertent avant chaque échéance pour que votre véhicule reste toujours en règle.</p>
     <h3>Gestion de flotte pour artisans, TPE et PME</h3>
-    <p>Pour les professionnels disposant d'une flotte de véhicules utilitaires — plombiers, électriciens, livreurs, transporteurs — AutoCarnet Pro offre une solution de gestion de flotte simple et abordable à 4,99€ par mois. Suivez l'entretien de chaque camionnette, recevez les rappels de contrôle technique, et exportez les historiques pour votre comptable. Un outil conçu pour les artisans et les petites entreprises qui veulent professionnaliser le suivi de leur parc véhicules sans logiciel complexe.</p>
+    <p>Pour les professionnels disposant d'une flotte de véhicules utilitaires — plombiers, électriciens, livreurs, transporteurs — AutoCarnet Pro offre une solution de gestion de flotte simple et abordable à 4,99€ par mois. Suivez l'entretien de chaque camionnette, recevez les rappels de contrôle technique, et exportez les historiques pour votre comptable.</p>
   </div>
 </div>
 
 <footer>
+  <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:14px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+    <span style="font-size:.85rem;font-weight:800;color:#64748B">Auto<span style="color:var(--primary)">Carnet</span></span>
+  </div>
   <div class="footer-links">
     <a href="/app.html">Application</a>
     <a href="#features">Fonctionnalités</a>
@@ -649,7 +681,6 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   </div>
 </footer>
 
-<!-- ALL SCRIPTS PRESERVED EXACTLY -->
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
 (function(){
@@ -673,12 +704,10 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   }catch(e){}
 })();
 
-// Nav scroll
 window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);
 },{passive:true});
 
-// Reveal observer
 const rvEls=document.querySelectorAll('.rv');
 requestAnimationFrame(()=>{
   rvEls.forEach(el=>el.classList.add('anim'));
@@ -690,28 +719,6 @@ requestAnimationFrame(()=>{
   rvEls.forEach(el=>rvObs.observe(el));
   setTimeout(()=>rvEls.forEach(el=>el.classList.add('up')),1500);
 });
-
-// Compteurs animés
-function animCounter(el){
-  const target=parseInt(el.dataset.count);
-  const suffix=el.dataset.suffix||'';
-  if(isNaN(target)||target===0){el.textContent='0'+suffix;return;}
-  const dur=1800,start=performance.now();
-  function step(now){
-    const p=Math.min((now-start)/dur,1);
-    const ease=1-Math.pow(1-p,3);
-    el.textContent=Math.round(ease*target)+suffix;
-    if(p<1)requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-const cntObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){animCounter(e.target);cntObs.unobserve(e.target);}
-  });
-},{threshold:0.3});
-document.querySelectorAll('[data-count]').forEach(el=>cntObs.observe(el));
 </script>
 <script>
 async function stripeCheckout(plan){
