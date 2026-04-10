@@ -243,9 +243,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 /* EMPTY */
 .empty{text-align:center;padding:40px 16px;color:var(--txm)}
-.empty-i{font-size:2.8rem;display:block;margin-bottom:10px}
-.empty-t{font-size:.97rem;font-weight:700;color:var(--txt);margin-bottom:5px}
-.empty-d{font-size:.83rem;margin-bottom:16px;line-height:1.5}
+.empty-i{font-size:3.2rem;display:block;margin-bottom:14px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.1))}
+.empty-t{font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:6px;letter-spacing:-.02em}
+.empty-d{font-size:.83rem;margin-bottom:16px;line-height:1.6}
+
+/* MODAL HANDLE */
+.modal::before{content:'';display:block;width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 2px;flex-shrink:0}
+
+/* NAVBAR ACTIVE INDICATOR */
+.nb.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--primary);border-radius:2px 2px 0 0}
+
+/* ENTRETIEN icon category colors */
+.ei-ico.cat-moteur{background:#FFF7ED;color:#EA580C}
+.ei-ico.cat-filtres{background:#F0FDF4;color:#16A34A}
+.ei-ico.cat-freinage{background:#FEF2F2;color:#DC2626}
+.ei-ico.cat-pneus{background:#F8FAFC;color:#475569}
+.ei-ico.cat-transmission{background:#EFF6FF;color:#2563EB}
+.ei-ico.cat-suspension{background:#FDF4FF;color:#9333EA}
+.ei-ico.cat-electrique{background:#FEFCE8;color:#CA8A04}
+.ei-ico.cat-refroid{background:#EFF6FF;color:#0284C7}
+.ei-ico.cat-climatisation{background:#F0F9FF;color:#0EA5E9}
+.ei-ico.cat-administratif{background:#F0FDF4;color:#15803D}
+.ei-ico.cat-divers{background:#F8FAFC;color:#64748B}
+.ei-ico.cat-moto{background:#FFF1F2;color:#E11D48}
+.ei-ico.cat-carrosserie{background:#FFF7ED;color:#C2410C}
+
+/* IMMATRICULATION PLATE */
+.plaque{display:inline-flex;align-items:center;border:1.5px solid #1E3A5F;border-radius:4px;overflow:hidden;font-family:monospace;font-size:.68rem;font-weight:700;height:18px;letter-spacing:.02em;flex-shrink:0}
+.plaque-eu{background:#1E3A5F;color:#fff;padding:0 3px;font-size:.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;line-height:1;height:100%}
+.plaque-num{background:#fff;color:#0A0F1E;padding:0 5px;height:100%;display:flex;align-items:center}
+
+/* SEC HDR amélioré */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px}
+.sec-ttl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txl)}
+.sec-lnk{font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer;background:none;border:none;font-family:inherit}
+
+/* AVATAR INITIALES */
+.veh-avatar{display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;letter-spacing:-.02em;text-shadow:0 1px 2px rgba(0,0,0,.2)}
 
 /* INSTALL BANNER */
 #install-banner{display:none;margin:10px 14px 0;padding:12px 14px;background:var(--primary-lt);border:1.5px solid #BFDBFE;border-radius:var(--r);gap:12px;align-items:center;animation:tdown .3s ease both}
@@ -1239,6 +1273,19 @@ const vehCardColor=v=>(v.couleur_carte||v.emoji||'#2563EB');
 const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
 const getType=id=>TYPES.find(t=>t.id===id)||{id:'autre',label:id,ico:'🔨',ikm:null,imo:null,cat:'Divers'};
 
+function vehInitials(v){
+  const m=(v.marque||'').trim();const mo=(v.modele||'').trim();
+  return((m[0]||'')+(mo[0]||'')).toUpperCase()||'?';
+}
+function plaqueHTML(immat){
+  if(!immat)return'';
+  return`<span class="plaque"><span class="plaque-eu"><span>🇪🇺</span><span style="font-size:.42rem">F</span></span><span class="plaque-num">${esc(immat)}</span></span>`;
+}
+function catClass(cat){
+  const map={'Moteur':'cat-moteur','Filtres':'cat-filtres','Freinage':'cat-freinage','Pneus':'cat-pneus','Transmission':'cat-transmission','Suspension':'cat-suspension','Électrique':'cat-electrique','Refroid.':'cat-refroid','Climatisation':'cat-climatisation','Administratif':'cat-administratif','Divers':'cat-divers','Moto':'cat-moto','Carrosserie':'cat-carrosserie'};
+  return map[cat]||'';
+}
+
 function toast(msg,type='i'){
   const el=document.createElement('div');
   el.className='toast '+type;
@@ -2142,7 +2189,7 @@ function vcCompactHTML(v){
         <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-compact-sub">
           <span class="vc-compact-km">${fmtKm(v.km_actuel)}</span>
-          ${v.immatriculation?`<span style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem;cursor:pointer" title="Appui long pour copier" oncontextmenu="event.preventDefault();navigator.clipboard.writeText('${esc(v.immatriculation)}').then(()=>toast('Immatriculation copiée !','s'))" onclick="navigator.clipboard.writeText('${esc(v.immatriculation)}').then(()=>toast('Immatriculation copiée !','s'))">${esc(v.immatriculation)}</span>`:''}
+          ${v.immatriculation?plaqueHTML(v.immatriculation):''}
           ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
         </div>
       </div>
@@ -3014,7 +3061,7 @@ function showAllEntsInDetail(vid){
     h+=es.map(e=>{
       const ti=getType(e.type);
       return`<div class="ei" onclick="openEnt('${e.id}')">
-        <div class="ei-ico">${ti.ico}</div>
+        <div class="ei-ico ${catClass(ti.cat)}">${ti.ico}</div>
         <div class="ei-inf">
           <div class="ei-ty">${esc(ti.label)}</div>
           <div class="ei-mt">
@@ -3403,7 +3450,7 @@ function eiHTML(e,v){
   if(e.rappel_date)rappels.push('📅 '+fmtDate(e.rappel_date));
   if(e.rappel_km)rappels.push('📍 '+fmtKm(e.rappel_km));
   const inner=`<div class="ei" onclick="openEnt('${e.id}')" data-eid="${e.id}">
-    <div class="ei-ico">${ti.ico}</div>
+    <div class="ei-ico ${catClass(ti.cat)}">${ti.ico}</div>
     <div class="ei-inf">
       <div class="ei-ty">${esc(ti.label)}</div>
       <div class="ei-mt"><span>${fmtDate(e.date)}</span>${e.km?`<span>${fmtKm(e.km)}</span>`:''}${e.garage?`<span><a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a></span>`:''}${v?`<span>${esc(v.marque)}</span>`:''}</div>
@@ -4380,7 +4427,7 @@ function renderFlotte(){
     h+=`<div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>`;
     h+=`<div style="flex:1;min-width:0">`;
     h+=`<div style="font-weight:800;font-size:.97rem;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
-    h+=`<div style="font-size:.75rem;color:var(--txm);margin-top:2px">${fmtKm(v.km_actuel)}${v.immatriculation?' · <span style="font-family:monospace">'+esc(v.immatriculation)+'</span>':''}</div>`;
+    h+=`<div style="font-size:.75rem;color:var(--txm);margin-top:3px;display:flex;align-items:center;gap:6px">${fmtKm(v.km_actuel)}${v.immatriculation?' '+plaqueHTML(v.immatriculation):''}</div>`;
     h+=`</div>`;
     if(vRaps.length) h+=`<span style="font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:8px;background:#FEF2F2;color:#DC2626;flex-shrink:0">⚠️ ${vRaps.length}</span>`;
     h+=`<button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer;font-size:1rem" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>`;
