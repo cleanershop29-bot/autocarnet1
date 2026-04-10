@@ -238,7 +238,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .mo.open .modal-c{transform:scale(1)}
 .mhdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 11px;border-bottom:1px solid var(--border);flex-shrink:0}
 .mtit{font-size:.97rem;font-weight:700}
-.mcls{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)}
+.mcls{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)}
 .mbdy{flex:1;overflow-y:auto;padding:15px 18px;-webkit-overflow-scrolling:touch}
 .mft{padding:10px 18px 20px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
 .mft-l{flex:1}
@@ -469,7 +469,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- INSTALL BANNER -->
 <div id="offline-banner">📡 Pas de connexion internet — les données peuvent être obsolètes</div>
 <div id="install-banner">
-  <div style="font-size:1.5rem">📲</div>
+  <div style="width:36px;height:36px;background:var(--primary-lt);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
   <div class="install-copy" style="flex:1">
     <strong>Installer AutoCarnet</strong>
     <span>Accès rapide depuis votre écran d'accueil</span>
@@ -482,14 +482,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 </div>
 
 <div id="ls">
-  <div class="ls-logo">🚗 Auto<span>Carnet</span></div>
+  <div class="ls-logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>Auto<span>Carnet</span></div>
   <div class="ls-dot"></div>
   <div class="ls-msg" id="ls-msg">Chargement…</div>
 </div>
 
 <div id="auth-screen" class="hidden">
   <div class="auth-card">
-    <div class="auth-logo">🚗 AutoCarnet</div>
+    <div class="auth-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>Auto<span style="color:var(--primary)">Carnet</span></div>
     <div class="atabs" id="auth-tabs">
       <button class="atab on" onclick="authTab('l')">Connexion</button>
       <button class="atab" onclick="authTab('r')">Créer un compte</button>
@@ -556,7 +556,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
     <button class="nb" id="nb-fam" onclick="nav('fam')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Équipe</button>
     <button class="nb" id="nb-profil" onclick="nav('profil')">
-      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profil<span id="nb-prem" class="hidden" style="position:absolute;top:5px;right:calc(50% - 16px);font-size:.55rem;color:#F59E0B">⭐</span></button>
+      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profil<span id="nb-prem" class="hidden" style="position:absolute;top:5px;right:calc(50% - 16px);"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></button>
   </nav>
 </div>
 
@@ -571,7 +571,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- MODAL DETAIL VEHICULE -->
 <div id="mo-veh-detail">
   <div class="vd-header">
-    <button class="mcls" onclick="closeVehDetail()" style="background:var(--bg2)">←</button>
+    <button class="mcls" onclick="closeVehDetail()" style="background:var(--bg2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div id="vd-title" style="font-size:.97rem;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
     <button class="btn btn-s btn-sm" id="vd-edit-btn" onclick="openVehDetailEdit()">Modifier</button>
   </div>
@@ -654,7 +654,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- MODAL ADMIN -->
 <div class="mo" id="mo-admin" style="z-index:900">
   <div class="modal modal-c">
-    <div class="mhdr"><div class="mtit">🔐 Panneau Admin</div><button class="mcls" onclick="closeAdmin()">✕</button></div>
+    <div class="mhdr"><div class="mtit" style="display:flex;align-items:center;gap:7px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Panneau Admin</div><button class="mcls" onclick="closeAdmin()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <div id="admin-auth">
         <div class="fg"><label class="fl">Code secret</label><input class="fc" id="admin-code" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkAdminCode()"></div>
@@ -675,7 +675,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
             <label class="fl" style="font-size:.72rem">ID abonnement Stripe</label>
             <input class="fc" id="admin-sub-id" placeholder="Ex: sub_1ABC..." style="font-size:.78rem">
           </div>
-          <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()">💾 Enregistrer l'ID abonnement</button>
+          <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Enregistrer l'ID abonnement</button>
         </div>
       </div>
     </div>
@@ -685,7 +685,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Véhicule -->
 <div class="mo" id="mo-veh" onclick="if(event.target===this)cm('veh')">
   <div class="modal">
-    <div class="mhdr"><div class="mtit" id="mt-veh">Ajouter un véhicule</div><button class="mcls" onclick="cm('veh')">✕</button></div>
+    <div class="mhdr"><div class="mtit" id="mt-veh">Ajouter un véhicule</div><button class="mcls" onclick="cm('veh')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <input type="hidden" id="v-id">
       <div class="fr">
@@ -769,14 +769,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
           </div>
         </div>
         <!-- SECTION DOCUMENTS VÉHICULE (dans Informations avancées) -->
-        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:14px 0 8px;border-top:1px solid var(--border);padding-top:12px">📄 Documents du véhicule</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:14px 0 8px;border-top:1px solid var(--border);padding-top:12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documents du véhicule</div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:8px 0 6px">🪪 Carte grise</div>
         <div class="fr">
           <div class="fg"><label class="fl">Titulaire</label><input class="fc" id="vdoc-cg-nom" placeholder="Nom du propriétaire"></div>
           <div class="fg"><label class="fl">Mise en circulation</label><input class="fc" id="vdoc-cg-emission" type="date"></div>
         </div>
         <div class="fg"><label class="fl">Photo carte grise</label><input class="fc" type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
-        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">🛡️ Assurance</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Assurance</div>
         <div class="fr">
           <div class="fg"><label class="fl">Compagnie</label><input class="fc" id="v-ac" placeholder="Maif, AXA…"></div>
           <div class="fg"><label class="fl">Échéance</label><input class="fc" id="v-as" type="date"></div>
@@ -786,7 +786,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
           <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
         </div>
         <div class="fg"><label class="fl">Photo assurance</label><input class="fc" type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
-        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">✅ Contrôle technique</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Contrôle technique</div>
         <div class="fr">
           <div class="fg"><label class="fl">Centre CT</label><input class="fc" id="vdoc-ct-nom" placeholder="Nom du centre"></div>
           <div class="fg"><label class="fl">Date du CT</label><input class="fc" id="vdoc-ct-emission" type="date"></div>
@@ -800,7 +800,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       </div>
     </div>
     <div class="mft">
-      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-v" onclick="delVeh()">🗑 Supprimer</button></div>
+      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-v" onclick="delVeh()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Supprimer</button></div>
       <button class="btn btn-s btn-sm" onclick="cm('veh')">Annuler</button>
       <button class="btn btn-p btn-sm" onclick="saveVeh()" id="btn-sv">Enregistrer</button>
     </div>
@@ -810,7 +810,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Entretien -->
 <div class="mo" id="mo-ent" onclick="if(event.target===this)cm('ent')">
   <div class="modal">
-    <div class="mhdr"><div class="mtit" id="mt-ent">Ajouter un entretien</div><button class="mcls" onclick="cm('ent')">✕</button></div>
+    <div class="mhdr"><div class="mtit" id="mt-ent">Ajouter un entretien</div><button class="mcls" onclick="cm('ent')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <input type="hidden" id="e-id">
 
@@ -835,7 +835,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
       <!-- ÉTAPE 2 : PROCHAINE ÉCHÉANCE -->
       <div style="background:var(--primary-lt);border:1px solid var(--blue-mid,#BFDBFE);border-radius:var(--r-sm);padding:12px;margin-bottom:10px">
-        <div style="font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:8px">🔔 Prochaine échéance</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:8px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Prochaine échéance</div>
         <div class="fg" style="margin-bottom:8px">
           <label class="fl">Date prévue</label>
           <input class="fc" id="e-rd" type="date" oninput="updateEntRappelPreview()">
@@ -883,18 +883,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
           <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)">
           <!-- Bouton ajouter (visible si pas de photo) -->
           <button type="button" class="photo-btn" id="e-photo-btn" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input').click();}">
-            📷 <span id="e-photo-label">Ajouter une photo de facture</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> <span id="e-photo-label">Ajouter une photo de facture</span>
           </button>
           <!-- Actions photo (visible si photo présente) -->
           <div id="e-photo-actions" class="hidden" style="display:none;gap:6px">
-            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="openPhotoFullscreen(_photoPreviewUrl||g('e-photo-url').value)">🔍 Voir</button>
-            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="g('e-photo-input').click()">🔄 Changer</button>
-            <button type="button" class="btn btn-d btn-sm" style="flex:1" onclick="removePhoto()">🗑 Supprimer</button>
+            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="openPhotoFullscreen(_photoPreviewUrl||g('e-photo-url').value)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Voir</button>
+            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="g('e-photo-input').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Changer</button>
+            <button type="button" class="btn btn-d btn-sm" style="flex:1" onclick="removePhoto()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Supprimer</button>
           </div>
           <input type="hidden" id="e-photo-url" value="">
         </div>
     <div class="mft">
-      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-e" onclick="delEnt()">🗑 Supprimer</button></div>
+      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-e" onclick="delEnt()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Supprimer</button></div>
       <button class="btn btn-s btn-sm" onclick="cm('ent')">Annuler</button>
       <button class="btn btn-p btn-sm" onclick="saveEnt()">Enregistrer</button>
     </div>
@@ -904,7 +904,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Km -->
 <div class="mo" id="mo-km" onclick="if(event.target===this)cm('km')">
   <div class="modal modal-c">
-    <div class="mhdr"><div class="mtit">Mettre à jour le km</div><button class="mcls" onclick="cm('km')">✕</button></div>
+    <div class="mhdr"><div class="mtit">Mettre à jour le km</div><button class="mcls" onclick="cm('km')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <input type="hidden" id="km-vid">
       <div class="fg"><label class="fl">Kilométrage actuel</label><input class="fc" id="km-v" type="number" inputmode="numeric" min="0"><div id="km-h" style="font-size:.76rem;color:var(--txm);margin-top:4px"></div></div>
@@ -916,7 +916,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Invitation -->
 <div class="mo" id="mo-inv" onclick="if(event.target===this)cm('inv')">
   <div class="modal modal-c">
-    <div class="mhdr"><div class="mtit">Partager un véhicule</div><button class="mcls" onclick="cm('inv')">✕</button></div>
+    <div class="mhdr"><div class="mtit">Partager un véhicule</div><button class="mcls" onclick="cm('inv')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <div class="fg"><label class="fl">Véhicule</label><select class="fc" id="inv-v"></select></div>
       <div class="fg"><label class="fl">Email du membre</label><input class="fc" id="inv-e" type="email" placeholder="membre@email.com"></div>
@@ -928,7 +928,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Nouveau mot de passe (reset) -->
 <div class="mo" id="mo-newpass" style="z-index:600">
   <div class="modal modal-c">
-    <div class="mhdr"><div class="mtit">🔐 Nouveau mot de passe</div></div>
+    <div class="mhdr"><div class="mtit" style="display:flex;align-items:center;gap:7px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Nouveau mot de passe</div></div>
     <div class="mbdy">
       <p style="font-size:.85rem;color:var(--txm);margin-bottom:14px;line-height:1.5">Choisissez un nouveau mot de passe pour votre compte.</p>
       <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fc" id="np-pass" type="password" placeholder="8 caractères minimum"></div>
@@ -941,7 +941,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Note Véhicule -->
 <div class="mo" id="mo-veh-note" onclick="if(event.target===this)cm('veh-note')">
   <div class="modal">
-    <div class="mhdr"><div class="mtit">📝 Notes</div><button class="mcls" onclick="cm('veh-note')">✕</button></div>
+    <div class="mhdr"><div class="mtit" style="display:flex;align-items:center;gap:7px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Notes</div><button class="mcls" onclick="cm('veh-note')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <input type="hidden" id="note-vid">
       <input type="hidden" id="note-id">
@@ -949,7 +949,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <div class="fg"><label class="fl">Note</label><textarea class="fc" id="note-contenu" rows="5" placeholder="Détails de la note…" style="resize:vertical"></textarea></div>
     </div>
     <div class="mft">
-      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-note" onclick="delVehNote()">🗑 Supprimer</button></div>
+      <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-note" onclick="delVehNote()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Supprimer</button></div>
       <button class="btn btn-s btn-sm" onclick="cm('veh-note')">Annuler</button>
       <button class="btn btn-p btn-sm" onclick="saveVehNote()">Enregistrer</button>
     </div>
@@ -958,7 +958,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 <!-- Lightbox Photo -->
 <div id="mo-lightbox" onclick="this.classList.remove('open');document.body.style.overflow=''" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:16px;flex-direction:column;gap:12px">
-  <button onclick="document.getElementById('mo-lightbox').classList.remove('open');document.body.style.overflow=''" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.4rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+  <button onclick="document.getElementById('mo-lightbox').classList.remove('open');document.body.style.overflow=''" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.4rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   <img id="lightbox-img" src="" style="max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px" onclick="event.stopPropagation()">
   <div id="lightbox-label" style="color:rgba(255,255,255,.7);font-size:.85rem;text-align:center"></div>
 </div>
@@ -966,7 +966,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- Modal Confirmation -->
 <div class="mo" id="mo-cfm" onclick="if(event.target===this)cm('cfm')">
   <div class="modal modal-c">
-    <div class="mhdr"><div class="mtit" id="cfm-t">Confirmer</div><button class="mcls" onclick="cm('cfm')">✕</button></div>
+    <div class="mhdr"><div class="mtit" id="cfm-t">Confirmer</div><button class="mcls" onclick="cm('cfm')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <p id="cfm-m" style="color:var(--txm);font-size:.88rem;line-height:1.5"></p>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -980,7 +980,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- MODAL RAPPEL CUSTOM -->
 <div class="mo" id="mo-rcus" onclick="if(event.target===this)cm('rcus')">
   <div class="modal">
-    <div class="mhdr"><div class="mtit" id="mt-rcus">Rappel personnalisé</div><button class="mcls" onclick="cm('rcus')">✕</button></div>
+    <div class="mhdr"><div class="mtit" id="mt-rcus">Rappel personnalisé</div><button class="mcls" onclick="cm('rcus')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <input type="hidden" id="rcus-id">
       <div class="fg"><label class="fl">Titre *</label><input class="fc" id="rcus-titre" placeholder="Ex: Renouveler assurance, Révision prévue…"></div>
@@ -1028,7 +1028,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- MODAL DOCUMENT -->
 <div class="mo" id="mo-doc" onclick="if(event.target===this)cm('doc')">
   <div class="modal">
-    <div class="mhdr"><div class="mtit" id="mt-doc">Ajouter un document</div><button class="mcls" onclick="cm('doc')">✕</button></div>
+    <div class="mhdr"><div class="mtit" id="mt-doc">Ajouter un document</div><button class="mcls" onclick="cm('doc')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
       <input type="hidden" id="doc-id">
       <div class="fg"><label class="fl">Véhicule *</label>
@@ -1064,13 +1064,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <div id="carb-page">
   <div class="carb-page-header" style="flex-direction:column;height:auto;padding:10px 16px;gap:8px">
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
-      <div class="carb-page-title">⛽ Prix carburant</div>
-      <button class="mcls" onclick="closeCarburantPage()">✕</button>
+      <div class="carb-page-title" style="display:flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M10 22v-6h4v6"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 1-2 2h-1"/><line x1="17" y1="6" x2="17" y2="12"/></svg>Prix carburant</div>
+      <button class="mcls" onclick="closeCarburantPage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div style="display:flex;gap:6px;width:100%;align-items:center">
       <input id="carb-page-cp" class="fc" placeholder="Code postal" style="flex:1;min-width:0;text-align:center;padding:7px 10px" maxlength="5">
-      <button class="btn btn-p btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="searchCarburantPageByCp()">🔍</button>
-      <button class="btn btn-s btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="S.carbLat=null;S.carbLon=null;S.carbCp=null;searchCarburantPage('Gazole')">📍</button>
+      <button class="btn btn-p btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="searchCarburantPageByCp()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <button class="btn btn-s btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="S.carbLat=null;S.carbLon=null;S.carbCp=null;searchCarburantPage('Gazole')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></button>
     </div>
     <div style="display:flex;gap:6px;width:100%">
       <button class="btn btn-s btn-sm" style="flex:1" onclick="searchCarburantPage('Gazole')">🛢️ Gazole</button>
@@ -1283,6 +1283,26 @@ const fmtCout=n=>n?Number(n).toLocaleString('fr',{style:'currency',currency:'EUR
 const vehCardColor=v=>(v.couleur_carte||v.emoji||'#2563EB');
 const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
 const getType=id=>TYPES.find(t=>t.id===id)||{id:'autre',label:id,ico:'🔨',ikm:null,imo:null,cat:'Divers'};
+
+/* SVG ICONS */
+const SVG={
+  close:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  back:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+  trash:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`,
+  camera:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  refresh:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
+  bell:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+  save:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
+  pin:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  phone:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+  star:`<svg width="10" height="10" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  search:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  lock:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  note:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  shield:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  check:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  car:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>`,
+};
 
 function vehInitials(v){
   const m=(v.marque||'').trim();const mo=(v.modele||'').trim();
@@ -1510,7 +1530,7 @@ function showCGU(){
   mo.innerHTML=`<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0;flex-shrink:0">
       <div style="font-size:1rem;font-weight:700">Conditions Générales d'Utilisation</div>
-      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1F5F9;cursor:pointer;font-size:1rem">✕</button>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1F5F9;cursor:pointer;font-size:1rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div style="padding:16px 20px;overflow-y:auto;font-size:.85rem;color:#334155;line-height:1.7">
       <p style="font-weight:700;margin-bottom:8px">Dernière mise à jour : ${new Date().toLocaleDateString('fr-FR')}</p>
@@ -1533,7 +1553,7 @@ function showRGPD(){
   mo.innerHTML=`<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0;flex-shrink:0">
       <div style="font-size:1rem;font-weight:700">Politique de confidentialité</div>
-      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1F5F9;cursor:pointer;font-size:1rem">✕</button>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1F5F9;cursor:pointer;font-size:1rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div style="padding:16px 20px;overflow-y:auto;font-size:.85rem;color:#334155;line-height:1.7">
       <p style="font-weight:700;margin-bottom:8px">Dernière mise à jour : ${new Date().toLocaleDateString('fr-FR')}</p>
@@ -3016,7 +3036,7 @@ function openVehDetail(vid){
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px">
           ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
-          ${e.photo_url?`<span style="font-size:.72rem;color:var(--txm)">📷 facture</span>`:''}
+          ${e.photo_url?`<span style="font-size:.72rem;color:var(--txm);display:inline-flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>facture</span>`:''}
         </div>
       </div>`;
     }).join('');
@@ -3027,7 +3047,7 @@ function openVehDetail(vid){
   // Infos avancées
   // Notes
   const vnotes=(S.veh_notes||[]).filter(n=>n.vehicle_id===vid);
-  h+=`<div class="sec-hdr"><span class="sec-ttl">📝 Notes (${vnotes.length})</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openVehNote('${vid}')">+ Ajouter</button></div>`;
+  h+=`<div class="sec-hdr"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>Notes (${vnotes.length})</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openVehNote('${vid}')">+ Ajouter</button></div>`;
   if(vnotes.length){
     h+=vnotes.map(n=>`<div class="ei-inline" onclick="openVehNote('${vid}','${n.id}')">
       <span style="font-size:1rem">📝</span>
@@ -3406,10 +3426,10 @@ function renderRap(){
     .map(e=>{const v=S.vehicles.find(x=>x.id===e.vehicle_id);const exp=new Date(e.date);exp.setMonth(exp.getMonth()+e.garantie_mois);const days=Math.ceil((exp-now2)/86400000);return{e,v,days};})
     .sort((a,b)=>a.days-b.days);
   if(garanties.length){
-    h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🛡️ Garanties actives (${garanties.length})</span></div>`;
+    h+=`<div class="sec-hdr mt12"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Garanties actives (${garanties.length})</span></div>`;
     h+=garanties.map(({e,v,days})=>{
       const ti=getType(e.type);const col=v?vehCardColor(v):'#2563EB';
-      return`<div class="ri2 ok" onclick="openEnt('${e.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span></div><div style="font-size:.87rem;font-weight:700">🛡️ ${esc(ti.label)}</div><div style="font-size:.72rem;color:var(--txm)">Expire le ${(()=>{const d=new Date(e.date);d.setMonth(d.getMonth()+e.garantie_mois);return fmtDate(d.toISOString());})()} </div></div><div class="ri2-badge ok">Dans ${days}j</div></div>`;
+      return`<div class="ri2 ok" onclick="openEnt('${e.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span></div><div style="font-size:.87rem;font-weight:700;display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${esc(ti.label)}</div><div style="font-size:.72rem;color:var(--txm)">Expire le ${(()=>{const d=new Date(e.date);d.setMonth(d.getMonth()+e.garantie_mois);return fmtDate(d.toISOString());})()} </div></div>${daysBadge(`Dans ${days}j`,'ok')}</div>`;
     }).join('');
   }
 
@@ -3493,7 +3513,7 @@ function eiHTML(e,v){
       ${e.note?`<div class="ei-nt">${esc(e.note)}</div>`:''}
       ${rappels.length?`<div class="ei-rp">Rappel : ${rappels.join(' · ')}</div>`:''}
       ${e.pieces?`<div style="font-size:.72rem;color:var(--txm);margin-top:3px">🔩 ${esc(e.pieces)}</div>`:''}
-      ${e.garantie_mois?`<div style="font-size:.72rem;color:var(--ok);margin-top:2px">🛡️ Garantie ${e.garantie_mois} mois</div>`:''}
+      ${e.garantie_mois?`<div style="font-size:.72rem;color:var(--ok);margin-top:2px;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Garantie ${e.garantie_mois} mois</div>`:''}
     </div>
     ${e.cout?`<div class="ei-ct">${fmtCout(e.cout)}</div>`:''}
   </div>`;
@@ -3830,7 +3850,7 @@ function renderProfil(){
     <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin-bottom:12px">Compte</div>
     <div class="g6">
       <button class="btn btn-s btn-sm" onclick="doOut()">🚪 Déconnexion</button>
-      <button class="btn btn-d btn-sm" onclick="deleteAccount()">🗑 Supprimer mon compte</button>
+      <button class="btn btn-d btn-sm" onclick="deleteAccount()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Supprimer mon compte</button>
     </div>
   </div>`;
 }
