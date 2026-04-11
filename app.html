@@ -229,7 +229,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 /* MODALES */
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:500;display:none;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-#mo-cfm{z-index:600}
+#mo-cfm{z-index:1000}
 #mo-lightbox.open{display:flex!important}
 .mo.open{display:flex;opacity:1;pointer-events:all}
 .mo.open .modal{transform:translateY(0)}
@@ -2017,11 +2017,7 @@ function getCostsByYear(vid){
   S.ents.filter(e=>e.vehicle_id===vid&&e.cout).forEach(e=>{const y=new Date(e.date).getFullYear();map[y]=(map[y]||0)+e.cout;});
   return Object.keys(map).sort().slice(-5).map(y=>({year:y,total:map[y]}));
 }
-function chartHTML(vid){
-  const data=getCostsByYear(vid);if(!data.length)return'';
-  const max=Math.max(...data.map(d=>d.total),1);
-  return`<div class="chart"><div class="chart-ttl">Coûts par année</div><div class="chart-bars">${data.map(d=>`<div class="bar-wrap"><div class="bar-val">${Math.round(d.total)}€</div><div class="bar" style="height:${Math.max(Math.round(d.total/max*100),4)}%"></div><div class="bar-lbl">${d.year}</div></div>`).join('')}</div></div>`;
-}
+
 
 /* PDF */
 function exportPDF(vid){
