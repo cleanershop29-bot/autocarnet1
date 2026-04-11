@@ -50,12 +50,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .ls-msg{color:rgba(255,255,255,.5);font-size:.82rem;animation:ls-fade-in .6s .2s ease both}
 
 /* AUTH */
-#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0A0F1E}
-.auth-card{background:#fff;border-radius:24px;padding:28px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.auth-logo{font-family:inherit;font-size:1.5rem;font-weight:800;color:var(--txt);letter-spacing:-1px;margin-bottom:22px;text-align:center}
-.atabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:20px}
-.atab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-family:inherit;font-size:.88rem;font-weight:500;color:var(--txm);cursor:pointer;transition:.2s}
-.atab.on{background:#fff;color:var(--primary);font-weight:700;box-shadow:var(--sh)}
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#070C1A;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E"),radial-gradient(ellipse at 20% 20%,rgba(37,99,235,.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(29,78,216,.12) 0%,transparent 60%),linear-gradient(160deg,#0A0F1E 0%,#070C1A 100%);position:relative;overflow:hidden}
+#auth-screen::before{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:80%;background:radial-gradient(ellipse,rgba(37,99,235,.12) 0%,transparent 70%);pointer-events:none}
+#auth-screen::after{content:'';position:absolute;bottom:-30%;right:-20%;width:50%;height:70%;background:radial-gradient(ellipse,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none}
+.auth-card{background:#fff;border-radius:28px;padding:32px 28px;width:100%;max-width:390px;box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06);position:relative;z-index:1;animation:ls-fade-in .4s ease both}
+.auth-logo{font-family:inherit;font-size:1.6rem;font-weight:900;color:var(--txt);letter-spacing:-1.5px;margin-bottom:6px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px}
+.auth-logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,99,235,.45);flex-shrink:0}
+.auth-subtitle{font-size:.82rem;color:var(--txm);text-align:center;margin-bottom:24px;font-weight:500}
+.atabs{display:flex;background:#F1F5F9;border-radius:12px;padding:4px;margin-bottom:22px}
+.atab{flex:1;padding:10px;border:none;background:none;border-radius:9px;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s}
+.atab.on{background:#fff;color:var(--primary);font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 
 /* FORM */
 .fg{margin-bottom:13px}
@@ -489,30 +493,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
 .sort-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 /* ONBOARDING */
-#mo-onboard{position:fixed;inset:0;background:rgba(10,15,30,.65);z-index:800;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px)}
+#mo-onboard{position:fixed;inset:0;background:rgba(10,15,30,.7);z-index:800;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(8px)}
 #mo-onboard.open{opacity:1;pointer-events:all}
 #mo-onboard.open .ob-sheet{transform:translateY(0)}
-.ob-sheet{background:#fff;border-radius:28px 28px 0 0;width:100%;padding:28px 24px 40px;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:90vh;overflow-y:auto}
-.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:24px}
-.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:.25s}
-.ob-dot.on{background:var(--txt);width:24px;border-radius:4px}
-.ob-ico{font-size:3rem;text-align:center;margin-bottom:14px}
-.ob-ttl{font-family:inherit;font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.03em;color:var(--txt)}
-.ob-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.65;margin-bottom:24px;font-weight:500}
-.ob-feat{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
-.ob-feat-row{display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:var(--r-sm);padding:12px 14px;border:1px solid var(--border)}
-.ob-feat-ico{font-size:1.3rem;flex-shrink:0}
-.ob-feat-txt{font-size:.85rem;font-weight:600;color:var(--txt)}
+.ob-sheet{background:#fff;border-radius:32px 32px 0 0;width:100%;padding:0 0 40px;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto}
+.ob-header{padding:20px 24px 0;display:flex;flex-direction:column;align-items:center}
+.ob-handle{width:40px;height:5px;background:linear-gradient(90deg,#CBD5E1,#94A3B8);border-radius:3px;margin-bottom:20px}
+.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:0}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:#E2E8F0;transition:.3s cubic-bezier(.34,1.56,.64,1)}
+.ob-dot.on{background:linear-gradient(135deg,#3B82F6,#2563EB);width:28px;border-radius:4px;box-shadow:0 2px 8px rgba(37,99,235,.35)}
+.ob-body{padding:24px 24px 0}
+.ob-ico{display:flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:24px;margin:0 auto 20px;position:relative}
+.ob-ttl{font-family:inherit;font-size:1.3rem;font-weight:900;text-align:center;margin-bottom:10px;letter-spacing:-.03em;color:var(--txt)}
+.ob-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.7;margin-bottom:24px;font-weight:500}
+.ob-feat{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.ob-feat-row{display:flex;align-items:center;gap:14px;border-radius:14px;padding:13px 14px;border:1px solid rgba(184,196,216,.6);background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.ob-feat-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ob-feat-txt{font-size:.87rem;font-weight:700;color:var(--txt)}
+.ob-feat-sub{font-size:.75rem;color:var(--txm);margin-top:2px;font-weight:500}
 /* Plan cards dans l'onboarding */
-.ob-plan{border-radius:14px;padding:14px;margin-bottom:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:.15s}
-.ob-plan.pop{border-color:#10B981;background:#F0FDF4}
-.ob-plan.feat{border-color:var(--primary);background:var(--primary-lt)}
-.ob-plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.ob-plan-name{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm)}
-.ob-plan-price{font-family:inherit;font-size:1.2rem;font-weight:800;color:var(--txt);letter-spacing:-.03em}
+.ob-plan{border-radius:16px;padding:14px 16px;margin-bottom:8px;border:1.5px solid rgba(184,196,216,.6);background:#fff;cursor:pointer;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.ob-plan.pop{border-color:#10B981;background:linear-gradient(160deg,#F0FDF4,#fff);box-shadow:0 3px 14px rgba(16,185,129,.12)}
+.ob-plan.feat{border-color:var(--primary);background:linear-gradient(160deg,#EFF6FF,#fff);box-shadow:0 3px 14px rgba(37,99,235,.12)}
+.ob-plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.ob-plan-name{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm)}
+.ob-plan-price{font-family:inherit;font-size:1.25rem;font-weight:900;color:var(--txt);letter-spacing:-.03em}
 .ob-plan-price span{font-family:inherit;font-size:.7rem;font-weight:500;color:var(--txm)}
-.ob-plan-desc{font-size:.76rem;color:var(--txm);font-weight:500;line-height:1.5}
-.ob-plan-chip{font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:20px}
+.ob-plan-desc{font-size:.76rem;color:var(--txm);font-weight:500;line-height:1.55}
+.ob-plan-chip{font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:20px}
 .chip-green{background:#10B981;color:#fff}
 .chip-blue{background:var(--primary);color:#fff}
 </style>
@@ -542,7 +550,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 <div id="auth-screen" class="hidden">
   <div class="auth-card">
-    <div class="auth-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>Auto<span style="color:var(--primary)">Carnet</span></div>
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
+      <span>Auto<span style="color:var(--primary)">Carnet</span></span>
+    </div>
+    <div class="auth-subtitle">Carnet d'entretien intelligent ✦ Rappels automatiques</div>
     <div class="atabs" id="auth-tabs">
       <button class="atab on" onclick="authTab('l')">Connexion</button>
       <button class="atab" onclick="authTab('r')">Créer un compte</button>
@@ -550,28 +562,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
     <div id="pl">
       <div class="fg"><label class="fl">Email</label><input class="fc" id="le" type="email" placeholder="vous@email.com" autocomplete="email"></div>
       <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="lp" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn btn-p-full" onclick="doLogin()" id="btn-login">Se connecter</button>
-      <div style="text-align:center;margin-top:12px"><button onclick="showReset()" style="background:none;border:none;color:#2563EB;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:underline">Mot de passe oublié ?</button></div>
-      <div style="display:flex;align-items:center;gap:8px;margin:14px 0"><div style="flex:1;height:1px;background:#E2E8F0"></div><span style="font-size:.78rem;color:#94A3B8">ou</span><div style="flex:1;height:1px;background:#E2E8F0"></div></div>
-      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:600;color:#1E293B"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continuer avec Google</button>
+      <button class="btn btn-p-full" onclick="doLogin()" id="btn-login" style="padding:13px;font-size:.95rem">Se connecter</button>
+      <div style="text-align:center;margin-top:12px"><button onclick="showReset()" style="background:none;border:none;color:var(--primary);font-family:inherit;font-size:.83rem;font-weight:600;cursor:pointer">Mot de passe oublié ?</button></div>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0"><div style="flex:1;height:1px;background:#E8EDF5"></div><span style="font-size:.75rem;color:#94A3B8;font-weight:600;letter-spacing:.04em">OU</span><div style="flex:1;height:1px;background:#E8EDF5"></div></div>
+      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1.5px solid #E2E8F0;border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:700;color:#1E293B;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:.15s"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continuer avec Google</button>
     </div>
     <div id="pp" class="hidden">
-      <div style="text-align:center;margin-bottom:14px;font-size:.9rem;color:#64748B;line-height:1.5">Entrez votre email pour recevoir un lien de réinitialisation.</div>
+      <div style="text-align:center;margin-bottom:18px"><div style="font-size:2rem;margin-bottom:8px">🔑</div><div style="font-size:.95rem;font-weight:700;color:var(--txt);margin-bottom:4px">Réinitialiser le mot de passe</div><div style="font-size:.83rem;color:var(--txm)">Un lien vous sera envoyé par email.</div></div>
       <div class="fg"><label class="fl">Email</label><input class="fc" id="pe" type="email" placeholder="vous@email.com" autocomplete="email"></div>
-      <button class="btn btn-p-full" onclick="doReset()" id="btn-reset">Envoyer le lien</button>
-      <div style="text-align:center;margin-top:12px"><button onclick="authTab('l')" style="background:none;border:none;color:#64748B;font-family:inherit;font-size:.85rem;cursor:pointer">← Retour à la connexion</button></div>
+      <button class="btn btn-p-full" onclick="doReset()" id="btn-reset" style="padding:13px">Envoyer le lien</button>
+      <div style="text-align:center;margin-top:12px"><button onclick="authTab('l')" style="background:none;border:none;color:#64748B;font-family:inherit;font-size:.85rem;cursor:pointer;font-weight:600">← Retour</button></div>
     </div>
     <div id="pr" class="hidden">
       <div class="fg"><label class="fl">Prénom</label><input class="fc" id="rn" type="text" placeholder="Votre prénom"></div>
       <div class="fg"><label class="fl">Email</label><input class="fc" id="re" type="email" placeholder="vous@email.com"></div>
       <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="rp" type="password" placeholder="8 caractères minimum"></div>
-      <div style="margin-bottom:14px;display:flex;align-items:flex-start;gap:8px">
-        <input type="checkbox" id="cgu-check" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer">
-        <label for="cgu-check" style="font-size:.8rem;color:#64748B;line-height:1.5;cursor:pointer">J'accepte les <span onclick="showCGU()" style="color:#2563EB;font-weight:600;text-decoration:underline;cursor:pointer">CGU</span> et la <span onclick="showRGPD()" style="color:#2563EB;font-weight:600;text-decoration:underline;cursor:pointer">politique de confidentialité</span></label>
+      <div style="margin-bottom:16px;display:flex;align-items:flex-start;gap:8px;background:#F8FAFF;border-radius:10px;padding:10px 12px;border:1px solid #DBEAFE">
+        <input type="checkbox" id="cgu-check" style="margin-top:2px;flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--primary)">
+        <label for="cgu-check" style="font-size:.8rem;color:#475569;line-height:1.55;cursor:pointer">J'accepte les <span onclick="showCGU()" style="color:#2563EB;font-weight:700;cursor:pointer">CGU</span> et la <span onclick="showRGPD()" style="color:#2563EB;font-weight:700;cursor:pointer">politique de confidentialité</span></label>
       </div>
-      <button class="btn btn-p-full" onclick="doReg()" id="btn-reg">Créer mon compte</button>
-      <div style="display:flex;align-items:center;gap:8px;margin:14px 0"><div style="flex:1;height:1px;background:#E2E8F0"></div><span style="font-size:.78rem;color:#94A3B8">ou</span><div style="flex:1;height:1px;background:#E2E8F0"></div></div>
-      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:600;color:#1E293B"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>S'inscrire avec Google</button>
+      <button class="btn btn-p-full" onclick="doReg()" id="btn-reg" style="padding:13px;font-size:.95rem">Créer mon compte</button>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0"><div style="flex:1;height:1px;background:#E8EDF5"></div><span style="font-size:.75rem;color:#94A3B8;font-weight:600;letter-spacing:.04em">OU</span><div style="flex:1;height:1px;background:#E8EDF5"></div></div>
+      <button onclick="doGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1.5px solid #E2E8F0;border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:700;color:#1E293B;box-shadow:0 1px 4px rgba(0,0,0,.06)"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>S'inscrire avec Google</button>
     </div>
   </div>
 </div>
@@ -635,71 +647,81 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 <!-- ONBOARDING -->
 <div id="mo-onboard">
   <div class="ob-sheet">
-    <div class="ob-dots">
-      <div class="ob-dot on"></div>
-      <div class="ob-dot"></div>
-      <div class="ob-dot"></div>
-      <div class="ob-dot"></div>
-    </div>
-    <!-- Étape 1 : Bienvenue -->
-    <div class="ob-step" id="ob-s1">
-      <div class="ob-ico"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
-      <div class="ob-ttl">Bienvenue sur AutoCarnet !</div>
-      <div class="ob-txt">Fini les carnets papier perdus et les CT ratés.<br><strong>2 minutes</strong> suffisent pour configurer votre premier véhicule.</div>
-      <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="showOnboardStep(2)">Découvrir →</button>
-    </div>
-    <!-- Étape 2 : Fonctionnalités -->
-    <div class="ob-step hidden" id="ob-s2">
-      <div class="ob-ttl">Tout ce dont vous avez besoin</div>
-      <div class="ob-feat">
-        <div class="ob-feat-row"><div class="ob-feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="ob-feat-txt">Historique complet de chaque entretien</div></div>
-        <div class="ob-feat-row"><div class="ob-feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="ob-feat-txt">Rappels automatiques date & kilométrage</div></div>
-        <div class="ob-feat-row"><div class="ob-feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="ob-feat-txt">Export PDF & CSV en un tap</div></div>
-        <div class="ob-feat-row"><div class="ob-feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M10 22v-6h4v6"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 1-2 2h-1"/><line x1="17" y1="6" x2="17" y2="12"/></svg></div><div class="ob-feat-txt">Prix carburant autour de vous</div></div>
+    <div class="ob-header">
+      <div class="ob-handle"></div>
+      <div class="ob-dots">
+        <div class="ob-dot on"></div>
+        <div class="ob-dot"></div>
+        <div class="ob-dot"></div>
+        <div class="ob-dot"></div>
       </div>
-      <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(3)">Suivant →</button>
     </div>
-    <!-- Étape 3 : Les plans -->
-    <div class="ob-step hidden" id="ob-s3">
-      <div class="ob-ttl">Choisissez votre formule</div>
-      <div class="ob-txt" style="margin-bottom:16px">Commencez gratuitement, évoluez selon vos besoins.</div>
-      <div class="ob-plan">
-        <div class="ob-plan-header">
-          <div class="ob-plan-name">Gratuit</div>
-          <div class="ob-plan-price">0€ <span>/ toujours</span></div>
+    <div class="ob-body">
+      <!-- Étape 1 : Bienvenue -->
+      <div class="ob-step" id="ob-s1">
+        <div class="ob-ico" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
         </div>
-        <div class="ob-plan-desc">1 véhicule · Entretiens illimités · Rappels · PWA</div>
+        <div class="ob-ttl">Bienvenue sur AutoCarnet !</div>
+        <div class="ob-txt">Fini les carnets papier perdus et les CT ratés.<br><strong style="color:var(--txt)">2 minutes</strong> suffisent pour configurer votre premier véhicule.</div>
+        <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="showOnboardStep(2)">Découvrir →</button>
       </div>
-      <div class="ob-plan pop">
-        <div class="ob-plan-header">
-          <div class="ob-plan-name" style="color:#065F46">Famille</div>
-          <div style="display:flex;align-items:center;gap:7px">
-            <div class="ob-plan-price">1,99€ <span>/mois</span></div>
-            <div class="ob-plan-chip chip-green">7j offerts</div>
+      <!-- Étape 2 : Fonctionnalités -->
+      <div class="ob-step hidden" id="ob-s2">
+        <div class="ob-ttl">Tout ce dont vous avez besoin</div>
+        <div class="ob-txt" style="margin-bottom:20px">Un seul endroit pour tout gérer.</div>
+        <div class="ob-feat">
+          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#ECFDF5"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div><div class="ob-feat-txt">Historique complet</div><div class="ob-feat-sub">Chaque entretien enregistré en un tap</div></div></div>
+          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#FEF3C7"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><div class="ob-feat-txt">Rappels automatiques</div><div class="ob-feat-sub">CT, vidange, assurance — jamais oublié</div></div></div>
+          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#EFF6FF"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="ob-feat-txt">Export PDF & CSV</div><div class="ob-feat-sub">Historique complet pour la revente</div></div></div>
+          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#FEF9C3"><span style="font-size:1.2rem">⛽</span></div><div><div class="ob-feat-txt">Prix carburant en direct</div><div class="ob-feat-sub">Stations les moins chères autour de vous</div></div></div>
+        </div>
+        <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(3)">Suivant →</button>
+      </div>
+      <!-- Étape 3 : Les plans -->
+      <div class="ob-step hidden" id="ob-s3">
+        <div class="ob-ttl">Choisissez votre formule</div>
+        <div class="ob-txt" style="margin-bottom:18px">Commencez gratuitement, évoluez selon vos besoins.</div>
+        <div class="ob-plan">
+          <div class="ob-plan-header">
+            <div class="ob-plan-name">Gratuit</div>
+            <div class="ob-plan-price">0€ <span>/ toujours</span></div>
           </div>
+          <div class="ob-plan-desc">1 véhicule · Entretiens illimités · Rappels · Prix carburant</div>
         </div>
-        <div class="ob-plan-desc">3 véhicules · Documents · Photos factures · Partage famille</div>
-      </div>
-      <div class="ob-plan feat">
-        <div class="ob-plan-header">
-          <div class="ob-plan-name" style="color:#0A0F1E">Pro</div>
-          <div style="display:flex;align-items:center;gap:7px">
-            <div class="ob-plan-price">4,99€ <span>/mois</span></div>
-            <div class="ob-plan-chip chip-blue">7j offerts</div>
+        <div class="ob-plan pop">
+          <div class="ob-plan-header">
+            <div class="ob-plan-name" style="color:#065F46">👨‍👩‍👧 Famille</div>
+            <div style="display:flex;align-items:center;gap:7px">
+              <div class="ob-plan-price">1,99€ <span>/mois</span></div>
+              <div class="ob-plan-chip chip-green">7j offerts</div>
+            </div>
           </div>
+          <div class="ob-plan-desc">3 véhicules · Documents · Photos factures · Partage famille</div>
         </div>
-        <div class="ob-plan-desc">Véhicules illimités · Export · Prix carburant · Mode équipe</div>
+        <div class="ob-plan feat">
+          <div class="ob-plan-header">
+            <div class="ob-plan-name" style="color:#1D4ED8">🚀 Pro</div>
+            <div style="display:flex;align-items:center;gap:7px">
+              <div class="ob-plan-price">4,99€ <span>/mois</span></div>
+              <div class="ob-plan-chip chip-blue">7j offerts</div>
+            </div>
+          </div>
+          <div class="ob-plan-desc">Véhicules illimités · Export · Flotte · Mode équipe</div>
+        </div>
+        <div style="font-size:.73rem;color:var(--txm);text-align:center;margin:12px 0 18px;font-weight:500">Sans engagement · Annulation à tout moment</div>
+        <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(4)">Continuer →</button>
       </div>
-      <div style="font-size:.73rem;color:var(--txm);text-align:center;margin:10px 0 16px;font-weight:500">Sans engagement · Annulation à tout moment</div>
-      <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(4)">Continuer →</button>
-    </div>
-    <!-- Étape 4 : C'est parti -->
-    <div class="ob-step hidden" id="ob-s4">
-      <div class="ob-ico">✨</div>
-      <div class="ob-ttl">C'est parti !</div>
-      <div class="ob-txt">Ajoutez votre premier véhicule maintenant.<br>Ça prend moins de 30 secondes.</div>
-      <button class="btn btn-p" style="width:100%;margin-top:12px;padding:15px;font-size:.95rem" onclick="onboardFinish()">+ Ajouter mon véhicule</button>
-      <button onclick="closeOnboarding()" style="width:100%;margin-top:10px;background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;font-weight:600">Passer →</button>
+      <!-- Étape 4 : C'est parti -->
+      <div class="ob-step hidden" id="ob-s4">
+        <div class="ob-ico" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);box-shadow:0 6px 24px rgba(245,158,11,.25)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="ob-ttl">C'est parti ! 🎉</div>
+        <div class="ob-txt">Votre carnet d'entretien intelligent est prêt.<br>Ajoutez votre premier véhicule — <strong style="color:var(--txt)">moins de 30 secondes.</strong></div>
+        <button class="btn btn-p" style="width:100%;margin-top:4px;padding:15px;font-size:.95rem" onclick="onboardFinish()">🚗 Ajouter mon véhicule</button>
+        <button onclick="closeOnboarding()" style="width:100%;margin-top:10px;background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;font-weight:600">Passer →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3369,29 +3391,29 @@ function renderRap(){
 
   // Compteurs SVG circulaires
   const total=totalDanger+total30+total90||1;
-  function rapCircle(count,label,color,bg,onclick){
-    const r=28,circ=2*Math.PI*r;
+  function rapCircle(count,label,color,bg,shadow,onclick){
+    const r=30,circ=2*Math.PI*r;
     const pct=Math.min(count/Math.max(total,1),1);
     const dash=pct*circ;
-    return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:14px 4px;width:100%" onclick="${onclick}">
-      <div style="position:relative;width:72px;height:72px">
-        <svg width="72" height="72" viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r="${r}" fill="${bg}" stroke="${color}" stroke-opacity=".15" stroke-width="5"/>
-          <circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="5"
+    return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;padding:18px 4px;width:100%;transition:transform .15s" onclick="${onclick}" ontouchstart="this.style.transform='scale(.95)'" ontouchend="this.style.transform=''">
+      <div style="position:relative;width:80px;height:80px;filter:drop-shadow(0 4px 12px ${shadow})">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="${r}" fill="${bg}" stroke="${color}" stroke-opacity=".15" stroke-width="6"/>
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="6"
             stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
             stroke-dashoffset="${(circ/4).toFixed(1)}"
             stroke-linecap="round"
-            style="transition:stroke-dasharray .6s ease"/>
+            style="transition:stroke-dasharray .7s cubic-bezier(.34,1.56,.64,1)"/>
         </svg>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.45rem;font-weight:900;color:${color};line-height:1">${count}</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:${color};line-height:1;letter-spacing:-.04em">${count}</div>
       </div>
-      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${color};text-align:center">${label}</div>
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${color};text-align:center;line-height:1.3">${label}</div>
     </div>`;
   }
-  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:14px;background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--border);overflow:hidden">
-    <div style="border-right:1px solid var(--border)">${rapCircle(totalDanger,'En retard','#DC2626','#FEF2F2',"scrollToRapSection('rap-section-danger')")}</div>
-    <div style="border-right:1px solid var(--border)">${rapCircle(total30,'30 jours','#D97706','#FFFBEB',"scrollToRapSection('rap-section-30')")}</div>
-    <div>${rapCircle(total90,'90 jours','#2563EB','#EFF6FF',"scrollToRapSection('rap-section-90')")}</div>
+  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:16px;background:#fff;border-radius:20px;box-shadow:0 3px 16px rgba(0,0,0,.07);border:1px solid rgba(184,196,216,.5);overflow:hidden">
+    <div style="border-right:1px solid rgba(184,196,216,.4)">${rapCircle(totalDanger,'En retard','#DC2626','#FEF2F2','rgba(220,38,38,.15)',"scrollToRapSection('rap-section-danger')")}</div>
+    <div style="border-right:1px solid rgba(184,196,216,.4)">${rapCircle(total30,'Ce mois','#D97706','#FFFBEB','rgba(217,119,6,.15)',"scrollToRapSection('rap-section-30')")}</div>
+    <div>${rapCircle(total90,'À venir','#2563EB','#EFF6FF','rgba(37,99,235,.12)',"scrollToRapSection('rap-section-90')")}</div>
   </div>`;
 
   // Mini calendrier
