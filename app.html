@@ -80,27 +80,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 /* APP SHELL */
 #app-screen{display:flex;flex-direction:column;min-height:100vh}
-.appbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(184,196,216,.6);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
-.appbar-logo{font-family:inherit;font-size:1rem;font-weight:800;color:var(--txt);letter-spacing:-.5px}
-.content{flex:1;overflow-y:auto;padding:16px 16px 92px;-webkit-overflow-scrolling:touch}
+.appbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(184,196,216,.5);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:0 1px 12px rgba(37,99,235,.07)}
+.appbar-logo{font-family:inherit;font-size:1.05rem;font-weight:900;color:var(--txt);letter-spacing:-.5px;display:flex;align-items:center;gap:7px}
+.appbar-logo-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(37,99,235,.35)}
+.content{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:touch}
 .tab{display:none}.tab.on{display:block;animation:tab-in .22s ease}
 
 /* NAVBAR */
-.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(184,196,216,.6);display:flex;z-index:100;padding:2px 0 env(safe-area-inset-bottom,2px)}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px 5px;border:none;background:none;font-family:inherit;font-size:.6rem;font-weight:600;color:var(--txm);cursor:pointer;position:relative;transition:color .2s}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(184,196,216,.5);display:flex;z-index:100;padding:4px 8px env(safe-area-inset-bottom,4px)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 5px;border:none;background:none;font-family:inherit;font-size:.58rem;font-weight:600;color:var(--txm);cursor:pointer;position:relative;transition:color .2s;border-radius:14px}
 .nb.on{color:var(--primary)}
-.nb-ico{font-size:1.3rem;line-height:1;transition:transform .2s}
-.nb.on .nb-ico{transform:scale(1.1)}
+.nb-ico{font-size:1.25rem;line-height:1;transition:transform .2s;width:38px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background .2s,transform .2s}
+.nb.on .nb-ico{background:var(--primary-lt);transform:scale(1.05)}
+.nb.on .nb-ico svg{stroke:var(--primary)}
 @keyframes tab-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid var(--bg);font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px}
 
 /* FAB */
-#fab{position:fixed;bottom:78px;right:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(37,99,235,.5),0 2px 6px rgba(37,99,235,.3);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300;transition:transform .2s}
+#fab{position:fixed;bottom:82px;right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(37,99,235,.55),0 2px 8px rgba(37,99,235,.3),0 0 0 3px rgba(37,99,235,.12);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300;transition:transform .2s,box-shadow .2s}
 #fab.vis{display:flex}
-#fab.open{transform:rotate(45deg)}
-#fab:active{transform:scale(.88)}
-@keyframes fabpop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
-#fab.vis{animation:fabpop .3s ease}
+#fab.open{transform:rotate(45deg);box-shadow:0 10px 30px rgba(37,99,235,.6),0 0 0 4px rgba(37,99,235,.15)}
+#fab:active{transform:scale(.86);box-shadow:0 4px 12px rgba(37,99,235,.4)}
+@keyframes fabpop{0%{transform:scale(1)}40%{transform:scale(1.14)}70%{transform:scale(.96)}100%{transform:scale(1)}}
+#fab.vis{animation:fabpop .35s cubic-bezier(.34,1.56,.64,1)}
 #fab-menu{position:fixed;bottom:140px;right:14px;z-index:98;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s}
 #fab-menu.open{pointer-events:all;opacity:1;transform:translateY(0)}
 .fab-item{display:flex;align-items:center;gap:9px;background:#fff;border-radius:24px;padding:9px 14px 9px 11px;box-shadow:0 4px 20px rgba(0,0,0,.14);cursor:pointer;font-size:.84rem;font-weight:700;color:var(--txt);border:none;font-family:inherit;white-space:nowrap}
@@ -122,9 +124,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
-.stat{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1px solid var(--border);animation:card-in .3s ease both}
-.stat-v{font-size:1.5rem;font-weight:800}
-.stat-l{font-size:.68rem;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.stat{background:linear-gradient(145deg,#fff 60%,#f8faff 100%);border-radius:16px;padding:14px 14px 12px;box-shadow:0 2px 12px rgba(37,99,235,.08),0 1px 3px rgba(0,0,0,.05);border:1px solid rgba(184,196,216,.6);animation:card-in .3s ease both;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary-lt),var(--primary));opacity:.4;border-radius:16px 16px 0 0}
+.stat-v{font-size:1.6rem;font-weight:900;letter-spacing:-.03em;line-height:1}
+.stat-l{font-size:.65rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
 @keyframes card-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* VEHICLE CARD */
@@ -162,18 +165,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .badge-ct-e{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
 
 /* ENTRETIEN */
-.ei{background:#fff;border-radius:var(--r);padding:13px;display:flex;align-items:flex-start;gap:11px;box-shadow:var(--sh);margin-bottom:8px;cursor:pointer;border:1px solid var(--border)}
-.ei:active{opacity:.85}
-.ei-ico{width:38px;height:38px;border-radius:9px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ei{background:#fff;border-radius:var(--r);padding:13px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 2px 10px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);margin-bottom:8px;cursor:pointer;border:1px solid rgba(184,196,216,.6);transition:transform .15s,box-shadow .15s}
+.ei:active{transform:scale(.985);opacity:.9}
+.ei-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .ei-inf{flex:1;min-width:0}
-.ei-ty{font-size:.88rem;font-weight:600}
+.ei-ty{font-size:.88rem;font-weight:700}
 .ei-mt{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .ei-mt span{font-size:.72rem;color:var(--txm);background:var(--bg);padding:2px 7px;border-radius:4px}
 .ei-nt{font-size:.76rem;color:var(--txm);margin-top:4px;font-style:italic}
 .ei-rp{font-size:.72rem;color:var(--primary);font-weight:600;margin-top:4px;background:var(--primary-lt);padding:2px 8px;border-radius:4px;display:inline-block}
 .ei-ct{font-size:.88rem;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:2px}
-.ei-inline{background:#fff;border-radius:9px;padding:11px 12px;display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;cursor:pointer;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.ei-inline:active{opacity:.85}
+.ei-inline{background:#fff;border-radius:11px;padding:11px 12px;display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;cursor:pointer;border:1px solid rgba(184,196,216,.6);box-shadow:0 1px 6px rgba(0,0,0,.05);transition:transform .15s}
+.ei-inline:active{transform:scale(.985);opacity:.85}
 
 /* VEHICLE PICKER */
 .vp{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
@@ -256,8 +259,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 /* MODAL HANDLE */
 .modal::before{content:'';display:block;width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 2px;flex-shrink:0}
 
-/* NAVBAR ACTIVE INDICATOR */
-.nb.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--primary);border-radius:2px 2px 0 0}
+/* NAVBAR ACTIVE INDICATOR — pill bg on icon, see .nb-ico above */
+
+/* STAGGER ANIMATIONS */
+@keyframes item-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ei-wrap:nth-child(1),.ei:nth-child(1),.vc-compact:nth-child(1),.ri2:nth-child(1),.stat:nth-child(1){animation:item-in .25s ease both}
+.ei-wrap:nth-child(2),.ei:nth-child(2),.vc-compact:nth-child(2),.ri2:nth-child(2),.stat:nth-child(2){animation:item-in .25s .05s ease both}
+.ei-wrap:nth-child(3),.ei:nth-child(3),.vc-compact:nth-child(3),.ri2:nth-child(3),.stat:nth-child(3){animation:item-in .25s .1s ease both}
+.ei-wrap:nth-child(4),.ei:nth-child(4),.vc-compact:nth-child(4),.ri2:nth-child(4),.stat:nth-child(4){animation:item-in .25s .15s ease both}
+.ei-wrap:nth-child(5),.ei:nth-child(5),.vc-compact:nth-child(5),.ri2:nth-child(5){animation:item-in .25s .2s ease both}
+.ei-wrap:nth-child(n+6),.ei:nth-child(n+6),.vc-compact:nth-child(n+6),.ri2:nth-child(n+6){animation:item-in .25s .22s ease both}
 
 /* ENTRETIEN icon category colors */
 .ei-ico.cat-moteur{background:#FFF7ED;color:#EA580C}
@@ -525,7 +536,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 <div id="app-screen" class="hidden">
   <div class="appbar">
-    <div class="appbar-logo">Auto<span style="color:var(--primary)">Carnet</span></div>
+    <div class="appbar-logo"><div class="appbar-logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>Auto<span style="color:var(--primary)">Carnet</span></div>
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btn-search-toggle" onclick="toggleSearch()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
     </div>
