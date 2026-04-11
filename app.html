@@ -2181,7 +2181,16 @@ function renderVehs(){
   }
   // Alertes urgentes en haut si existantes
   const urgent=getRappels().filter(r=>r.sev==='danger');
-  let h='';
+  const today=new Date();today.setHours(0,0,0,0);
+  const rcUrgentVehs=S.rappels_custom.filter(r=>r.statut==='actif'&&r.date_rappel&&Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0).length;
+  const docsUrgentVehs=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0).length;
+  const totalAlertesVehs=urgent.length+rcUrgentVehs+docsUrgentVehs;
+  const moisCoutVehs=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
+  let h='<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px">';
+  h+='<div class="stat"><div class="stat-v">'+S.vehicles.length+'</div><div class="stat-l">Véhicule'+(S.vehicles.length>1?'s':'')+'</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="color:'+(totalAlertesVehs?'var(--err)':'var(--ok)')+'">'+totalAlertesVehs+'</div><div class="stat-l">Alerte'+(totalAlertesVehs>1?'s':'')+' urgentes</div></div>';
+  h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCoutVehs)+'</div><div class="stat-l">Ce mois</div></div>';
+  h+='</div>';
   if(urgent.length){
     h+=`<div style="background:var(--err-bg);border:1px solid #FECACA;border-radius:var(--r-sm);padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="nav('rap')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -2227,35 +2236,40 @@ function vcCompactHTML(v){
     ?`<div class="vc-alert-pill ${alertRap.sev==='danger'?'red':'amber'}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="vc-alert-pill-text">${esc(alertRap.ti.label)}</span><span class="vc-alert-pill-days">${esc(alertRap.label)}</span></div>`
     :'';
 
+  const vRapsGarage=getRappels().filter(r=>r.v?.id===v.id&&r.sev!=='ok');
+  const parcLabelGarage=v.num_parc?` <span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;font-size:.68rem;font-weight:600">📋 ${esc(v.num_parc)}</span>`:'';
   return `<div class="vc-compact ${st}${premClass}" id="vc-${v.id}" style="margin-bottom:12px;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.07)">
     <div class="vc-compact-main" onclick="openVehDetail('${v.id}')" style="cursor:pointer;padding:14px 14px 0">
       <div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
       <div class="vc-compact-info">
-        <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}</div>
+        <div class="vc-compact-name">${esc(v.marque)} ${esc(v.modele)}${parcLabelGarage}</div>
         <div class="vc-compact-sub">
           <span class="vc-compact-km">${fmtKm(v.km_actuel)}</span>
           ${v.immatriculation?plaqueHTML(v.immatriculation):''}
           ${!isOwner?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}
         </div>
       </div>
+      ${vRapsGarage.length?`<span style="display:inline-flex;align-items:center;gap:3px;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:8px;background:#FEF2F2;color:#DC2626;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${vRapsGarage.length}</span>`:''}
       <button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>
     </div>
     ${pillHTML}
     <div class="vc-meta-chips" style="grid-template-columns:1fr 1fr">
       <div class="vc-chip">
         <span class="vc-chip-label">Conducteur</span>
-        <span class="vc-chip-value">${v.conducteur?`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(v.conducteur)}`:'—'}</span>
+        <input style="width:100%;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txt);outline:none;padding:0" placeholder="Non attribué" value="${esc(v.conducteur||'')}" onclick="event.stopPropagation()" onchange="saveFlotteField('${v.id}','conducteur',this.value)">
       </div>
       <div class="vc-chip">
         <span class="vc-chip-label">Statut</span>
-        <span class="status-pill ${statutClass==='status-ok'?'ok':statutClass==='status-warn'?'warn':'err'}"><span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>${statutLabel}</span>
+        <select style="width:100%;border:none;background:none;font-family:inherit;font-size:.78rem;font-weight:600;color:${statutClass==='status-ok'?'var(--ok)':statutClass==='status-warn'?'var(--warn)':'var(--err)'};outline:none;padding:0;-webkit-appearance:none" onclick="event.stopPropagation()" onchange="saveFlotteField('${v.id}','statut_vehicule',this.value)"><option value="disponible" ${(v.statut_vehicule||'disponible')==='disponible'?'selected':''}>✅ Dispo</option><option value="intervention" ${v.statut_vehicule==='intervention'?'selected':''}>🔧 Interv.</option><option value="panne" ${v.statut_vehicule==='panne'?'selected':''}>❌ Panne</option><option value="garage" ${v.statut_vehicule==='garage'?'selected':''}>🏠 Garage</option></select>
       </div>
     </div>
     <div class="vc-compact-acts" style="border-top:1px solid var(--border);margin:0 14px;padding:8px 0 12px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600;display:inline-flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Plan limité</span>'
         :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
-         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">+ Rappel</button>`
+         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">+ Rappel</button>
+         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();exportCSV('${v.id}')">CSV</button>
+         <button class="btn btn-s btn-sm" onclick="event.stopPropagation();exportPDF('${v.id}')">PDF</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
     </div>
@@ -4481,7 +4495,7 @@ function renderFlotte(){
     h+=`<div style="width:46px;height:46px;border-radius:13px;background:${col};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>`;
     h+=`<div style="flex:1;min-width:0">`;
     h+=`<div style="font-weight:800;font-size:.97rem;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.marque)} ${esc(v.modele)}${parcLabel}</div>`;
-    h+=`<div style="font-size:.75rem;color:var(--txm);margin-top:3px;display:flex;align-items:center;gap:6px">${fmtKm(v.km_actuel)}${v.immatriculation?' '+plaqueHTML(v.immatriculation):''}</div>`;
+    h+=`<div style="font-size:.75rem;color:var(--txm);margin-top:3px;display:flex;align-items:center;gap:6px">${fmtKm(v.km_actuel)}${v.immatriculation?' '+plaqueHTML(v.immatriculation):''}${v.user_id!==S.user.id?'<span style="color:var(--primary);font-size:.7rem;font-weight:600">Partagé</span>':''}</div>`;
     h+=`</div>`;
     if(vRaps.length) h+=`<span style="display:inline-flex;align-items:center;gap:3px;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:8px;background:#FEF2F2;color:#DC2626;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${vRaps.length}</span>`;
     h+=`<button style="width:34px;height:34px;border-radius:10px;background:#F0F2F7;border:none;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;cursor:pointer;font-size:1rem" onclick="event.stopPropagation();openVehDetail('${v.id}')">›</button>`;
@@ -4502,6 +4516,8 @@ function renderFlotte(){
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
     h+=`<button class="btn btn-s btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
     h+=`<button class="btn btn-s btn-sm" onclick="openRappelCustomVeh('${v.id}')">+ Rappel</button>`;
+    h+=`<button class="btn btn-s btn-sm" onclick="exportCSV('${v.id}')">CSV</button>`;
+    h+=`<button class="btn btn-s btn-sm" onclick="exportPDF('${v.id}')">PDF</button>`;
     h+=`<button class="btn btn-p btn-sm" onclick="openVehDetail('${v.id}')">Détail →</button>`;
     h+=`</div>`;
     h+=`</div>`;
