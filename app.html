@@ -81,7 +81,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 /* APP SHELL */
 #app-screen{display:flex;flex-direction:column;min-height:100vh}
 .appbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(184,196,216,.5);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:0 1px 12px rgba(37,99,235,.07)}
-.appbar-logo{font-family:inherit;font-size:1.05rem;font-weight:900;color:var(--txt);letter-spacing:-.5px;display:flex;align-items:center;gap:7px}
+.appbar-logo{font-family:inherit;font-size:1.05rem;font-weight:900;color:var(--txt);letter-spacing:-.5px;display:flex;align-items:center;gap:0;white-space:nowrap}
+.appbar-logo-icon{margin-right:7px}
+.appbar-logo span{letter-spacing:-.5px}
 .appbar-logo-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(37,99,235,.35)}
 .content{flex:1;overflow-y:auto;padding:16px 16px 96px;-webkit-overflow-scrolling:touch}
 .tab{display:none}.tab.on{display:block;animation:tab-in .22s ease}
@@ -124,10 +126,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
-.stat{background:linear-gradient(145deg,#fff 60%,#f8faff 100%);border-radius:16px;padding:14px 14px 12px;box-shadow:0 2px 12px rgba(37,99,235,.08),0 1px 3px rgba(0,0,0,.05);border:1px solid rgba(184,196,216,.6);animation:card-in .3s ease both;position:relative;overflow:hidden}
+.stat{background:linear-gradient(145deg,#fff 60%,#f8faff 100%);border-radius:16px;padding:16px 12px;box-shadow:0 2px 12px rgba(37,99,235,.08),0 1px 3px rgba(0,0,0,.05);border:1px solid rgba(184,196,216,.6);animation:card-in .3s ease both;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:80px}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary-lt),var(--primary));opacity:.4;border-radius:16px 16px 0 0}
 .stat-v{font-size:1.6rem;font-weight:900;letter-spacing:-.03em;line-height:1}
-.stat-l{font-size:.65rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.stat-l{font-size:.62rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-top:5px;line-height:1.3;text-align:center}
 @keyframes card-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* VEHICLE CARD */
@@ -269,6 +271,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .ei-wrap:nth-child(4),.ei:nth-child(4),.vc-compact:nth-child(4),.ri2:nth-child(4),.stat:nth-child(4){animation:item-in .25s .15s ease both}
 .ei-wrap:nth-child(5),.ei:nth-child(5),.vc-compact:nth-child(5),.ri2:nth-child(5){animation:item-in .25s .2s ease both}
 .ei-wrap:nth-child(n+6),.ei:nth-child(n+6),.vc-compact:nth-child(n+6),.ri2:nth-child(n+6){animation:item-in .25s .22s ease both}
+
+/* BOUTON CARBURANT */
+@keyframes fuel-pulse{0%,100%{box-shadow:0 4px 16px rgba(217,119,6,.25),0 0 0 0 rgba(217,119,6,.2)}60%{box-shadow:0 4px 20px rgba(217,119,6,.35),0 0 0 6px rgba(217,119,6,.0)}}
+.btn-carburant{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border:1.5px solid #F59E0B;border-radius:14px;padding:11px 16px;cursor:pointer;font-family:inherit;font-weight:700;font-size:.88rem;color:#92400E;width:100%;margin-bottom:12px;animation:fuel-pulse 3s ease-in-out infinite;transition:transform .15s,box-shadow .15s}
+.btn-carburant:active{transform:scale(.97)}
+.btn-carburant-ico{width:36px;height:36px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem}
+.btn-carburant-txt{flex:1;text-align:left}
+.btn-carburant-ttl{font-size:.9rem;font-weight:800;color:#92400E}
+.btn-carburant-sub{font-size:.73rem;color:#B45309;margin-top:1px;font-weight:500}
+.btn-carburant-arr{color:#D97706;font-size:1.1rem;flex-shrink:0}
 
 /* ENTRETIEN icon category colors */
 .ei-ico.cat-moteur{background:#FFF7ED;color:#EA580C}
@@ -536,7 +548,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 <div id="app-screen" class="hidden">
   <div class="appbar">
-    <div class="appbar-logo"><div class="appbar-logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>Auto<span style="color:var(--primary)">Carnet</span></div>
+    <div class="appbar-logo"><div class="appbar-logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><span style="color:var(--txt)">Auto</span><span style="color:var(--primary)">Carnet</span></div>
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btn-search-toggle" onclick="toggleSearch()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
     </div>
@@ -2193,13 +2205,12 @@ function renderVehs(){
       <span style="margin-left:auto;color:var(--err)">›</span>
     </div>`;
   }
-  // Carte carburant sur le dashboard
-  h+='<div style="background:linear-gradient(135deg,#FFF7ED,#FFFBEB);border:1.5px solid #FDE68A;border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="openCarburantPage()">'
-    +'<div style="width:38px;height:38px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M10 22v-6h4v6"/><path d="M17 12h1a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 1-2 2h-1"/><line x1="17" y1="6" x2="17" y2="12"/></svg></div>'
-    +'<div style="flex:1"><div style="font-size:.92rem;font-weight:700;color:#92400E">Prix carburant autour de moi</div>'
-    +'<div style="font-size:.78rem;color:#B45309;margin-top:2px">Trouvez les stations les moins chères</div></div>'
-    +'<div style="color:#D97706;font-size:1rem">›</div>'
-    +'</div>';
+  // Bouton carburant
+  h+='<button class="btn-carburant" onclick="openCarburantPage()">'
+    +'<div class="btn-carburant-ico">⛽</div>'
+    +'<div class="btn-carburant-txt"><div class="btn-carburant-ttl">Prix carburant autour de moi</div><div class="btn-carburant-sub">Stations les moins chères en temps réel</div></div>'
+    +'<div class="btn-carburant-arr">›</div>'
+    +'</button>';
   const sortedVehs=[...S.vehicles].sort((a,b)=>{
     const sortMode=S.vehSort||'alerte';
     if(sortMode==='alerte'){const order={danger:0,warn:1,ok:2};return(order[vStatus(a.id)]||2)-(order[vStatus(b.id)]||2);}
@@ -4466,9 +4477,13 @@ function renderFlotte(){
   h+='<div class="stat"><div class="stat-v" style="color:'+(totalAlertesFlotte?'var(--err)':'var(--ok)')+'">'+totalAlertesFlotte+'</div><div class="stat-l">Alerte'+(totalAlertesFlotte>1?'s':'')+' urgentes</div></div>';
   h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
   h+='</div>';
-  // Header véhicules
-  h+='<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="sec-lnk" onclick="openCarburantPage()" style="background:#FFF7ED;color:#B45309;border:1px solid #FDE68A;padding:3px 8px;border-radius:6px;font-weight:600">⛽ Prix carburant</button></div>';
-  // Filtres tri — mêmes que Garage
+  // Bouton carburant — avant les alertes
+  h+='<button class="btn-carburant" onclick="openCarburantPage()">'
+    +'<div class="btn-carburant-ico">⛽</div>'
+    +'<div class="btn-carburant-txt"><div class="btn-carburant-ttl">Prix carburant autour de moi</div><div class="btn-carburant-sub">Stations les moins chères en temps réel</div></div>'
+    +'<div class="btn-carburant-arr">›</div>'
+    +'</button>';
+  // Filtres tri
   h+=`<div class="filters">
     <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Alerte</button>
     <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Km</button>
