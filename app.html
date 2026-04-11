@@ -963,19 +963,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
   <div id="lightbox-label" style="color:rgba(255,255,255,.7);font-size:.85rem;text-align:center"></div>
 </div>
 
-<!-- Modal Confirmation -->
-<div class="mo" id="mo-cfm" onclick="if(event.target===this)cm('cfm')">
-  <div class="modal modal-c">
-    <div class="mhdr"><div class="mtit" id="cfm-t">Confirmer</div><button class="mcls" onclick="cm('cfm')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <div class="mbdy">
-      <p id="cfm-m" style="color:var(--txm);font-size:.88rem;line-height:1.5"></p>
-      <div style="display:flex;gap:8px;margin-top:14px">
-        <button class="btn btn-s btn-sm" style="flex:1" onclick="cm('cfm')">Annuler</button>
-        <button class="btn btn-d btn-sm" style="flex:1" onclick="runCfm()">Confirmer</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <!-- MODAL RAPPEL CUSTOM -->
 <div class="mo" id="mo-rcus" onclick="if(event.target===this)cm('rcus')">
@@ -3004,28 +2992,34 @@ function openVehDetail(vid){
     <div><span class="vs-v" style="font-size:.78rem;color:var(--ok)">${getNextRevision(v,es)}</span><span class="vs-l">Prochaine révision</span></div>
     ${total&&v.km_actuel?`<div><span class="vs-v" style="font-size:.78rem">${(total/v.km_actuel).toFixed(2)}€</span><span class="vs-l">€/km</span></div>`:''}
   </div>`;
-  // Graphique — remplacé par bouton modal coûts
-  h+=`<button class="btn btn-s" style="width:100%;margin-bottom:12px;justify-content:center;gap:8px" onclick="openCostModal('${vid}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Voir les coûts par année</button>`;
+  // Graphique — bouton modal coûts
+  h+=`<button class="btn btn-s" style="width:100%;margin-bottom:8px;justify-content:center;gap:8px" onclick="openCostModal('${vid}')">€ Voir les coûts par année</button>`;
   
   // Graphique historique km
-  h+=buildKmChart(vid);
   // Actions — bloquees si vehicule en exces
   const _exces=isVehExces(vid);
   if(_exces){
     h+=`<div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;margin-bottom:10px;font-size:.8rem;color:#92400E;display:flex;align-items:center;gap:7px">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       Ce véhicule dépasse la limite de votre plan — <span style="font-weight:700;cursor:pointer;text-decoration:underline" onclick="showUpgradeModal('Passez à un plan supérieur pour modifier ce véhicule.')">Passer à un plan supérieur</span>
-    </div>`;
-    h+=`<div class="g6 mb8">
+    </div>
+    <div class="g6 mb8">
       <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
     </div>`;
   } else {
-    h+=`<div class="g6 mb8">
-      <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">Km</button>
-      <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
-      <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
-      <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Lien</button>
+    h+=`<div style="margin-bottom:12px">
+      <button class="btn btn-s btn-sm" style="width:100%;justify-content:center;gap:6px" onclick="toggleVehSubMenu('${vid}')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        Plus d'options
+      </button>
+      <div id="veh-submenu-${vid}" style="display:none;margin-top:8px;background:var(--bg);border-radius:var(--r-sm);padding:8px;flex-wrap:wrap;gap:6px">
+        <button class="btn btn-s btn-sm" onclick="openKm('${vid}')">📍 Km</button>
+        <button class="btn btn-s btn-sm" onclick="openKmChart('${vid}')">📈 Évolution km</button>
+        <button class="btn btn-s btn-sm" onclick="exportCSV('${vid}')">CSV</button>
+        <button class="btn btn-s btn-sm" onclick="exportPDF('${vid}')">PDF</button>
+        <button class="btn btn-s btn-sm" onclick="showShareLink('${vid}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Lien</button>
+      </div>
     </div>`;
   }
   h+=statsHTML(vid);
@@ -4516,6 +4510,12 @@ function renderFlotte(){
   });
   el.innerHTML=h;
 }
+function toggleVehSubMenu(vid){
+  const el=document.getElementById('veh-submenu-'+vid);
+  if(!el)return;
+  const isOpen=el.style.display==='flex';
+  el.style.display=isOpen?'none':'flex';
+}
 async function saveFlotteKm(vid,val){
   const km=parseInt(val);
   if(!km||km<0)return;
@@ -4647,5 +4647,19 @@ function openKmChart(vid){
 
 document.addEventListener("DOMContentLoaded", ()=>{init();});
 </script>
+
+<!-- Modal Confirmation — en dernier dans le DOM pour éviter le stacking context de mo-veh-detail -->
+<div class="mo" id="mo-cfm" onclick="if(event.target===this)cm('cfm')">
+  <div class="modal modal-c">
+    <div class="mhdr"><div class="mtit" id="cfm-t">Confirmer</div><button class="mcls" onclick="cm('cfm')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbdy">
+      <p id="cfm-m" style="color:var(--txm);font-size:.88rem;line-height:1.5"></p>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="cm('cfm')">Annuler</button>
+        <button class="btn btn-d btn-sm" style="flex:1" onclick="runCfm()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
