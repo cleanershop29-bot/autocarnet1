@@ -3137,6 +3137,7 @@ function closeVehDetail(){
 }
 
 function openAddMenu(vid){
+  resetCfmBody();
   cfm('➕ Que voulez-vous ajouter ?','',null);
   setTimeout(()=>{
     const b=document.querySelector('#mo-cfm .mbdy');
@@ -4062,11 +4063,23 @@ const ADMIN_CODE = "AC2026admin";
 /* ══ FREEMIUM ══ */
 const STRIPE_PUBLIC_KEY=typeof process!=='undefined'?process.env.STRIPE_PUBLIC_KEY:'pk_live_51THVbnPILh21QVYHWIlwpTLZxOmk3ET3R6VV6sR2UUVPY3kdRwZaJDnug5CIpeZ81UtnDkldUj9klSY2BsCcVWKU00W8EAHjq6';
 
+function resetCfmBody(){
+  const b=document.querySelector('#mo-cfm .mbdy');
+  if(!b)return;
+  b.innerHTML=`<p id="cfm-m" style="color:var(--txm);font-size:.88rem;line-height:1.5"></p>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="cm('cfm')">Annuler</button>
+      <button class="btn btn-d btn-sm" style="flex:1" onclick="runCfm()">Confirmer</button>
+    </div>`;
+  const f=document.querySelector('#mo-cfm .mft');if(f)f.style.display='';
+}
+
 function openCostModal(vid){
   const v=S.vehicles.find(x=>x.id===vid);
   if(!v)return;
   const costData=getCostsByYear(vid);
-  const title=`Coûts — ${v.marque} ${v.modele}`;
+  const title=`€ Coûts — ${v.marque} ${v.modele}`;
+  resetCfmBody();
   if(!costData.length){cfm(title,'Aucun coût enregistré pour ce véhicule.',null);setTimeout(()=>{const f=document.querySelector('#mo-cfm .mft');if(f)f.style.display='none';},30);return;}
   cfm(title,'',null);
   setTimeout(()=>{
@@ -4624,6 +4637,7 @@ function openKmChart(vid){
   }));
   const path=pts.map((p,i)=>(i===0?`M${p.x},${p.y}`:`L${p.x},${p.y}`)).join(' ');
   const area=`M${pts[0].x},${H} ${pts.map(p=>`L${p.x},${p.y}`).join(' ')} L${pts[pts.length-1].x},${H} Z`;
+  resetCfmBody();
   cfm(`📈 Évolution km — ${esc(v.marque)} ${esc(v.modele)}`,'',null);
   setTimeout(()=>{
     const b=document.querySelector('#mo-cfm .mbdy');
