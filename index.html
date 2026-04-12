@@ -227,6 +227,43 @@ h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.04em;li
 .seo-text h3{font-size:.95rem;font-weight:800;color:var(--ink);margin-bottom:8px}
 .seo-text p{font-size:.82rem;color:var(--slate);line-height:1.8;font-weight:500;margin-bottom:18px}
 
+/* INSTALL BANNER */
+@keyframes install-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes install-arrow{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes install-shine{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes install-pop{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.install-banner{padding:32px 20px;background:linear-gradient(135deg,#0A0F1E 0%,#1E2740 60%,#0F172A 100%);position:relative;overflow:hidden}
+.install-banner::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.2),transparent 65%);top:-200px;right:-100px;pointer-events:none}
+.install-banner::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.15),transparent 65%);bottom:-150px;left:-50px;pointer-events:none}
+.install-inner{max-width:600px;margin:0 auto;position:relative;animation:install-pop .5s cubic-bezier(.22,1,.36,1) both}
+.install-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(37,99,235,.25);border:1px solid rgba(37,99,235,.4);color:#93C5FD;padding:4px 12px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.install-title{font-size:clamp(1.3rem,4vw,1.9rem);font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1.15;margin-bottom:8px}
+.install-title em{font-style:normal;background:linear-gradient(90deg,#60A5FA,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.install-sub{font-size:.84rem;color:rgba(255,255,255,.55);font-weight:500;line-height:1.65;margin-bottom:24px}
+.install-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.install-step{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 16px;transition:.2s}
+.install-step-num{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.install-step-txt{font-size:.82rem;color:rgba(255,255,255,.85);font-weight:600;line-height:1.4}
+.install-step-txt span{color:rgba(255,255,255,.45);font-weight:500}
+.install-os{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.install-os-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px;cursor:pointer;transition:.2s;user-select:none}
+.install-os-card:active{transform:scale(.97);background:rgba(255,255,255,.1)}
+.install-os-icon{font-size:1.4rem;margin-bottom:6px}
+.install-os-name{font-size:.78rem;font-weight:800;color:#fff;margin-bottom:4px}
+.install-os-steps{font-size:.7rem;color:rgba(255,255,255,.45);line-height:1.7;font-weight:500}
+.install-os-steps strong{color:rgba(255,255,255,.75);font-weight:700}
+.install-cta{display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 28px;border-radius:14px;font-size:.95rem;font-weight:800;background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;box-shadow:0 8px 28px rgba(37,99,235,.45);letter-spacing:-.01em;width:100%;margin-top:20px;border:none;cursor:pointer;font-family:inherit;transition:.2s;animation:install-shine 3s linear infinite;background-size:200% auto}
+.install-cta:active{transform:scale(.98)}
+.install-phone-ico{animation:install-float 2.5s ease-in-out infinite;display:inline-block}
+.install-arrow-ico{animation:install-arrow 1.2s ease-in-out infinite;display:inline-block}
+
+@keyframes install-pulse{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.6),0 8px 32px rgba(139,92,246,.5)}70%{box-shadow:0 0 0 16px rgba(139,92,246,.0),0 8px 32px rgba(139,92,246,.3)}}
+@keyframes install-shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+.btn-install-hero{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 28px;border-radius:16px;font-size:1rem;font-weight:800;background:linear-gradient(135deg,#7C3AED,#4F46E5,#7C3AED);background-size:200% auto;color:#fff;letter-spacing:-.01em;width:100%;max-width:320px;border:2px solid rgba(255,255,255,.25);animation:install-pulse 1.6s ease-out infinite,install-shimmer 3s linear infinite;position:relative;overflow:hidden}
+.btn-install-hero:active{transform:scale(.97)}
+.btn-install-icon{font-size:1.2rem}
+.btn-install-arrow{margin-left:auto;font-size:1.3rem;opacity:.9}
+
 /* FOOTER */
 footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;background:#fff}
 .footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
@@ -267,6 +304,11 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
       <a href="/app.html" class="btn-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
         Créer mon compte gratuit
+      </a>
+      <a href="/app.html" class="btn-install-hero">
+        <span class="btn-install-icon">📲</span>
+        <span>Installer l'app sur mon téléphone</span>
+        <span class="btn-install-arrow">›</span>
       </a>
       <div class="free-note">Sans carte bancaire · Accès immédiat</div>
     </div>
