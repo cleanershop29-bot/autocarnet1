@@ -11,6 +11,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoCarnet">
 <link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icon-192.png">
+<link rel="shortcut icon" href="/icon-192.png">
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -134,6 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .toast.e{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
 .toast.i{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 @keyframes tdown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 
 /* STATS */
@@ -1018,7 +1022,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
     <div class="mft">
       <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-e" onclick="delEnt()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Supprimer</button></div>
       <button class="btn btn-s btn-sm" onclick="cm('ent')">Annuler</button>
-      <button class="btn btn-p btn-sm" onclick="saveEnt()">Enregistrer</button>
+      <button class="btn btn-p btn-sm" id="btn-sv-ent" onclick="saveEnt()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -1031,7 +1035,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <input type="hidden" id="km-vid">
       <div class="fg"><label class="fl">Kilométrage actuel</label><input class="fc" id="km-v" type="number" inputmode="numeric" min="0"><div id="km-h" style="font-size:.76rem;color:var(--txm);margin-top:4px"></div></div>
     </div>
-    <div class="mft"><button class="btn btn-s btn-sm" onclick="cm('km')">Annuler</button><button class="btn btn-p btn-sm" onclick="saveKm()">Enregistrer</button></div>
+    <div class="mft"><button class="btn btn-s btn-sm" onclick="cm('km')">Annuler</button><button class="btn btn-p btn-sm" id="btn-sv-km" onclick="saveKm()">Enregistrer</button></div>
   </div>
 </div>
 
@@ -1129,7 +1133,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <div class="mft" style="padding:10px 0 0">
         <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-rcus" onclick="delRappelCustom()">Supprimer</button></div>
         <button class="btn btn-s btn-sm" onclick="cm('rcus')">Annuler</button>
-        <button class="btn btn-p btn-sm" onclick="saveRappelCustom()">Enregistrer</button>
+        <button class="btn btn-p btn-sm" id="btn-sv-rap" onclick="saveRappelCustom()">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -1164,7 +1168,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <div class="mft" style="padding:10px 0 0">
         <div class="mft-l"><button class="btn btn-d btn-sm hidden" id="btn-del-doc" onclick="delDocument()">Supprimer</button></div>
         <button class="btn btn-s btn-sm" onclick="cm('doc')">Annuler</button>
-        <button class="btn btn-p btn-sm" onclick="saveDocument()">Enregistrer</button>
+        <button class="btn btn-p btn-sm" id="btn-sv-doc" onclick="saveDocument()">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -1783,7 +1787,7 @@ async function saveVeh(){
       return showUpgradeModal('Vous avez atteint la limite de '+maxV+' véhicule'+(maxV>1?'s':'')+' de votre plan.');
     }
   }
-  const btn=g('btn-sv');btn.disabled=true;btn.textContent='Enregistrement…';
+  btnLoad('btn-sv',true);
   const payload={marque,modele,
     annee:parseInt(g('v-yr').value)||null,
     carburant:g('v-cb').value||'essence',
@@ -1813,8 +1817,8 @@ async function saveVeh(){
   try{
     if(id){({error}=await sb.from('vehicles').update(payload).eq('id',id).eq('user_id',S.user.id));}
     else{const newId=crypto.randomUUID();payload_id_temp=newId;({error}=await sb.from('vehicles').insert({...payload,id:newId,user_id:S.user.id}));}
-  }catch(e){btn.disabled=false;btn.textContent='Enregistrer';return toast('Erreur réseau : '+e.message,'e');}
-  btn.disabled=false;btn.textContent='Enregistrer';
+  }catch(e){btnLoad('btn-sv',false);return toast('Erreur réseau : '+e.message,'e');}
+  btnLoad('btn-sv',false);
   if(error){console.error(error);return toast('Erreur : '+(error.message||error.code),'e');}
   // Recuperer l'id final du vehicule
   const finalVid = id || payload_id_temp;
@@ -1902,8 +1906,9 @@ function openKm(vid){
 async function saveKm(){
   const vid=g('km-vid').value,km=parseInt(g('km-v').value);
   if(isNaN(km)||km<0)return toast('Kilométrage invalide.','e');
+  btnLoad('btn-sv-km',true);
   const{error}=await sb.from('vehicles').update({km_actuel:km,km_maj_date:new Date().toISOString().split('T')[0]}).eq('id',vid).eq('user_id',S.user.id);
-  if(error)return toast('Erreur : '+error.message,'e');
+  if(error){btnLoad('btn-sv-km',false);return toast('Erreur : '+error.message,'e');}
   toast('Kilométrage mis à jour !','s');cm('km');await loadVehs();renderView();
 }
 
@@ -1948,8 +1953,10 @@ async function saveEnt(){
   if(!id) p.id=crypto.randomUUID();
   // Alerte si km entretien < km actuel du véhicule
   if(km){const vv=S.vehicles.find(x=>x.id===vehicle_id);if(vv&&vv.km_actuel&&km<vv.km_actuel){if(!confirm(`⚠️ Le kilométrage saisi (${km.toLocaleString('fr')} km) est inférieur au kilométrage actuel du véhicule (${vv.km_actuel.toLocaleString('fr')} km). Continuer ?`))return;}}
+  btnLoad('btn-sv-ent',true);
   const{error}=id?await sb.from('entretiens').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('entretiens').insert(p);
-  if(error)return toast('Erreur : '+error.message,'e');
+  if(error){btnLoad('btn-sv-ent',false);return toast('Erreur : '+error.message,'e');}
+
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
   // Upload photo si present
   const finalId = p.id || id;
@@ -2790,8 +2797,9 @@ async function saveRappelCustom(){
     statut:'actif'
   };
   if(!id)p.id=crypto.randomUUID();
+  btnLoad('btn-sv-rap',true);
   const{error}=id?await sb.from('rappels_custom').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('rappels_custom').insert(p);
-  if(error)return toast('Erreur : '+error.message,'e');
+  if(error){btnLoad('btn-sv-rap',false);return toast('Erreur : '+error.message,'e');}
   toast(id?'Rappel mis à jour !':'Rappel créé !','s');
   if(p.date_rappel){const t=encodeURIComponent('📌 Rappel enregistré');const b=encodeURIComponent(`${p.titre}${p.date_rappel?' — le '+p.date_rappel:''}`);fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${t}&body=${b}`).catch(()=>{});}
   cm('rcus');await loadRappelsCustom();renderView();
@@ -2925,8 +2933,9 @@ async function saveDocument(){
     note:g('doc-note').value.trim()||null
   };
   if(!id)p.id=crypto.randomUUID();
+  btnLoad('btn-sv-doc',true);
   const{error}=id?await sb.from('documents').update(p).eq('id',id).eq('user_id',S.user.id):await sb.from('documents').insert(p);
-  if(error)return toast('Erreur : '+error.message,'e');
+  if(error){btnLoad('btn-sv-doc',false);return toast('Erreur : '+error.message,'e');}
   toast(id?'Document mis à jour !':'Document ajouté !','s');
   const _vid=g('doc-vid').value;
   cm('doc');await loadDocuments();renderView();
@@ -4824,6 +4833,19 @@ function openKmChart(vid){
     const f=document.querySelector('#mo-cfm .mft');
     if(f)f.style.display='none';
   },30);
+}
+
+/* ══ BTN LOADING STATE ══ */
+function btnLoad(id,loading,label='Enregistrer'){
+  const b=g(id);if(!b)return;
+  if(loading){
+    b.disabled=true;
+    b.dataset.orig=b.innerHTML;
+    b.innerHTML=`<svg style="animation:spin .7s linear infinite" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Enregistrement…`;
+  } else {
+    b.disabled=false;
+    b.innerHTML=b.dataset.orig||label;
+  }
 }
 
 /* ══ FILTRE ENTRETIENS PAR CATÉGORIE ══ */
