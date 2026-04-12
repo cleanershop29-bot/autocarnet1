@@ -3650,7 +3650,7 @@ function renderRap(){
 
   // Rappels sans date — non classables dans les groupes, affichés ici
   const rcSansDate=S.rappels_custom.filter(r=>!r.date_rappel&&(S.rapFilterVeh==='all'||r.vehicle_id===S.rapFilterVeh));
-  h+=`<div class="sec-hdr mt12"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Rappels personnalisés</span><button class="sec-lnk" onclick="openRappelCustom()">+ Ajouter</button></div>`;
+  h+=`<div class="sec-hdr mt12"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Rappels personnalisés</span></div>`;
   if(rcSansDate.length){
     h+=rcSansDate.map(r=>{
       const v=S.vehicles.find(x=>x.id===r.vehicle_id);
@@ -3790,7 +3790,7 @@ function nav(view){
   const tabEl=g('t-'+view);
   if(tabEl){tabEl.classList.add('on');if(prevIdx!==-1&&nextIdx!==-1&&prevIdx!==nextIdx)tabEl.classList.add(dir);}
   const nbEl=g('nb-'+view); if(nbEl) nbEl.classList.add('on');
-  g('fab').classList.toggle('vis',['dash','flotte','rap'].includes(view));
+  g('fab').classList.toggle('vis',['dash','flotte'].includes(view));
   // Pulse FAB si aucun entretien pour guider l'utilisateur
   setTimeout(()=>{
     const fab=g('fab');
