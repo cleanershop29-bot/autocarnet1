@@ -116,6 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .nb.on .nb-ico svg{stroke:var(--primary)}
 @keyframes tab-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes rdot-pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}70%{box-shadow:0 0 0 5px rgba(220,38,38,.0)}}
+@keyframes pulse-bar{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.5;transform:scaleX(.6)}}
 .rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid var(--bg);font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;animation:rdot-pulse 1.8s ease-out infinite}
 
 /* FAB */
@@ -3502,31 +3503,21 @@ function renderRap(){
 
   let h='';
 
-  // Compteurs SVG circulaires
-  const total=totalDanger+total30+total90||1;
-  function rapCircle(count,label,color,bg,shadow,onclick){
-    const r=30,circ=2*Math.PI*r;
-    const pct=Math.min(count/Math.max(total,1),1);
-    const dash=pct*circ;
-    return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;padding:18px 4px;width:100%;transition:transform .15s" onclick="${onclick}" ontouchstart="this.style.transform='scale(.95)'" ontouchend="this.style.transform=''">
-      <div style="position:relative;width:80px;height:80px;filter:drop-shadow(0 4px 12px ${shadow})">
-        <svg width="80" height="80" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="${r}" fill="${bg}" stroke="${color}" stroke-opacity=".15" stroke-width="6"/>
-          <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="6"
-            stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
-            stroke-dashoffset="${(circ/4).toFixed(1)}"
-            stroke-linecap="round"
-            style="transition:stroke-dasharray .7s cubic-bezier(.34,1.56,.64,1)"/>
-        </svg>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:${color};line-height:1;letter-spacing:-.04em">${count}</div>
-      </div>
-      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${color};text-align:center;line-height:1.3">${label}</div>
-    </div>`;
-  }
-  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:16px;background:#fff;border-radius:20px;box-shadow:0 3px 16px rgba(0,0,0,.07);border:1px solid rgba(184,196,216,.5);overflow:hidden">
-    <div style="border-right:1px solid rgba(184,196,216,.4)">${rapCircle(totalDanger,'En retard','#DC2626','#FEF2F2','rgba(220,38,38,.15)',"scrollToRapSection('rap-section-danger')")}</div>
-    <div style="border-right:1px solid rgba(184,196,216,.4)">${rapCircle(total30,'Ce mois','#D97706','#FFFBEB','rgba(217,119,6,.15)',"scrollToRapSection('rap-section-30')")}</div>
-    <div>${rapCircle(total90,'À venir','#2563EB','#EFF6FF','rgba(37,99,235,.12)',"scrollToRapSection('rap-section-90')")}</div>
+  // Cartes résumé — simples et claires
+  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+    <div onclick="scrollToRapSection('rap-section-danger')" style="background:${totalDanger?'linear-gradient(145deg,#FEF2F2,#FFF5F5)':'#F8FAFC'};border:1.5px solid ${totalDanger?'#FECACA':'rgba(184,196,216,.5)'};border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
+      <div style="font-size:1.9rem;font-weight:900;color:${totalDanger?'#DC2626':'#94A3B8'};line-height:1;letter-spacing:-.04em">${totalDanger}</div>
+      <div style="font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${totalDanger?'#DC2626':'#94A3B8'};margin-top:5px">En retard</div>
+      ${totalDanger?`<div style="width:20px;height:3px;border-radius:2px;background:#DC2626;margin:6px auto 0;animation:pulse-bar 1.5s ease-in-out infinite"></div>`:''}
+    </div>
+    <div onclick="scrollToRapSection('rap-section-30')" style="background:${total30?'linear-gradient(145deg,#FFFBEB,#FFFDF5)':'#F8FAFC'};border:1.5px solid ${total30?'#FDE68A':'rgba(184,196,216,.5)'};border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
+      <div style="font-size:1.9rem;font-weight:900;color:${total30?'#D97706':'#94A3B8'};line-height:1;letter-spacing:-.04em">${total30}</div>
+      <div style="font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${total30?'#D97706':'#94A3B8'};margin-top:5px">Ce mois</div>
+    </div>
+    <div onclick="scrollToRapSection('rap-section-90')" style="background:${total90?'linear-gradient(145deg,#EFF6FF,#F5F8FF)':'#F8FAFC'};border:1.5px solid ${total90?'#BFDBFE':'rgba(184,196,216,.5)'};border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
+      <div style="font-size:1.9rem;font-weight:900;color:${total90?'#2563EB':'#94A3B8'};line-height:1;letter-spacing:-.04em">${total90}</div>
+      <div style="font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${total90?'#2563EB':'#94A3B8'};margin-top:5px">À venir</div>
+    </div>
   </div>`;
 
   // Mini calendrier
