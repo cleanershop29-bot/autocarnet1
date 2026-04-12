@@ -828,6 +828,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
       <div class="fg"><label class="fl">🪪 Carte carburant</label><input class="fc" id="v-fcard" placeholder="N° ou nom (ex: Total, Shell…)"></div>
 
       <!-- Flotte -->
+      <div id="flotte-section-veh" style="display:none">
       <div style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin:16px 0 10px;display:flex;align-items:center;gap:6px"><span style="width:3px;height:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);border-radius:2px;display:inline-block"></span>Flotte</div>
       <div class="fr">
         <div class="fg"><label class="fl">N° de parc</label><input class="fc" id="v-np2" placeholder="Ex: VH-042"></div>
@@ -838,6 +839,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         <div class="fg"><label class="fl">Rejet CO2 (g/km)</label><input class="fc" id="v-co2" type="number" inputmode="numeric" placeholder="120" min="0"></div>
       </div>
       <div class="fg"><label class="fl">VIN (optionnel)</label><input class="fc" id="v-vn" placeholder="Numéro de châssis"></div>
+      </div><!-- /flotte-section-veh -->
+      <div id="flotte-section-lock" style="display:none;background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:var(--r-sm);padding:10px 13px;margin:8px 0 14px;font-size:.78rem;color:#1E40AF;cursor:pointer" onclick="showUpgradeModal('La gestion de flotte est disponible avec le plan Pro.')">
+        🔒 <strong>Mode Flotte</strong> — Disponible en plan Pro <span style="margin-left:4px;text-decoration:underline">Passer à Pro →</span>
+      </div>
 
       <!-- SECTION AVANCÉE VÉHICULE -->
       <button type="button" class="adv-toggle" id="adv-veh-btn" onclick="toggleAdv('veh')">
@@ -3164,7 +3169,15 @@ function openVehDetail(vid){
   h+=statsHTML(vid);
   // Derniers entretiens
   if(es.length){
+    // Catégories présentes dans ce véhicule
+    const cats=[...new Set(es.map(e=>getType(e.type).cat))].filter(Boolean);
+    const catFilter=`<div style="display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:8px">
+      <button class="flt on" id="cat-flt-all-${vid}" onclick="filterEntsCat('${vid}','all',this)">Tous (${es.length})</button>
+      ${cats.map(c=>`<button class="flt" id="cat-flt-${vid}-${c.replace(/\s/g,'')}" onclick="filterEntsCat('${vid}','${c}',this)">${c} (${es.filter(e=>getType(e.type).cat===c).length})</button>`).join('')}
+    </div>`;
     h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><div style="display:flex;gap:6px">${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}<button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div></div>`;
+    h+=catFilter;
+    h+=`<div id="ents-list-${vid}">`;
     h+=es.slice(0,5).map(e=>{
       const ti=getType(e.type);
       return`<div class="ei-inline" onclick="openEnt('${e.id}')">
@@ -3179,9 +3192,15 @@ function openVehDetail(vid){
         </div>
       </div>`;
     }).join('');
+    h+=`</div>`;
   } else {
     h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (0)</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div>`;
-    h+=`<div style="font-size:.8rem;color:var(--txl);margin-bottom:12px">Aucun entretien.</div>`;
+    h+=`<div style="text-align:center;padding:24px 16px;background:#F8FAFF;border-radius:var(--r);border:1.5px dashed var(--border);margin-bottom:12px">
+      <div style="font-size:2rem;margin-bottom:8px">🔧</div>
+      <div style="font-size:.85rem;font-weight:700;color:var(--txt);margin-bottom:4px">Aucun entretien enregistré</div>
+      <div style="font-size:.76rem;color:var(--txm);margin-bottom:12px">Ajoutez le premier entretien de ce véhicule pour commencer le suivi.</div>
+      <button class="btn btn-p btn-sm" onclick="openEnt(null,'${vid}')">+ Ajouter un entretien</button>
+    </div>`;
   }
   // Infos avancées
   // Notes
@@ -3802,6 +3821,7 @@ async function openVeh(id){
     g('btn-del-v').classList.add('hidden');
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em==='🚗'));
   }
+  initFlotteSection();
   om('veh');
 }
 
@@ -4804,6 +4824,39 @@ function openKmChart(vid){
     const f=document.querySelector('#mo-cfm .mft');
     if(f)f.style.display='none';
   },30);
+}
+
+/* ══ FILTRE ENTRETIENS PAR CATÉGORIE ══ */
+function filterEntsCat(vid,cat,btn){
+  const container=document.getElementById('ents-list-'+vid);
+  if(!container)return;
+  document.querySelectorAll(`[id^="cat-flt-${vid}"]`).forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const es=S.ents.filter(e=>e.vehicle_id===vid);
+  const filtered=cat==='all'?es.slice(0,10):es.filter(e=>getType(e.type).cat===cat).slice(0,10);
+  container.innerHTML=filtered.map(e=>{
+    const ti=getType(e.type);
+    return`<div class="ei-inline" onclick="openEnt('${e.id}')">
+      <div class="ei-ico ${catClass(ti.cat)}" style="width:32px;height:32px;border-radius:8px;font-size:.95rem">${ti.ico}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
+        <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px">
+        ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
+        ${e.photo_url?`<span style="font-size:.72rem;color:var(--txm);display:inline-flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>facture</span>`:''}
+      </div>
+    </div>`;
+  }).join('')||(cat!=='all'?`<div style="font-size:.8rem;color:var(--txl);padding:8px 0">Aucun entretien de type "${cat}".</div>`:'');
+}
+
+/* ══ VISIBILITÉ SECTION FLOTTE FORMULAIRE ══ */
+function initFlotteSection(){
+  const isPro=getUserPlan()==='pro';
+  const flotteDiv=g('flotte-section-veh');
+  const flotteLock=g('flotte-section-lock');
+  if(flotteDiv)flotteDiv.style.display=isPro?'block':'none';
+  if(flotteLock)flotteLock.style.display=isPro?'none':'block';
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{init();});
