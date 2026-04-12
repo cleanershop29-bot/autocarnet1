@@ -257,6 +257,7 @@ h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.04em;li
 .install-phone-ico{animation:install-float 2.5s ease-in-out infinite;display:inline-block}
 .install-arrow-ico{animation:install-arrow 1.2s ease-in-out infinite;display:inline-block}
 
+@keyframes slide-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes install-pulse{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.6),0 8px 32px rgba(139,92,246,.5)}70%{box-shadow:0 0 0 16px rgba(139,92,246,.0),0 8px 32px rgba(139,92,246,.3)}}
 @keyframes install-shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
 .btn-install-hero{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 28px;border-radius:16px;font-size:1rem;font-weight:800;background:linear-gradient(135deg,#7C3AED,#4F46E5,#7C3AED);background-size:200% auto;color:#fff;letter-spacing:-.01em;width:100%;max-width:320px;border:2px solid rgba(255,255,255,.25);animation:install-pulse 1.6s ease-out infinite,install-shimmer 3s linear infinite;position:relative;overflow:hidden}
@@ -305,7 +306,7 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
         Créer mon compte gratuit
       </a>
-      <a href="/app.html" class="btn-install-hero">
+      <a href="/app.html" class="btn-install-hero" id="btn-install" onclick="handleInstall(event)">
         <span class="btn-install-icon">📲</span>
         <span>Installer l'app sur mon téléphone</span>
         <span class="btn-install-arrow">›</span>
@@ -727,6 +728,33 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
   </div>
 </footer>
 
+<!-- MODAL INSTALL iOS -->
+<div id="mo-install" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,15,30,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end;justify-content:center">
+  <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:28px 24px 36px;animation:slide-up .35s cubic-bezier(.32,.72,0,1)">
+    <div style="width:36px;height:4px;background:#CBD5E1;border-radius:4px;margin:0 auto 20px"></div>
+    <div style="font-size:1.1rem;font-weight:800;color:#0A0F1E;margin-bottom:6px">Installer AutoCarnet 📲</div>
+    <div style="font-size:.84rem;color:#64748B;margin-bottom:22px;line-height:1.65">Ajoutez l'app sur votre écran d'accueil pour y accéder en un tap, même sans connexion.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:12px;background:#F8FAFC;border-radius:12px;padding:13px 14px">
+        <div style="width:32px;height:32px;border-radius:9px;background:#0A0F1E;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">1️⃣</div>
+        <div style="font-size:.82rem;color:#0A0F1E;font-weight:600">Appuyez sur <strong>Partager</strong> <span style="font-size:1rem">⎙</span> en bas de Safari</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:#F8FAFC;border-radius:12px;padding:13px 14px">
+        <div style="width:32px;height:32px;border-radius:9px;background:#0A0F1E;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">2️⃣</div>
+        <div style="font-size:.82rem;color:#0A0F1E;font-weight:600">Faites défiler et appuyez sur <strong>"Sur l'écran d'accueil"</strong></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:#F8FAFC;border-radius:12px;padding:13px 14px">
+        <div style="width:32px;height:32px;border-radius:9px;background:#0A0F1E;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">3️⃣</div>
+        <div style="font-size:.82rem;color:#0A0F1E;font-weight:600">Appuyez sur <strong>"Ajouter"</strong> en haut à droite</div>
+      </div>
+    </div>
+    <a href="/app.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:13px;font-size:.92rem;font-weight:800;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;margin-bottom:10px">
+      Ouvrir l'app maintenant →
+    </a>
+    <button onclick="document.getElementById('mo-install').style.display='none'" style="width:100%;padding:12px;border:none;background:none;font-family:inherit;font-size:.84rem;color:#94A3B8;font-weight:600;cursor:pointer">Fermer</button>
+  </div>
+</div>
+
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
 (function(){
@@ -753,6 +781,37 @@ footer{padding:26px 20px;border-top:1px solid var(--border);text-align:center;ba
 window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);
 },{passive:true});
+
+// PWA Install
+let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  _deferredPrompt=e;
+});
+
+function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
+function isInStandaloneMode(){return window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone===true;}
+
+function handleInstall(e){
+  e.preventDefault();
+  if(isInStandaloneMode()){window.location.href='/app.html';return;}
+  if(_deferredPrompt){
+    // Android Chrome — prompt natif
+    _deferredPrompt.prompt();
+    _deferredPrompt.userChoice.then(r=>{
+      _deferredPrompt=null;
+      if(r.outcome==='accepted')setTimeout(()=>window.location.href='/app.html',800);
+    });
+  } else if(isIOS()){
+    // iOS Safari — modale instructions
+    const mo=document.getElementById('mo-install');
+    mo.style.display='flex';
+    mo.addEventListener('click',function(ev){if(ev.target===mo)mo.style.display='none';},{once:false});
+  } else {
+    // Autre navigateur — rediriger directement
+    window.location.href='/app.html';
+  }
+}
 
 const rvEls=document.querySelectorAll('.rv');
 requestAnimationFrame(()=>{
