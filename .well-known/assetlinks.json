@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "fr.autocarnet.app",
+    "sha256_cert_fingerprints": ["14:8D:B5:F4:16:37:75:68:F6:61:E3:F4:59:C1:3A:B0:04:F6:AC:5C:E7:FD:CB:0B:35:06:0C:36:0F:64:70:74"]
+  }
+}]
