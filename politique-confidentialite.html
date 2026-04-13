@@ -46,13 +46,13 @@ footer a{color:var(--txl)}
 <div class="container">
   <a href="/" class="back">← Retour à l'accueil</a>
   <h1>Politique de confidentialité</h1>
-  <p class="meta">Dernière mise à jour : avril 2026 · Conforme au RGPD</p>
+  <p class="meta">Dernière mise à jour : avril 2026 (v2) · Conforme au RGPD</p>
 
   <div class="highlight"><p>🔒 AutoCarnet respecte votre vie privée. Nous collectons uniquement les données indispensables au fonctionnement du service et ne les revendons jamais.</p></div>
 
   <h2>1. Responsable du traitement</h2>
   <p><strong>AutoCarnet</strong> — Auto-entrepreneur — SIRET 914 511 639 00025<br>
-  Email : <a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a></p>
+  Email : <a href="/cdn-cgi/l/email-protection#680b07061c090b1c28091d1c070b091a060d1c460e1a"><span class="__cf_email__" data-cfemail="1e7d71706a7f7d6a5e7f6b6a717d7f6c707b6a30786c">[email&#160;protected]</span></a></p>
 
   <h2>2. Données collectées</h2>
   <table class="table">
@@ -64,6 +64,7 @@ footer a{color:var(--txl)}
       <tr><td>Données entretiens</td><td>Fonctionnement du service</td><td>Exécution du contrat</td><td>Durée du compte</td></tr>
       <tr><td>Abonnement Stripe</td><td>Gestion des paiements</td><td>Obligation légale</td><td>10 ans (comptabilité)</td></tr>
       <tr><td>Endpoint push</td><td>Notifications</td><td>Consentement</td><td>Jusqu'au désabonnement</td></tr>
+      <tr><td>Localisation (optionnelle)</td><td>Affichage des prix carburant à proximité (app Android uniquement)</td><td>Consentement explicite</td><td>Non stockée — utilisée en temps réel uniquement</td></tr>
     </tbody>
   </table>
 
@@ -71,7 +72,7 @@ footer a{color:var(--txl)}
   <p>AutoCarnet ne collecte <strong>jamais</strong> :</p>
   <ul>
     <li>Coordonnées bancaires (traitées exclusivement par Stripe)</li>
-    <li>Données de localisation GPS permanentes</li>
+    <li>Données de localisation stockées ou transmises à des tiers (la localisation est demandée uniquement pour la feature prix carburant sur Android, en temps réel, et n'est jamais enregistrée ni partagée)</li>
     <li>Données de navigation ou cookies publicitaires</li>
     <li>Données sensibles au sens du RGPD</li>
   </ul>
@@ -95,7 +96,15 @@ footer a{color:var(--txl)}
   </ul>
   <p>Aucun cookie publicitaire, de tracking ou analytique n'est utilisé.</p>
 
-  <h2>6. Vos droits</h2>
+  <h2>6. Application Android (Play Store)</h2>
+  <p>La version Android d'AutoCarnet est distribuée via le Google Play Store. Elle accède aux données suivantes :</p>
+  <ul>
+    <li><strong>Localisation</strong> — demandée uniquement pour afficher les prix carburant à proximité. Vous pouvez refuser cette permission sans impact sur les autres fonctionnalités. La localisation n'est jamais stockée ni transmise à des tiers.</li>
+    <li><strong>Notifications push</strong> — pour les rappels d'entretien. Vous pouvez les désactiver à tout moment dans les paramètres.</li>
+  </ul>
+  <p>Les abonnements Premium sont gérés via le site <a href="https://autocarnet.fr/premium.html">autocarnet.fr</a> et non via Google Play Billing.</p>
+
+  <h2>7. Vos droits</h2>
   <p>Conformément au RGPD, vous disposez des droits suivants :</p>
   <ul>
     <li><strong>Droit d'accès</strong> — obtenir une copie de vos données</li>
@@ -104,10 +113,10 @@ footer a{color:var(--txl)}
     <li><strong>Droit à la portabilité</strong> — exporter vos données (CSV disponible dans l'app)</li>
     <li><strong>Droit d'opposition</strong> — vous opposer à certains traitements</li>
   </ul>
-  <p>Pour exercer ces droits : <a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a> — réponse sous 30 jours.</p>
+  <p>Pour exercer ces droits : <a href="/cdn-cgi/l/email-protection#b1d2dedfc5d0d2c5f1d0c4c5ded2d0c3dfd4c59fd7c3"><span class="__cf_email__" data-cfemail="4c2f2322382d2f380c2d3938232f2d3e222938622a3e">[email&#160;protected]</span></a> — réponse sous 30 jours.</p>
   <p>Vous pouvez également déposer une réclamation auprès de la <strong>CNIL</strong> : <a href="https://www.cnil.fr" target="_blank">www.cnil.fr</a></p>
 
-  <h2>7. Sécurité</h2>
+  <h2>8. Sécurité</h2>
   <p>AutoCarnet met en œuvre les mesures de sécurité suivantes :</p>
   <ul>
     <li>Connexion chiffrée HTTPS sur l'ensemble du site</li>
@@ -116,18 +125,11 @@ footer a{color:var(--txl)}
     <li>Clés API stockées côté serveur uniquement</li>
   </ul>
 
-  <h2>8. Transferts hors UE</h2>
+  <h2>9. Transferts hors UE</h2>
   <p>Certains prestataires (Netlify, Stripe, Google) sont situés aux États-Unis. Ces transferts sont encadrés par des clauses contractuelles types conformes au RGPD.</p>
 
-  <h2>9. Modifications</h2>
+  <h2>10. Modifications</h2>
   <p>Cette politique peut être mise à jour. En cas de modification substantielle, vous serez informé par email. La date de dernière mise à jour est indiquée en haut de cette page.</p>
 
   <hr>
-  <p style="font-size:.8rem;color:var(--txl)">Contact DPO : <a href="mailto:contact@autocarnet.fr">contact@autocarnet.fr</a></p>
-</div>
-
-<footer>
-  <p>© 2026 AutoCarnet · <a href="/">Accueil</a> · <a href="/cgu.html">CGU</a> · <a href="/mentions-legales.html">Mentions légales</a></p>
-</footer>
-</body>
-</html>
+  <p style="font-size:.8rem;color:var(
