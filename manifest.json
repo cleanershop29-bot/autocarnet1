@@ -1,25 +1,27 @@
 {
-  "name": "Auto Carnet",
+  "name": "AutoCarnet",
   "short_name": "AutoCarnet",
-  "description": "Carnet d'entretien digital pour vos véhicules",
+  "description": "Carnet d'entretien numérique pour vos véhicules. Rappels automatiques, suivi des coûts, export PDF.",
   "start_url": "/app.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#F1F5F9",
+  "background_color": "#0A0F1E",
   "theme_color": "#2563EB",
   "lang": "fr",
-  "categories": ["auto", "productivity"],
+  "categories": ["auto", "productivity", "utilities"],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     {
       "name": "Ajouter un entretien",
       "short_name": "Entretien",
       "url": "/app.html?action=add",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }
