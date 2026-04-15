@@ -395,9 +395,10 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 /* UTILS */
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}
 /* PHOTO FACTURE */
-.photo-btn{width:100%;padding:12px;border:2px dashed var(--border);border-radius:var(--r-sm);background:var(--bg2);display:flex;align-items:center;justify-content:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s;font-family:inherit}
-.photo-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-lt)}
-.photo-btn.has-photo{border-style:solid;border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.photo-btn{width:100%;padding:16px 12px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#1e3a8a 0%,#2563EB 100%);display:flex;align-items:center;justify-content:center;gap:10px;font-size:.9rem;font-weight:700;color:#fff;cursor:pointer;transition:.15s;font-family:inherit;box-shadow:0 2px 8px rgba(37,99,235,.35);letter-spacing:.01em}
+.photo-btn:hover{opacity:.92;box-shadow:0 4px 14px rgba(37,99,235,.45);transform:translateY(-1px)}
+.photo-btn:active{transform:translateY(0);box-shadow:0 2px 6px rgba(37,99,235,.3)}
+.photo-btn.has-photo{background:linear-gradient(135deg,#065f46 0%,#059669 100%);box-shadow:0 2px 8px rgba(5,150,105,.35)}
 .photo-preview{width:100%;border-radius:var(--r-sm);overflow:hidden;position:relative;margin-top:6px;max-height:100px}
 .photo-preview img{width:100%;height:100px;object-fit:cover;display:block;cursor:pointer}
 .photo-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -1014,19 +1015,14 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         </div>
       </div>
     </div>
-        <!-- PHOTO FACTURE -->
-        <div style="padding:4px 0 8px">
-          <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)">
-          <!-- Bouton ajouter (visible si pas de photo) -->
+        <!-- PHOTOS FACTURES MULTI -->
+        <div style="padding:8px 0 12px">
+          <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)" multiple>
           <button type="button" class="photo-btn" id="e-photo-btn" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input').click();}">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> <span id="e-photo-label">Ajouter une photo de facture</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span id="e-photo-label">📎 Ajouter des photos de facture</span>
           </button>
-          <!-- Actions photo (visible si photo présente) -->
-          <div id="e-photo-actions" class="hidden" style="display:none;gap:6px">
-            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="openPhotoFullscreen(_photoPreviewUrl||g('e-photo-url').value)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Voir</button>
-            <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="g('e-photo-input').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Changer</button>
-            <button type="button" class="btn btn-d btn-sm" style="flex:1" onclick="removePhoto()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Supprimer</button>
-          </div>
+          <div id="e-photos-list" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
           <input type="hidden" id="e-photo-url" value="">
         </div>
     <div class="mft">
@@ -2056,17 +2052,30 @@ async function saveEnt(){
   if(error){btnLoad('btn-sv-ent',false);return toast('Erreur : '+error.message,'e');}
 
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
-  // Upload photo si present
+  // Upload multi-photos
   const finalId = p.id || id;
-  if(_photoFile && finalId){
-    const photoUrl = await uploadPhoto(finalId);
-    if(photoUrl){
-      await sb.from('entretiens').update({photo_url:photoUrl}).eq('id',finalId).eq('user_id',S.user.id);
+  if(_photoFiles.length > 0 && finalId){
+    const newUrls = await uploadAllPhotos(finalId);
+    // Insérer dans entretien_photos
+    if(newUrls.length > 0){
+      const rows = newUrls.map(url => ({
+        entretien_id: finalId,
+        user_id: S.user.id,
+        url
+      }));
+      await sb.from('entretien_photos').insert(rows);
+      // Compatibilité : garder photo_url sur la 1ère photo
+      if(!id || !_photoUrls.length){
+        await sb.from('entretiens').update({photo_url:newUrls[0]}).eq('id',finalId).eq('user_id',S.user.id);
+      }
     }
-  } else if(!_photoFile && g('e-photo-url').value === 'DELETE' && id) {
-    // Supprimer la photo existante
-    await sb.storage.from('factures').remove([`${S.user.id}/${id}.jpg`,`${S.user.id}/${id}.png`]);
-    await sb.from('entretiens').update({photo_url:null}).eq('id',id).eq('user_id',S.user.id);
+  }
+  // Supprimer les photos retirées par l'utilisateur
+  if(id && _photoUrls.length === 0 && !_photoFiles.length){
+    const existingPhotos = await sb.from('entretien_photos').select('id').eq('entretien_id',id).eq('user_id',S.user.id);
+    if(!existingPhotos.data?.length){
+      await sb.from('entretiens').update({photo_url:null}).eq('id',id).eq('user_id',S.user.id);
+    }
   }
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
   btnLoad('btn-sv-ent',false);
@@ -2796,18 +2805,66 @@ function updateRappelDatePreview(){
   }
 }
 /* ══ PHOTOS FACTURES ══ */
-let _photoFile = null;
-let _photoPreviewUrl = null;
+// ═══════════════════════════════════════
+// MULTI-PHOTOS FACTURES
+// ═══════════════════════════════════════
+let _photoFiles = []; // nouvelles photos à uploader
+let _photoUrls = [];  // urls photos déjà uploadées (existantes)
+let _photoFile = null; // compatibilité legacy
+let _photoPreviewUrl = null; // compatibilité legacy
 
 function onPhotoSelected(input){
-  const file = input.files[0];
-  if(!file) return;
-  // Compresser si > 1Mo
-  if(file.size > 1024*1024){
-    compressPhoto(file).then(compressed => showPhotoPreview(compressed));
-  } else {
-    showPhotoPreview(file);
-  }
+  const files = Array.from(input.files);
+  if(!files.length) return;
+  files.forEach(file => {
+    if(file.size > 1024*1024){
+      compressPhoto(file).then(compressed => addPhotoToList(compressed, file.name));
+    } else {
+      addPhotoToList(file, file.name);
+    }
+  });
+  input.value = '';
+}
+
+function addPhotoToList(file, name){
+  _photoFiles.push(file);
+  renderPhotoList();
+}
+
+function renderPhotoList(){
+  const list = g('e-photos-list');
+  if(!list) return;
+  const allItems = [
+    ..._photoUrls.map((url,i) => ({type:'url', url, i})),
+    ..._photoFiles.map((f,i) => ({type:'file', file:f, i}))
+  ];
+  if(!allItems.length){ list.innerHTML=''; return; }
+  list.innerHTML = allItems.map(item => {
+    if(item.type==='url'){
+      return `<div style="display:flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span style="flex:1;font-size:.8rem;color:#166534;font-weight:600">Photo ${item.i+1} — uploadée</span>
+        <button type="button" onclick="openPhotoFullscreen('${item.url}')" style="background:none;border:none;color:#2563EB;font-size:.78rem;cursor:pointer;padding:2px 6px;border-radius:4px">Voir</button>
+        <button type="button" onclick="removeExistingPhoto(${item.i})" style="background:none;border:none;color:#dc2626;font-size:.78rem;cursor:pointer;padding:2px 6px;border-radius:4px">✕</button>
+      </div>`;
+    } else {
+      return `<div style="display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span style="flex:1;font-size:.8rem;color:#1e40af;font-weight:600">${esc(item.file.name||'Photo')} — prête</span>
+        <button type="button" onclick="removeNewPhoto(${item.i})" style="background:none;border:none;color:#dc2626;font-size:.78rem;cursor:pointer;padding:2px 6px;border-radius:4px">✕</button>
+      </div>`;
+    }
+  }).join('');
+}
+
+function removeExistingPhoto(i){
+  _photoUrls.splice(i,1);
+  renderPhotoList();
+}
+
+function removeNewPhoto(i){
+  _photoFiles.splice(i,1);
+  renderPhotoList();
 }
 
 function compressPhoto(file){
@@ -2828,44 +2885,49 @@ function compressPhoto(file){
   });
 }
 
-function showPhotoPreview(file){
-  _photoFile = file;
-  if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); }
-  _photoPreviewUrl = URL.createObjectURL(file);
-  showPhotoActions();
-}
-
-function showPhotoActions(){
-  const btn = g('e-photo-btn');
-  const actions = g('e-photo-actions');
-  if(btn) btn.style.display = 'none';
-  if(actions){ actions.classList.remove('hidden'); actions.style.display = 'flex'; }
-}
-
-function hidePhotoActions(){
-  const btn = g('e-photo-btn');
-  const actions = g('e-photo-actions');
-  if(btn) btn.style.display = '';
-  if(actions){ actions.classList.add('hidden'); actions.style.display = 'none'; }
-}
+function showPhotoPreview(file){ _photoFiles.push(file); renderPhotoList(); }
+function showPhotoActions(){}
+function hidePhotoActions(){}
 
 function removePhoto(){
+  _photoFiles = [];
+  _photoUrls = [];
   _photoFile = null;
   if(_photoPreviewUrl){ URL.revokeObjectURL(_photoPreviewUrl); _photoPreviewUrl = null; }
   const url = g('e-photo-url');
-  if(url){ url.value = 'DELETE'; }
+  if(url) url.value = '';
   const input = g('e-photo-input');
-  if(input){ input.value = ''; }
-  hidePhotoActions();
+  if(input) input.value = '';
+  renderPhotoList();
+}
+
+async function uploadAllPhotos(entId){
+  const uploaded = [];
+  for(let i=0; i<_photoFiles.length; i++){
+    const file = _photoFiles[i];
+    try{
+      const ext = file.type === 'image/png' ? 'png' : 'jpg';
+      const path = `${S.user.id}/${entId}_${Date.now()}_${i}.${ext}`;
+      const { error } = await sb.storage.from('factures').upload(path, file, {
+        upsert: false, contentType: file.type || 'image/jpeg'
+      });
+      if(!error){
+        const { data } = sb.storage.from('factures').getPublicUrl(path);
+        if(data?.publicUrl) uploaded.push(data.publicUrl);
+      }
+    }catch(e){ console.error('Upload photo:', e.message); }
+  }
+  return uploaded;
 }
 
 async function uploadPhoto(entId){
-  if(!_photoFile) return null;
+  if(!_photoFiles.length) return null;
   try{
-    const ext = _photoFile.type === 'image/png' ? 'png' : 'jpg';
+    const file = _photoFiles[0];
+    const ext = file.type === 'image/png' ? 'png' : 'jpg';
     const path = `${S.user.id}/${entId}.${ext}`;
-    const { error } = await sb.storage.from('factures').upload(path, _photoFile, {
-      upsert: true, contentType: _photoFile.type || 'image/jpeg'
+    const { error } = await sb.storage.from('factures').upload(path, file, {
+      upsert: true, contentType: file.type || 'image/jpeg'
     });
     if(error){ console.error('Upload photo:', error.message); return null; }
     const { data } = sb.storage.from('factures').getPublicUrl(path);
@@ -4054,10 +4116,21 @@ function openEnt(id,forcedVid){
     g('e-dt').value=e.date||'';g('e-km').value=e.km||'';
     g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';
     g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
-    // Charger photo existante
-    if(e.photo_url){
-      g('e-photo-url').value=e.photo_url;
-      showPhotoActions();
+    // Charger photos existantes (multi)
+    removePhoto();
+    if(e.id){
+      sb.from('entretien_photos').select('url').eq('entretien_id',e.id).eq('user_id',S.user.id).then(({data})=>{
+        if(data&&data.length){
+          _photoUrls = data.map(r=>r.url);
+        } else if(e.photo_url){
+          // Compatibilité ancienne photo unique
+          _photoUrls = [e.photo_url];
+        }
+        renderPhotoList();
+      });
+    } else if(e.photo_url){
+      _photoUrls = [e.photo_url];
+      renderPhotoList();
     }
     g('e-rk').value=e.rappel_km||'';
     g('e-pc').value=e.pieces||'';g('e-tech').value=e.technicien||'';
