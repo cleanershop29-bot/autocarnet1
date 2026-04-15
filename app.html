@@ -945,7 +945,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 </div>
 
 <!-- Modal Entretien -->
-<div class="mo" id="mo-ent" onclick="if(event.target===this)cm('ent')">
+<div class="mo" id="mo-ent" id="mo-ent">
   <div class="modal">
     <div class="mhdr"><div class="mtit" id="mt-ent">Ajouter un entretien</div><button class="mcls" onclick="cm('ent')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mbdy">
@@ -1560,6 +1560,18 @@ function pickColor(c){
     b.style.boxShadow=isOn?`0 0 0 3px #fff, 0 0 0 5px ${c==='#FFFFFF'?'#94A3B8':c}`:'0 1px 3px rgba(0,0,0,.15)';
     b.innerHTML=isOn?`<svg style="position:absolute;inset:0;margin:auto;display:block" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${c==='#FFFFFF'||c==='#EAB308'||c==='#84CC16'?'#374151':'#fff'}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`:'';
   });
+}
+
+function initModalBackdrop(){
+  const mo = g('mo-ent');
+  if(!mo) return;
+  let startY = 0;
+  mo.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+  mo.addEventListener('touchend', e => {
+    const dy = Math.abs(e.changedTouches[0].clientY - startY);
+    if(e.target === mo && dy < 10) cm('ent');
+  });
+  mo.addEventListener('mousedown', e => { if(e.target === mo) cm('ent'); });
 }
 
 function initAutoComplete(){
@@ -2831,6 +2843,15 @@ function addPhotoToList(file, name){
   renderPhotoList();
 }
 
+function getAutoPhotoName(index){
+  const type = g('e-ty')?.value || '';
+  const date = g('e-dt')?.value || '';
+  let d = '';
+  if(date){ try{ const dt=new Date(date); d=' '+dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){} }
+  const label = type ? type.replace(/\//g,'-') : 'Facture';
+  return `${label}${d} — photo ${index+1}`;
+}
+
 function renderPhotoList(){
   const list = g('e-photos-list');
   if(!list) return;
@@ -2839,19 +2860,33 @@ function renderPhotoList(){
     ..._photoFiles.map((f,i) => ({type:'file', file:f, i}))
   ];
   if(!allItems.length){ list.innerHTML=''; return; }
-  list.innerHTML = allItems.map(item => {
+  const total = allItems.length;
+  list.innerHTML = `<div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">
+    📎 ${total} photo${total>1?'s':''} jointe${total>1?'s':''}
+  </div>` + allItems.map((item,globalIdx) => {
+    const name = getAutoPhotoName(globalIdx);
     if(item.type==='url'){
-      return `<div style="display:flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        <span style="flex:1;font-size:.8rem;color:#166534;font-weight:600">Photo ${item.i+1} — uploadée</span>
-        <button type="button" onclick="openPhotoFullscreen('${item.url}')" style="background:none;border:none;color:#2563EB;font-size:.78rem;cursor:pointer;padding:2px 6px;border-radius:4px">Voir</button>
-        <button type="button" onclick="removeExistingPhoto(${item.i})" style="background:none;border:none;color:#dc2626;font-size:.78rem;cursor:pointer;padding:2px 6px;border-radius:4px">✕</button>
+      return `<div style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:10px 12px">
+        <div style="width:34px;height:34px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.82rem;font-weight:700;color:#166534;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(name)}</div>
+          <div style="font-size:.7rem;color:#16a34a;margin-top:1px">✓ Enregistrée</div>
+        </div>
+        <button type="button" onclick="openPhotoFullscreen('${item.url}')" style="background:#dcfce7;border:none;color:#166534;font-size:.75rem;font-weight:700;cursor:pointer;padding:5px 10px;border-radius:6px;white-space:nowrap">Voir</button>
+        <button type="button" onclick="removeExistingPhoto(${item.i})" style="background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center">✕</button>
       </div>`;
     } else {
-      return `<div style="display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 10px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        <span style="flex:1;font-size:.8rem;color:#1e40af;font-weight:600">${esc(item.file.name||'Photo')} — prête</span>
-        <button type="button" onclick="removeNewPhoto(${item.i})" style="background:none;border:none;color:#dc2626;font-size:.78rem;cursor:pointer;padding:2px 6px;border-radius:4px">✕</button>
+      return `<div style="display:flex;align-items:center;gap:10px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:10px 12px">
+        <div style="width:34px;height:34px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.82rem;font-weight:700;color:#1e40af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(name)}</div>
+          <div style="font-size:.7rem;color:#3b82f6;margin-top:1px">⏳ Prête à enregistrer</div>
+        </div>
+        <button type="button" onclick="removeNewPhoto(${item.i})" style="background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center">✕</button>
       </div>`;
     }
   }).join('');
