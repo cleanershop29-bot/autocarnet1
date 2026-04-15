@@ -547,173 +547,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .chip-green{background:#10B981;color:#fff}
 .chip-blue{background:var(--primary);color:#fff}
 
-/* ═══════════════════════════════════════════════
-   DESKTOP LAYOUT — min-width 640px
-   Toutes règles scoped à #app-root pour ne pas
-   affecter le mobile (media query suffit aussi)
-   ═══════════════════════════════════════════════ */
-@media (min-width: 640px){
-
-  html {
-    background: linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#0f172a 100%);
-    background-attachment: fixed;
-    min-height: 100vh;
-  }
-
-  body {
-    background: transparent !important;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  /* Conteneur principal centré */
-  #app-root {
-    position: relative;
-    width: 430px;
-    min-height: 100vh;
-    background: #F0F4FA;
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,.06),
-      0 20px 80px rgba(0,0,0,.5),
-      0 0 120px rgba(37,99,235,.2);
-    overflow: hidden;
-    flex-shrink: 0;
-    margin: 0 auto;
-  }
-
-  /* Appbar sticky dans le root */
-  .appbar {
-    position: sticky !important;
-    top: 0 !important;
-    left: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    z-index: 100;
-  }
-
-  /* Navbar fixe relative au root */
-  .navbar {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-    bottom: 0 !important;
-  }
-
-  /* FAB */
-  #fab {
-    position: fixed !important;
-    right: calc(50% - 430px/2 + 16px) !important;
-    bottom: 82px !important;
-  }
-  #fab-menu {
-    position: fixed !important;
-    right: calc(50% - 430px/2 + 14px) !important;
-    bottom: 148px !important;
-  }
-  #fab-overlay {
-    position: fixed !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-  }
-
-  /* Modaux */
-  .mo {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-  }
-  .mo.open {
-    transform: translateX(-50%) !important;
-  }
-
-  /* Detail vehicule */
-  #mo-veh-detail {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(calc(-50% + 430px)) !important;
-    width: 430px !important;
-  }
-  #mo-veh-detail.open {
-    transform: translateX(-50%) !important;
-  }
-
-  /* Page carburant */
-  #carb-page {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) translateY(100%) !important;
-    width: 430px !important;
-  }
-  #carb-page.open {
-    transform: translateX(-50%) translateY(0) !important;
-  }
-
-  /* Onboarding */
-  #mo-onboard {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-  }
-
-  /* Banners */
-  #offline-banner, #install-banner, #ios-hint {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-  }
-
-  /* Toast */
-  #tc {
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 400px !important;
-    max-width: 400px !important;
-  }
-
-  /* Lightbox */
-  #mo-lightbox {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-  }
-
-  /* Contenu scrollable */
-  #main-content {
-    max-height: calc(100vh - 56px - 65px);
-    overflow-y: auto;
-  }
-
-  /* Loader */
-  #ls {
-    position: fixed !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 430px !important;
-  }
-
-  /* Auth */
-  #auth-screen {
-    min-height: 100vh;
-    background: var(--bg);
-  }
-}
-
 /* ═══ COMPTEURS RAPPELS REDESIGNÉS ═══ */
 .rap-ctr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .rap-ctr{border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
@@ -781,7 +614,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 </style>
 </head>
 <body>
-<div id="app-root">
 
 <!-- INSTALL BANNER -->
 <div id="offline-banner">📡 Pas de connexion internet — les données peuvent être obsolètes</div>
@@ -4074,7 +3906,7 @@ function renderRap(){
       const evs=evtsByDate[ds]||[];
       const isToday=c.date.getTime()===today2.getTime();
       const isSel=calSel===ds;
-      const dots=evs.slice(0,3).map(e=>`<div class="rap-cal-dot" style="background:${e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB'}"></div>`).join('');
+      const dots=evs.slice(0,3).map(e=>'<div class="rap-cal-dot" style="background:'+( e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB')+'"></div>').join('');
       calGrid+=`<div class="rap-cal-cell${c.other?' other':''}${isToday?' today':''}${isSel?' selected':''}" onclick="selectCalDay('${ds}')">
         <span class="rap-cal-num">${c.date.getDate()}</span>
         ${dots}
@@ -4111,7 +3943,7 @@ function renderRap(){
         </div>
       </div>
       <div class="rap-cal-days-hdr">
-        ${['L','M','M','J','V','S','D'].map(d=>`<div class="rap-cal-day-name">${d}</div>`).join('')}
+        ${['L','M','M','J','V','S','D'].map(d=>'<div class="rap-cal-day-name">'+d+'</div>').join('')}
       </div>
       <div class="rap-cal-grid">${calGrid}</div>
       <div class="rap-cal-legend">
@@ -4238,6 +4070,7 @@ function renderRap(){
     h+=`<div class="info-box">Ajoutez des rappels personnalisés avec une date pour les voir apparaître dans les sections ci-dessus.</div>`;
   }
 
+  } // fin vue liste
   el.innerHTML=h;
 }
 function setRapView(v){
@@ -5698,6 +5531,5 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
   </div>
 </div>
-</div><!-- #app-root -->
 </body>
 </html>
