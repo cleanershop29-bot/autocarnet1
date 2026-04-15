@@ -4128,8 +4128,11 @@ function openEnt(id,forcedVid){
     g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
     // Charger photos existantes (multi)
     removePhoto();
-    if(e.id){
-      sb.from('entretien_photos').select('url,nom').eq('entretien_id',e.id).eq('user_id',S.user.id).then(({data})=>{
+    const entId = e.id || g('e-id').value;
+    console.log('Chargement photos pour entretien_id:', entId);
+    if(entId){
+      sb.from('entretien_photos').select('url,nom').eq('entretien_id',entId).eq('user_id',S.user.id).then(({data,error})=>{
+        console.log('Photos chargées:', data, 'Erreur:', error);
         if(data&&data.length){
           _photoUrls = data.map(r=>r.url);
           data.forEach((r,i) => { _photoNames[i] = r.nom || ''; });
