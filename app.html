@@ -546,9 +546,242 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ob-plan-chip{font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:20px}
 .chip-green{background:#10B981;color:#fff}
 .chip-blue{background:var(--primary);color:#fff}
+
+/* ═══════════════════════════════════════════════
+   DESKTOP LAYOUT — min-width 640px
+   Toutes règles scoped à #app-root pour ne pas
+   affecter le mobile (media query suffit aussi)
+   ═══════════════════════════════════════════════ */
+@media (min-width: 640px){
+
+  html {
+    background: linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#0f172a 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  body {
+    background: transparent !important;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* Conteneur principal centré */
+  #app-root {
+    position: relative;
+    width: 430px;
+    min-height: 100vh;
+    background: #F0F4FA;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.06),
+      0 20px 80px rgba(0,0,0,.5),
+      0 0 120px rgba(37,99,235,.2);
+    overflow: hidden;
+    flex-shrink: 0;
+    margin: 0 auto;
+  }
+
+  /* Appbar sticky dans le root */
+  .appbar {
+    position: sticky !important;
+    top: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    z-index: 100;
+  }
+
+  /* Navbar fixe relative au root */
+  .navbar {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+    bottom: 0 !important;
+  }
+
+  /* FAB */
+  #fab {
+    position: fixed !important;
+    right: calc(50% - 430px/2 + 16px) !important;
+    bottom: 82px !important;
+  }
+  #fab-menu {
+    position: fixed !important;
+    right: calc(50% - 430px/2 + 14px) !important;
+    bottom: 148px !important;
+  }
+  #fab-overlay {
+    position: fixed !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+  }
+
+  /* Modaux */
+  .mo {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+  }
+  .mo.open {
+    transform: translateX(-50%) !important;
+  }
+
+  /* Detail vehicule */
+  #mo-veh-detail {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(calc(-50% + 430px)) !important;
+    width: 430px !important;
+  }
+  #mo-veh-detail.open {
+    transform: translateX(-50%) !important;
+  }
+
+  /* Page carburant */
+  #carb-page {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) translateY(100%) !important;
+    width: 430px !important;
+  }
+  #carb-page.open {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  /* Onboarding */
+  #mo-onboard {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+  }
+
+  /* Banners */
+  #offline-banner, #install-banner, #ios-hint {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+  }
+
+  /* Toast */
+  #tc {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 400px !important;
+    max-width: 400px !important;
+  }
+
+  /* Lightbox */
+  #mo-lightbox {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+  }
+
+  /* Contenu scrollable */
+  #main-content {
+    max-height: calc(100vh - 56px - 65px);
+    overflow-y: auto;
+  }
+
+  /* Loader */
+  #ls {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 430px !important;
+  }
+
+  /* Auth */
+  #auth-screen {
+    min-height: 100vh;
+    background: var(--bg);
+  }
+}
+
+/* ═══ COMPTEURS RAPPELS REDESIGNÉS ═══ */
+.rap-ctr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.rap-ctr{border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
+.rap-ctr:active{transform:scale(.96)}
+.rap-ctr-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rap-ctr-num{font-size:1.8rem;font-weight:900;line-height:1;letter-spacing:-.04em}
+.rap-ctr-label{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.rap-ctr-bar{position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0}
+.rap-ctr.danger{background:#FEF2F2;border:1.5px solid #FECACA}
+.rap-ctr.danger .rap-ctr-num{color:#DC2626}
+.rap-ctr.danger .rap-ctr-label{color:#EF4444}
+.rap-ctr.danger .rap-ctr-icon{background:#FEE2E2;color:#DC2626}
+.rap-ctr.danger .rap-ctr-bar{background:#DC2626}
+.rap-ctr.warn{background:#FFFBEB;border:1.5px solid #FDE68A}
+.rap-ctr.warn .rap-ctr-num{color:#D97706}
+.rap-ctr.warn .rap-ctr-label{color:#F59E0B}
+.rap-ctr.warn .rap-ctr-icon{background:#FEF3C7;color:#D97706}
+.rap-ctr.warn .rap-ctr-bar{background:#F59E0B}
+.rap-ctr.info{background:#EFF6FF;border:1.5px solid #BFDBFE}
+.rap-ctr.info .rap-ctr-num{color:#2563EB}
+.rap-ctr.info .rap-ctr-label{color:#3B82F6}
+.rap-ctr.info .rap-ctr-icon{background:#DBEAFE;color:#2563EB}
+.rap-ctr.info .rap-ctr-bar{background:#2563EB}
+.rap-ctr.empty{background:#F8FAFC;border:1.5px solid rgba(184,196,216,.5)}
+.rap-ctr.empty .rap-ctr-num{color:#94A3B8}
+.rap-ctr.empty .rap-ctr-label{color:#CBD5E1}
+.rap-ctr.empty .rap-ctr-icon{background:#F1F5F9;color:#CBD5E1}
+.rap-ctr.empty .rap-ctr-bar{background:#E2E8F0}
+
+/* ═══ VUE SWITCH LISTE/CALENDRIER ═══ */
+.rap-view-switch{display:flex;background:#F1F5F9;border-radius:10px;padding:3px;margin-bottom:12px}
+.rap-view-btn{flex:1;padding:6px;border:none;background:none;border-radius:8px;font-size:.78rem;font-weight:700;font-family:inherit;cursor:pointer;color:#64748B;display:flex;align-items:center;justify-content:center;gap:5px;transition:.15s}
+.rap-view-btn.on{background:#fff;color:#2563EB;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* ═══ CALENDRIER RAPPELS ═══ */
+.rap-cal{background:#fff;border:1px solid rgba(184,196,216,.4);border-radius:16px;overflow:hidden;margin-bottom:10px}
+.rap-cal-hdr{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(184,196,216,.3)}
+.rap-cal-title{font-size:.9rem;font-weight:700;color:var(--txt)}
+.rap-cal-nav{display:flex;gap:4px}
+.rap-cal-nav button{background:none;border:1px solid rgba(184,196,216,.5);border-radius:7px;width:26px;height:26px;cursor:pointer;color:var(--txm);font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.rap-cal-nav button:hover{background:#F8FAFC}
+.rap-cal-days-hdr{display:grid;grid-template-columns:repeat(7,1fr);padding:8px 12px 2px}
+.rap-cal-day-name{text-align:center;font-size:.65rem;color:var(--txm);font-weight:700;padding:3px 0}
+.rap-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:2px 12px 10px;gap:2px}
+.rap-cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;position:relative;padding:1px}
+.rap-cal-cell:hover{background:#F8FAFC}
+.rap-cal-num{font-size:.78rem;color:var(--txt);line-height:1}
+.rap-cal-cell.other .rap-cal-num{color:#CBD5E1}
+.rap-cal-cell.today{background:#EFF6FF}
+.rap-cal-cell.today .rap-cal-num{color:#2563EB;font-weight:700}
+.rap-cal-cell.selected{background:#2563EB}
+.rap-cal-cell.selected .rap-cal-num{color:#fff;font-weight:700}
+.rap-cal-dot{width:4px;height:4px;border-radius:50%;margin-top:1px}
+.rap-cal-legend{display:flex;gap:10px;padding:8px 16px;background:#F8FAFC;border-top:1px solid rgba(184,196,216,.3)}
+.rap-cal-leg{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--txm);font-weight:600}
+.rap-cal-leg-dot{width:6px;height:6px;border-radius:50%}
+.rap-cal-events{border-top:1px solid rgba(184,196,216,.3)}
+.rap-cal-event{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(184,196,216,.2)}
+.rap-cal-event:last-child{border-bottom:none}
+.rap-cal-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rap-cal-event-name{font-size:.82rem;font-weight:700;color:var(--txt)}
+.rap-cal-event-veh{font-size:.7rem;color:var(--txm);margin-top:1px}
+.rap-cal-event-days{font-size:.7rem;font-weight:700;color:var(--txm);white-space:nowrap}
+.rap-cal-empty{padding:16px;text-align:center;font-size:.8rem;color:var(--txm)}
 </style>
 </head>
 <body>
+<div id="app-root">
 
 <!-- INSTALL BANNER -->
 <div id="offline-banner">📡 Pas de connexion internet — les données peuvent être obsolètes</div>
@@ -3759,22 +3992,136 @@ function renderRap(){
 
   let h='';
 
-  // Cartes résumé — simples et claires
-  h+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
-    <div onclick="scrollToRapSection('rap-section-danger')" style="background:${totalDanger?'linear-gradient(145deg,#FEF2F2,#FFF5F5)':'#F8FAFC'};border:1.5px solid ${totalDanger?'#FECACA':'rgba(184,196,216,.5)'};border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
-      <div style="font-size:1.9rem;font-weight:900;color:${totalDanger?'#DC2626':'#94A3B8'};line-height:1;letter-spacing:-.04em">${totalDanger}</div>
-      <div style="font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${totalDanger?'#DC2626':'#94A3B8'};margin-top:5px">En retard</div>
-      ${totalDanger?`<div style="width:20px;height:3px;border-radius:2px;background:#DC2626;margin:6px auto 0;animation:pulse-bar 1.5s ease-in-out infinite"></div>`:''}
+  // ── COMPTEURS REDESIGNÉS ──
+  const iconDanger=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  const iconCal=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+  const iconBell=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`;
+  h+=`<div class="rap-ctr-grid">
+    <div class="rap-ctr ${totalDanger?'danger':'empty'}" onclick="scrollToRapSection('rap-section-danger')">
+      <div class="rap-ctr-icon">${iconDanger}</div>
+      <div class="rap-ctr-num">${totalDanger}</div>
+      <div class="rap-ctr-label">En retard</div>
+      <div class="rap-ctr-bar" style="width:${totalDanger?'100%':'30%'}"></div>
     </div>
-    <div onclick="scrollToRapSection('rap-section-30')" style="background:${total30?'linear-gradient(145deg,#FFFBEB,#FFFDF5)':'#F8FAFC'};border:1.5px solid ${total30?'#FDE68A':'rgba(184,196,216,.5)'};border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
-      <div style="font-size:1.9rem;font-weight:900;color:${total30?'#D97706':'#94A3B8'};line-height:1;letter-spacing:-.04em">${total30}</div>
-      <div style="font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${total30?'#D97706':'#94A3B8'};margin-top:5px">Ce mois</div>
+    <div class="rap-ctr ${total30?'warn':'empty'}" onclick="scrollToRapSection('rap-section-30')">
+      <div class="rap-ctr-icon">${iconCal}</div>
+      <div class="rap-ctr-num">${total30}</div>
+      <div class="rap-ctr-label">Ce mois</div>
+      <div class="rap-ctr-bar" style="width:${total30?'70%':'30%'}"></div>
     </div>
-    <div onclick="scrollToRapSection('rap-section-90')" style="background:${total90?'linear-gradient(145deg,#EFF6FF,#F5F8FF)':'#F8FAFC'};border:1.5px solid ${total90?'#BFDBFE':'rgba(184,196,216,.5)'};border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
-      <div style="font-size:1.9rem;font-weight:900;color:${total90?'#2563EB':'#94A3B8'};line-height:1;letter-spacing:-.04em">${total90}</div>
-      <div style="font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:${total90?'#2563EB':'#94A3B8'};margin-top:5px">À venir</div>
+    <div class="rap-ctr ${total90?'info':'empty'}" onclick="scrollToRapSection('rap-section-90')">
+      <div class="rap-ctr-icon">${iconBell}</div>
+      <div class="rap-ctr-num">${total90}</div>
+      <div class="rap-ctr-label">À venir</div>
+      <div class="rap-ctr-bar" style="width:${total90?'50%':'30%'}"></div>
     </div>
   </div>`;
+
+  // ── SWITCH LISTE / CALENDRIER (persistant via localStorage) ──
+  const rapView = localStorage.getItem('ac_rap_view')||'list';
+  h+=`<div class="rap-view-switch">
+    <button class="rap-view-btn ${rapView==='list'?'on':''}" onclick="setRapView('list')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Liste
+    </button>
+    <button class="rap-view-btn ${rapView==='cal'?'on':''}" onclick="setRapView('cal')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Calendrier
+    </button>
+  </div>`;
+
+  // ── CALENDRIER ──
+  if(rapView==='cal'){
+    const calState=JSON.parse(localStorage.getItem('ac_cal_state')||'{}');
+    const calNow=new Date();
+    const calYear=calState.year||calNow.getFullYear();
+    const calMonth=calState.month!==undefined?calState.month:calNow.getMonth();
+    const calSel=calState.sel||null;
+    const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    const today2=new Date();today2.setHours(0,0,0,0);
+
+    // Collecter tous les rappels avec date
+    const allEvts=[];
+    allRaps.forEach(r=>{
+      if(!r.e?.rappel_date&&!r.rappel_date)return;
+      const d=r.e?.rappel_date||r.rappel_date;
+      if(!d)return;
+      allEvts.push({date:d,label:r.e?.type||'Rappel',veh:r.v?r.v.marque+' '+r.v.modele:'',sev:r.sev,vid:r.v?.id});
+    });
+    S.rappels_custom.forEach(r=>{
+      if(!r.date_rappel)return;
+      const v=S.vehicles.find(x=>x.id===r.vehicle_id);
+      const dt=new Date(r.date_rappel);dt.setHours(0,0,0,0);
+      const dDays=Math.ceil((dt-today2)/86400000);
+      const sev=dDays<=0?'danger':dDays<=30?'warn':'ok';
+      allEvts.push({date:r.date_rappel,label:r.titre,veh:v?v.marque+' '+v.modele:'Tous',sev,vid:r.vehicle_id});
+    });
+
+    const firstDay=new Date(calYear,calMonth,1);
+    const lastDay=new Date(calYear,calMonth+1,0);
+    let startDow=(firstDay.getDay()+6)%7;
+    let cells=[];
+    for(let i=startDow-1;i>=0;i--){const d=new Date(firstDay);d.setDate(d.getDate()-i-1);cells.push({date:d,other:true});}
+    for(let i=1;i<=lastDay.getDate();i++)cells.push({date:new Date(calYear,calMonth,i),other:false});
+    while(cells.length%7!==0){const last=cells[cells.length-1].date;const nd=new Date(last);nd.setDate(nd.getDate()+1);cells.push({date:nd,other:true});}
+
+    const evtsByDate={};
+    allEvts.forEach(e=>{if(!evtsByDate[e.date])evtsByDate[e.date]=[];evtsByDate[e.date].push(e);});
+
+    let calGrid='';
+    cells.forEach(c=>{
+      const ds=c.date.toISOString().split('T')[0];
+      const evs=evtsByDate[ds]||[];
+      const isToday=c.date.getTime()===today2.getTime();
+      const isSel=calSel===ds;
+      const dots=evs.slice(0,3).map(e=>`<div class="rap-cal-dot" style="background:${e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB'}"></div>`).join('');
+      calGrid+=`<div class="rap-cal-cell${c.other?' other':''}${isToday?' today':''}${isSel?' selected':''}" onclick="selectCalDay('${ds}')">
+        <span class="rap-cal-num">${c.date.getDate()}</span>
+        ${dots}
+      </div>`;
+    });
+
+    const selEvts=calSel?(evtsByDate[calSel]||[]):[];
+    let calDetail='';
+    if(selEvts.length){
+      calDetail=selEvts.map(e=>{
+        const col=e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB';
+        const dt=new Date(e.date);dt.setHours(0,0,0,0);
+        const dys=Math.ceil((dt-today2)/86400000);
+        const dysTxt=dys===0?'Aujourd\'hui':dys<0?'Il y a '+Math.abs(dys)+'j':'Dans '+dys+'j';
+        return`<div class="rap-cal-event">
+          <div class="rap-cal-event-dot" style="background:${col}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="rap-cal-event-name">${esc(e.label)}</div>
+            <div class="rap-cal-event-veh">${esc(e.veh)}</div>
+          </div>
+          <div class="rap-cal-event-days" style="color:${col}">${dysTxt}</div>
+        </div>`;
+      }).join('');
+    } else if(calSel){
+      calDetail=`<div class="rap-cal-empty">Aucun rappel ce jour</div>`;
+    }
+
+    h+=`<div class="rap-cal">
+      <div class="rap-cal-hdr">
+        <span class="rap-cal-title">${MONTHS[calMonth]} ${calYear}</span>
+        <div class="rap-cal-nav">
+          <button onclick="navCal(-1)">&#8249;</button>
+          <button onclick="navCal(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="rap-cal-days-hdr">
+        ${['L','M','M','J','V','S','D'].map(d=>`<div class="rap-cal-day-name">${d}</div>`).join('')}
+      </div>
+      <div class="rap-cal-grid">${calGrid}</div>
+      <div class="rap-cal-legend">
+        <div class="rap-cal-leg"><div class="rap-cal-leg-dot" style="background:#DC2626"></div>En retard</div>
+        <div class="rap-cal-leg"><div class="rap-cal-leg-dot" style="background:#F59E0B"></div>Dans 30j</div>
+        <div class="rap-cal-leg"><div class="rap-cal-leg-dot" style="background:#2563EB"></div>Planifié</div>
+      </div>
+      ${calDetail?`<div class="rap-cal-events">${calDetail}</div>`:''}
+    </div>`;
+  }
 
   // Mini calendrier
   // Filtre vehicule
@@ -3805,6 +4152,7 @@ function renderRap(){
   const docsSoon30F=docsSoon30.filter(d=>filterVid(d.vehicle_id));
   const docsSoon90F=docsSoon90.filter(d=>filterVid(d.vehicle_id));
 
+  if(rapView==='list'){
   if(!urgentF.length&&!rcUrgentF.length&&!docsUrgentF.length&&!soon30F.length&&!rcSoon30F.length&&!docsSoon30F.length&&!soon90F.length&&!rcSoon90F.length&&!docsSoon90F.length){
     h+=`<div class="empty"><span class="empty-i"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 90 prochains jours.</p></div>`;
   }
@@ -3892,6 +4240,31 @@ function renderRap(){
 
   el.innerHTML=h;
 }
+function setRapView(v){
+  localStorage.setItem('ac_rap_view',v);
+  renderRap();
+}
+
+function selectCalDay(ds){
+  const state=JSON.parse(localStorage.getItem('ac_cal_state')||'{}');
+  state.sel=state.sel===ds?null:ds;
+  localStorage.setItem('ac_cal_state',JSON.stringify(state));
+  renderRap();
+}
+
+function navCal(dir){
+  const state=JSON.parse(localStorage.getItem('ac_cal_state')||'{}');
+  const now=new Date();
+  let m=state.month!==undefined?state.month:now.getMonth();
+  let y=state.year||now.getFullYear();
+  m+=dir;
+  if(m>11){m=0;y++;}
+  if(m<0){m=11;y--;}
+  state.month=m;state.year=y;state.sel=null;
+  localStorage.setItem('ac_cal_state',JSON.stringify(state));
+  renderRap();
+}
+
 function scrollToRapSection(id){
   const el=document.getElementById(id);
   if(!el)return;
@@ -5325,5 +5698,6 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
   </div>
 </div>
+</div><!-- #app-root -->
 </body>
 </html>
