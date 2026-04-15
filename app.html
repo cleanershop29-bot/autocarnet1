@@ -2879,7 +2879,7 @@ function renderPhotoList(){
           <span style="font-size:.7rem;color:#16a34a;font-weight:600">✓ Enregistrée</span>
           <div style="margin-left:auto;display:flex;gap:6px">
             <button type="button" onclick="openPhotoFullscreen('${item.url}')" style="background:#dcfce7;border:none;color:#166534;font-size:.75rem;font-weight:700;cursor:pointer;padding:4px 10px;border-radius:6px">Voir</button>
-            <button type="button" onclick="removeExistingPhoto(${item.i})" style="background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px">✕</button>
+            <button type="button" onclick="if(confirm('Supprimer cette photo ?'))removeExistingPhoto(${item.i})" style="background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px">✕</button>
           </div>
         </div>
         <input type="text" value="${esc(name)}" oninput="updatePhotoName(${item.globalIdx},this.value)" placeholder="Nom de la photo…" style="width:100%;box-sizing:border-box;border:1px solid #bbf7d0;border-radius:7px;padding:6px 10px;font-size:.82rem;color:#166534;background:#fff;font-family:inherit;outline:none">
@@ -2891,7 +2891,7 @@ function renderPhotoList(){
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           </div>
           <span style="font-size:.7rem;color:#3b82f6;font-weight:600">⏳ Prête à enregistrer</span>
-          <button type="button" onclick="removeNewPhoto(${item.i})" style="margin-left:auto;background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px">✕</button>
+          <button type="button" onclick="if(confirm('Supprimer cette photo ?'))removeNewPhoto(${item.i})" style="margin-left:auto;background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px">✕</button>
         </div>
         <input type="text" value="${esc(name)}" oninput="updatePhotoName(${item.globalIdx},this.value)" placeholder="Nom de la photo…" style="width:100%;box-sizing:border-box;border:1px solid #bfdbfe;border-radius:7px;padding:6px 10px;font-size:.82rem;color:#1e40af;background:#fff;font-family:inherit;outline:none">
       </div>`;
