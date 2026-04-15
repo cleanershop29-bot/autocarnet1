@@ -3090,6 +3090,55 @@ function openPhotoFullscreen(url){
 }
 
 function openRappelCustomVeh(vid){if(blockIfExces(vid))return;openRappelCustom(null,vid);}
+// Index de navigation par catégorie de rappel
+const _calNavIdx = {danger:0, warn:0, ok:0};
+
+function navToRapDate(sev){
+  // Collecter toutes les dates de rappels de cette catégorie, triées
+  const today = new Date(); today.setHours(0,0,0,0);
+  const allRaps = getRappels();
+  const dates = new Set();
+
+  allRaps.forEach(r => {
+    const d = r.e?.rappel_date || r.rappel_date;
+    if(!d) return;
+    const dt = new Date(d); dt.setHours(0,0,0,0);
+    const days = Math.ceil((dt - today) / 86400000);
+    const rSev = r.sev === 'danger' ? 'danger' : days <= 30 ? 'warn' : 'ok';
+    if(rSev === sev) dates.add(d);
+  });
+  S.rappels_custom.forEach(r => {
+    if(!r.date_rappel) return;
+    const dt = new Date(r.date_rappel); dt.setHours(0,0,0,0);
+    const days = Math.ceil((dt - today) / 86400000);
+    const rSev = days <= 0 ? 'danger' : days <= 30 ? 'warn' : 'ok';
+    if(rSev === sev) dates.add(r.date_rappel);
+  });
+
+  const sorted = [...dates].sort();
+  if(!sorted.length) return;
+
+  // Naviguer à la date suivante (cycle)
+  _calNavIdx[sev] = _calNavIdx[sev] % sorted.length;
+  const targetDate = sorted[_calNavIdx[sev]];
+  _calNavIdx[sev]++;
+
+  // Naviguer au bon mois dans le calendrier
+  const d = new Date(targetDate);
+  const state = JSON.parse(localStorage.getItem('ac_cal_state') || '{}');
+  state.month = d.getMonth();
+  state.year = d.getFullYear();
+  state.sel = targetDate;
+  localStorage.setItem('ac_cal_state', JSON.stringify(state));
+  renderRap();
+
+  // Scroll vers le calendrier
+  setTimeout(() => {
+    const cal = document.querySelector('.rap-cal');
+    if(cal) cal.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 50);
+}
+
 function openEntWithDate(dateStr){
   openEnt();
   setTimeout(()=>{
@@ -3844,19 +3893,19 @@ function renderRap(){
   const iconCal=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
   const iconBell=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`;
   h+=`<div class="rap-ctr-grid">
-    <div class="rap-ctr ${totalDanger?'danger':'empty'}" onclick="scrollToRapSection('rap-section-danger')">
+    <div class="rap-ctr ${totalDanger?'danger':'empty'}" onclick="rapView==='cal'?navToRapDate('danger'):scrollToRapSection('rap-section-danger')">
       <div class="rap-ctr-icon">${iconDanger}</div>
       <div class="rap-ctr-num">${totalDanger}</div>
       <div class="rap-ctr-label">En retard</div>
       <div class="rap-ctr-bar" style="width:${totalDanger?'100%':'30%'}"></div>
     </div>
-    <div class="rap-ctr ${total30?'warn':'empty'}" onclick="scrollToRapSection('rap-section-30')">
+    <div class="rap-ctr ${total30?'warn':'empty'}" onclick="rapView==='cal'?navToRapDate('warn'):scrollToRapSection('rap-section-30')">
       <div class="rap-ctr-icon">${iconCal}</div>
       <div class="rap-ctr-num">${total30}</div>
       <div class="rap-ctr-label">Ce mois</div>
       <div class="rap-ctr-bar" style="width:${total30?'70%':'30%'}"></div>
     </div>
-    <div class="rap-ctr ${total90?'info':'empty'}" onclick="scrollToRapSection('rap-section-90')">
+    <div class="rap-ctr ${total90?'info':'empty'}" onclick="rapView==='cal'?navToRapDate('ok'):scrollToRapSection('rap-section-90')">
       <div class="rap-ctr-icon">${iconBell}</div>
       <div class="rap-ctr-num">${total90}</div>
       <div class="rap-ctr-label">À venir</div>
