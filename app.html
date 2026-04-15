@@ -2070,10 +2070,11 @@ async function saveEnt(){
     const newUrls = await uploadAllPhotos(finalId);
     // Insérer dans entretien_photos
     if(newUrls.length > 0){
-      const rows = newUrls.map(url => ({
+      const rows = newUrls.map((url, i) => ({
         entretien_id: finalId,
         user_id: S.user.id,
-        url
+        url,
+        nom: _photoNames[_photoUrls.length + i] || null
       }));
       await sb.from('entretien_photos').insert(rows);
       // Compatibilité : garder photo_url sur la 1ère photo
@@ -4128,12 +4129,13 @@ function openEnt(id,forcedVid){
     // Charger photos existantes (multi)
     removePhoto();
     if(e.id){
-      sb.from('entretien_photos').select('url').eq('entretien_id',e.id).eq('user_id',S.user.id).then(({data})=>{
+      sb.from('entretien_photos').select('url,nom').eq('entretien_id',e.id).eq('user_id',S.user.id).then(({data})=>{
         if(data&&data.length){
           _photoUrls = data.map(r=>r.url);
+          data.forEach((r,i) => { _photoNames[i] = r.nom || ''; });
         } else if(e.photo_url){
-          // Compatibilité ancienne photo unique
           _photoUrls = [e.photo_url];
+          _photoNames[0] = '';
         }
         renderPhotoList();
       });
