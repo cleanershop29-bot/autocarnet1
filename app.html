@@ -590,16 +590,18 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .rap-cal-nav button:hover{background:#F8FAFC}
 .rap-cal-days-hdr{display:grid;grid-template-columns:repeat(7,1fr);padding:8px 12px 2px}
 .rap-cal-day-name{text-align:center;font-size:.65rem;color:var(--txm);font-weight:700;padding:3px 0}
-.rap-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:2px 12px 10px;gap:2px}
-.rap-cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;position:relative;padding:1px}
+.rap-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:4px 8px 10px;gap:3px}
+.rap-cal-cell{height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;position:relative;padding:2px;gap:2px}
 .rap-cal-cell:hover{background:#F8FAFC}
-.rap-cal-num{font-size:.78rem;color:var(--txt);line-height:1}
+.rap-cal-num-wrap{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.rap-cal-num{font-size:.75rem;color:var(--txt);line-height:1;font-weight:600;position:relative;z-index:1}
 .rap-cal-cell.other .rap-cal-num{color:#CBD5E1}
-.rap-cal-cell.today{background:#EFF6FF}
+.rap-cal-cell.other .rap-cal-num-wrap{background:none!important}
+.rap-cal-cell.today .rap-cal-num-wrap{border:2px solid #2563EB}
 .rap-cal-cell.today .rap-cal-num{color:#2563EB;font-weight:700}
-.rap-cal-cell.selected{background:#2563EB}
-.rap-cal-cell.selected .rap-cal-num{color:#fff;font-weight:700}
-.rap-cal-dot{width:4px;height:4px;border-radius:50%;margin-top:1px}
+.rap-cal-cell.selected .rap-cal-num-wrap{background:#2563EB!important;border-color:#2563EB!important}
+.rap-cal-cell.selected .rap-cal-num{color:#fff!important}
+.rap-cal-badge{font-size:.5rem;font-weight:800;color:#fff;padding:1px 3px;border-radius:3px;line-height:1.2;position:absolute;top:-2px;right:-4px;z-index:2}
 .rap-cal-legend{display:flex;gap:10px;padding:8px 16px;background:#F8FAFC;border-top:1px solid rgba(184,196,216,.3)}
 .rap-cal-leg{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--txm);font-weight:600}
 .rap-cal-leg-dot{width:6px;height:6px;border-radius:50%}
@@ -3906,10 +3908,18 @@ function renderRap(){
       const evs=evtsByDate[ds]||[];
       const isToday=c.date.getTime()===today2.getTime();
       const isSel=calSel===ds;
-      const dots=evs.slice(0,3).map(e=>'<div class="rap-cal-dot" style="background:'+( e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB')+'"></div>').join('');
+      // Couleur la plus urgente du jour
+      const sevOrder={danger:0,warn:1,ok:2};
+      const topSev=evs.length?evs.sort((a,b)=>sevOrder[a.sev]-sevOrder[b.sev])[0].sev:null;
+      const topCol=topSev==='danger'?'#DC2626':topSev==='warn'?'#F59E0B':topSev==='ok'?'#2563EB':null;
+      const bgStyle=topCol&&!c.other?'background:'+topCol+'22;border:1.5px solid '+topCol+';':'';
+      const numStyle=topCol&&!c.other?'color:'+topCol+';font-weight:800;':'';
+      const badge=evs.length>1?'<span class="rap-cal-badge" style="background:'+topCol+'">+'+evs.length+'</span>':'';
       calGrid+=`<div class="rap-cal-cell${c.other?' other':''}${isToday?' today':''}${isSel?' selected':''}" onclick="selectCalDay('${ds}')">
-        <span class="rap-cal-num">${c.date.getDate()}</span>
-        ${dots}
+        <div class="rap-cal-num-wrap" style="${bgStyle}">
+          <span class="rap-cal-num" style="${numStyle}">${c.date.getDate()}</span>
+          ${badge}
+        </div>
       </div>`;
     });
 
