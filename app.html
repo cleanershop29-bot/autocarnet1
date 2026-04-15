@@ -1565,11 +1565,27 @@ function pickColor(c){
 function initModalBackdrop(){
   const mo = g('mo-ent');
   if(!mo) return;
-  let startY = 0;
-  mo.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+  const inner = mo.querySelector('.modal');
+
+  // Stopper la propagation du scroll/touch depuis l'intérieur du modal
+  if(inner){
+    inner.addEventListener('touchstart', e => e.stopPropagation(), {passive:true});
+    inner.addEventListener('touchmove', e => e.stopPropagation(), {passive:true});
+    inner.addEventListener('touchend', e => e.stopPropagation());
+  }
+
+  // Fermer uniquement si tap court et direct sur le backdrop (pas le modal)
+  let startX = 0, startY = 0;
+  mo.addEventListener('touchstart', e => {
+    if(e.target !== mo) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, {passive:true});
   mo.addEventListener('touchend', e => {
+    if(e.target !== mo) return;
+    const dx = Math.abs(e.changedTouches[0].clientX - startX);
     const dy = Math.abs(e.changedTouches[0].clientY - startY);
-    if(e.target === mo && dy < 10) cm('ent');
+    if(dx < 8 && dy < 8) cm('ent');
   });
   mo.addEventListener('mousedown', e => { if(e.target === mo) cm('ent'); });
 }
