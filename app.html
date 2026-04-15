@@ -2073,7 +2073,6 @@ async function saveEnt(){
     // Supprimer photos retirées
     const urlsToKeep = new Set(_photoUrls);
     const toDelete = dbPhotos.filter(r => !urlsToKeep.has(r.url));
-    console.log('A garder:', [...urlsToKeep].length, 'A supprimer:', toDelete.length);
     if(toDelete.length > 0){
       const idsToDelete = toDelete.map(r => r.id);
       await sb.from('entretien_photos').delete().in('id', idsToDelete);
@@ -4151,10 +4150,8 @@ function openEnt(id,forcedVid){
     // Charger photos existantes (multi)
     removePhoto();
     const entId = e.id || g('e-id').value;
-    console.log('Chargement photos pour entretien_id:', entId);
     if(entId){
       sb.from('entretien_photos').select('url,nom').eq('entretien_id',entId).eq('user_id',S.user.id).then(({data,error})=>{
-        console.log('Photos chargées:', data, 'Erreur:', error);
         if(data&&data.length){
           _photoUrls = data.map(r=>r.url);
           data.forEach((r,i) => { _photoNames[i] = r.nom || ''; });
