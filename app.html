@@ -1539,7 +1539,7 @@ function showApp(){
   // Toast bienvenue Premium
   if(isPremium()&&!sessionStorage.getItem('ac_premium_welcomed')){
     sessionStorage.setItem('ac_premium_welcomed','1');
-    const plan=sess.user?.user_metadata?.plan;
+    const plan=S.user?.user_metadata?.plan;
     const planLabel=plan==='famille'?'👨‍👩‍👧 Bienvenue dans AutoCarnet Famille !':'🚀 Bienvenue dans AutoCarnet Pro !';
     setTimeout(()=>toast(planLabel,'s'),800);
   }
