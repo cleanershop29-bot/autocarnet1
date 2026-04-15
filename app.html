@@ -2064,31 +2064,53 @@ async function saveEnt(){
   if(error){btnLoad('btn-sv-ent',false);return toast('Erreur : '+error.message,'e');}
 
   if(km){const v=S.vehicles.find(x=>x.id===vehicle_id);if(v&&km>(v.km_actuel||0))await sb.from('vehicles').update({km_actuel:km}).eq('id',vehicle_id);}
-  // Upload multi-photos
+  // Gestion photos (suppression + mise à jour + upload nouveaux)
   const finalId = p.id || id;
-  if(_photoFiles.length > 0 && finalId){
-    const newUrls = await uploadAllPhotos(finalId);
-    // Insérer dans entretien_photos
-    if(newUrls.length > 0){
-      const rows = newUrls.map((url, i) => ({
-        entretien_id: finalId,
-        user_id: S.user.id,
-        url,
-        nom: _photoNames[_photoUrls.length + i] || null
-      }));
-      await sb.from('entretien_photos').insert(rows);
-      // Compatibilité : garder photo_url sur la 1ère photo
-      if(!id || !_photoUrls.length){
-        await sb.from('entretiens').update({photo_url:newUrls[0]}).eq('id',finalId).eq('user_id',S.user.id);
+  if(finalId){
+    const {data: existingInDb} = await sb.from('entretien_photos').select('id,url,nom').eq('entretien_id',finalId).eq('user_id',S.user.id);
+    const dbPhotos = existingInDb || [];
+
+    // Supprimer photos retirées
+    const urlsToKeep = new Set(_photoUrls);
+    const toDelete = dbPhotos.filter(r => !urlsToKeep.has(r.url));
+    console.log('A garder:', [...urlsToKeep].length, 'A supprimer:', toDelete.length);
+    if(toDelete.length > 0){
+      const idsToDelete = toDelete.map(r => r.id);
+      await sb.from('entretien_photos').delete().in('id', idsToDelete);
+      const pathsToDelete = toDelete.map(r => {
+        const marker = '/object/public/factures/';
+        const idx = r.url.indexOf(marker);
+        return idx >= 0 ? decodeURIComponent(r.url.slice(idx + marker.length)) : null;
+      }).filter(Boolean);
+      if(pathsToDelete.length) await sb.storage.from('factures').remove(pathsToDelete);
+    }
+
+    // Mettre à jour les noms des photos conservées
+    for(let i=0; i<_photoUrls.length; i++){
+      const dbRow = dbPhotos.find(r => r.url === _photoUrls[i]);
+      if(dbRow && (_photoNames[i]||'') !== (dbRow.nom||'')){
+        await sb.from('entretien_photos').update({nom:_photoNames[i]||null}).eq('id',dbRow.id);
       }
     }
-  }
-  // Supprimer les photos retirées par l'utilisateur
-  if(id && _photoUrls.length === 0 && !_photoFiles.length){
-    const existingPhotos = await sb.from('entretien_photos').select('id').eq('entretien_id',id).eq('user_id',S.user.id);
-    if(!existingPhotos.data?.length){
-      await sb.from('entretiens').update({photo_url:null}).eq('id',id).eq('user_id',S.user.id);
+
+    // Uploader nouvelles photos
+    if(_photoFiles.length > 0){
+      const newUrls = await uploadAllPhotos(finalId);
+      if(newUrls.length > 0){
+        const rows = newUrls.map((url,i) => ({
+          entretien_id: finalId,
+          user_id: S.user.id,
+          url,
+          nom: _photoNames[_photoUrls.length+i] || null
+        }));
+        await sb.from('entretien_photos').insert(rows);
+      }
     }
+
+    // Mettre à jour photo_url
+    const {data: allPhotos} = await sb.from('entretien_photos').select('url').eq('entretien_id',finalId).eq('user_id',S.user.id).order('created_at',{ascending:true}).limit(1);
+    const firstUrl = allPhotos?.[0]?.url || null;
+    await sb.from('entretiens').update({photo_url:firstUrl}).eq('id',finalId).eq('user_id',S.user.id);
   }
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
   btnLoad('btn-sv-ent',false);
