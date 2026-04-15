@@ -4030,43 +4030,7 @@ function om(id){
   if(!el)return;
   el.classList.add('open');
   document.body.style.overflow='hidden';
-  // Swipe to close
-  const modal=el.querySelector('.modal');
-  if(!modal||modal._swipeInit)return;
-  modal._swipeInit=true;
-  let startY=0,curY=0,dragging=false;
-  const handle=modal.querySelector('::before')||modal;
-  modal.addEventListener('touchstart',e=>{
-    startY=e.touches[0].clientY;
-    curY=startY;
-    dragging=true;
-    modal.style.transition='none';
-  },{passive:true});
-  modal.addEventListener('touchmove',e=>{
-    if(!dragging)return;
-    curY=e.touches[0].clientY;
-    const dy=Math.max(0,curY-startY);
-    modal.style.transform=`translateY(${dy}px)`;
-    el.style.background=`rgba(10,15,30,${Math.max(0,.5-dy/400)})`;
-  },{passive:true});
-  modal.addEventListener('touchend',()=>{
-    if(!dragging)return;
-    dragging=false;
-    modal.style.transition='';
-    const dy=curY-startY;
-    if(dy>90){
-      modal.style.transform='translateY(100%)';
-      el.style.background='rgba(10,15,30,0)';
-      setTimeout(()=>{
-        modal.style.transform='';
-        el.style.background='';
-        cm(id);
-      },300);
-    } else {
-      modal.style.transform='';
-      el.style.background='';
-    }
-  });
+  // Swipe to close désactivé — fermeture uniquement via la croix
 }
 function cm(id){const el=g('mo-'+id);if(el){el.classList.remove('open');document.body.style.overflow='';}}
 function cfm(title,msg,cb){g('cfm-t').textContent=title;g('cfm-m').textContent=msg;S.cfmCb=cb;om('cfm');}
