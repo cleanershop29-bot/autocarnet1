@@ -3090,6 +3090,19 @@ function openPhotoFullscreen(url){
 }
 
 function openRappelCustomVeh(vid){if(blockIfExces(vid))return;openRappelCustom(null,vid);}
+function openEntWithDate(dateStr){
+  openEnt();
+  setTimeout(()=>{
+    if(g('e-dt'))g('e-dt').value=dateStr;
+  },100);
+}
+function openRappelCustomWithDate(dateStr){
+  openRappelCustom(null,null);
+  setTimeout(()=>{
+    if(g('rcus-date'))g('rcus-date').value=dateStr;
+    updateRappelDatePreview();
+  },100);
+}
 function openRappelCustom(id,preVid){
   // Remplir select véhicules
   const sel=g('rcus-vid');
@@ -3925,23 +3938,43 @@ function renderRap(){
 
     const selEvts=calSel?(evtsByDate[calSel]||[]):[];
     let calDetail='';
-    if(selEvts.length){
-      calDetail=selEvts.map(e=>{
-        const col=e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB';
-        const dt=new Date(e.date);dt.setHours(0,0,0,0);
-        const dys=Math.ceil((dt-today2)/86400000);
-        const dysTxt=dys===0?'Aujourd\'hui':dys<0?'Il y a '+Math.abs(dys)+'j':'Dans '+dys+'j';
-        return`<div class="rap-cal-event">
-          <div class="rap-cal-event-dot" style="background:${col}"></div>
-          <div style="flex:1;min-width:0">
-            <div class="rap-cal-event-name">${esc(e.label)}</div>
-            <div class="rap-cal-event-veh">${esc(e.veh)}</div>
+    if(calSel){
+      const selDateFmt=(()=>{const d=new Date(calSel);return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});})();
+      let evtsHtml='';
+      if(selEvts.length){
+        evtsHtml=selEvts.map(e=>{
+          const col=e.sev==='danger'?'#DC2626':e.sev==='warn'?'#F59E0B':'#2563EB';
+          const dt=new Date(e.date);dt.setHours(0,0,0,0);
+          const dys=Math.ceil((dt-today2)/86400000);
+          const dysTxt=dys===0?'Aujourd\'hui':dys<0?'Il y a '+Math.abs(dys)+'j':'Dans '+dys+'j';
+          return`<div class="rap-cal-event">
+            <div class="rap-cal-event-dot" style="background:${col}"></div>
+            <div style="flex:1;min-width:0">
+              <div class="rap-cal-event-name">${esc(e.label)}</div>
+              <div class="rap-cal-event-veh">${esc(e.veh)}</div>
+            </div>
+            <div class="rap-cal-event-days" style="color:${col}">${dysTxt}</div>
+          </div>`;
+        }).join('');
+      } else {
+        evtsHtml=`<div class="rap-cal-empty">Aucun rappel ce jour</div>`;
+      }
+      calDetail=`<div style="border-top:1px solid rgba(184,196,216,.3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px;border-bottom:1px solid rgba(184,196,216,.2)">
+          <span style="font-size:.75rem;font-weight:700;color:var(--txm);text-transform:capitalize">${selDateFmt}</span>
+          <div style="display:flex;gap:6px">
+            <button onclick="openEntWithDate('${calSel}')" style="display:flex;align-items:center;gap:4px;background:#F1F5F9;border:none;color:#475569;font-size:.75rem;font-weight:700;padding:5px 10px;border-radius:7px;cursor:pointer;font-family:inherit">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              Entretien
+            </button>
+            <button onclick="openRappelCustomWithDate('${calSel}')" style="display:flex;align-items:center;gap:4px;background:#EFF6FF;border:none;color:#2563EB;font-size:.75rem;font-weight:700;padding:5px 10px;border-radius:7px;cursor:pointer;font-family:inherit">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Rappel / RDV
+            </button>
           </div>
-          <div class="rap-cal-event-days" style="color:${col}">${dysTxt}</div>
-        </div>`;
-      }).join('');
-    } else if(calSel){
-      calDetail=`<div class="rap-cal-empty">Aucun rappel ce jour</div>`;
+        </div>
+        <div class="rap-cal-events">${evtsHtml}</div>
+      </div>`;
     }
 
     h+=`<div class="rap-cal">
@@ -3976,11 +4009,13 @@ function renderRap(){
     h+=`</div>`;
   }
 
-  // Boutons actions
-  h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
-    <button class="btn btn-s btn-sm" onclick="openEnt()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> + Entretien</button>
-    <button class="btn btn-p btn-sm" onclick="openRappelCustom()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> + Rappel / RDV</button>
-  </div>`;
+  // Boutons actions — uniquement en vue liste
+  if(rapView==='list'){
+    h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
+      <button class="btn btn-s btn-sm" onclick="openEnt()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> + Entretien</button>
+      <button class="btn btn-p btn-sm" onclick="openRappelCustom()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> + Rappel / RDV</button>
+    </div>`;
+  }
 
   function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
   function filterVid(vid){return S.rapFilterVeh==='all'||vid===S.rapFilterVeh;}
