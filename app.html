@@ -39,9 +39,10 @@
   --card-pad:13px 14px;
   --card-gap:8px;
   --card-r:14px;
+  --card-mb:8px;
 }
 /* SWIPE */
-.ei-wrap{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:8px}
+.ei-wrap{position:relative;overflow:hidden;border-radius:var(--card-r,var(--r));margin-bottom:var(--card-mb,8px)}
 .ei-swipe-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--err);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;border-radius:0 var(--r) var(--r) 0}
 .ei-wrap .ei{margin-bottom:0;border-radius:var(--r);position:relative;z-index:1;transition:transform .2s;touch-action:pan-y}
 
@@ -750,6 +751,57 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .color-swatch:active{transform:scale(.9)}
 .perso-section{background:#fff;border-radius:14px;border:1px solid rgba(184,196,216,.4);padding:16px;margin-bottom:10px}
 .perso-section-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txm);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* ═══ PAGE CONNEXION AMÉLIORÉE ═══ */
+@keyframes wheelSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes authFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Logo animé */
+.auth-logo-icon{position:relative;animation:logoFloat 3s ease-in-out infinite}
+.auth-logo-wheel{transform-origin:center;animation:wheelSpin .8s linear infinite}
+
+/* Card glassmorphism */
+.auth-card{
+  background:rgba(255,255,255,0.07) !important;
+  backdrop-filter:blur(24px) !important;
+  -webkit-backdrop-filter:blur(24px) !important;
+  border:1px solid rgba(255,255,255,.13) !important;
+  box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.1) !important;
+  animation:authFadeIn .5s ease both !important;
+}
+.auth-card .fl{color:rgba(255,255,255,.7) !important}
+.auth-card .fc{
+  background:rgba(255,255,255,.08) !important;
+  border-color:rgba(255,255,255,.15) !important;
+  color:#fff !important;
+}
+.auth-card .fc::placeholder{color:rgba(255,255,255,.3) !important}
+.auth-card .fc:focus{
+  background:rgba(255,255,255,.12) !important;
+  border-color:rgba(255,255,255,.35) !important;
+  box-shadow:0 0 0 3px rgba(255,255,255,.08) !important;
+}
+.auth-logo{color:#fff !important}
+.auth-logo span:last-child{color:rgba(255,255,255,.9) !important}
+.auth-subtitle{color:rgba(255,255,255,.5) !important}
+.auth-card .atabs{background:rgba(255,255,255,.08) !important}
+.auth-card .atab{color:rgba(255,255,255,.5) !important}
+.auth-card .atab.on{background:rgba(255,255,255,.15) !important;color:#fff !important}
+.auth-card .btn-p-full{box-shadow:0 4px 20px rgba(37,99,235,.5) !important}
+.auth-sep-line{background:rgba(255,255,255,.15) !important}
+.auth-card [style*="color:#94A3B8"]{color:rgba(255,255,255,.35) !important}
+.auth-card [style*="color:var(--txm)"]{color:rgba(255,255,255,.5) !important}
+.auth-card [style*="background:#fff"]{background:rgba(255,255,255,.08) !important;border-color:rgba(255,255,255,.15) !important;color:#fff !important}
+.auth-card [style*="color:#1E293B"]{color:#fff !important}
+.auth-card [style*="border:1.5px solid #E2E8F0"]{border-color:rgba(255,255,255,.2) !important}
+.auth-card [style*="color:var(--primary)"]{color:#93C5FD !important}
+.auth-card [style*="color:#2563EB"]{color:#93C5FD !important}
+.auth-card [style*="height:1px;background:#E8EDF5"]{background:rgba(255,255,255,.15) !important}
+.auth-card [style*="background:#F8FAFF"]{background:rgba(255,255,255,.06) !important;border-color:rgba(255,255,255,.12) !important}
+.auth-card [style*="color:#475569"]{color:rgba(255,255,255,.6) !important}
+.auth-card [style*="background:none;border:none;color:#64748B"]{color:rgba(255,255,255,.5) !important}
+.auth-forget-btn{background:none !important;border:none !important;color:rgba(255,255,255,.5) !important;font-family:inherit;font-size:.83rem;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -781,7 +833,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-logo-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
-      <span>Auto<span style="color:var(--primary)">Carnet</span></span>
+      <span>Auto<span style="color:#93C5FD">Carnet</span></span>
     </div>
     <div class="auth-subtitle">Carnet d'entretien intelligent ✦ Rappels automatiques</div>
     <div class="atabs" id="auth-tabs">
@@ -1943,6 +1995,17 @@ function initAutoComplete(){
 /* INIT */
 async function init(){
   sb=window.supabase.createClient(SB_URL,SB_KEY);
+  // Dégradé dynamique selon l'heure
+  (function(){
+    const h=new Date().getHours();
+    let bg;
+    if(h>=6&&h<12) bg='linear-gradient(160deg,#1E3A8A 0%,#1D4ED8 40%,#0A0F1E 100%)';
+    else if(h>=12&&h<18) bg='linear-gradient(160deg,#0A0F1E 0%,#1E3A5F 40%,#070C1A 100%)';
+    else if(h>=18&&h<22) bg='linear-gradient(160deg,#1E1B4B 0%,#312E81 40%,#0A0F1E 100%)';
+    else bg='linear-gradient(160deg,#000005 0%,#0A0F1E 50%,#000005 100%)';
+    const el=document.getElementById('auth-screen');
+    if(el) el.style.background=bg;
+  })();
   g('ls-msg').textContent='Connexion…';
 
   // Détecter recovery depuis le hash direct OU depuis sessionStorage (après redirect landing)
@@ -4988,12 +5051,12 @@ function renderProfil(){
 
   <!-- NOTIFICATIONS -->
   <div class="profil-card">
-    <div style="background:#fff;border-radius:14px;border:1px solid rgba(184,196,216,.4);padding:16px;margin-bottom:10px">
+    <div data-section="apparence" style="background:#fff;border-radius:14px;border:1px solid rgba(184,196,216,.4);padding:16px;margin-bottom:10px">
       <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txm);margin-bottom:16px;display:flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
         Apparence
       </div>
-      ${renderAppearanceSection()}
+      <div>${renderAppearanceSection()}</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
       <div style="width:30px;height:30px;border-radius:8px;background:#FFFBEB;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -5372,26 +5435,38 @@ function applyAccentColor(hex){
   root.style.setProperty('--primary-lt', c.lt);
   root.style.setProperty('--primary-dk', c.dk);
   localStorage.setItem('ac_accent_color', hex);
+  updateAppearanceUI();
+}
+
+function updateAppearanceUI(){
+  // Re-render uniquement la section apparence sans toucher aux notifications
+  const el = document.getElementById('pr-ctn');
+  if(!el) return;
+  // Trouver et mettre à jour uniquement le contenu de la section apparence
+  const section = el.querySelector('[data-section="apparence"]');
+  if(section) section.innerHTML = renderAppearanceSection();
 }
 
 function applyCardStyle(style){
   localStorage.setItem('ac_card_style', style);
   const root = document.documentElement;
   if(style === 'compact'){
-    root.style.setProperty('--card-pad', '9px 11px');
-    root.style.setProperty('--card-gap', '5px');
+    root.style.setProperty('--card-pad', '8px 10px');
+    root.style.setProperty('--card-gap', '4px');
     root.style.setProperty('--card-r', '10px');
+    root.style.setProperty('--card-mb', '5px');
   } else if(style === 'spacieux'){
     root.style.setProperty('--card-pad', '18px 16px');
-    root.style.setProperty('--card-gap', '12px');
-    root.style.setProperty('--card-r', '16px');
+    root.style.setProperty('--card-gap', '14px');
+    root.style.setProperty('--card-r', '18px');
+    root.style.setProperty('--card-mb', '12px');
   } else {
     root.style.setProperty('--card-pad', '13px 14px');
     root.style.setProperty('--card-gap', '8px');
     root.style.setProperty('--card-r', '14px');
+    root.style.setProperty('--card-mb', '8px');
   }
-  renderProfil();
-  renderView();
+  updateAppearanceUI();
 }
 
 function applyFontSize(size){
@@ -5400,12 +5475,12 @@ function applyFontSize(size){
   if(size === 'small') root.style.fontSize = '13px';
   else if(size === 'large') root.style.fontSize = '17px';
   else root.style.fontSize = '15px';
-  renderProfil();
+  updateAppearanceUI();
 }
 
 function applyRapDelay(days){
   localStorage.setItem('ac_rap_delay', days);
-  renderProfil();
+  updateAppearanceUI();
   toast('Délai de rappel mis à jour','s');
 }
 
@@ -5426,70 +5501,97 @@ function renderAppearanceSection(){
   const savedFont = localStorage.getItem('ac_font_size') || 'normal';
   const savedDelay = localStorage.getItem('ac_rap_delay') || '15';
 
-  // Couleur d'accent
-  const colorHtml = `
-    <div style="margin-bottom:18px">
-      <div style="font-size:.75rem;font-weight:700;color:var(--txt);margin-bottom:10px">Couleur principale</div>
-      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:8px">
+  const colorLabels={compact:'Compact',normal:'Normal',spacieux:'Aéré'};
+  const fontLabels={small:'Petit',normal:'Normal',large:'Grand'};
+  const accentColor = ACCENT_COLORS.find(c=>c.val===savedColor);
+
+  return `
+  <!-- Couleur principale -->
+  <div style="margin-bottom:1px">
+    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid rgba(184,196,216,.3)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:20px;height:20px;border-radius:50%;background:${savedColor}"></div>
+        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Couleur principale</span>
+      </div>
+      <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="hidden" style="padding:12px 0">
+      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:10px">
         ${ACCENT_COLORS.map(c=>`<div class="color-swatch${savedColor===c.val?' on':''}" style="background:${c.val}" title="${c.name}" onclick="applyAccentColor('${c.val}');renderProfil()"></div>`).join('')}
       </div>
-    </div>`;
+    </div>
+  </div>
 
-  // Style des cartes
-  const cardStyles = [
-    {val:'compact', label:'Compact', desc:'Plus dense'},
-    {val:'normal',  label:'Normal',  desc:'Par défaut'},
-    {val:'spacieux',label:'Aéré',    desc:'Plus espacé'},
-  ];
-  const cardHtml = `
-    <div style="margin-bottom:18px">
-      <div style="font-size:.75rem;font-weight:700;color:var(--txt);margin-bottom:10px">Style des cartes</div>
+  <!-- Style des cartes -->
+  <div style="margin-bottom:1px">
+    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid rgba(184,196,216,.3)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Style des cartes</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:.75rem;color:var(--txm)">${colorLabels[savedStyle]||'Normal'}</span>
+        <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="hidden" style="padding:12px 0">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${cardStyles.map(s=>`
-          <div onclick="applyCardStyle('${s.val}')" style="border:2px solid ${savedStyle===s.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:${savedStyle===s.val?'var(--primary-lt)':'#fff'};transition:.15s">
+        ${[{val:'compact',label:'Compact',desc:'Dense',preview:'▬▬'},{val:'normal',label:'Normal',desc:'Standard',preview:'▬ ▬'},{val:'spacieux',label:'Aéré',desc:'Espacé',preview:'▬  ▬'}].map(s=>`
+          <div onclick="applyCardStyle('${s.val}')" style="border:2px solid ${savedStyle===s.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;background:${savedStyle===s.val?'var(--primary-lt)':'#fff'};transition:.15s">
+            <div style="font-size:1rem;margin-bottom:4px;letter-spacing:${s.val==='compact'?'-1px':s.val==='spacieux'?'3px':'1px'}">${s.preview}</div>
             <div style="font-size:.8rem;font-weight:700;color:${savedStyle===s.val?'var(--primary)':'var(--txt)'}">${s.label}</div>
-            <div style="font-size:.65rem;color:var(--txm);margin-top:2px">${s.desc}</div>
+            <div style="font-size:.65rem;color:var(--txm);margin-top:1px">${s.desc}</div>
           </div>`).join('')}
       </div>
-    </div>`;
+    </div>
+  </div>
 
-  // Taille du texte
-  const fontSizes = [
-    {val:'small',  label:'Petit'},
-    {val:'normal', label:'Normal'},
-    {val:'large',  label:'Grand'},
-  ];
-  const fontHtml = `
-    <div style="margin-bottom:18px">
-      <div style="font-size:.75rem;font-weight:700;color:var(--txt);margin-bottom:10px">Taille du texte</div>
+  <!-- Taille du texte -->
+  <div style="margin-bottom:1px">
+    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid rgba(184,196,216,.3)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Taille du texte</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:.75rem;color:var(--txm)">${fontLabels[savedFont]||'Normal'}</span>
+        <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="hidden" style="padding:12px 0">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${fontSizes.map(f=>`
-          <div onclick="applyFontSize('${f.val}')" style="border:2px solid ${savedFont===f.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:${savedFont===f.val?'var(--primary-lt)':'#fff'};transition:.15s">
-            <div style="font-size:${f.val==='small'?'.72rem':f.val==='large'?'.92rem':'.82rem'};font-weight:700;color:${savedFont===f.val?'var(--primary)':'var(--txt)'}">${f.label}</div>
+        ${[{val:'small',label:'Petit',size:'13px'},{val:'normal',label:'Normal',size:'15px'},{val:'large',label:'Grand',size:'17px'}].map(f=>`
+          <div onclick="applyFontSize('${f.val}')" style="border:2px solid ${savedFont===f.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;background:${savedFont===f.val?'var(--primary-lt)':'#fff'};transition:.15s">
+            <div style="font-size:${f.size};font-weight:700;color:${savedFont===f.val?'var(--primary)':'var(--txt)'}">${f.label}</div>
           </div>`).join('')}
       </div>
-    </div>`;
+    </div>
+  </div>
 
-  // Délai de rappel par défaut
-  const delays = [
-    {val:'7',  label:'7 jours'},
-    {val:'15', label:'15 jours'},
-    {val:'30', label:'30 jours'},
-  ];
-  const delayHtml = `
-    <div>
-      <div style="font-size:.75rem;font-weight:700;color:var(--txt);margin-bottom:10px">Délai de rappel par défaut</div>
+  <!-- Délai rappel -->
+  <div>
+    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Délai de rappel par défaut</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:.75rem;color:var(--txm)">${savedDelay}j avant</span>
+        <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="hidden" style="padding:12px 0">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${delays.map(d=>`
-          <div onclick="applyRapDelay('${d.val}')" style="border:2px solid ${savedDelay===d.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:${savedDelay===d.val?'var(--primary-lt)':'#fff'};transition:.15s">
-            <div style="font-size:.8rem;font-weight:700;color:${savedDelay===d.val?'var(--primary)':'var(--txt)'}">${d.label}</div>
+        ${['7','15','30'].map(d=>`
+          <div onclick="applyRapDelay('${d}')" style="border:2px solid ${savedDelay===d?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;background:${savedDelay===d?'var(--primary-lt)':'#fff'};transition:.15s">
+            <div style="font-size:.88rem;font-weight:700;color:${savedDelay===d?'var(--primary)':'var(--txt)'}">${d} jours</div>
           </div>`).join('')}
       </div>
-      <div style="font-size:.7rem;color:var(--txm);margin-top:8px;text-align:center">Pré-remplit le champ "Rappel avant" lors de l'ajout d'un entretien</div>
-    </div>`;
-
-  return colorHtml + cardHtml + fontHtml + delayHtml;
+      <div style="font-size:.7rem;color:var(--txm);margin-top:8px;text-align:center">Pré-remplit le champ rappel lors de l'ajout d'un entretien</div>
+    </div>
+  </div>`;
 }
+
 
 function renderColorPicker(){ return ''; } // gardé pour compatibilité
 
