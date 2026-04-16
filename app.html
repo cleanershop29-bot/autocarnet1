@@ -468,7 +468,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 /* MODAL DETAIL VEHICULE */
 #mo-veh-detail{position:fixed;inset:0;z-index:450;background:var(--bg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .32s cubic-bezier(.32,.72,0,1)}
 #mo-veh-detail.open{transform:translateX(0)}
-.vd-band{height:5px;width:100%;flex-shrink:0;position:relative;overflow:hidden}
+.vd-band{height:6px;width:100%;flex-shrink:0;position:relative;overflow:hidden}
 .vd-band::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.5) 50%,transparent 100%);background-size:200% 100%;animation:band-shimmer 2.8s ease-in-out infinite}
 .vd-header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid rgba(184,196,216,.5);padding:0 16px;height:56px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
 .vd-back{width:36px;height:36px;border-radius:10px;border:none;background:#F1F5F9;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm);flex-shrink:0;transition:.15s}
@@ -668,6 +668,40 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 
 /* Smooth scroll */
 #main-content{scroll-behavior:smooth}
+
+/* ═══ FICHE VÉHICULE — AMÉLIORATIONS ═══ */
+
+/* Stats row plus propre */
+.vc-stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));padding:0;gap:0;background:transparent;border:none;margin-bottom:14px}
+.vc-stats-row > div{background:#fff;border:1px solid rgba(184,196,216,.4);padding:12px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px}
+.vc-stats-row > div:first-child{border-radius:12px 0 0 12px}
+.vc-stats-row > div:last-child{border-radius:0 12px 12px 0}
+.vc-stats-row > div:not(:last-child){border-right:none}
+.vs-v{display:block;font-size:.95rem;font-weight:800;color:var(--txt);letter-spacing:-.02em}
+.vs-l{display:block;font-size:.6rem;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;font-weight:600}
+
+/* Section header épuré */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:20px 0 8px;padding:0}
+.sec-ttl{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);display:flex;align-items:center;gap:6px}
+
+/* Filtres catégorie redesignés */
+.flt{flex-shrink:0;padding:5px 13px;border-radius:8px;border:1.5px solid rgba(184,196,216,.6);background:#fff;font-family:inherit;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s;white-space:nowrap}
+.flt:hover{border-color:var(--primary);color:var(--primary)}
+.flt.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+
+/* Cartes entretien inline — redesign complet */
+.ei-inline{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;cursor:pointer;border:1px solid rgba(184,196,216,.45);box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
+.ei-inline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ei-inline-accent,#E2E8F0);border-radius:3px 0 0 3px}
+.ei-inline:active{transform:scale(.985);box-shadow:none}
+.ei-inline-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.ei-inline-body{flex:1;min-width:0}
+.ei-inline-type{font-size:.84rem;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ei-inline-meta{font-size:.7rem;color:var(--txm);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ei-inline-meta span{display:flex;align-items:center;gap:2px}
+.ei-inline-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.ei-inline-cost{font-size:.82rem;font-weight:800;color:var(--ok);background:#F0FDF4;padding:3px 8px;border-radius:6px;border:1px solid #BBF7D0;white-space:nowrap}
+.ei-inline-date{font-size:.68rem;color:var(--txm);font-weight:500}
+.ei-inline-photo{width:16px;height:16px;color:var(--txm);opacity:.6}
 </style>
 </head>
 <body>
@@ -2247,11 +2281,13 @@ async function saveEnt(){
   btnLoad('btn-sv-ent',false);
   vib([50,30,50]);
   if(p.rappel_date){const vv=S.vehicles.find(x=>x.id===vehicle_id);const vehName=vv?(vv.num_parc?`${vv.marque} ${vv.modele} (${vv.num_parc})`:`${vv.marque} ${vv.modele}`):'Véhicule';const t=encodeURIComponent('🔔 Rappel enregistré');const b=encodeURIComponent(`${p.type||'Entretien'} — ${vehName} le ${p.rappel_date}`);fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${t}&body=${b}`).catch(()=>{});}
+  const _savedVid = vehicle_id;
   g('e-id').value='';
   removePhoto();
   cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
-  if(S.expandedVeh&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
-    openVehDetail(S.expandedVeh);
+  // Retour sur la fiche véhicule si elle était ouverte, sinon l'ouvrir
+  if(_savedVid){
+    setTimeout(()=>openVehDetail(_savedVid), 80);
   }
 }
 async function delEnt(){
@@ -3677,24 +3713,33 @@ function openVehDetail(vid){
   if(es.length){
     // Catégories présentes dans ce véhicule
     const cats=[...new Set(es.map(e=>getType(e.type).cat))].filter(Boolean);
-    const catFilter=`<div style="display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:8px">
-      <button class="flt on" id="cat-flt-all-${vid}" onclick="filterEntsCat('${vid}','all',this)">Tous (${es.length})</button>
-      ${cats.map(c=>`<button class="flt" id="cat-flt-${vid}-${c.replace(/\s/g,'')}" onclick="filterEntsCat('${vid}','${c}',this)">${c} (${es.filter(e=>getType(e.type).cat===c).length})</button>`).join('')}
+    const catIcos={'Moteur':'🛢️','Filtres':'🔘','Freinage':'🔴','Pneus':'⚫','Transmission':'⚙️','Suspension':'🔩','Électrique':'🔋','Refroid.':'🌡️','Climatisation':'❄️','Administratif':'✅','Divers':'🔧','Moto':'⛓️','Camping-car':'☀️'};
+    const catFilter=`<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:10px">
+      <button class="flt on" id="cat-flt-all-${vid}" onclick="filterEntsCat('${vid}','all',this)">Tous · ${es.length}</button>
+      ${cats.map(c=>`<button class="flt" id="cat-flt-${vid}-${c.replace(/\s/g,'')}" onclick="filterEntsCat('${vid}','${c}',this)">${catIcos[c]||'🔧'} ${c} · ${es.filter(e=>getType(e.type).cat===c).length}</button>`).join('')}
     </div>`;
     h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><div style="display:flex;gap:6px">${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}<button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div></div>`;
     h+=catFilter;
     h+=`<div id="ents-list-${vid}">`;
+    const catAccentColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Camping-car':'#0891B2'};
     h+=es.slice(0,5).map(e=>{
       const ti=getType(e.type);
-      return`<div class="ei-inline" onclick="openEnt('${e.id}')">
-        <div class="ei-ico ${catClass(ti.cat)}" style="width:32px;height:32px;border-radius:8px;font-size:.95rem">${ti.ico}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
-          <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${timeAgo(e.date)} · ${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
+      const accent=catAccentColors[ti.cat]||'#94A3B8';
+      const hasPhoto=!!(e.photo_url);
+      return`<div class="ei-inline" onclick="openEnt('${e.id}')" style="--ei-inline-accent:${accent}">
+        <div class="ei-inline-ico ${catClass(ti.cat)}">${ti.ico}</div>
+        <div class="ei-inline-body">
+          <div class="ei-inline-type">${esc(ti.label)}</div>
+          <div class="ei-inline-meta">
+            <span>${fmtDate(e.date)}</span>
+            ${e.km?`<span>· ${fmtKm(e.km)}</span>`:''}
+            ${e.garage?`<span>· <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">${esc(e.garage)}</a></span>`:''}
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px">
-          ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
-          ${e.photo_url?`<span style="font-size:.72rem;color:var(--txm);display:inline-flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>facture</span>`:''}
+        <div class="ei-inline-right">
+          ${e.cout?`<span class="ei-inline-cost">${fmtCout(e.cout)}</span>`:''}
+          ${hasPhoto?`<svg class="ei-inline-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`:''}
+          <svg style="width:14px;height:14px;color:var(--txm);opacity:.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>`;
     }).join('');
@@ -5615,17 +5660,25 @@ function filterEntsCat(vid,cat,btn){
   btn.classList.add('on');
   const es=S.ents.filter(e=>e.vehicle_id===vid);
   const filtered=cat==='all'?es.slice(0,10):es.filter(e=>getType(e.type).cat===cat).slice(0,10);
+  const catAccentColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Camping-car':'#0891B2'};
   container.innerHTML=filtered.map(e=>{
     const ti=getType(e.type);
-    return`<div class="ei-inline" onclick="openEnt('${e.id}')">
-      <div class="ei-ico ${catClass(ti.cat)}" style="width:32px;height:32px;border-radius:8px;font-size:.95rem">${ti.ico}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.83rem;font-weight:600">${esc(ti.label)}</div>
-        <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${fmtDate(e.date)}${e.km?' · '+fmtKm(e.km):''}${e.garage?` · <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" style="color:var(--primary);text-decoration:none">📍 ${esc(e.garage)}</a>`:''}</div>
+    const accent=catAccentColors[ti.cat]||'#94A3B8';
+    const hasPhoto=!!(e.photo_url);
+    return`<div class="ei-inline" onclick="openEnt('${e.id}')" style="--ei-inline-accent:${accent}">
+      <div class="ei-inline-ico ${catClass(ti.cat)}">${ti.ico}</div>
+      <div class="ei-inline-body">
+        <div class="ei-inline-type">${esc(ti.label)}</div>
+        <div class="ei-inline-meta">
+          <span>${fmtDate(e.date)}</span>
+          ${e.km?`<span>· ${fmtKm(e.km)}</span>`:''}
+          ${e.garage?`<span>· <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">${esc(e.garage)}</a></span>`:''}
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px">
-        ${e.cout?`<div style="font-size:.82rem;font-weight:700;color:var(--ok)">${fmtCout(e.cout)}</div>`:''}
-        ${e.photo_url?`<span style="font-size:.72rem;color:var(--txm);display:inline-flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>facture</span>`:''}
+      <div class="ei-inline-right">
+        ${e.cout?`<span class="ei-inline-cost">${fmtCout(e.cout)}</span>`:''}
+        ${hasPhoto?`<svg class="ei-inline-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`:''}
+        <svg style="width:14px;height:14px;color:var(--txm);opacity:.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
     </div>`;
   }).join('')||(cat!=='all'?`<div style="font-size:.8rem;color:var(--txl);padding:8px 0">Aucun entretien de type "${cat}".</div>`:'');
