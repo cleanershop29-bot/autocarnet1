@@ -613,6 +613,61 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .rap-cal-event-veh{font-size:.7rem;color:var(--txm);margin-top:1px}
 .rap-cal-event-days{font-size:.7rem;font-weight:700;color:var(--txm);white-space:nowrap}
 .rap-cal-empty{padding:16px;text-align:center;font-size:.8rem;color:var(--txm)}
+
+/* ═══ ANIMATIONS GLOBALES ═══ */
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:.7}}
+
+/* Cards en cascade */
+.vc-card{animation:fadeSlideUp .28s ease both}
+.vc-card:nth-child(1){animation-delay:.04s}
+.vc-card:nth-child(2){animation-delay:.08s}
+.vc-card:nth-child(3){animation-delay:.12s}
+.vc-card:nth-child(4){animation-delay:.16s}
+.vc-card:nth-child(5){animation-delay:.20s}
+
+/* Entrées des rappels */
+.ri2{animation:fadeSlideUp .22s ease both}
+
+/* Stats dashboard */
+.stat{animation:scaleIn .3s ease both}
+.stat:nth-child(1){animation-delay:.05s}
+.stat:nth-child(2){animation-delay:.10s}
+.stat:nth-child(3){animation-delay:.15s}
+.stat:nth-child(4){animation-delay:.20s}
+
+/* Compteurs rappels */
+.rap-ctr{animation:scaleIn .25s ease both}
+.rap-ctr:nth-child(1){animation-delay:.04s}
+.rap-ctr:nth-child(2){animation-delay:.08s}
+.rap-ctr:nth-child(3){animation-delay:.12s}
+
+/* Modal */
+.modal{transition:transform .32s cubic-bezier(.32,.72,0,1)!important}
+
+/* Boutons — retour haptique visuel */
+.btn{transition:transform .1s,box-shadow .1s,opacity .1s}
+.btn:active{transform:scale(.96)!important}
+
+/* Tab bar items */
+.nb-btn{transition:color .18s,transform .18s}
+.nb-btn.on{animation:scaleIn .2s ease}
+
+/* Carte véhicule hover */
+.vc{transition:box-shadow .18s,transform .18s}
+.vc:active{transform:scale(.985)}
+
+/* Badges */
+.ri2-badge{transition:background .2s}
+
+/* Dot badge navbar pulse */
+.rdot{animation:rdot-pulse 1.8s ease-out infinite,pulse-dot 2s ease-in-out infinite}
+
+/* Smooth scroll */
+#main-content{scroll-behavior:smooth}
 </style>
 </head>
 <body>
@@ -1085,10 +1140,10 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     </div>
         <!-- PHOTOS FACTURES MULTI -->
         <div style="padding:8px 0 12px">
-          <input type="file" id="e-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)" multiple>
+          <input type="file" id="e-photo-input" accept="image/*,application/pdf,.pdf" style="display:none" onchange="onPhotoSelected(this)" multiple>
           <button type="button" class="photo-btn" id="e-photo-btn" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input').click();}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span id="e-photo-label">📎 Ajouter des photos de facture</span>
+            <span id="e-photo-label">📎 Ajouter photos ou PDF</span>
           </button>
           <div id="e-photos-list" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
           <input type="hidden" id="e-photo-url" value="">
@@ -2920,7 +2975,10 @@ function onPhotoSelected(input){
   const files = Array.from(input.files);
   if(!files.length) return;
   files.forEach(file => {
-    if(file.size > 1024*1024){
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if(isPdf){
+      addPhotoToList(file); // Pas de compression pour les PDF
+    } else if(file.size > 1024*1024){
       compressPhoto(file).then(compressed => addPhotoToList(compressed));
     } else {
       addPhotoToList(file);
@@ -2974,15 +3032,20 @@ function renderPhotoList(){
         <input type="text" value="${esc(name)}" oninput="updatePhotoName(${item.globalIdx},this.value)" placeholder="Nom de la photo…" style="width:100%;box-sizing:border-box;border:1px solid #bbf7d0;border-radius:7px;padding:6px 10px;font-size:.82rem;color:#166534;background:#fff;font-family:inherit;outline:none">
       </div>`;
     } else {
+      const isPdfFile = item.file?.type === 'application/pdf' || item.file?.name?.toLowerCase().endsWith('.pdf');
+      const fileIcon = isPdfFile
+        ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+        : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+      const fileLabel = isPdfFile ? '📄 PDF prêt à enregistrer' : '⏳ Prête à enregistrer';
       return `<div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:10px 12px;margin-bottom:4px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <div style="width:30px;height:30px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            ${fileIcon}
           </div>
-          <span style="font-size:.7rem;color:#3b82f6;font-weight:600">⏳ Prête à enregistrer</span>
-          <button type="button" onclick="if(confirm('Supprimer cette photo ?'))removeNewPhoto(${item.i})" style="margin-left:auto;background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px">✕</button>
+          <span style="font-size:.7rem;color:#3b82f6;font-weight:600">${fileLabel}</span>
+          <button type="button" onclick="if(confirm('Supprimer ce fichier ?'))removeNewPhoto(${item.i})" style="margin-left:auto;background:#fee2e2;border:none;color:#dc2626;font-size:.85rem;font-weight:700;cursor:pointer;width:28px;height:28px;border-radius:6px">✕</button>
         </div>
-        <input type="text" value="${esc(name)}" oninput="updatePhotoName(${item.globalIdx},this.value)" placeholder="Nom de la photo…" style="width:100%;box-sizing:border-box;border:1px solid #bfdbfe;border-radius:7px;padding:6px 10px;font-size:.82rem;color:#1e40af;background:#fff;font-family:inherit;outline:none">
+        <input type="text" value="${esc(name)}" oninput="updatePhotoName(${item.globalIdx},this.value)" placeholder="Nom du fichier…" style="width:100%;box-sizing:border-box;border:1px solid #bfdbfe;border-radius:7px;padding:6px 10px;font-size:.82rem;color:#1e40af;background:#fff;font-family:inherit;outline:none">
       </div>`;
     }
   }).join('');
@@ -3041,7 +3104,8 @@ async function uploadAllPhotos(entId){
   for(let i=0; i<_photoFiles.length; i++){
     const file = _photoFiles[i];
     try{
-      const ext = file.type === 'image/png' ? 'png' : 'jpg';
+      const isPdf = file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf');
+      const ext = isPdf ? 'pdf' : file.type === 'image/png' ? 'png' : 'jpg';
       const path = `${S.user.id}/${entId}_${Date.now()}_${i}.${ext}`;
       const { error } = await sb.storage.from('factures').upload(path, file, {
         upsert: false, contentType: file.type || 'image/jpeg'
@@ -3072,6 +3136,11 @@ async function uploadPhoto(entId){
 
 function openPhotoFullscreen(url){
   if(!url||url==='DELETE')return toast('Aucune photo disponible.','e');
+  // Si c'est un PDF, ouvrir dans un nouvel onglet
+  if(url.toLowerCase().includes('.pdf')||url.includes('application/pdf')){
+    window.open(url,'_blank');
+    return;
+  }
   const mo = document.createElement('div');
   mo.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;padding:16px';
   const img = document.createElement('img');
@@ -4249,7 +4318,9 @@ function eiHTML(e,v){
   const rappels=[];
   if(e.rappel_date)rappels.push('📅 '+fmtDate(e.rappel_date));
   if(e.rappel_km)rappels.push('📍 '+fmtKm(e.rappel_km));
-  const inner=`<div class="ei" onclick="openEnt('${e.id}')" data-eid="${e.id}">
+  const catColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Camping-car':'#0891B2'};
+  const accentCol=catColors[ti.cat]||'rgba(184,196,216,.5)';
+  const inner=`<div class="ei" onclick="openEnt('${e.id}')" data-eid="${e.id}" style="--ei-accent:${accentCol}">
     <div class="ei-ico ${catClass(ti.cat)}">${ti.ico}</div>
     <div class="ei-inf">
       <div class="ei-ty">${esc(ti.label)}</div>
