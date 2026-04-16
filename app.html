@@ -739,6 +739,14 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .tuto-tooltip::after{content:'';position:absolute;border:7px solid transparent}
 .tuto-tooltip.arrow-up::after{border-bottom-color:#0A0F1E;top:-14px;left:50%;transform:translateX(-50%)}
 .tuto-tooltip.arrow-down::after{border-top-color:#0A0F1E;bottom:-14px;left:50%;transform:translateX(-50%)}
+
+/* ═══ PERSONNALISATION COULEUR ═══ */
+.color-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0}
+.color-swatch{width:100%;aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:.15s;position:relative}
+.color-swatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--primary),0 2px 8px rgba(0,0,0,.2)}
+.color-swatch:active{transform:scale(.9)}
+.perso-section{background:#fff;border-radius:14px;border:1px solid rgba(184,196,216,.4);padding:16px;margin-bottom:10px}
+.perso-section-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txm);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
@@ -1872,6 +1880,7 @@ function toast(msg,type='i'){
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
 function showApp(){
   g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
+  loadAccentColor();
   buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
   setTimeout(checkOnboarding,600);setTimeout(checkTuto,1000);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
   // Toast bienvenue Premium
@@ -3318,14 +3327,20 @@ function compressPhoto(file){
     const url = URL.createObjectURL(file);
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      const MAX = 1200;
-      let w = img.width, h = img.height;
+      const w0 = img.width, h0 = img.height;
+      const isPortrait = h0 > w0;
+      const isLikelyDoc = isPortrait && (h0/w0 > 1.2); // facture = portrait allongé
+      // Résolution max selon le type
+      const MAX = isLikelyDoc ? 1600 : 1200;
+      const QUALITY = isLikelyDoc ? 0.92 : 0.82; // qualité plus haute pour les factures
+      let w = w0, h = h0;
       if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; }
       if(h > MAX){ w = Math.round(w*MAX/h); h = MAX; }
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      canvas.toBlob(blob => { URL.revokeObjectURL(url); resolve(blob||file); }, 'image/jpeg', 0.82);
+      canvas.toBlob(blob => { URL.revokeObjectURL(url); resolve(blob||file); }, 'image/jpeg', QUALITY);
     };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
     img.src = url;
   });
 }
@@ -4976,6 +4991,7 @@ function renderProfil(){
       </div>
       <div style="font-size:.88rem;font-weight:800;color:var(--txt)">Notifications</div>
     </div>
+    ${renderColorPicker()}
     <div id="push-status-wrap" style="margin-bottom:10px;font-size:.82rem;color:var(--txm)">Vérification…</div>
     <div class="g6">
       <button class="btn btn-p btn-sm" id="btn-push-on" onclick="registerPush()" style="display:none">🔔 Activer les notifications</button>
@@ -5327,6 +5343,56 @@ document.addEventListener('DOMContentLoaded',()=>{
     closeTuto();
   },true);
 });
+
+// ═══ PERSONNALISATION COULEUR ═══
+const ACCENT_COLORS = [
+  {name:'Bleu',      val:'#2563EB', lt:'#EFF6FF', dk:'#1D4ED8'},
+  {name:'Violet',    val:'#7C3AED', lt:'#F5F3FF', dk:'#6D28D9'},
+  {name:'Rose',      val:'#DB2777', lt:'#FDF2F8', dk:'#BE185D'},
+  {name:'Rouge',     val:'#DC2626', lt:'#FEF2F2', dk:'#B91C1C'},
+  {name:'Orange',    val:'#EA580C', lt:'#FFF7ED', dk:'#C2410C'},
+  {name:'Jaune',     val:'#CA8A04', lt:'#FEFCE8', dk:'#A16207'},
+  {name:'Vert',      val:'#059669', lt:'#ECFDF5', dk:'#047857'},
+  {name:'Cyan',      val:'#0891B2', lt:'#ECFEFF', dk:'#0E7490'},
+];
+
+function applyAccentColor(hex){
+  const c = ACCENT_COLORS.find(x=>x.val===hex) || ACCENT_COLORS[0];
+  const root = document.documentElement;
+  root.style.setProperty('--primary', c.val);
+  root.style.setProperty('--primary-lt', c.lt);
+  root.style.setProperty('--primary-dk', c.dk);
+  // Mettre à jour le gradient du bouton principal
+  document.querySelectorAll('.btn-p').forEach(b=>{
+    b.style.background = `linear-gradient(135deg,${c.val}dd,${c.val})`;
+  });
+  localStorage.setItem('ac_accent_color', hex);
+}
+
+function loadAccentColor(){
+  const saved = localStorage.getItem('ac_accent_color');
+  if(saved) applyAccentColor(saved);
+}
+
+function renderColorPicker(){
+  const saved = localStorage.getItem('ac_accent_color') || '#2563EB';
+  return `<div class="perso-section">
+    <div class="perso-section-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      Couleur d'accent
+    </div>
+    <div class="color-picker-grid">
+      ${ACCENT_COLORS.map(c=>`
+        <div class="color-swatch${saved===c.val?' on':''}" 
+          style="background:${c.val}" 
+          title="${c.name}"
+          onclick="applyAccentColor('${c.val}');renderProfil()">
+        </div>
+      `).join('')}
+    </div>
+    <div style="font-size:.72rem;color:var(--txm);text-align:center">Personnalisez la couleur de l'interface</div>
+  </div>`;
+}
 
 function checkOnboarding(){
   if(localStorage.getItem('ac_onboarded')) return;
