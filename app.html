@@ -672,13 +672,12 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 /* ═══ FICHE VÉHICULE — AMÉLIORATIONS ═══ */
 
 /* Stats row plus propre */
-.vc-stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));padding:0;gap:0;background:transparent;border:none;margin-bottom:14px}
-.vc-stats-row > div{background:#fff;border:1px solid rgba(184,196,216,.4);padding:12px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px}
-.vc-stats-row > div:first-child{border-radius:12px 0 0 12px}
-.vc-stats-row > div:last-child{border-radius:0 12px 12px 0}
-.vc-stats-row > div:not(:last-child){border-right:none}
-.vs-v{display:block;font-size:.95rem;font-weight:800;color:var(--txt);letter-spacing:-.02em}
-.vs-l{display:block;font-size:.6rem;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;font-weight:600}
+.vc-stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.vc-stats-row > div{background:#fff;border:1px solid rgba(184,196,216,.35);border-radius:12px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.vc-stats-row > div.full-width{grid-column:1/-1}
+.vs-v{display:block;font-size:1.1rem;font-weight:800;color:var(--txt);letter-spacing:-.03em;line-height:1}
+.vs-l{display:block;font-size:.62rem;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.vs-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
 
 /* Section header épuré */
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:20px 0 8px;padding:0}
@@ -3671,12 +3670,34 @@ function openVehDetail(vid){
   const costData=getCostsByYear(vid);
   let h='';
   // Stats
-  h+=`<div class="vc-stats-row" style="border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px;background:#fff;box-shadow:var(--sh)">
-    <div><span class="vs-v">${fmtKm(v.km_actuel)}</span><span class="vs-l">Kilométrage</span></div>
-    <div><span class="vs-v">${es.length}</span><span class="vs-l">Entretiens</span></div>
-    <div><span class="vs-v" style="font-size:.82rem">${fmtCout(total)}</span><span class="vs-l">Coût total</span></div>
-    <div><span class="vs-v" style="font-size:.78rem;color:var(--ok)">${getNextRevision(v,es)}</span><span class="vs-l">Prochaine révision</span></div>
-    ${total&&v.km_actuel?`<div><span class="vs-v" style="font-size:.78rem">${(total/v.km_actuel).toFixed(2)}€</span><span class="vs-l">€/km</span></div>`:''}
+  const nextRev=getNextRevision(v,es);
+  const nextRevColor=nextRev==='En retard'?'#DC2626':nextRev==='Bientôt'?'#D97706':'var(--ok)';
+  const nextRevLabel=nextRev==='?'?'—':nextRev;
+  h+=`<div class="vc-stats-row" style="border:none;background:transparent;box-shadow:none">
+    <div>
+      <div class="vs-icon" style="background:#EFF6FF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <span class="vs-v">${fmtKm(v.km_actuel||0)}</span>
+      <span class="vs-l">Kilométrage</span>
+    </div>
+    <div>
+      <div class="vs-icon" style="background:#F0FDF4"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+      <span class="vs-v">${es.length}</span>
+      <span class="vs-l">Entretiens</span>
+    </div>
+    <div>
+      <div class="vs-icon" style="background:#FFF7ED"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <span class="vs-v" style="font-size:.95rem">${fmtCout(total)}</span>
+      <span class="vs-l">Coût total</span>
+    </div>
+    <div>
+      <div class="vs-icon" style="background:#F0FDF4"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span class="vs-v" style="font-size:.88rem;color:${nextRevColor}">${nextRevLabel}</span>
+      <span class="vs-l">Prochaine révision</span>
+    </div>
+    ${total&&v.km_actuel?`<div class="full-width" style="flex-direction:row;align-items:center;justify-content:space-between;padding:10px 14px">
+      <span class="vs-l" style="text-transform:none;letter-spacing:0;font-size:.78rem">Coût moyen par kilomètre</span>
+      <span class="vs-v" style="font-size:.88rem">${(total/v.km_actuel).toFixed(2)} €/km</span>
+    </div>`:''}
   </div>`;
   // Graphique — bouton modal coûts
   h+=`<button class="btn btn-s" style="width:100%;margin-bottom:8px;justify-content:center;gap:8px" onclick="openCostModal('${vid}')">€ Voir les coûts par année</button>`;
