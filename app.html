@@ -36,13 +36,9 @@
   --sh-lg:0 12px 32px rgba(0,0,0,.16);
   --sh-card:0 8px 24px rgba(37,99,235,.16);
   --r:14px;--r-sm:10px;
-  --card-pad:13px 14px;
-  --card-gap:8px;
-  --card-r:14px;
-  --card-mb:8px;
 }
 /* SWIPE */
-.ei-wrap{position:relative;overflow:hidden;border-radius:var(--card-r,var(--r));margin-bottom:var(--card-mb,8px)}
+.ei-wrap{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:8px}
 .ei-swipe-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--err);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;border-radius:0 var(--r) var(--r) 0}
 .ei-wrap .ei{margin-bottom:0;border-radius:var(--r);position:relative;z-index:1;transition:transform .2s;touch-action:pan-y}
 
@@ -693,7 +689,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .flt.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
 
 /* Cartes entretien inline — redesign complet */
-.ei-inline{background:#fff;border-radius:var(--card-r,12px);padding:var(--card-pad,12px 14px);display:flex;align-items:center;gap:12px;margin-bottom:6px;cursor:pointer;border:1px solid rgba(184,196,216,.45);box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
+.ei-inline{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;cursor:pointer;border:1px solid rgba(184,196,216,.45);box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
 .ei-inline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ei-inline-accent,#E2E8F0);border-radius:3px 0 0 3px}
 .ei-inline:active{transform:scale(.985);box-shadow:none}
 .ei-inline-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
@@ -745,51 +741,30 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .tuto-tooltip.arrow-down::after{border-top-color:#0A0F1E;bottom:-14px;left:50%;transform:translateX(-50%)}
 
 /* ═══ PERSONNALISATION COULEUR ═══ */
-.color-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0}
-.color-swatch{width:100%;aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:.15s;position:relative}
-.color-swatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--primary),0 2px 8px rgba(0,0,0,.2)}
-.color-swatch:active{transform:scale(.9)}
-.perso-section{background:#fff;border-radius:14px;border:1px solid rgba(184,196,216,.4);padding:16px;margin-bottom:10px}
-.perso-section-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txm);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 
 /* ═══ PAGE CONNEXION AMÉLIORÉE ═══ */
-@keyframes wheelSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes authFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-/* Logo animé */
-.auth-logo-icon{position:relative;animation:logoFloat 3s ease-in-out infinite}
-.auth-logo-wheel{transform-origin:center;animation:wheelSpin .8s linear infinite}
+.auth-logo-icon{animation:logoFloat 3s ease-in-out infinite}
 
-/* Card glassmorphism */
 .auth-card{
   background:rgba(255,255,255,0.07) !important;
   backdrop-filter:blur(24px) !important;
   -webkit-backdrop-filter:blur(24px) !important;
   border:1px solid rgba(255,255,255,.13) !important;
-  box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.1) !important;
+  box-shadow:0 32px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1) !important;
   animation:authFadeIn .5s ease both !important;
 }
 .auth-card .fl{color:rgba(255,255,255,.7) !important}
-.auth-card .fc{
-  background:rgba(255,255,255,.08) !important;
-  border-color:rgba(255,255,255,.15) !important;
-  color:#fff !important;
-}
+.auth-card .fc{background:rgba(255,255,255,.08) !important;border-color:rgba(255,255,255,.15) !important;color:#fff !important}
 .auth-card .fc::placeholder{color:rgba(255,255,255,.3) !important}
-.auth-card .fc:focus{
-  background:rgba(255,255,255,.12) !important;
-  border-color:rgba(255,255,255,.35) !important;
-  box-shadow:0 0 0 3px rgba(255,255,255,.08) !important;
-}
+.auth-card .fc:focus{background:rgba(255,255,255,.12) !important;border-color:rgba(255,255,255,.35) !important;box-shadow:0 0 0 3px rgba(255,255,255,.08) !important}
 .auth-logo{color:#fff !important}
-.auth-logo span:last-child{color:rgba(255,255,255,.9) !important}
 .auth-subtitle{color:rgba(255,255,255,.5) !important}
 .auth-card .atabs{background:rgba(255,255,255,.08) !important}
 .auth-card .atab{color:rgba(255,255,255,.5) !important}
 .auth-card .atab.on{background:rgba(255,255,255,.15) !important;color:#fff !important}
-.auth-card .btn-p-full{box-shadow:0 4px 20px rgba(37,99,235,.5) !important}
-.auth-sep-line{background:rgba(255,255,255,.15) !important}
 .auth-card [style*="color:#94A3B8"]{color:rgba(255,255,255,.35) !important}
 .auth-card [style*="color:var(--txm)"]{color:rgba(255,255,255,.5) !important}
 .auth-card [style*="background:#fff"]{background:rgba(255,255,255,.08) !important;border-color:rgba(255,255,255,.15) !important;color:#fff !important}
@@ -801,7 +776,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .auth-card [style*="background:#F8FAFF"]{background:rgba(255,255,255,.06) !important;border-color:rgba(255,255,255,.12) !important}
 .auth-card [style*="color:#475569"]{color:rgba(255,255,255,.6) !important}
 .auth-card [style*="background:none;border:none;color:#64748B"]{color:rgba(255,255,255,.5) !important}
-.auth-forget-btn{background:none !important;border:none !important;color:rgba(255,255,255,.5) !important;font-family:inherit;font-size:.83rem;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -1935,7 +1909,6 @@ function toast(msg,type='i'){
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
 function showApp(){
   g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
-  loadAccentColor();
   buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
   setTimeout(checkOnboarding,600);setTimeout(checkTuto,1000);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
   // Toast bienvenue Premium
@@ -1995,7 +1968,6 @@ function initAutoComplete(){
 /* INIT */
 async function init(){
   sb=window.supabase.createClient(SB_URL,SB_KEY);
-  // Dégradé dynamique selon l'heure
   (function(){
     const h=new Date().getHours();
     let bg;
@@ -5050,19 +5022,7 @@ function renderProfil(){
   </div>
 
   <!-- NOTIFICATIONS -->
-  <div class="profil-card">
-    <div data-section="apparence" style="background:#fff;border-radius:14px;border:1px solid rgba(184,196,216,.4);padding:16px;margin-bottom:10px">
-      <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txm);margin-bottom:16px;display:flex;align-items:center;gap:6px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-        Apparence
-      </div>
-      <div>${renderAppearanceSection()}</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-      <div style="width:30px;height:30px;border-radius:8px;background:#FFFBEB;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </div>
-      <div style="font-size:.88rem;font-weight:800;color:var(--txt)">Notifications</div>
+  <div class="profil-card">      <div style="font-size:.88rem;font-weight:800;color:var(--txt)">Notifications</div>
     </div>
     <div id="push-status-wrap" style="margin-bottom:10px;font-size:.82rem;color:var(--txm)">Vérification…</div>
     <div class="g6">
@@ -5416,184 +5376,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   },true);
 });
 
-// ═══ PERSONNALISATION COULEUR ═══
-const ACCENT_COLORS = [
-  {name:'Bleu',      val:'#2563EB', lt:'#EFF6FF', dk:'#1D4ED8'},
-  {name:'Violet',    val:'#7C3AED', lt:'#F5F3FF', dk:'#6D28D9'},
-  {name:'Rose',      val:'#DB2777', lt:'#FDF2F8', dk:'#BE185D'},
-  {name:'Rouge',     val:'#DC2626', lt:'#FEF2F2', dk:'#B91C1C'},
-  {name:'Orange',    val:'#EA580C', lt:'#FFF7ED', dk:'#C2410C'},
-  {name:'Jaune',     val:'#CA8A04', lt:'#FEFCE8', dk:'#A16207'},
-  {name:'Vert',      val:'#059669', lt:'#ECFDF5', dk:'#047857'},
-  {name:'Cyan',      val:'#0891B2', lt:'#ECFEFF', dk:'#0E7490'},
-];
-
-function applyAccentColor(hex){
-  const c = ACCENT_COLORS.find(x=>x.val===hex) || ACCENT_COLORS[0];
-  const root = document.documentElement;
-  root.style.setProperty('--primary', c.val);
-  root.style.setProperty('--primary-lt', c.lt);
-  root.style.setProperty('--primary-dk', c.dk);
-  localStorage.setItem('ac_accent_color', hex);
-  updateAppearanceUI();
-}
-
-function updateAppearanceUI(){
-  // Re-render uniquement la section apparence sans toucher aux notifications
-  const el = document.getElementById('pr-ctn');
-  if(!el) return;
-  // Trouver et mettre à jour uniquement le contenu de la section apparence
-  const section = el.querySelector('[data-section="apparence"]');
-  if(section) section.innerHTML = renderAppearanceSection();
-}
-
-function applyCardStyle(style){
-  localStorage.setItem('ac_card_style', style);
-  const root = document.documentElement;
-  if(style === 'compact'){
-    root.style.setProperty('--card-pad', '8px 10px');
-    root.style.setProperty('--card-gap', '4px');
-    root.style.setProperty('--card-r', '10px');
-    root.style.setProperty('--card-mb', '5px');
-  } else if(style === 'spacieux'){
-    root.style.setProperty('--card-pad', '18px 16px');
-    root.style.setProperty('--card-gap', '14px');
-    root.style.setProperty('--card-r', '18px');
-    root.style.setProperty('--card-mb', '12px');
-  } else {
-    root.style.setProperty('--card-pad', '13px 14px');
-    root.style.setProperty('--card-gap', '8px');
-    root.style.setProperty('--card-r', '14px');
-    root.style.setProperty('--card-mb', '8px');
-  }
-  updateAppearanceUI();
-}
-
-function applyFontSize(size){
-  localStorage.setItem('ac_font_size', size);
-  const root = document.documentElement;
-  if(size === 'small') root.style.fontSize = '13px';
-  else if(size === 'large') root.style.fontSize = '17px';
-  else root.style.fontSize = '15px';
-  updateAppearanceUI();
-}
-
-function applyRapDelay(days){
-  localStorage.setItem('ac_rap_delay', days);
-  updateAppearanceUI();
-  toast('Délai de rappel mis à jour','s');
-}
-
-function loadAppearanceSettings(){
-  const color = localStorage.getItem('ac_accent_color');
-  if(color) applyAccentColor(color);
-  const style = localStorage.getItem('ac_card_style') || 'normal';
-  applyCardStyle(style);
-  const font = localStorage.getItem('ac_font_size') || 'normal';
-  applyFontSize(font);
-}
-
-function loadAccentColor(){ loadAppearanceSettings(); } // alias
-
-function renderAppearanceSection(){
-  const savedColor = localStorage.getItem('ac_accent_color') || '#2563EB';
-  const savedStyle = localStorage.getItem('ac_card_style') || 'normal';
-  const savedFont = localStorage.getItem('ac_font_size') || 'normal';
-  const savedDelay = localStorage.getItem('ac_rap_delay') || '15';
-
-  const colorLabels={compact:'Compact',normal:'Normal',spacieux:'Aéré'};
-  const fontLabels={small:'Petit',normal:'Normal',large:'Grand'};
-  const accentColor = ACCENT_COLORS.find(c=>c.val===savedColor);
-
-  return `
-  <!-- Couleur principale -->
-  <div style="margin-bottom:1px">
-    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid rgba(184,196,216,.3)">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:20px;height:20px;border-radius:50%;background:${savedColor}"></div>
-        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Couleur principale</span>
-      </div>
-      <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div class="hidden" style="padding:12px 0">
-      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:10px">
-        ${ACCENT_COLORS.map(c=>`<div class="color-swatch${savedColor===c.val?' on':''}" style="background:${c.val}" title="${c.name}" onclick="applyAccentColor('${c.val}');renderProfil()"></div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <!-- Style des cartes -->
-  <div style="margin-bottom:1px">
-    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid rgba(184,196,216,.3)">
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Style des cartes</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:.75rem;color:var(--txm)">${colorLabels[savedStyle]||'Normal'}</span>
-        <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </div>
-    <div class="hidden" style="padding:12px 0">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${[{val:'compact',label:'Compact',desc:'Dense',preview:'▬▬'},{val:'normal',label:'Normal',desc:'Standard',preview:'▬ ▬'},{val:'spacieux',label:'Aéré',desc:'Espacé',preview:'▬  ▬'}].map(s=>`
-          <div onclick="applyCardStyle('${s.val}')" style="border:2px solid ${savedStyle===s.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;background:${savedStyle===s.val?'var(--primary-lt)':'#fff'};transition:.15s">
-            <div style="font-size:1rem;margin-bottom:4px;letter-spacing:${s.val==='compact'?'-1px':s.val==='spacieux'?'3px':'1px'}">${s.preview}</div>
-            <div style="font-size:.8rem;font-weight:700;color:${savedStyle===s.val?'var(--primary)':'var(--txt)'}">${s.label}</div>
-            <div style="font-size:.65rem;color:var(--txm);margin-top:1px">${s.desc}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <!-- Taille du texte -->
-  <div style="margin-bottom:1px">
-    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid rgba(184,196,216,.3)">
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Taille du texte</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:.75rem;color:var(--txm)">${fontLabels[savedFont]||'Normal'}</span>
-        <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </div>
-    <div class="hidden" style="padding:12px 0">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${[{val:'small',label:'Petit',size:'13px'},{val:'normal',label:'Normal',size:'15px'},{val:'large',label:'Grand',size:'17px'}].map(f=>`
-          <div onclick="applyFontSize('${f.val}')" style="border:2px solid ${savedFont===f.val?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;background:${savedFont===f.val?'var(--primary-lt)':'#fff'};transition:.15s">
-            <div style="font-size:${f.size};font-weight:700;color:${savedFont===f.val?'var(--primary)':'var(--txt)'}">${f.label}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <!-- Délai rappel -->
-  <div>
-    <div onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.appar-arrow').style.transform=this.nextElementSibling.classList.contains('hidden')?'':'rotate(180deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer">
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span style="font-size:.85rem;font-weight:600;color:var(--txt)">Délai de rappel par défaut</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:.75rem;color:var(--txm)">${savedDelay}j avant</span>
-        <svg class="appar-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.5" stroke-linecap="round" style="transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </div>
-    <div class="hidden" style="padding:12px 0">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${['7','15','30'].map(d=>`
-          <div onclick="applyRapDelay('${d}')" style="border:2px solid ${savedDelay===d?'var(--primary)':'rgba(184,196,216,.5)'};border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;background:${savedDelay===d?'var(--primary-lt)':'#fff'};transition:.15s">
-            <div style="font-size:.88rem;font-weight:700;color:${savedDelay===d?'var(--primary)':'var(--txt)'}">${d} jours</div>
-          </div>`).join('')}
-      </div>
-      <div style="font-size:.7rem;color:var(--txm);margin-top:8px;text-align:center">Pré-remplit le champ rappel lors de l'ajout d'un entretien</div>
-    </div>
-  </div>`;
-}
-
-
-function renderColorPicker(){ return ''; } // gardé pour compatibilité
 
 function checkOnboarding(){
   if(localStorage.getItem('ac_onboarded')) return;
