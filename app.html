@@ -709,6 +709,36 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .welcome-bar-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;font-size:.82rem;font-weight:600}
 .welcome-bar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .welcome-bar-msg{flex:1;line-height:1.4}
+
+/* ═══ TUTORIEL GUIDÉ ═══ */
+#mo-tuto{position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+#mo-tuto.open{opacity:1;pointer-events:all}
+#mo-tuto .tuto-backdrop{position:absolute;inset:0;background:rgba(10,15,30,.65);backdrop-filter:blur(4px)}
+.tuto-sheet{position:relative;z-index:1;background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:100%;padding:0 0 env(safe-area-inset-bottom,16px);box-shadow:0 -8px 40px rgba(0,0,0,.18);transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1)}
+#mo-tuto.open .tuto-sheet{transform:translateY(0)}
+.tuto-handle{width:40px;height:4px;border-radius:2px;background:#E2E8F0;margin:12px auto 0}
+.tuto-progress{display:flex;gap:6px;justify-content:center;padding:14px 0 0}
+.tuto-dot{width:6px;height:6px;border-radius:50%;background:#E2E8F0;transition:.2s}
+.tuto-dot.on{width:20px;border-radius:3px;background:var(--primary)}
+.tuto-body{padding:20px 24px 24px}
+.tuto-step{display:none}
+.tuto-step.active{display:block}
+.tuto-ico{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:2rem}
+.tuto-ttl{font-size:1.3rem;font-weight:900;color:var(--txt);text-align:center;letter-spacing:-.02em;margin-bottom:10px;line-height:1.25}
+.tuto-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.65;margin-bottom:22px}
+.tuto-features{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.tuto-feat{display:flex;align-items:center;gap:12px;background:#F8FAFC;border-radius:12px;padding:12px 14px;border:1px solid rgba(184,196,216,.4)}
+.tuto-feat-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem}
+.tuto-feat-body{flex:1}
+.tuto-feat-ttl{font-size:.84rem;font-weight:700;color:var(--txt)}
+.tuto-feat-sub{font-size:.73rem;color:var(--txm);margin-top:2px}
+.tuto-actions{display:flex;flex-direction:column;gap:8px}
+.tuto-btn-skip{background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;font-weight:600;text-align:center;width:100%}
+.tuto-highlight{position:fixed;z-index:899;pointer-events:none;border-radius:14px;box-shadow:0 0 0 4000px rgba(10,15,30,.7);transition:all .4s cubic-bezier(.32,.72,0,1)}
+.tuto-tooltip{position:fixed;z-index:901;background:#0A0F1E;color:#fff;border-radius:12px;padding:12px 16px;font-size:.82rem;font-weight:600;line-height:1.5;max-width:260px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.tuto-tooltip::after{content:'';position:absolute;border:7px solid transparent}
+.tuto-tooltip.arrow-up::after{border-bottom-color:#0A0F1E;top:-14px;left:50%;transform:translateX(-50%)}
+.tuto-tooltip.arrow-down::after{border-top-color:#0A0F1E;bottom:-14px;left:50%;transform:translateX(-50%)}
 </style>
 </head>
 <body>
@@ -923,6 +953,135 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         <button class="btn btn-p" style="width:100%;margin-top:4px;padding:15px;font-size:.95rem" onclick="onboardFinish()">🚗 Ajouter mon véhicule</button>
         <button onclick="closeOnboarding()" style="width:100%;margin-top:10px;background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;font-weight:600">Passer →</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIEL GUIDÉ -->
+<div id="mo-tuto">
+  <div class="tuto-backdrop" onclick="tutoSkip()"></div>
+  <div class="tuto-sheet">
+    <div class="tuto-handle"></div>
+    <div class="tuto-progress" id="tuto-progress"></div>
+    <div class="tuto-body">
+
+      <!-- Étape 1 : Bienvenue -->
+      <div class="tuto-step active" id="tuto-s1">
+        <div class="tuto-ico" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">🚗</div>
+        <div class="tuto-ttl">Bienvenue sur AutoCarnet !</div>
+        <div class="tuto-txt">Votre carnet d'entretien intelligent.<br>En <strong style="color:var(--txt)">2 minutes</strong>, votre véhicule est configuré et vos rappels sont actifs.</div>
+        <div class="tuto-actions">
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoNext()">C'est parti →</button>
+          <button class="tuto-btn-skip" onclick="tutoSkip()">Passer le tutoriel</button>
+        </div>
+      </div>
+
+      <!-- Étape 2 : Ajouter un véhicule -->
+      <div class="tuto-step" id="tuto-s2">
+        <div class="tuto-ico" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7)">🔧</div>
+        <div class="tuto-ttl">Ajoutez votre véhicule</div>
+        <div class="tuto-txt">Commencez par saisir la marque et le modèle.<br>Les autres informations sont optionnelles.</div>
+        <div class="tuto-features">
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#EFF6FF">📋</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Marque & modèle</div>
+              <div class="tuto-feat-sub">Sélectionnez dans la liste ou tapez librement</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#FEF3C7">📍</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Kilométrage actuel</div>
+              <div class="tuto-feat-sub">Pour des rappels précis basés sur le km</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#F0FDF4">🎨</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Couleur personnalisée</div>
+              <div class="tuto-feat-sub">Pour identifier vos véhicules d'un coup d'œil</div>
+            </div>
+          </div>
+        </div>
+        <div class="tuto-actions">
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoAddVehicle()">🚗 Ajouter mon véhicule</button>
+          <button class="tuto-btn-skip" onclick="tutoSkip()">Passer</button>
+        </div>
+      </div>
+
+      <!-- Étape 3 : Premier entretien -->
+      <div class="tuto-step" id="tuto-s3">
+        <div class="tuto-ico" style="background:linear-gradient(135deg,#FFF7ED,#FEF3C7)">🛢️</div>
+        <div class="tuto-ttl">Enregistrez un entretien</div>
+        <div class="tuto-txt">Notez votre dernier entretien effectué.<br>AutoCarnet calculera automatiquement la prochaine échéance.</div>
+        <div class="tuto-features">
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#FEF2F2">📅</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Type & date</div>
+              <div class="tuto-feat-sub">Vidange, freins, CT... plus de 50 types disponibles</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#F0FDF4">🔔</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Rappel automatique</div>
+              <div class="tuto-feat-sub">La prochaine échéance est pré-calculée pour vous</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#EFF6FF">📎</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Photos & PDF</div>
+              <div class="tuto-feat-sub">Joignez vos factures directement</div>
+            </div>
+          </div>
+        </div>
+        <div class="tuto-actions">
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoAddEntretien()">🔧 Ajouter un entretien</button>
+          <button class="tuto-btn-skip" onclick="tutoNext()">Passer cette étape</button>
+        </div>
+      </div>
+
+      <!-- Étape 4 : Rappels push -->
+      <div class="tuto-step" id="tuto-s4">
+        <div class="tuto-ico" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)">🔔</div>
+        <div class="tuto-ttl">Activez les notifications</div>
+        <div class="tuto-txt">Recevez une alerte avant chaque échéance.<br>Plus jamais de CT raté ou de vidange oubliée.</div>
+        <div class="tuto-features">
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#FFFBEB">⏰</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">7, 15 ou 30 jours avant</div>
+              <div class="tuto-feat-sub">Vous choisissez quand être alerté</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#F0FDF4">🔒</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">100% privé</div>
+              <div class="tuto-feat-sub">Uniquement vos entretiens, aucune pub</div>
+            </div>
+          </div>
+        </div>
+        <div class="tuto-actions">
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoActivatePush()">🔔 Activer les notifications</button>
+          <button class="tuto-btn-skip" onclick="tutoNext()">Plus tard</button>
+        </div>
+      </div>
+
+      <!-- Étape 5 : C'est parti ! -->
+      <div class="tuto-step" id="tuto-s5">
+        <div class="tuto-ico" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);font-size:2.5rem">🎉</div>
+        <div class="tuto-ttl">Votre carnet est lancé !</div>
+        <div class="tuto-txt" id="tuto-recap">Tout est configuré. Vous recevrez vos rappels automatiquement.</div>
+        <div class="tuto-features" id="tuto-recap-feats"></div>
+        <div class="tuto-actions">
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoFinish()">Découvrir AutoCarnet →</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1714,7 +1873,7 @@ function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.r
 function showApp(){
   g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
   buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
-  setTimeout(checkOnboarding,600);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
+  setTimeout(checkOnboarding,600);setTimeout(checkTuto,1000);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
   // Toast bienvenue Premium
   if(isPremium()&&!sessionStorage.getItem('ac_premium_welcomed')){
     sessionStorage.setItem('ac_premium_welcomed','1');
@@ -5036,6 +5195,139 @@ function copyLink(url){
 }
 
 /* ══ ONBOARDING ══ */
+// ═══════════════════════════════════
+// TUTORIEL GUIDÉ — 5 ÉTAPES
+// ═══════════════════════════════════
+let _tutoStep = 1;
+const TUTO_STEPS = 5;
+const _tutoState = {vehicleAdded: false, entretienAdded: false, pushEnabled: false};
+
+function checkTuto(){
+  // Afficher uniquement si premier lancement ET pas de véhicule
+  if(localStorage.getItem('ac_tuto_done')) return;
+  if(S.vehicles.length > 0){ localStorage.setItem('ac_tuto_done','1'); return; }
+  setTimeout(showTuto, 800);
+}
+
+function showTuto(){
+  _tutoStep = 1;
+  tutoRenderProgress();
+  document.querySelectorAll('.tuto-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tuto-s1')?.classList.add('active');
+  document.getElementById('mo-tuto')?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function tutoRenderProgress(){
+  const el = document.getElementById('tuto-progress');
+  if(!el) return;
+  el.innerHTML = Array.from({length:TUTO_STEPS},(_,i)=>
+    `<div class="tuto-dot${i+1===_tutoStep?' on':''}"></div>`
+  ).join('');
+}
+
+function tutoGoTo(n){
+  _tutoStep = n;
+  tutoRenderProgress();
+  document.querySelectorAll('.tuto-step').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('tuto-s'+n);
+  if(el){ el.style.opacity='0'; el.classList.add('active'); setTimeout(()=>{el.style.transition='opacity .25s';el.style.opacity='1';},10); }
+}
+
+function tutoNext(){
+  if(_tutoStep < TUTO_STEPS) tutoGoTo(_tutoStep + 1);
+  else tutoFinish();
+}
+
+function tutoSkip(){
+  tutoFinish();
+}
+
+function tutoAddVehicle(){
+  // Fermer le tuto temporairement, ouvrir le modal véhicule
+  document.getElementById('mo-tuto')?.classList.remove('open');
+  document.body.style.overflow = '';
+  openVeh();
+  // Écouter la fermeture du modal pour reprendre le tuto
+  const orig = saveVeh.toString();
+  const _origSaveVeh = saveVeh;
+  window._tutoSaveVehWrap = async function(){
+    await _origSaveVeh.apply(this, arguments);
+    if(S.vehicles.length > 0){
+      _tutoState.vehicleAdded = true;
+      setTimeout(()=>{ showTuto(); tutoGoTo(3); }, 400);
+    }
+  };
+  // Patch temporaire
+  window.saveVeh = window._tutoSaveVehWrap;
+}
+
+function tutoAddEntretien(){
+  document.getElementById('mo-tuto')?.classList.remove('open');
+  document.body.style.overflow = '';
+  if(S.vehicles.length > 0) openEnt(null, S.vehicles[0].id);
+  else openEnt();
+  const _origSaveEnt = saveEnt;
+  window._tutoSaveEntWrap = async function(){
+    await _origSaveEnt.apply(this, arguments);
+    _tutoState.entretienAdded = true;
+    setTimeout(()=>{ showTuto(); tutoGoTo(4); }, 400);
+  };
+  window.saveEnt = window._tutoSaveEntWrap;
+}
+
+async function tutoActivatePush(){
+  try{
+    await registerPush();
+    _tutoState.pushEnabled = true;
+    toast('Notifications activées !','s');
+  }catch(e){}
+  tutoNext();
+}
+
+function tutoFinish(){
+  // Restaurer les fonctions originales si patchées
+  if(window._tutoSaveVehWrap) delete window.saveVeh;
+  if(window._tutoSaveEntWrap) delete window.saveEnt;
+  // Construire le récap
+  const feats = [];
+  if(_tutoState.vehicleAdded || S.vehicles.length > 0){
+    const v = S.vehicles[0];
+    feats.push(`✅ Véhicule ajouté${v?' — '+v.marque+' '+v.modele:''}`);
+  }
+  if(_tutoState.entretienAdded || S.ents.length > 0){
+    feats.push('✅ Premier entretien enregistré');
+  }
+  if(_tutoState.pushEnabled){
+    feats.push('✅ Notifications activées');
+  }
+  const recapEl = document.getElementById('tuto-recap-feats');
+  if(recapEl && feats.length){
+    recapEl.innerHTML = feats.map(f=>`<div class="tuto-feat" style="padding:10px 14px"><span style="font-size:.84rem;font-weight:600;color:var(--txt)">${f}</span></div>`).join('');
+  }
+  tutoGoTo(5);
+}
+
+function closeTuto(){
+  localStorage.setItem('ac_tuto_done','1');
+  document.getElementById('mo-tuto')?.classList.remove('open');
+  document.body.style.overflow = '';
+  // Restaurer les fonctions si patchées
+  if(window._tutoSaveVehWrap){ window.saveVeh = undefined; delete window._tutoSaveVehWrap; }
+  if(window._tutoSaveEntWrap){ window.saveEnt = undefined; delete window._tutoSaveEntWrap; }
+  // Ouvrir le modal véhicule si pas encore ajouté
+  if(!S.vehicles.length) setTimeout(()=>openVeh(), 300);
+}
+
+// Surcharge de tutoFinish pour vraiment fermer
+const _tutoFinishOrig = tutoFinish;
+// Le bouton "Découvrir" dans l'étape 5 appelle closeTuto
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelector('#tuto-s5 .btn')?.addEventListener('click',()=>{
+    closeTuto();
+  },true);
+});
+
 function checkOnboarding(){
   if(localStorage.getItem('ac_onboarded')) return;
   if(S.vehicles.length) return; // déjà des véhicules = pas nouveau
