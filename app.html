@@ -701,6 +701,14 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ei-inline-cost{font-size:.82rem;font-weight:800;color:var(--ok);background:#F0FDF4;padding:3px 8px;border-radius:6px;border:1px solid #BBF7D0;white-space:nowrap}
 .ei-inline-date{font-size:.68rem;color:var(--txm);font-weight:500}
 .ei-inline-photo{width:16px;height:16px;color:var(--txm);opacity:.6}
+
+/* ═══ BARRE BIENVENUE ═══ */
+.welcome-bar{border-radius:16px;padding:16px 18px;margin-bottom:16px;position:relative;overflow:hidden;background:#fff;border:1px solid rgba(184,196,216,.4);box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.welcome-bar-greeting{font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.welcome-bar-name{font-size:1.15rem;font-weight:900;color:var(--txt);letter-spacing:-.02em;margin-bottom:10px}
+.welcome-bar-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;font-size:.82rem;font-weight:600}
+.welcome-bar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.welcome-bar-msg{flex:1;line-height:1.4}
 </style>
 </head>
 <body>
@@ -2509,6 +2517,50 @@ function renderView(){
   updateDot();
 }
 
+function getWelcomeBar(){
+  const now = new Date();
+  const h = now.getHours();
+  const greeting = h < 12 ? 'Bonjour' : h < 18 ? 'Bonne après-midi' : 'Bonsoir';
+  const name = S.user?.user_metadata?.prenom || S.user?.user_metadata?.name || '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Trouver la situation la plus urgente
+  const allRaps = getRappels();
+  const urgent = allRaps.filter(r=>r.sev==='danger');
+  const rcUrgent = S.rappels_custom.filter(r=>r.date_rappel&&Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0);
+  const docsUrgent = S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0);
+  const totalUrgent = urgent.length + rcUrgent.length + docsUrgent.length;
+  const soon30 = allRaps.filter(r=>r.sev==='warn'||(r.sev==='ok'&&r.days!==undefined&&r.days<=30));
+  let statusBg, statusBorder, statusDot, statusMsg;
+  if(totalUrgent > 0){
+    const first = urgent[0];
+    const vName = first?.v ? first.v.marque+' '+first.v.modele : '';
+    statusBg='#FEF2F2'; statusBorder='#FECACA'; statusDot='#DC2626';
+    statusMsg = totalUrgent===1
+      ? (vName ? `${first.ti?.label||'Entretien'} en retard — ${vName}` : `${totalUrgent} entretien en retard`)
+      : `${totalUrgent} entretiens en retard`;
+  } else if(soon30.length > 0){
+    const next = soon30[0];
+    const vName = next?.v ? next.v.marque+' '+next.v.modele : '';
+    const days = next?.days;
+    statusBg='#FFFBEB'; statusBorder='#FDE68A'; statusDot='#D97706';
+    statusMsg = `${next.ti?.label||'Entretien'} dans ${days}j${vName?' — '+vName:''}`;
+  } else if(S.vehicles.length > 0){
+    statusBg='#F0FDF4'; statusBorder='#BBF7D0'; statusDot='#16A34A';
+    statusMsg = 'Tous vos véhicules sont à jour ✓';
+  } else {
+    statusBg='#EFF6FF'; statusBorder='#BFDBFE'; statusDot='#2563EB';
+    statusMsg = 'Ajoutez votre premier véhicule pour commencer';
+  }
+  return `<div class="welcome-bar">
+    <div class="welcome-bar-greeting">${greeting}</div>
+    <div class="welcome-bar-name">${esc(name)||'Bienvenue'} 👋</div>
+    <div class="welcome-bar-status" style="background:${statusBg};border:1px solid ${statusBorder}">
+      <div class="welcome-bar-dot" style="background:${statusDot}"></div>
+      <div class="welcome-bar-msg" style="color:${statusDot==='#DC2626'?'#991B1B':statusDot==='#D97706'?'#92400E':statusDot==='#16A34A'?'#166534':'#1E40AF'}">${statusMsg}</div>
+    </div>
+  </div>`;
+}
+
 function renderDash(){
   const el=g('d-ctn');
   const raps=getRappels(),urgent=raps.filter(r=>r.sev!=='ok');
@@ -2524,13 +2576,7 @@ function renderDash(){
   // Prochaine échéance globale
   const nextRap=raps.find(r=>r.sev!=='danger'&&r.kind==='date');
   const nextDays=nextRap?nextRap.days:null;
-  let h=`<div class="stats-row">
-    <div class="stat"><div class="stat-v" data-count="${S.vehicles.length}">0</div><div class="stat-l">Véhicule${S.vehicles.length>1?'s':''}</div></div>
-    <div class="stat"><div class="stat-v" data-count="${S.ents.length}">0</div><div class="stat-l">Entretiens</div></div>
-    <div class="stat"><div class="stat-v" data-count="${Math.round(total)}" data-prefix="" data-suffix="€" style="font-size:1.1rem;color:var(--ok)">0€</div><div class="stat-l">Coût total</div></div>
-    <div class="stat"><div class="stat-v" data-count="${totalUrgent}" style="color:${totalUrgent?'var(--err)':'var(--ok)'}">0</div><div class="stat-l">Alerte${totalUrgent>1?'s':''}</div></div>
-    ${nextDays!==null?`<div class="stat"><div class="stat-v" style="font-size:1rem;color:var(--warn)">${nextDays===0?"Auj.":nextDays+'j'}</div><div class="stat-l">Proch. échéance</div></div>`:''}
-  </div>`;
+  let h=getWelcomeBar();
   if(totalUrgent){
     h+=`<div class="sec-hdr"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Alertes actives</span><button class="sec-lnk" onclick="nav('rap')">Tout voir</button></div>`;
     h+=urgent.slice(0,3).map(r=>riHTML(r)).join('');
@@ -5437,13 +5483,7 @@ function renderFlotte(){
   const docsUrgentFlotte=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-todayF)/86400000)<=0).length;
   const totalAlertesFlotte=alertes.length+rcUrgentFlotte+docsUrgentFlotte;
   const moisCout=S.ents.filter(e=>{const d=new Date(e.date);const now=new Date();return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+(e.cout||0),0);
-  let h='';
-  // Métriques
-  h+='<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">';
-  h+='<div class="stat"><div class="stat-v">'+vehs.length+'</div><div class="stat-l">Véhicule'+(vehs.length>1?'s':'')+'</div></div>';
-  h+='<div class="stat"><div class="stat-v" style="color:'+(totalAlertesFlotte?'var(--err)':'var(--ok)')+'">'+totalAlertesFlotte+'</div><div class="stat-l">Alerte'+(totalAlertesFlotte>1?'s':'')+' urgentes</div></div>';
-  h+='<div class="stat"><div class="stat-v" style="font-size:1rem">'+fmtCout(moisCout)+'</div><div class="stat-l">Ce mois</div></div>';
-  h+='</div>';
+  let h=getWelcomeBar();
   // Bouton carburant — avant les alertes
   h+='<button class="btn-carburant" onclick="openCarburantPage()">'
     +'<div class="btn-carburant-ico">⛽</div>'
