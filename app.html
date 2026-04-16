@@ -2784,7 +2784,7 @@ function vcFullHTML(v){
         <div><span class="vs-v">${es.length}</span><span class="vs-l">Entretiens</span></div>
         <div><span class="vs-v" style="font-size:.82rem">${fmtCout(total)}</span><span class="vs-l">Coût total</span></div>
         <div><span class="vs-v" style="font-size:.78rem;color:var(--ok)">${getNextRevision(v,es)}</span><span class="vs-l">Prochaine révision</span></div>
-        ${total&&v.km_actuel?`<div><span class="vs-v" style="font-size:.78rem">${(total/v.km_actuel).toFixed(2)}€</span><span class="vs-l">€ / km</span></div>`:''}
+
         ${v.valeur_achat&&v.annee?`<div><span class="vs-v" style="font-size:.78rem;color:var(--warn)">${fmtCout(Math.max(0,v.valeur_achat*(1-0.15*Math.min(new Date().getFullYear()-v.annee,8))))}</span><span class="vs-l">Valeur est.</span></div>`:v.valeur_actuelle?`<div><span class="vs-v" style="font-size:.78rem;color:var(--warn)">${fmtCout(v.valeur_actuelle)}</span><span class="vs-l">Valeur act.</span></div>`:''}
       </div>`;
 
@@ -3694,10 +3694,7 @@ function openVehDetail(vid){
       <span class="vs-v" style="font-size:.88rem;color:${nextRevColor}">${nextRevLabel}</span>
       <span class="vs-l">Prochaine révision</span>
     </div>
-    ${total&&v.km_actuel?`<div class="full-width" style="flex-direction:row;align-items:center;justify-content:space-between;padding:10px 14px">
-      <span class="vs-l" style="text-transform:none;letter-spacing:0;font-size:.78rem">Coût moyen par kilomètre</span>
-      <span class="vs-v" style="font-size:.88rem">${(total/v.km_actuel).toFixed(2)} €/km</span>
-    </div>`:''}
+
   </div>`;
   // Graphique — bouton modal coûts
   h+=`<button class="btn btn-s" style="width:100%;margin-bottom:8px;justify-content:center;gap:8px" onclick="openCostModal('${vid}')">€ Voir les coûts par année</button>`;
