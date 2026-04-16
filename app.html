@@ -1140,11 +1140,20 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     </div>
         <!-- PHOTOS FACTURES MULTI -->
         <div style="padding:8px 0 12px">
+          <!-- Input caméra -->
+          <input type="file" id="e-photo-input-cam" accept="image/*" capture="environment" style="display:none" onchange="onPhotoSelected(this)" multiple>
+          <!-- Input galerie + PDF -->
           <input type="file" id="e-photo-input" accept="image/*,application/pdf,.pdf" style="display:none" onchange="onPhotoSelected(this)" multiple>
-          <button type="button" class="photo-btn" id="e-photo-btn" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input').click();}">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span id="e-photo-label">📎 Ajouter photos ou PDF</span>
-          </button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button type="button" class="photo-btn" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input-cam').click();}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span>Photo</span>
+            </button>
+            <button type="button" class="photo-btn" style="background:linear-gradient(135deg,#065f46 0%,#059669 100%);box-shadow:0 2px 8px rgba(5,150,105,.35)" onclick="if(getUserPlan()==='free'){showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');}else{g('e-photo-input').click();}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <span>Fichier / PDF</span>
+            </button>
+          </div>
           <div id="e-photos-list" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
           <input type="hidden" id="e-photo-url" value="">
         </div>
@@ -2976,12 +2985,14 @@ function onPhotoSelected(input){
   if(!files.length) return;
   files.forEach(file => {
     const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    const isPng = file.type === 'image/png';
     if(isPdf){
       addPhotoToList(file); // Pas de compression pour les PDF
-    } else if(file.size > 1024*1024){
+    } else if(!isPng && file.size > 2*1024*1024){
+      // Compresser uniquement les JPEG > 2Mo (pas les PNG/captures d'écran)
       compressPhoto(file).then(compressed => addPhotoToList(compressed));
     } else {
-      addPhotoToList(file);
+      addPhotoToList(file); // PNG et fichiers < 2Mo : pas de compression
     }
   });
   input.value = '';
@@ -3105,10 +3116,12 @@ async function uploadAllPhotos(entId){
     const file = _photoFiles[i];
     try{
       const isPdf = file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf');
-      const ext = isPdf ? 'pdf' : file.type === 'image/png' ? 'png' : 'jpg';
+      const isPng = file.type === 'image/png';
+      const ext = isPdf ? 'pdf' : isPng ? 'png' : 'jpg';
+      const contentType = isPdf ? 'application/pdf' : isPng ? 'image/png' : 'image/jpeg';
       const path = `${S.user.id}/${entId}_${Date.now()}_${i}.${ext}`;
       const { error } = await sb.storage.from('factures').upload(path, file, {
-        upsert: false, contentType: file.type || 'image/jpeg'
+        upsert: false, contentType: contentType
       });
       if(!error){
         const { data } = sb.storage.from('factures').getPublicUrl(path);
@@ -4548,7 +4561,7 @@ function openEnt(id,forcedVid){
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';_photoFile=null;if(_photoPreviewUrl){URL.revokeObjectURL(_photoPreviewUrl);_photoPreviewUrl=null;}if(g('e-photo-url'))g('e-photo-url').value='';if(g('e-photo-input'))g('e-photo-input').value='';hidePhotoActions();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
+    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';_photoFile=null;if(_photoPreviewUrl){URL.revokeObjectURL(_photoPreviewUrl);_photoPreviewUrl=null;}if(g('e-photo-url'))g('e-photo-url').value='';if(g('e-photo-input'))g('e-photo-input').value='';if(g('e-photo-input-cam'))g('e-photo-input-cam').value='';hidePhotoActions();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
