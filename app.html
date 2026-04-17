@@ -825,13 +825,13 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ei-swipe-bg svg{transition:transform .15s}
 .ei-wrap:has(.ei[style*="translateX(-"]) .ei-swipe-bg svg{transform:scale(1.15)}
 
-/* ── VEHICLE CARDS GRADIENT ACCENT ── */
-.vc{background:linear-gradient(160deg,#fff 60%,#f8fafc 100%);border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;border:1.5px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:box-shadow .2s ease,transform .15s ease;will-change:transform}
+/* VEHICLE CARD */
+.vc{background:linear-gradient(160deg,#fff 60%,#f8fafc 100%);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:box-shadow .2s,transform .15s;transform:translateZ(0)}
 .vc:active{transform:scale(.99)}
-.vc.expanded{box-shadow:0 6px 20px rgba(37,99,235,.14);border-color:rgba(37,99,235,.22)}
-.vc.ok{border-left-color:var(--ok);background:linear-gradient(160deg,#fff 70%,#f0fdf8 100%);border-color:rgba(5,150,105,.2)}
-.vc.warn{border-left-color:var(--warn);background:linear-gradient(160deg,#fff 70%,#fffbeb 100%);border-color:rgba(217,119,6,.2)}
-.vc.danger{border-left-color:var(--err);background:linear-gradient(160deg,#fff6f6 0%,#fff 60%);border-color:rgba(220,38,38,.2)}
+.vc.expanded{box-shadow:var(--sh-card);border-color:rgba(37,99,235,.18)}
+.vc.ok{border-left-color:var(--ok)}
+.vc.warn{border-left-color:var(--warn)}
+.vc.danger{border-left-color:var(--err);background:#FFE4E4;border-color:#FBBABA}
 
 /* ── WELCOME BAR REDESIGNÉE ── */
 .welcome-bar{border-radius:18px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 60%,#2563EB 100%);box-shadow:0 8px 24px rgba(37,99,235,.28),0 2px 8px rgba(37,99,235,.15)}
