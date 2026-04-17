@@ -20,38 +20,20 @@ exports.handler = async (event) => {
   const title  = params.get('title')   || null;
   const body   = params.get('body')    || null;
 
-  console.log('trigger-notifications: userId=', userId, 'title=', title);
-
   // Mode instantané : title + body + user_id fournis directement
   if (userId && title && body) {
     const subRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${userId}&select=*`, { headers: SB_HEADERS });
     const subArr = await subRes.json();
-    console.log('Souscriptions trouvées:', subArr.length);
-    
     if (!Array.isArray(subArr) || !subArr.length) {
       return { statusCode: 200, headers, body: JSON.stringify({ message: 'Pas de souscription' }) };
     }
-    
     const sub = subArr[0];
-    console.log('Endpoint:', sub.endpoint ? sub.endpoint.substring(0, 50) + '...' : 'VIDE');
-    
-    if (!sub.endpoint || !sub.p256dh || !sub.auth) {
-      return { statusCode: 200, headers, body: JSON.stringify({ error: 'Souscription incomplète', sub: { endpoint: !!sub.endpoint, p256dh: !!sub.p256dh, auth: !!sub.auth } }) };
-    }
-    
     const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
     try {
       await webpush.sendNotification(pushSub, JSON.stringify({ title, body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
-      console.log('Notification envoyée avec succès');
       return { statusCode: 200, headers, body: JSON.stringify({ sent: 1 }) };
     } catch(e) {
-      console.error('Erreur web-push:', e.statusCode, e.message);
-      // Si endpoint expiré, supprimer de Supabase
-      if (e.statusCode === 410 || e.statusCode === 404) {
-        await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${userId}`, { method: 'DELETE', headers: SB_HEADERS });
-        console.log('Souscription expirée supprimée');
-      }
-      return { statusCode: 200, headers, body: JSON.stringify({ error: e.message, statusCode: e.statusCode }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ error: e.message }) };
     }
   }
 
@@ -117,7 +99,9 @@ exports.handler = async (event) => {
         if (diff === 30) alerts.push({ title: `📄 ${label} expire dans 30j`, body: veh });
       });
 
-      if (!alerts.length) continue;
+      if (!alerts.length) {
+        alerts.push({ title: '🔔 AutoCarnet', body: "Aucun rappel pour aujourd'hui ✓" });
+      }
 
       const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
 
@@ -128,7 +112,7 @@ exports.handler = async (event) => {
         } catch(e) {
           if (e.statusCode === 410 || e.statusCode === 404) {
             expired++;
-            await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${sub.user_id}`, { method: 'DELETE', headers: SB_HEADERS });
+            // Ne pas supprimer — l'endpoint peut se régénérer à la prochaine ouverture de l'app
             break;
           }
           console.error('Push error:', e.message);
