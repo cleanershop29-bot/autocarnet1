@@ -5485,7 +5485,11 @@ async function registerPush(){
       await savePushSubscription(existing);
       return;
     }
-    const permission=await Notification.requestPermission();
+    // Ne demander la permission que si pas encore accordée
+    let permission=Notification.permission;
+    if(permission==='default'){
+      permission=await Notification.requestPermission();
+    }
     if(permission!=='granted'){toast('Permission refusée.','e');return;}
     const sub=await reg.pushManager.subscribe({
       userVisibleOnly:true,
@@ -5540,9 +5544,30 @@ async function unregisterPush(){
 async function checkPushStatus(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window))return false;
   try{
+    // Vérifier d'abord le navigateur
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    return !!sub;
+    if(sub) return true;
+    // Si pas de souscription locale, vérifier Supabase
+    // (peut arriver après fermeture/réouverture sur mobile)
+    if(S.user?.id){
+      const r=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
+      if(r.data?.endpoint){
+        // Souscription dans Supabase mais perdue localement → réabonner silencieusement
+        try{
+          const permission=Notification.permission;
+          if(permission==='granted'){
+            const newSub=await reg.pushManager.subscribe({
+              userVisibleOnly:true,
+              applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+            });
+            await savePushSubscription(newSub);
+            return true;
+          }
+        }catch(e){ console.log('Réabonnement silencieux échoué:',e.message); }
+      }
+    }
+    return false;
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
