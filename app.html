@@ -5536,10 +5536,20 @@ async function testPushNotif(){
   const btn = document.getElementById('btn-push-test');
   if(btn){ btn.textContent = 'Envoi…'; btn.disabled = true; }
   try{
+    // D'abord forcer un nouvel endpoint frais
+    const reg = await navigator.serviceWorker.ready;
+    const existing = await reg.pushManager.getSubscription();
+    if(existing){ await existing.unsubscribe(); }
+    const newSub = await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    await savePushSubscription(newSub);
+    // Puis envoyer le test
     const r = await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Les notifications fonctionnent correctement ✓')}`);
     const d = await r.json();
-    if(d.sent) toast('Notification envoyée — vérifiez votre téléphone','s');
-    else toast('Aucune souscription active — réactivez les notifications','e');
+    if(d.sent) toast('Notification envoyée — vérifiez votre téléphone ✓','s');
+    else toast('Erreur envoi : '+(d.error||JSON.stringify(d)),'e');
   }catch(e){ toast('Erreur : '+e.message,'e'); }
   if(btn){ btn.textContent = 'Tester'; btn.disabled = false; }
 }
