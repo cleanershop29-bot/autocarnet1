@@ -5481,28 +5481,44 @@ async function registerPush(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window)){
     toast('Notifications non supportées sur cet appareil.','e');return;
   }
+  const btnOn=document.getElementById('btn-push-on');
+  if(btnOn){btnOn.disabled=true;btnOn.textContent='Activation…';}
   try{
     const reg=await navigator.serviceWorker.ready;
-    const existing=await reg.pushManager.getSubscription();
-    if(existing){
-      toast('Notifications déjà activées ✓','s');
-      await savePushSubscription(existing);
+    // Demander permission uniquement si nécessaire (évite la double demande)
+    if(Notification.permission==='default'){
+      const perm=await Notification.requestPermission();
+      if(perm!=='granted'){
+        toast('Permission refusée.','e');
+        if(btnOn){btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
+        return;
+      }
+    } else if(Notification.permission==='denied'){
+      toast('Notifications bloquées — autorisez-les dans les paramètres du navigateur.','e');
+      if(btnOn){btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
       return;
     }
-    // Ne demander la permission que si pas encore accordée
-    let permission=Notification.permission;
-    if(permission==='default'){
-      permission=await Notification.requestPermission();
-    }
-    if(permission!=='granted'){toast('Permission refusée.','e');return;}
+    // Supprimer ancienne souscription si elle existe (force un nouvel endpoint frais)
+    const existing=await reg.pushManager.getSubscription();
+    if(existing) await existing.unsubscribe();
+    // Créer nouvelle souscription
     const sub=await reg.pushManager.subscribe({
       userVisibleOnly:true,
       applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
     await savePushSubscription(sub);
     toast('🔔 Notifications activées !','s');
+    // Mettre à jour l'UI immédiatement sans attendre renderProfil
+    const wrap=document.getElementById('push-status-wrap');
+    const btnOff=document.getElementById('btn-push-off');
+    const btnTest=document.getElementById('btn-push-test');
+    if(wrap)wrap.innerHTML='<span style="color:var(--ok)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications activées</span>';
+    if(btnOn)btnOn.style.display='none';
+    if(btnOff)btnOff.style.display='';
+    if(btnTest)btnTest.style.display='';
   }catch(e){
     toast('Erreur : '+e.message,'e');
+    if(btnOn){btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
   }
 }
 
