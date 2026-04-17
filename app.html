@@ -5477,7 +5477,7 @@ function getUserPlan(){
 function isPremium(){return getUserPlan()!=='free';}
 
 /* ══ PUSH NOTIFICATIONS ══ */
-const VAPID_PUBLIC_KEY='BE7KvvdlYZM6Ph2Eipldx1_wDUCrhSRn6FYP3CN9oQq6oRzR1T0UYecZ3xQMjruj0tTvWjwy54P7ZFJXyKNjW6Y';
+const VAPID_PUBLIC_KEY='BKchAEJMdfyokyfWnKo1h27r79OrSzeTcONy8GV5UgxL30GviVz42ok-9LvMv06s1NSfzvQBDgm5Z2HwoUXlkmo';
 
 function urlBase64ToUint8Array(base64String){
   const padding='='.repeat((4-base64String.length%4)%4);
@@ -5566,13 +5566,11 @@ async function testPushNotif(){
   try{
     const r=await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`);
     const d=await r.json();
-    if(d.sent){
-      toast('Notification envoyée ✓','s');
-    } else {
-      // Endpoint expiré — réabonner silencieusement et réessayer
-      toast('Réabonnement…','i');
+    if(d.sent) toast('Notification envoyée ✓','s');
+    else if(d.statusCode===410||d.error?.includes('410')){
+      toast('Réabonnement en cours…','i');
       await registerPush();
-    }
+    } else toast('Erreur : '+JSON.stringify(d),'e');
   }catch(e){toast('Erreur : '+e.message,'e');}
 }
 
@@ -5598,7 +5596,6 @@ async function checkPushStatus(){
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
     if(sub) return true;
-    // Fallback Android TWA : vérifier Supabase sans toucher à l'endpoint
     if(!S.user?.id) return false;
     const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
     return !!(data?.endpoint);
