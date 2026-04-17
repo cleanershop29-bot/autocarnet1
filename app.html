@@ -2755,29 +2755,7 @@ function renderView(){
   else if(v==='flotte')renderFlotte();
   else if(v==='profil'){
     renderProfil();
-    setTimeout(()=>{
-      checkPushStatus().then(active=>{
-        const wrap=document.getElementById('push-status-wrap');
-        const btnOn=document.getElementById('btn-push-on');
-        const btnOff=document.getElementById('btn-push-off');
-        if(!wrap)return;
-        if(!('PushManager' in window)||!('serviceWorker' in navigator)){
-          wrap.textContent='Notifications non supportées sur cet appareil.';
-          return;
-        }
-        if(active){
-          wrap.innerHTML='<span style="color:var(--ok)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications activées</span>';
-          if(btnOn)btnOn.style.display='none';
-          if(btnOff)btnOff.style.display='';
-          const btnTest=document.getElementById('btn-push-test');if(btnTest)btnTest.style.display='';
-        } else {
-          wrap.textContent='Recevez une alerte avant chaque échéance.';
-          if(btnOn)btnOn.style.display='';
-          if(btnOff)btnOff.style.display='none';
-          const btnTest2=document.getElementById('btn-push-test');if(btnTest2)btnTest2.style.display='none';
-        }
-      });
-    },100);
+    setTimeout(()=>checkPushStatus().then(active=>updatePushUI(active)),50);
   }
   updateDot();
 }
@@ -5068,7 +5046,7 @@ function renderProfil(){
     <div id="push-status-wrap" style="font-size:.82rem;color:var(--txm);margin-bottom:10px">Vérification…</div>
     <div class="g6">
       <button class="btn btn-p btn-sm" id="btn-push-on" onclick="registerPush()" style="display:none">🔔 Activer</button>
-      <button class="btn btn-s btn-sm" id="btn-push-off" onclick="unregisterPush().then(()=>renderProfil())" style="display:none">🔕 Désactiver</button>
+      <button class="btn btn-s btn-sm" id="btn-push-off" onclick="unregisterPush()" style="display:none">🔕 Désactiver</button>
       <button id="btn-push-test" style="display:none;background:none;border:none;font-family:inherit;font-size:.72rem;color:var(--txm);cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:2px" onclick="testPushNotif()">Tester</button>
     </div>
   </div>
@@ -5477,48 +5455,62 @@ function urlBase64ToUint8Array(base64String){
   return outputArray;
 }
 
+function updatePushUI(active){
+  const wrap=document.getElementById('push-status-wrap');
+  const btnOn=document.getElementById('btn-push-on');
+  const btnOff=document.getElementById('btn-push-off');
+  const btnTest=document.getElementById('btn-push-test');
+  if(!wrap)return;
+  if(!('PushManager' in window)||!('serviceWorker' in navigator)){
+    wrap.textContent='Notifications non supportées sur cet appareil.';
+    return;
+  }
+  if(active){
+    wrap.innerHTML='<span style="color:var(--ok);display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications activées</span>';
+    if(btnOn){btnOn.style.display='none';btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
+    if(btnOff)btnOff.style.display='';
+    if(btnTest)btnTest.style.display='';
+  } else {
+    wrap.textContent='Recevez une alerte avant chaque échéance.';
+    if(btnOn){btnOn.style.display='';btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
+    if(btnOff)btnOff.style.display='none';
+    if(btnTest)btnTest.style.display='none';
+  }
+}
+
 async function registerPush(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window)){
     toast('Notifications non supportées sur cet appareil.','e');return;
   }
+  // Afficher état intermédiaire
+  const wrap=document.getElementById('push-status-wrap');
   const btnOn=document.getElementById('btn-push-on');
   if(btnOn){btnOn.disabled=true;btnOn.textContent='Activation…';}
+  if(wrap)wrap.textContent='Activation en cours…';
   try{
     const reg=await navigator.serviceWorker.ready;
-    // Demander permission uniquement si nécessaire (évite la double demande)
     if(Notification.permission==='default'){
       const perm=await Notification.requestPermission();
       if(perm!=='granted'){
         toast('Permission refusée.','e');
-        if(btnOn){btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
-        return;
+        updatePushUI(false);return;
       }
     } else if(Notification.permission==='denied'){
-      toast('Notifications bloquées — autorisez-les dans les paramètres du navigateur.','e');
-      if(btnOn){btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
-      return;
+      toast('Notifications bloquées — autorisez-les dans les paramètres.','e');
+      updatePushUI(false);return;
     }
-    // Supprimer ancienne souscription si elle existe (force un nouvel endpoint frais)
     const existing=await reg.pushManager.getSubscription();
     if(existing) await existing.unsubscribe();
-    // Créer nouvelle souscription
     const sub=await reg.pushManager.subscribe({
       userVisibleOnly:true,
       applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
     await savePushSubscription(sub);
     toast('🔔 Notifications activées !','s');
-    // Mettre à jour l'UI immédiatement sans attendre renderProfil
-    const wrap=document.getElementById('push-status-wrap');
-    const btnOff=document.getElementById('btn-push-off');
-    const btnTest=document.getElementById('btn-push-test');
-    if(wrap)wrap.innerHTML='<span style="color:var(--ok)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications activées</span>';
-    if(btnOn)btnOn.style.display='none';
-    if(btnOff)btnOff.style.display='';
-    if(btnTest)btnTest.style.display='';
+    updatePushUI(true); // Mise à jour instantanée
   }catch(e){
     toast('Erreur : '+e.message,'e');
-    if(btnOn){btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
+    updatePushUI(false);
   }
 }
 
@@ -5536,39 +5528,35 @@ async function testPushNotif(){
   const btn = document.getElementById('btn-push-test');
   if(btn){ btn.textContent = 'Envoi…'; btn.disabled = true; }
   try{
-    // D'abord forcer un nouvel endpoint frais
-    const reg = await navigator.serviceWorker.ready;
-    const existing = await reg.pushManager.getSubscription();
-    if(existing){ await existing.unsubscribe(); }
-    const newSub = await reg.pushManager.subscribe({
-      userVisibleOnly:true,
-      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    });
-    await savePushSubscription(newSub);
-    // Puis envoyer le test
-    const r = await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Les notifications fonctionnent correctement ✓')}`);
+    const r = await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`);
     const d = await r.json();
-    if(d.sent) toast('Notification envoyée — vérifiez votre téléphone ✓','s');
-    else toast('Erreur envoi : '+(d.error||JSON.stringify(d)),'e');
+    if(d.sent) toast('Notification envoyée ✓','s');
+    else if(d.error) toast('Endpoint expiré — désactivez et réactivez les notifications','e');
+    else toast('Erreur : '+JSON.stringify(d),'e');
   }catch(e){ toast('Erreur : '+e.message,'e'); }
   if(btn){ btn.textContent = 'Tester'; btn.disabled = false; }
 }
 
 async function unregisterPush(){
+  const wrap=document.getElementById('push-status-wrap');
+  const btnOff=document.getElementById('btn-push-off');
+  if(btnOff){btnOff.disabled=true;btnOff.textContent='Désactivation…';}
+  if(wrap)wrap.textContent='Désactivation…';
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub){
-      await sub.unsubscribe();
-      // Supprimer de Supabase
-      await fetch('/.netlify/functions/save-push-sub',{
-        method:'DELETE',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({user_id:S.user.id})
-      });
-      toast('Notifications désactivées.','i');
-    }
-  }catch(e){}
+    if(sub) await sub.unsubscribe();
+    await fetch('/.netlify/functions/save-push-sub',{
+      method:'DELETE',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({user_id:S.user.id})
+    });
+    toast('Notifications désactivées.','i');
+    updatePushUI(false); // Mise à jour instantanée
+  }catch(e){
+    toast('Erreur : '+e.message,'e');
+    updatePushUI(true);
+  }
 }
 
 async function checkPushStatus(){
