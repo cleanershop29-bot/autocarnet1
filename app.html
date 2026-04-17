@@ -5555,16 +5555,15 @@ async function unregisterPush(){
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub){
-      await sub.unsubscribe();
-      await fetch('/.netlify/functions/save-push-sub',{
-        method:'DELETE',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({user_id:S.user.id})
-      });
-      toast('Notifications désactivées.','i');
-    }
-  }catch(e){}
+    if(sub) await sub.unsubscribe();
+    await fetch('/.netlify/functions/save-push-sub',{
+      method:'DELETE',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({user_id:S.user.id})
+    });
+    toast('Notifications désactivées.','i');
+    updatePushUI(false);
+  }catch(e){toast('Erreur : '+e.message,'e');}
 }
 
 async function checkPushStatus(){
