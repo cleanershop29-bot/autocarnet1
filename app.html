@@ -115,18 +115,17 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .tab.on.slide-left{animation:slide-in-left .28s cubic-bezier(.22,1,.36,1)}
 
 /* NAVBAR */
-.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(184,196,216,.5);display:flex;z-index:100;padding:4px 8px env(safe-area-inset-bottom,4px);position:relative}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 5px;border:none;background:none;font-family:inherit;font-size:.58rem;font-weight:600;color:var(--txm);cursor:pointer;position:relative;transition:color .2s;border-radius:14px}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(184,196,216,.4);display:flex;z-index:100;padding:4px 8px env(safe-area-inset-bottom,4px);will-change:transform}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 5px;border:none;background:none;font-family:inherit;font-size:.58rem;font-weight:600;color:var(--txm);cursor:pointer;position:relative;transition:color .18s ease;border-radius:14px;-webkit-tap-highlight-color:transparent}
 .nb.on{color:var(--primary)}
-.nb-ico{font-size:1.25rem;line-height:1;width:38px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background .22s cubic-bezier(.34,1.56,.64,1),transform .22s cubic-bezier(.34,1.56,.64,1)}
+.nb-ico{width:38px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background .2s cubic-bezier(.34,1.56,.64,1),transform .2s cubic-bezier(.34,1.56,.64,1);will-change:transform}
 .nb.on .nb-ico{background:var(--primary-lt);transform:scale(1.08)}
 .nb.on .nb-ico svg{stroke:var(--primary)}
 /* Pill animée sous navbar */
-#nb-pill{position:absolute;bottom:0;height:3px;background:linear-gradient(90deg,#3B82F6,#2563EB);border-radius:3px 3px 0 0;transition:left .3s cubic-bezier(.34,1.56,.64,1),width .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:10}
+#nb-pill{position:absolute;bottom:0;height:3px;background:linear-gradient(90deg,#3B82F6,#2563EB);border-radius:3px 3px 0 0;transition:left .28s cubic-bezier(.34,1.56,.64,1),width .28s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:10}
 @keyframes tab-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes rdot-pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}70%{box-shadow:0 0 0 5px rgba(220,38,38,.0)}}
-@keyframes pulse-bar{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.5;transform:scaleX(.6)}}
-.rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid var(--bg);font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;animation:rdot-pulse 1.8s ease-out infinite}
+.rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid #fff;font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;animation:rdot-pulse 1.8s ease-out infinite}
 
 /* FAB */
 #fab{position:fixed;bottom:82px;right:16px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 8px 28px rgba(37,99,235,.6),0 2px 8px rgba(37,99,235,.3),0 0 0 3px rgba(37,99,235,.12);display:none;align-items:center;justify-content:center;z-index:99;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
@@ -827,12 +826,12 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ei-wrap:has(.ei[style*="translateX(-"]) .ei-swipe-bg svg{transform:scale(1.15)}
 
 /* ── VEHICLE CARDS GRADIENT ACCENT ── */
-.vc{background:linear-gradient(160deg,#fff 60%,#f8fafc 100%);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;border:1px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:box-shadow .2s,transform .15s}
+.vc{background:linear-gradient(160deg,#fff 60%,#f8fafc 100%);border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;border:1.5px solid var(--border);border-left:4px solid var(--border);overflow:hidden;transition:box-shadow .2s ease,transform .15s ease;will-change:transform}
 .vc:active{transform:scale(.99)}
-.vc.expanded{box-shadow:var(--sh-card);border-color:rgba(37,99,235,.18)}
-.vc.ok{border-left-color:var(--ok);background:linear-gradient(160deg,#fff 70%,#f0fdf8 100%)}
-.vc.warn{border-left-color:var(--warn);background:linear-gradient(160deg,#fff 70%,#fffbeb 100%)}
-.vc.danger{border-left-color:var(--err);background:linear-gradient(160deg,#fff6f6 0%,#fff 60%);border-color:rgba(220,38,38,.18)}
+.vc.expanded{box-shadow:0 6px 20px rgba(37,99,235,.14);border-color:rgba(37,99,235,.22)}
+.vc.ok{border-left-color:var(--ok);background:linear-gradient(160deg,#fff 70%,#f0fdf8 100%);border-color:rgba(5,150,105,.2)}
+.vc.warn{border-left-color:var(--warn);background:linear-gradient(160deg,#fff 70%,#fffbeb 100%);border-color:rgba(217,119,6,.2)}
+.vc.danger{border-left-color:var(--err);background:linear-gradient(160deg,#fff6f6 0%,#fff 60%);border-color:rgba(220,38,38,.2)}
 
 /* ── WELCOME BAR REDESIGNÉE ── */
 .welcome-bar{border-radius:18px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 60%,#2563EB 100%);box-shadow:0 8px 24px rgba(37,99,235,.28),0 2px 8px rgba(37,99,235,.15)}
@@ -873,6 +872,22 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 /* ── PULL TO REFRESH SVG ── */
 #ptr-indicator{display:none;text-align:center;padding:10px 0;font-size:.78rem;color:var(--txm);font-weight:600;transition:opacity .2s}
 #ptr-spinner{animation:spin .8s linear infinite;transform-origin:center}
+/* Accélération GPU sur éléments animés */
+.tab{transform:translateZ(0);backface-visibility:hidden}
+.modal{transform:translateZ(0);backface-visibility:hidden;will-change:transform}
+.nb-ico{transform:translateZ(0)}
+#fab{transform:translateZ(0);will-change:transform}
+.vc{transform:translateZ(0)}
+/* Transitions unifiées */
+*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.btn{transition:transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .12s ease,opacity .1s ease}
+.btn:active{transform:scale(.95)!important}
+.ei-inline{transition:transform .12s ease,box-shadow .12s ease}
+.ei-inline:active{transform:scale(.985);opacity:.88}
+/* Scroll fluide */
+#main-content{-webkit-overflow-scrolling:touch;scroll-behavior:smooth;overscroll-behavior:contain}
+/* Supprime délai 300ms tap mobile */
+a,button,.btn,.nb,.ei-inline,.vc-main{touch-action:manipulation}
 
 </style>
 </head>
@@ -983,8 +998,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       <span class="nb-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14"/><path d="M3 22h12"/><path d="M7 6V4"/><path d="M11 6V4"/><path d="M15 10h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9l-3-4"/></svg></span>
       <span style="font-size:.6rem;font-weight:700;color:#D97706">Carburant</span>
     </button>
-    <button class="nb" id="nb-profil" onclick="nav('profil')">
-      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profil<span id="nb-prem" class="hidden" style="position:absolute;top:5px;right:calc(50% - 16px);"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></button>
   </nav>
 </div>
 
