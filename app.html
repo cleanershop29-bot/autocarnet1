@@ -2124,6 +2124,47 @@ async function doReg(){
     g('le').value=email;
   }
 }
+async function saveProfil(){
+  const btn=g('btn-sv-profil');
+  if(btn){btn.disabled=true;btn.textContent='Enregistrement…';}
+  const prenom=g('prof-prenom')?.value?.trim()||'';
+  const nom=g('prof-nom')?.value?.trim()||'';
+  const email=g('prof-email')?.value?.trim()||'';
+  const pass=g('prof-pass')?.value||'';
+  const societe=g('prof-societe')?.value?.trim()||undefined;
+  const adresse=g('prof-adresse')?.value?.trim()||undefined;
+  try{
+    // Mettre à jour user_metadata
+    const meta={prenom,nom,name:prenom};
+    if(societe!==undefined)meta.societe=societe;
+    if(adresse!==undefined)meta.adresse=adresse;
+    const{error:e1}=await sb.auth.updateUser({data:meta});
+    if(e1)throw e1;
+    // Mettre à jour email si changé
+    if(email&&email!==S.user.email){
+      const{error:e2}=await sb.auth.updateUser({email});
+      if(e2)throw e2;
+    }
+    // Mettre à jour mot de passe si renseigné
+    if(pass.length>=8){
+      const{error:e3}=await sb.auth.updateUser({password:pass});
+      if(e3)throw e3;
+    } else if(pass.length>0&&pass.length<8){
+      toast('Mot de passe trop court (8 caractères minimum).','e');
+      if(btn){btn.disabled=false;btn.textContent='Enregistrer';}
+      return;
+    }
+    // Rafraîchir S.user
+    const{data:{user}}=await sb.auth.getUser();
+    if(user)S.user=user;
+    toast('Profil mis à jour !','s');
+    renderProfil();
+  }catch(e){
+    toast('Erreur : '+(e.message||'inconnue'),'e');
+  }
+  if(btn){btn.disabled=false;btn.textContent='Enregistrer';}
+}
+
 async function doOut(){const hadUser=!!S.user;resetState();showAuth();if(hadUser){try{await sb.auth.signOut();}catch(e){}}}
 
 function showReset(){
