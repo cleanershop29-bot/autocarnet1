@@ -111,20 +111,26 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .tab.on.slide-left{animation:slide-in-left .28s cubic-bezier(.22,1,.36,1)}
 
 /* NAVBAR */
-.navbar{position:fixed;bottom:0;left:0;right:0;background:#0A0F1E;border-top:1px solid rgba(255,255,255,.07);display:flex;z-index:100;padding:4px 8px env(safe-area-inset-bottom,4px);isolation:isolate;box-shadow:0 -6px 28px rgba(0,0,0,.4)}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 5px;border:none;background:none;font-family:inherit;font-size:.58rem;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;position:relative;transition:color .18s;border-radius:14px}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(160deg,#1E3A8A 0%,#1D4ED8 60%,#2563EB 100%);border-top:1px solid rgba(255,255,255,.12);display:flex;z-index:100;padding:4px 8px env(safe-area-inset-bottom,4px);isolation:isolate;box-shadow:0 -4px 24px rgba(37,99,235,.35);overflow:hidden}
+/* Shimmer sur la navbar */
+.navbar::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:nb-shimmer 4s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes nb-shimmer{0%{left:-100%}60%,100%{left:160%}}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 5px;border:none;background:none;font-family:inherit;font-size:.58rem;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;position:relative;transition:color .18s;border-radius:14px;z-index:1}
 .nb.on{color:#fff}
-.nb-ico{font-size:1.25rem;line-height:1;width:38px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background .2s,transform .2s}
-.nb.on .nb-ico{background:rgba(255,255,255,.14);transform:scale(1.08)}
-.nb svg{stroke:rgba(255,255,255,.4)}
+/* Bounce au tap — C */
+.nb-ico{font-size:1.25rem;line-height:1;width:38px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background .2s,transform .2s cubic-bezier(.34,1.56,.64,1)}
+.nb:active .nb-ico{animation:nb-bounce .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes nb-bounce{0%{transform:scale(1)}40%{transform:scale(1.25)}70%{transform:scale(.95)}100%{transform:scale(1.08)}}
+.nb.on .nb-ico{background:rgba(255,255,255,.18);transform:scale(1.08)}
+.nb svg{stroke:rgba(255,255,255,.45)}
 .nb.on .nb-ico svg{stroke:#fff}
 @keyframes tab-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes rdot-pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}70%{box-shadow:0 0 0 5px rgba(220,38,38,.0)}}
 @keyframes pulse-bar{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.5;transform:scaleX(.6)}}
-.rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid #0A0F1E;font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;animation:rdot-pulse 1.8s ease-out infinite}
+.rdot{position:absolute;top:3px;right:calc(50% - 16px);min-width:16px;height:16px;background:var(--err);border-radius:8px;border:2px solid #1D4ED8;font-size:.55rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;animation:rdot-pulse 1.8s ease-out infinite}
 /* Bouton initiales navbar */
-.nb-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.2);transition:transform .2s,border-color .2s;letter-spacing:0}
-.nb.on .nb-avatar{border-color:rgba(255,255,255,.7);transform:scale(1.08)}
+.nb-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.3);transition:transform .2s cubic-bezier(.34,1.56,.64,1),border-color .2s,background .2s;letter-spacing:0}
+.nb.on .nb-avatar{border-color:rgba(255,255,255,.8);background:rgba(255,255,255,.25);transform:scale(1.08)}
 
 /* FAB */
 #fab{position:fixed;bottom:82px;right:16px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 8px 28px rgba(37,99,235,.6),0 2px 8px rgba(37,99,235,.3),0 0 0 3px rgba(37,99,235,.12);display:none;align-items:center;justify-content:center;z-index:99;font-weight:300;transition:transform .2s,box-shadow .2s}
