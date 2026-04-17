@@ -5579,7 +5579,12 @@ async function checkPushStatus(){
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    return !!sub;
+    if(sub) return true;
+    // Fallback Android TWA : la souscription locale peut être perdue après fermeture
+    // On vérifie Supabase sans toucher à l'endpoint existant
+    if(!S.user?.id) return false;
+    const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
+    return !!(data?.endpoint);
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
