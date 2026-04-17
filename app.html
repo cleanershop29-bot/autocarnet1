@@ -5564,9 +5564,27 @@ async function unregisterPush(){
 async function checkPushStatus(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window))return false;
   try{
+    // 1. Vérifier localement d'abord (rapide)
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    return !!sub;
+    if(sub) return true;
+    // 2. Si pas de souscription locale, vérifier Supabase
+    // Sur Android PWA, la souscription locale peut être perdue après fermeture
+    if(!S.user?.id) return false;
+    const {data} = await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
+    if(!data?.endpoint) return false;
+    // 3. Souscription dans Supabase mais perdue localement — réabonner silencieusement
+    if(Notification.permission==='granted'){
+      try{
+        const newSub=await reg.pushManager.subscribe({
+          userVisibleOnly:true,
+          applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+        await savePushSubscription(newSub);
+        return true;
+      }catch(e){ return true; } // Endpoint Supabase existe donc on dit actif
+    }
+    return true; // Supabase a une entrée = était actif
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
