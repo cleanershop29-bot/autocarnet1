@@ -3,13 +3,19 @@
   node_bundler = "esbuild"
 
 [functions."send-notifications"]
-  schedule = "0 7 * * *"
+  schedule = "0 * * * *"
 
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
 [[headers]]
   for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Content-Type  = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/service-worker.js"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
     Content-Type  = "application/javascript; charset=utf-8"

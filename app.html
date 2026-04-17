@@ -5049,6 +5049,15 @@ function renderProfil(){
       <button class="btn btn-s btn-sm" id="btn-push-off" onclick="unregisterPush()" style="display:none">🔕 Désactiver</button>
       <button id="btn-push-test" style="display:none;background:none;border:none;font-family:inherit;font-size:.72rem;color:var(--txm);cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:2px" onclick="testPushNotif()">Tester</button>
     </div>
+    <div id="notif-heure-wrap" style="display:none;margin-top:12px">
+      <label class="fl" style="margin-bottom:6px">Heure de réception des alertes</label>
+      <div style="display:flex;align-items:center;gap:10px">
+        <select id="notif-heure-select" class="fc" style="width:auto;padding:8px 12px" onchange="saveHeureNotif(this.value)">
+          ${[6,7,8,9,10,12,14,16,18,20].map(h=>`<option value="${h}">${h}h00</option>`).join('')}
+        </select>
+        <span style="font-size:.78rem;color:var(--txm)">chaque jour</span>
+      </div>
+    </div>
   </div>
 
   <!-- ══ MES DONNÉES ══ -->
@@ -5460,6 +5469,7 @@ function updatePushUI(active){
   const btnOn=document.getElementById('btn-push-on');
   const btnOff=document.getElementById('btn-push-off');
   const btnTest=document.getElementById('btn-push-test');
+  const heureWrap=document.getElementById('notif-heure-wrap');
   if(!wrap)return;
   if(!('PushManager' in window)||!('serviceWorker' in navigator)){
     wrap.textContent='Notifications non supportées sur cet appareil.';
@@ -5470,12 +5480,27 @@ function updatePushUI(active){
     if(btnOn){btnOn.style.display='none';btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
     if(btnOff)btnOff.style.display='';
     if(btnTest)btnTest.style.display='';
+    if(heureWrap){
+      heureWrap.style.display='';
+      // Charger l'heure depuis Supabase
+      sb.from('push_subscriptions').select('heure_notif').eq('user_id',S.user.id).maybeSingle().then(({data})=>{
+        const sel=document.getElementById('notif-heure-select');
+        if(sel&&data?.heure_notif!=null) sel.value=data.heure_notif;
+      });
+    }
   } else {
     wrap.textContent='Recevez une alerte avant chaque échéance.';
     if(btnOn){btnOn.style.display='';btnOn.disabled=false;btnOn.textContent='🔔 Activer';}
     if(btnOff)btnOff.style.display='none';
     if(btnTest)btnTest.style.display='none';
+    if(heureWrap)heureWrap.style.display='none';
   }
+}
+
+async function saveHeureNotif(heure){
+  if(!S.user?.id) return;
+  await sb.from('push_subscriptions').update({heure_notif: parseInt(heure)}).eq('user_id', S.user.id);
+  toast('Heure mise à jour — alertes à '+heure+'h00 chaque jour','s');
 }
 
 async function registerPush(){
