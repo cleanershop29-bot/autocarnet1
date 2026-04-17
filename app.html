@@ -2755,7 +2755,27 @@ function renderView(){
   else if(v==='flotte')renderFlotte();
   else if(v==='profil'){
     renderProfil();
-    setTimeout(()=>checkPushStatus().then(active=>updatePushUI(active)),50);
+    setTimeout(()=>{
+      checkPushStatus().then(active=>{
+        const wrap=document.getElementById('push-status-wrap');
+        const btnOn=document.getElementById('btn-push-on');
+        const btnOff=document.getElementById('btn-push-off');
+        if(!wrap)return;
+        if(!('PushManager' in window)||!('serviceWorker' in navigator)){
+          wrap.textContent='Notifications non supportées sur cet appareil.';
+          return;
+        }
+        if(active){
+          wrap.innerHTML='<span style="color:var(--ok)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications activées</span>';
+          if(btnOn)btnOn.style.display='none';
+          if(btnOff)btnOff.style.display='';
+        } else {
+          wrap.textContent='Recevez une alerte avant chaque échéance.';
+          if(btnOn)btnOn.style.display='';
+          if(btnOff)btnOff.style.display='none';
+        }
+      });
+    },100);
   }
   updateDot();
 }
@@ -5507,35 +5527,24 @@ async function registerPush(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window)){
     toast('Notifications non supportées sur cet appareil.','e');return;
   }
-  // Afficher état intermédiaire
-  const wrap=document.getElementById('push-status-wrap');
-  const btnOn=document.getElementById('btn-push-on');
-  if(btnOn){btnOn.disabled=true;btnOn.textContent='Activation…';}
-  if(wrap)wrap.textContent='Activation en cours…';
   try{
     const reg=await navigator.serviceWorker.ready;
-    if(Notification.permission==='default'){
-      const perm=await Notification.requestPermission();
-      if(perm!=='granted'){
-        toast('Permission refusée.','e');
-        updatePushUI(false);return;
-      }
-    } else if(Notification.permission==='denied'){
-      toast('Notifications bloquées — autorisez-les dans les paramètres.','e');
-      updatePushUI(false);return;
-    }
     const existing=await reg.pushManager.getSubscription();
-    if(existing) await existing.unsubscribe();
+    if(existing){
+      toast('Notifications déjà activées ✓','s');
+      await savePushSubscription(existing);
+      return;
+    }
+    const permission=await Notification.requestPermission();
+    if(permission!=='granted'){toast('Permission refusée.','e');return;}
     const sub=await reg.pushManager.subscribe({
       userVisibleOnly:true,
       applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
     await savePushSubscription(sub);
     toast('🔔 Notifications activées !','s');
-    updatePushUI(true); // Mise à jour instantanée
   }catch(e){
     toast('Erreur : '+e.message,'e');
-    updatePushUI(false);
   }
 }
 
@@ -5549,65 +5558,28 @@ async function savePushSubscription(sub){
   });
 }
 
-async function testPushNotif(){
-  const btn = document.getElementById('btn-push-test');
-  if(btn){ btn.textContent = 'Envoi…'; btn.disabled = true; }
-  try{
-    const r = await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`);
-    const d = await r.json();
-    if(d.sent) toast('Notification envoyée ✓','s');
-    else if(d.error) toast('Endpoint expiré — désactivez et réactivez les notifications','e');
-    else toast('Erreur : '+JSON.stringify(d),'e');
-  }catch(e){ toast('Erreur : '+e.message,'e'); }
-  if(btn){ btn.textContent = 'Tester'; btn.disabled = false; }
-}
-
 async function unregisterPush(){
-  const wrap=document.getElementById('push-status-wrap');
-  const btnOff=document.getElementById('btn-push-off');
-  if(btnOff){btnOff.disabled=true;btnOff.textContent='Désactivation…';}
-  if(wrap)wrap.textContent='Désactivation…';
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub) await sub.unsubscribe();
-    await fetch('/.netlify/functions/save-push-sub',{
-      method:'DELETE',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({user_id:S.user.id})
-    });
-    toast('Notifications désactivées.','i');
-    updatePushUI(false); // Mise à jour instantanée
-  }catch(e){
-    toast('Erreur : '+e.message,'e');
-    updatePushUI(true);
-  }
+    if(sub){
+      await sub.unsubscribe();
+      await fetch('/.netlify/functions/save-push-sub',{
+        method:'DELETE',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({user_id:S.user.id})
+      });
+      toast('Notifications désactivées.','i');
+    }
+  }catch(e){}
 }
 
 async function checkPushStatus(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window))return false;
   try{
-    // 1. Vérifier localement d'abord (rapide)
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub) return true;
-    // 2. Si pas de souscription locale, vérifier Supabase
-    // Sur Android PWA, la souscription locale peut être perdue après fermeture
-    if(!S.user?.id) return false;
-    const {data} = await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
-    if(!data?.endpoint) return false;
-    // 3. Souscription dans Supabase mais perdue localement — réabonner silencieusement
-    if(Notification.permission==='granted'){
-      try{
-        const newSub=await reg.pushManager.subscribe({
-          userVisibleOnly:true,
-          applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-        });
-        await savePushSubscription(newSub);
-        return true;
-      }catch(e){ return true; } // Endpoint Supabase existe donc on dit actif
-    }
-    return true; // Supabase a une entrée = était actif
+    return !!sub;
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
