@@ -107,13 +107,17 @@ html,body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe U
       <div style="font-size:.72rem;color:var(--txm);text-align:center;margin-top:4px">Lien valable 7 jours · Sans engagement</div>
     </div>
 
-    <!-- FORMULAIRE INSCRIPTION -->
     <div class="state" id="s-signup">
       <div style="margin-bottom:18px">
         <div style="font-size:.92rem;font-weight:800;color:var(--txt);margin-bottom:4px">Créer mon compte</div>
         <div style="font-size:.78rem;color:var(--txm)">Pour accéder au véhicule partagé</div>
       </div>
       <div id="signup-error" class="error-box"></div>
+      <button class="btn btn-s" onclick="doGoogle()" style="margin-bottom:0">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="sep"><div class="sep-line"></div><span class="sep-txt">OU</span><div class="sep-line"></div></div>
       <div class="fg"><label class="fl">Prénom</label><input class="fc" id="reg-name" type="text" placeholder="Votre prénom" autocomplete="given-name"></div>
       <div class="fg"><label class="fl">Email</label><input class="fc" id="reg-email" type="email" placeholder="vous@email.com" autocomplete="email"></div>
       <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="reg-pass" type="password" placeholder="8 caractères minimum" autocomplete="new-password"></div>
@@ -128,6 +132,11 @@ html,body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe U
         <div style="font-size:.78rem;color:var(--txm)">Pour accepter l'invitation</div>
       </div>
       <div id="login-error" class="error-box"></div>
+      <button class="btn btn-s" onclick="doGoogle()" style="margin-bottom:0">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="sep"><div class="sep-line"></div><span class="sep-txt">OU</span><div class="sep-line"></div></div>
       <div class="fg"><label class="fl">Email</label><input class="fc" id="log-email" type="email" placeholder="vous@email.com" autocomplete="email"></div>
       <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="log-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
       <button class="btn btn-p" id="btn-login" onclick="doLogin()">Se connecter et accepter</button>
@@ -155,7 +164,34 @@ let sb, _inv=null;
 
 window.addEventListener('DOMContentLoaded', async()=>{
   sb=window.supabase.createClient(SB_URL,SB_KEY);
-  const token=new URLSearchParams(window.location.search).get('token');
+
+  // Récupérer le token depuis l'URL ou sessionStorage (après redirect OAuth)
+  let token=new URLSearchParams(window.location.search).get('token');
+
+  // Si retour OAuth (hash dans l'URL), récupérer la session
+  if(window.location.hash&&window.location.hash.includes('access_token')){
+    // Supabase gère le hash automatiquement, on attend la session
+    await new Promise(r=>setTimeout(r,800));
+    const{data:{session}}=await sb.auth.getSession();
+    if(session){
+      // Récupérer le token depuis sessionStorage
+      const savedToken=sessionStorage.getItem('ac_invite_token');
+      if(savedToken){
+        sessionStorage.removeItem('ac_invite_token');
+        // Charger l'invitation et l'accepter
+        const{data:inv}=await sb.from('partages').select('*').eq('token',savedToken).eq('status','pending').single();
+        if(inv){
+          _inv=inv;
+          await acceptAndRedirect();
+          return;
+        }
+      }
+    }
+    // Si pas de token sauvegardé, aller sur app.html
+    window.location.href='/app.html';
+    return;
+  }
+
   if(!token){showInvalid('Aucun token d\'invitation trouvé.');return;}
   await loadInvitation(token);
 });
@@ -209,6 +245,17 @@ async function acceptAndRedirect(){
   }catch(e){
     showState('s-success'); // On redirige quand même
   }
+}
+
+async function doGoogle(){
+  // Sauvegarder le token avant redirect
+  const token=new URLSearchParams(window.location.search).get('token');
+  if(token) sessionStorage.setItem('ac_invite_token',token);
+  const{error}=await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.href.split('?')[0]} // invite.html sans params
+  });
+  if(error) alert('Erreur Google : '+error.message);
 }
 
 async function doSignup(){
