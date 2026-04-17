@@ -1,5 +1,5 @@
-// Netlify Scheduled Function — s'execute chaque matin à 8h
-// Configuration dans netlify.toml : [functions."send-notifications"] schedule = "0 7 * * *"
+// Netlify Scheduled Function — s'execute toutes les heures
+// Configuration dans netlify.toml : schedule = "0 * * * *"
 
 const SB_URL = 'https://qhacwsklhlsfyfxwnjff.supabase.co';
 const SB_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI5NzEyNiwiZXhwIjoyMDg5ODczMTI2fQ._glWcFJIdUUECVRiOiOUQCz5DN6A4Vz1fOiB1OdHpdw';
@@ -11,12 +11,24 @@ const webpush = require('web-push');
 webpush.setVapidDetails('mailto:contact@autocarnet.fr', VAPID_PUBLIC, VAPID_PRIVATE);
 
 exports.handler = async () => {
-  console.log('send-notifications: démarrage');
+  // Heure actuelle en France (UTC+1 hiver, UTC+2 été)
+  const now = new Date();
+  const offsetFrance = now.toLocaleString('en-US', { timeZone: 'Europe/Paris', hour: 'numeric', hour12: false });
+  const heureFrance = parseInt(offsetFrance);
+  
+  console.log(`send-notifications: heure France = ${heureFrance}h`);
+
   const today = new Date(); today.setHours(0,0,0,0);
 
-  const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=*`, { headers: SB_HEADERS });
+  // Récupérer uniquement les abonnés dont l'heure correspond à maintenant
+  const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?heure_notif=eq.${heureFrance}&select=*`, { headers: SB_HEADERS });
   const subs = await subsRes.json();
-  if (!Array.isArray(subs) || !subs.length) return { statusCode: 200, body: 'Aucun abonné' };
+  
+  console.log(`Abonnés à ${heureFrance}h : ${Array.isArray(subs) ? subs.length : 0}`);
+  
+  if (!Array.isArray(subs) || !subs.length) {
+    return { statusCode: 200, body: JSON.stringify({ message: `Aucun abonné à ${heureFrance}h` }) };
+  }
 
   let sent = 0, errors = 0, expired = 0;
 
@@ -79,12 +91,15 @@ exports.handler = async () => {
         try {
           await webpush.sendNotification(pushSub, JSON.stringify({ title: alert.title, body: alert.body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
           sent++;
+          console.log(`Envoyé à ${sub.user_id}: ${alert.title}`);
         } catch(e) {
           if (e.statusCode === 410 || e.statusCode === 404) {
             expired++;
             await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${sub.user_id}`, { method: 'DELETE', headers: SB_HEADERS });
+            console.log(`Souscription expirée supprimée: ${sub.user_id}`);
             break;
           }
+          console.error('Push error:', e.message);
           errors++;
         }
       }
@@ -94,6 +109,6 @@ exports.handler = async () => {
     }
   }
 
-  console.log(`send-notifications: ${sent} envoyés, ${errors} erreurs, ${expired} expirés`);
-  return { statusCode: 200, body: JSON.stringify({ sent, errors, expired }) };
+  console.log(`Résultat: ${sent} envoyés, ${errors} erreurs, ${expired} expirés`);
+  return { statusCode: 200, body: JSON.stringify({ sent, errors, expired, heure: heureFrance }) };
 };
