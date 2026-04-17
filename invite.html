@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr" style="color-scheme:light !important">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Invitation AutoCarnet</title>
+<meta name="theme-color" content="#0A0F1E">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--primary:#2563EB;--primary-dk:#1D4ED8;--txt:#0A0F1E;--txm:#64748B;--border:#E2E8F0;--r:16px}
+html,body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#0A0F1E;color:var(--txt);overscroll-behavior:none}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.screen::before{content:'';position:absolute;top:-30%;left:-20%;width:60%;height:80%;background:radial-gradient(ellipse,rgba(37,99,235,.18) 0%,transparent 70%);pointer-events:none}
+.screen::after{content:'';position:absolute;bottom:-20%;right:-10%;width:50%;height:60%;background:radial-gradient(ellipse,rgba(99,102,241,.12) 0%,transparent 70%);pointer-events:none}
+.card{background:#fff;border-radius:28px;padding:32px 28px;width:100%;max-width:390px;box-shadow:0 32px 80px rgba(0,0,0,.5);position:relative;z-index:1;animation:card-in .45s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes card-in{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px}
+.logo-ico{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,99,235,.45)}
+.logo-txt{font-size:1.3rem;font-weight:900;letter-spacing:-.5px;color:var(--txt)}
+.logo-txt span{color:var(--primary)}
+/* États */
+.state{display:none}
+.state.on{display:block}
+/* Invitation */
+.inv-hero{text-align:center;margin-bottom:24px}
+.inv-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:#fff;margin:0 auto 14px;box-shadow:0 4px 20px rgba(37,99,235,.3)}
+.inv-title{font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:6px;letter-spacing:-.02em}
+.inv-sub{font-size:.84rem;color:var(--txm);line-height:1.6}
+.inv-veh{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #BFDBFE;border-radius:14px;padding:14px 16px;margin:16px 0;display:flex;align-items:center;gap:12px}
+.inv-veh-ico{font-size:2rem;flex-shrink:0}
+.inv-veh-info{flex:1;min-width:0}
+.inv-veh-name{font-size:.94rem;font-weight:800;color:var(--txt)}
+.inv-veh-sub{font-size:.75rem;color:#2563EB;margin-top:2px;font-weight:600}
+/* Boutons */
+.btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-size:.92rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s,box-shadow .15s;margin-bottom:10px}
+.btn:active{transform:scale(.97)}
+.btn-p{background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+.btn-s{background:#fff;color:var(--txt);border:1.5px solid var(--border)}
+/* Auth forms */
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:.75rem;font-weight:600;color:var(--txm);margin-bottom:5px;letter-spacing:.01em}
+.fc{width:100%;padding:11px 13px;border:2px solid rgba(184,196,216,.7);border-radius:10px;font-family:inherit;font-size:.93rem;color:var(--txt);background:#fff;transition:.2s;outline:none}
+.fc:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.sep{display:flex;align-items:center;gap:10px;margin:14px 0}
+.sep-line{flex:1;height:1px;background:#E8EDF5}
+.sep-txt{font-size:.75rem;color:#94A3B8;font-weight:600;letter-spacing:.04em}
+.error-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:10px 13px;font-size:.82rem;color:#DC2626;margin-bottom:14px;display:none}
+.success-box{background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:10px 13px;font-size:.82rem;color:#065F46;margin-bottom:14px;display:none}
+/* Loading */
+.loader{text-align:center;padding:20px 0;color:var(--txm);font-size:.88rem}
+.spinner{width:32px;height:32px;border:3px solid #E2E8F0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Expirée / invalide */
+.err-ico{font-size:3rem;text-align:center;margin-bottom:14px}
+.back-link{text-align:center;margin-top:16px}
+.back-link a{color:var(--primary);font-size:.84rem;font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="card">
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
+      <div class="logo-txt">Auto<span>Carnet</span></div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="state on" id="s-loading">
+      <div class="loader">
+        <div class="spinner"></div>
+        Vérification de l'invitation…
+      </div>
+    </div>
+
+    <!-- INVALIDE / EXPIRÉE -->
+    <div class="state" id="s-invalid">
+      <div class="err-ico">⚠️</div>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:6px">Invitation invalide</div>
+        <div style="font-size:.84rem;color:var(--txm);line-height:1.6" id="invalid-msg">Ce lien d'invitation est invalide ou a expiré.</div>
+      </div>
+      <div class="back-link"><a href="/app.html">Aller sur AutoCarnet →</a></div>
+    </div>
+
+    <!-- INVITATION VALIDE -->
+    <div class="state" id="s-invite">
+      <div class="inv-hero">
+        <div class="inv-avatar" id="inv-avatar">?</div>
+        <div class="inv-title" id="inv-title">Vous avez été invité</div>
+        <div class="inv-sub" id="inv-sub">Rejoignez AutoCarnet pour accéder au véhicule partagé.</div>
+      </div>
+      <div class="inv-veh" id="inv-veh-card">
+        <div class="inv-veh-ico" id="inv-veh-ico">🚗</div>
+        <div class="inv-veh-info">
+          <div class="inv-veh-name" id="inv-veh-name">—</div>
+          <div class="inv-veh-sub">Véhicule partagé</div>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="showSignup()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Créer mon compte
+      </button>
+      <button class="btn btn-s" onclick="showLogin()">J'ai déjà un compte</button>
+      <div style="font-size:.72rem;color:var(--txm);text-align:center;margin-top:4px">Lien valable 7 jours · Sans engagement</div>
+    </div>
+
+    <!-- FORMULAIRE INSCRIPTION -->
+    <div class="state" id="s-signup">
+      <div style="margin-bottom:18px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--txt);margin-bottom:4px">Créer mon compte</div>
+        <div style="font-size:.78rem;color:var(--txm)">Pour accéder au véhicule partagé</div>
+      </div>
+      <div id="signup-error" class="error-box"></div>
+      <div class="fg"><label class="fl">Prénom</label><input class="fc" id="reg-name" type="text" placeholder="Votre prénom" autocomplete="given-name"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fc" id="reg-email" type="email" placeholder="vous@email.com" autocomplete="email"></div>
+      <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="reg-pass" type="password" placeholder="8 caractères minimum" autocomplete="new-password"></div>
+      <button class="btn btn-p" id="btn-signup" onclick="doSignup()">Créer mon compte et accepter</button>
+      <button class="btn btn-s" onclick="showInvite()" style="margin-top:0">← Retour</button>
+    </div>
+
+    <!-- FORMULAIRE CONNEXION -->
+    <div class="state" id="s-login">
+      <div style="margin-bottom:18px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--txt);margin-bottom:4px">Se connecter</div>
+        <div style="font-size:.78rem;color:var(--txm)">Pour accepter l'invitation</div>
+      </div>
+      <div id="login-error" class="error-box"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fc" id="log-email" type="email" placeholder="vous@email.com" autocomplete="email"></div>
+      <div class="fg"><label class="fl">Mot de passe</label><input class="fc" id="log-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-p" id="btn-login" onclick="doLogin()">Se connecter et accepter</button>
+      <button class="btn btn-s" onclick="showInvite()" style="margin-top:0">← Retour</button>
+    </div>
+
+    <!-- SUCCÈS -->
+    <div class="state" id="s-success">
+      <div style="text-align:center">
+        <div style="font-size:3.5rem;margin-bottom:16px;animation:card-in .5s ease both">🎉</div>
+        <div style="font-size:1.05rem;font-weight:800;color:var(--txt);margin-bottom:8px">Invitation acceptée !</div>
+        <div style="font-size:.84rem;color:var(--txm);line-height:1.6;margin-bottom:24px" id="success-msg">Le véhicule est maintenant visible dans votre espace Équipe.</div>
+        <button class="btn btn-p" onclick="window.location.href='/app.html'">
+          Ouvrir AutoCarnet →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL='https://qhacwsklhlsfyfxwnjff.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY';
+let sb, _inv=null;
+
+window.addEventListener('DOMContentLoaded', async()=>{
+  sb=window.supabase.createClient(SB_URL,SB_KEY);
+  const token=new URLSearchParams(window.location.search).get('token');
+  if(!token){showInvalid('Aucun token d\'invitation trouvé.');return;}
+  await loadInvitation(token);
+});
+
+async function loadInvitation(token){
+  try{
+    const{data,error}=await sb.from('partages')
+      .select('*')
+      .eq('token',token)
+      .eq('status','pending')
+      .single();
+    if(error||!data){showInvalid('Ce lien d\'invitation est invalide ou a déjà été utilisé.');return;}
+    // Vérifier expiration
+    if(data.token_expires_at&&new Date(data.token_expires_at)<new Date()){
+      showInvalid('Ce lien d\'invitation a expiré. Demandez un nouveau lien à l\'expéditeur.');return;
+    }
+    _inv=data;
+    // Charger infos véhicule
+    const{data:veh}=await sb.from('vehicles').select('*').eq('id',data.vehicle_id).single();
+    // Charger infos propriétaire
+    const ownerInitial='A'; // pas d'accès direct aux user_metadata d'un autre user
+    g('inv-avatar').textContent=ownerInitial;
+    g('inv-title').textContent='Vous avez été invité sur AutoCarnet';
+    g('inv-sub').textContent=`Rejoignez AutoCarnet pour accéder au véhicule partagé et collaborer avec votre équipe.`;
+    if(veh){
+      g('inv-veh-ico').textContent=veh.emoji||'🚗';
+      g('inv-veh-name').textContent=(veh.marque||'')+(veh.modele?' '+veh.modele:'');
+    }
+    // Pré-remplir email si disponible
+    if(data.invited_email){
+      g('reg-email').value=data.invited_email;
+      g('log-email').value=data.invited_email;
+    }
+    showState('s-invite');
+  }catch(e){
+    showInvalid('Erreur lors du chargement de l\'invitation.');
+  }
+}
+
+async function acceptAndRedirect(){
+  if(!_inv)return;
+  try{
+    const{data:{user}}=await sb.auth.getUser();
+    if(!user)return;
+    await sb.from('partages').update({status:'accepted',invited_user_id:user.id}).eq('id',_inv.id).eq('invited_email',user.email);
+    showState('s-success');
+  }catch(e){
+    showState('s-success'); // On redirige quand même
+  }
+}
+
+async function doSignup(){
+  const name=g('reg-name').value.trim();
+  const email=g('reg-email').value.trim().toLowerCase();
+  const pass=g('reg-pass').value;
+  const errEl=g('signup-error');
+  errEl.style.display='none';
+  if(!name)return showErr(errEl,'Prénom requis.');
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showErr(errEl,'Email invalide.');
+  if(pass.length<8)return showErr(errEl,'Mot de passe : 8 caractères minimum.');
+  const btn=g('btn-signup');btn.disabled=true;btn.textContent='Création…';
+  const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name,prenom:name}}});
+  if(error){btn.disabled=false;btn.textContent='Créer mon compte et accepter';return showErr(errEl,error.message);}
+  if(data?.session?.user){
+    await acceptAndRedirect();
+  } else {
+    // Email confirmation activée
+    showState('s-success');
+    g('success-msg').textContent='Compte créé ! Vérifiez vos emails pour confirmer, puis connectez-vous sur AutoCarnet. L\'invitation sera en attente dans l\'onglet Équipe.';
+  }
+  btn.disabled=false;btn.textContent='Créer mon compte et accepter';
+}
+
+async function doLogin(){
+  const email=g('log-email').value.trim().toLowerCase();
+  const pass=g('log-pass').value;
+  const errEl=g('login-error');
+  errEl.style.display='none';
+  if(!email||!pass)return showErr(errEl,'Remplissez tous les champs.');
+  const btn=g('btn-login');btn.disabled=true;btn.textContent='Connexion…';
+  const{error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){btn.disabled=false;btn.textContent='Se connecter et accepter';return showErr(errEl,error.message==='Invalid login credentials'?'Email ou mot de passe incorrect.':error.message);}
+  await acceptAndRedirect();
+  btn.disabled=false;btn.textContent='Se connecter et accepter';
+}
+
+function showState(id){
+  document.querySelectorAll('.state').forEach(s=>s.classList.remove('on'));
+  const el=document.getElementById(id);if(el)el.classList.add('on');
+}
+function showInvite(){showState('s-invite');}
+function showSignup(){showState('s-signup');}
+function showLogin(){showState('s-login');}
+function showInvalid(msg){g('invalid-msg').textContent=msg;showState('s-invalid');}
+function showErr(el,msg){el.textContent=msg;el.style.display='block';}
+function g(id){return document.getElementById(id);}
+</script>
+</body>
+</html>

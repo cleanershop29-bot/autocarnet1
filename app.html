@@ -246,6 +246,29 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 
 /* FAMILLE */
 .si{background:#fff;border-radius:14px;padding:13px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:8px;border:1px solid rgba(184,196,216,.6)}
+
+/* SIGNALEMENT */
+.sig-card{background:#fff;border-radius:14px;padding:13px 14px;margin-bottom:8px;border:1px solid rgba(184,196,216,.6);box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.sig-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3.5px;border-radius:3px 0 0 3px}
+.sig-card.urgent::before{background:#DC2626}
+.sig-card.normal::before{background:#D97706}
+.sig-card.traite::before{background:#059669}
+.sig-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sig-cat-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.sig-titre{font-size:.86rem;font-weight:700;color:var(--txt)}
+.sig-meta{font-size:.72rem;color:var(--txm);margin-top:2px}
+.sig-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.65rem;font-weight:800;margin-left:auto;flex-shrink:0}
+.sig-badge.urgent{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}
+.sig-badge.normal{background:#FFFBEB;color:#D97706;border:1px solid #FDE68A}
+.sig-badge.traite{background:#ECFDF5;color:#059669;border:1px solid #A7F3D0}
+.sig-desc{font-size:.78rem;color:var(--txm);line-height:1.5;margin-bottom:8px}
+.sig-actions{display:flex;gap:6px;flex-wrap:wrap}
+.chip-cat{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:20px;border:1.5px solid rgba(184,196,216,.7);background:#fff;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s;white-space:nowrap}
+.chip-cat.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.urgence-toggle{display:flex;background:#F1F5F9;border-radius:10px;padding:3px;margin-bottom:14px}
+.urgence-btn{flex:1;padding:8px;border:none;background:none;border-radius:8px;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
+.urgence-btn.on.normal{background:#FFFBEB;color:#D97706}
+.urgence-btn.on.urgent{background:#FEF2F2;color:#DC2626}
 .sav{width:40px;height:40px;border-radius:50%;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
 .sinf{flex:1;min-width:0}
 .sem{font-size:.88rem;font-weight:700}
@@ -1449,6 +1472,58 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 </div>
 
 <!-- Modal Invitation -->
+<!-- Modal Signalement Problème -->
+<div class="mo" id="mo-sig" onclick="if(event.target===this)cm('sig')">
+  <div class="modal">
+    <div class="mhdr">
+      <div class="mtit" style="display:flex;align-items:center;gap:7px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Signaler un problème
+      </div>
+      <button class="mcls" onclick="cm('sig')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbdy">
+      <input type="hidden" id="sig-vid">
+      <!-- Véhicule concerné -->
+      <div style="background:#F8FAFC;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:.82rem;color:var(--txm);display:flex;align-items:center;gap:8px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        <span id="sig-veh-name" style="font-weight:600;color:var(--txt)">—</span>
+      </div>
+      <!-- Catégorie -->
+      <div style="font-size:.75rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Catégorie</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="sig-cats">
+        <button class="chip-cat on" data-cat="Mécanique" onclick="selectSigCat(this)">🔧 Mécanique</button>
+        <button class="chip-cat" data-cat="Carrosserie" onclick="selectSigCat(this)">🚗 Carrosserie</button>
+        <button class="chip-cat" data-cat="Pneus" onclick="selectSigCat(this)">🛞 Pneus</button>
+        <button class="chip-cat" data-cat="Électrique" onclick="selectSigCat(this)">⚡ Électrique</button>
+        <button class="chip-cat" data-cat="Autre" onclick="selectSigCat(this)">📋 Autre</button>
+      </div>
+      <!-- Description -->
+      <div class="fg"><label class="fl">Description</label><textarea class="fc" id="sig-desc" rows="3" placeholder="Décrivez le problème observé…" style="resize:none"></textarea></div>
+      <!-- Urgence -->
+      <div style="font-size:.75rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Urgence</div>
+      <div class="urgence-toggle" style="margin-bottom:14px">
+        <button class="urgence-btn on normal" id="sig-urg-normal" onclick="setSigUrgence(false)">Normal</button>
+        <button class="urgence-btn urgent" id="sig-urg-urgent" onclick="setSigUrgence(true)">🚨 Urgent</button>
+      </div>
+      <!-- Photo optionnelle -->
+      <input type="file" id="sig-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onSigPhotoSelected(this)">
+      <button type="button" onclick="g('sig-photo-input').click()" style="width:100%;padding:10px;border:1.5px dashed rgba(184,196,216,.8);border-radius:10px;background:#F8FAFC;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Ajouter une photo (optionnel)
+      </button>
+      <div id="sig-photo-preview" style="margin-bottom:4px"></div>
+    </div>
+    <div class="mft">
+      <button class="btn btn-s btn-sm" onclick="cm('sig')">Annuler</button>
+      <button class="btn btn-sm" id="btn-sv-sig" onclick="saveSig()" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;box-shadow:0 4px 12px rgba(220,38,38,.3)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        Envoyer le signalement
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="mo" id="mo-inv" onclick="if(event.target===this)cm('inv')">
   <div class="modal modal-c">
     <div class="mhdr"><div class="mtit">Partager un véhicule</div><button class="mcls" onclick="cm('inv')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
@@ -1881,7 +1956,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte'};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],signalements:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte'};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -2125,7 +2200,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.signalements=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -2279,7 +2354,7 @@ function showRGPD(){
 async function loadAll(){
   const dc=document.getElementById('d-ctn'),vc=document.getElementById('vh-ctn');
   if(dc)showSkeleton(dc);if(vc)showSkeleton(vc);
-  await loadVehs();await Promise.all([loadEnts(),loadPartages(),loadRappelsCustom(),loadDocuments(),loadVehNotes()]);
+  await loadVehs();await Promise.all([loadEnts(),loadPartages(),loadRappelsCustom(),loadDocuments(),loadVehNotes(),loadSignalements()]);
 }
 async function loadVehs(){
   if(!S.user?.id)return;
@@ -2614,39 +2689,131 @@ async function sendInv(){
   if(!vid)return toast('Sélectionnez un véhicule.','e');
   if(!email)return toast('Email requis.','e');
   if(email===S.user.email)return toast('Vous ne pouvez pas vous inviter.','e');
-  // Vérifier doublon
   const alreadyInvited=S.partages.find(p=>p.owner_id===S.user.id&&p.vehicle_id===vid&&p.invited_email===email&&p.status!=='rejected');
   if(alreadyInvited)return toast('Une invitation existe déjà pour cet email.','e');
   const v=S.vehicles.find(x=>x.id===vid);
   const vname=v?(v.marque+' '+v.modele):'le véhicule';
-  const appUrl=window.location.origin+'/app.html';
-  const lines=[
-    'Bonjour !',
-    'Je t invite a rejoindre mon AutoCarnet pour '+vname+'.',
-    '',
-    '1. Va sur : '+appUrl,
-    '2. Cree un compte avec : '+email,
-    '3. Onglet Équipe > accepte mon invitation',
-    '',
-    'AutoCarnet - Carnet entretien numerique'
-  ];
-  const msg=lines.join('\n');
-  const{error}=await sb.from('partages').insert({vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending'});
+  // Générer un token unique
+  const token=crypto.randomUUID().replace(/-/g,'');
+  const tokenExpires=new Date(Date.now()+7*24*60*60*1000).toISOString();
+  const{data:inv,error}=await sb.from('partages').insert({
+    vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending',
+    token,token_expires_at:tokenExpires
+  }).select().single();
   if(error)return toast('Erreur : '+error.message,'e');
+  // Lien d'invitation dédié
+  const inviteUrl=`${window.location.origin}/invite.html?token=${token}`;
+  const ownerName=S.user.user_metadata?.prenom||S.user.user_metadata?.name||'Un utilisateur';
+  const msg=`${ownerName} vous invite sur AutoCarnet pour accéder au véhicule ${vname}.\n\nCliquez sur ce lien pour accepter :\n${inviteUrl}\n\n(Lien valable 7 jours)`;
   cm('inv');
   await loadPartages();
   renderView();
-  // Copier dans presse-papier + proposer partage natif
   try{
     await navigator.clipboard.writeText(msg);
-    toast('✅ Invitation créée ! Message copié — envoyez-le à '+email,'s');
+    toast('Invitation créée ! Lien copié — envoyez-le à '+email,'s');
   }catch(e){
-    toast('✅ Invitation créée pour '+email+' — allez dans Équipe pour voir','s');
+    toast('Invitation créée pour '+email,'s');
   }
-  // Partage natif si disponible
   if(navigator.share){
     try{await navigator.share({title:'Invitation AutoCarnet',text:msg});}catch(e){}
   }
+}
+
+/* ══ SIGNALEMENTS ══ */
+async function loadSignalements(){
+  if(!S.user?.id)return;
+  // Charger les signalements dont on est propriétaire (owner_id)
+  const{data,error}=await sb.from('signalements').select('*').eq('owner_id',S.user.id).order('created_at',{ascending:false});
+  if(!error) S.signalements=data||[];
+}
+
+let _sigUrgent=false;
+let _sigCat='Mécanique';
+let _sigPhotoFile=null;
+
+function openSig(vid){
+  if(getUserPlan()!=='pro')return showUpgradeModal('Le signalement de problème est réservé au plan Pro.');
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  g('sig-vid').value=vid;
+  g('sig-veh-name').textContent=(v.emoji||'🚗')+' '+v.marque+' '+v.modele;
+  g('sig-desc').value='';
+  g('sig-photo-preview').innerHTML='';
+  _sigUrgent=false;_sigCat='Mécanique';_sigPhotoFile=null;
+  // Reset chips
+  document.querySelectorAll('#sig-cats .chip-cat').forEach(b=>b.classList.toggle('on',b.dataset.cat==='Mécanique'));
+  // Reset urgence
+  g('sig-urg-normal').classList.add('on');g('sig-urg-urgent').classList.remove('on');
+  om('sig');
+}
+function selectSigCat(btn){
+  document.querySelectorAll('#sig-cats .chip-cat').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  _sigCat=btn.dataset.cat;
+}
+function setSigUrgence(urgent){
+  _sigUrgent=urgent;
+  g('sig-urg-normal').classList.toggle('on',!urgent);
+  g('sig-urg-urgent').classList.toggle('on',urgent);
+}
+function onSigPhotoSelected(input){
+  const file=input.files[0];if(!file)return;
+  _sigPhotoFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    g('sig-photo-preview').innerHTML=`<img src="${e.target.result}" style="width:100%;border-radius:8px;max-height:120px;object-fit:cover;margin-top:4px">`;
+  };
+  reader.readAsDataURL(file);
+}
+async function saveSig(){
+  const vid=g('sig-vid').value;
+  const desc=g('sig-desc').value.trim();
+  if(!vid)return toast('Véhicule manquant.','e');
+  const btn=g('btn-sv-sig');btn.disabled=true;btn.textContent='Envoi…';
+  let photo_url=null;
+  if(_sigPhotoFile){
+    try{
+      const path=`signalements/${S.user.id}/${Date.now()}_${_sigPhotoFile.name}`;
+      const{data:up,error:upe}=await sb.storage.from('factures').upload(path,_sigPhotoFile,{upsert:true});
+      if(!upe&&up){
+        const{data:pub}=sb.storage.from('factures').getPublicUrl(path);
+        photo_url=pub?.publicUrl||null;
+      }
+    }catch(e){}
+  }
+  // Trouver le owner du véhicule
+  const v=S.vehicles.find(x=>x.id===vid);
+  const owner_id=v?.user_id||S.user.id;
+  const{error}=await sb.from('signalements').insert({
+    vehicle_id:vid,
+    owner_id,
+    reporter_id:S.user.id,
+    reporter_email:S.user.email,
+    categorie:_sigCat,
+    description:desc||null,
+    photo_url,
+    urgent:_sigUrgent,
+    statut:'en_attente'
+  });
+  btn.disabled=false;btn.textContent='Envoyer le signalement';
+  if(error)return toast('Erreur : '+error.message,'e');
+  // Notifier le propriétaire
+  if(owner_id&&owner_id!==S.user.id){
+    const vName=v?(v.marque+' '+v.modele):'Véhicule';
+    const title=encodeURIComponent(_sigUrgent?'🚨 Problème urgent signalé':'⚠️ Nouveau signalement');
+    const body=encodeURIComponent(`${_sigCat} — ${vName}${desc?' : '+desc.slice(0,50):''}`);
+    fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${owner_id}&title=${title}&body=${body}`).catch(()=>{});
+  }
+  toast('Signalement envoyé !','s');
+  cm('sig');
+  await loadSignalements();
+  renderView();
+}
+async function updateSigStatut(id,statut){
+  const{error}=await sb.from('signalements').update({statut}).eq('id',id).eq('owner_id',S.user.id);
+  if(error)return toast('Erreur : '+error.message,'e');
+  const labels={traite:'Marqué comme traité ✅',en_cours:'En cours 🔧',rejete:'Rejeté'};
+  toast(labels[statut]||'Mis à jour','s');
+  await loadSignalements();renderView();
 }
 
 async function acceptInv(pid){
@@ -4680,31 +4847,130 @@ function toggleLaterRaps(hdr){
 
 function renderFam(){
   const el=g('fm-ctn');
-  const myVehs=S.vehicles.filter(v=>v.user_id===S.user.id);
+  const isPro=getUserPlan()==='pro';
   let h='';
+
+  // Invitations reçues en attente
   if(S.pending.length){
     h+=`<div class="sec-hdr"><span class="sec-ttl">📨 Invitations reçues</span></div>`;
-    h+=S.pending.map(p=>`<div class="si"><div class="sav">📩</div><div class="sinf"><div class="sem">Partage de véhicule</div><div class="sst">En attente de votre réponse</div></div><div class="sact"><button class="btn btn-p btn-xs" onclick="acceptInv('${p.id}')">Accepter</button><button class="btn btn-s btn-xs" onclick="rejectInv('${p.id}')">Refuser</button></div></div>`).join('');
+    h+=S.pending.map(p=>`
+      <div class="si">
+        <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="sinf" style="flex:1;min-width:0">
+          <div class="sem" style="font-weight:700">Partage de véhicule</div>
+          <div class="sst" style="font-size:.73rem;color:var(--txm);margin-top:2px">Un utilisateur vous invite à rejoindre son AutoCarnet</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-p btn-xs" onclick="acceptInv('${p.id}')">Accepter</button>
+          <button class="btn btn-s btn-xs" onclick="rejectInv('${p.id}')">Refuser</button>
+        </div>
+      </div>`).join('');
   }
-  h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🤝 Partages envoyés</span><button class="sec-lnk" onclick="openInv()">+ Partager</button></div>`;
+
+  // Partages envoyés
+  h+=`<div class="sec-hdr${S.pending.length?'':' mt12'}"><span class="sec-ttl">🤝 Partages envoyés</span><button class="sec-lnk" onclick="openInv()">+ Partager</button></div>`;
   const sent=S.partages.filter(p=>p.owner_id===S.user.id);
-  if(!sent.length)h+=`<div class="info-box">Partagez vos véhicules avec votre équipe. Ils pourront consulter et ajouter des entretiens.</div>`;
-  else h+=sent.map(p=>{
+  if(!sent.length){
+    h+=`<div style="background:#F8FAFC;border-radius:14px;padding:16px;text-align:center;border:1.5px dashed rgba(184,196,216,.7);margin-bottom:8px">
+      <div style="font-size:.84rem;color:var(--txm);line-height:1.6">Partagez vos véhicules avec votre équipe.<br>Ils pourront consulter et ajouter des entretiens.</div>
+      <button class="btn btn-p btn-sm" style="margin-top:12px" onclick="openInv()">+ Partager un véhicule</button>
+    </div>`;
+  } else {
+    h+=sent.map(p=>{
       const v=S.vehicles.find(x=>x.id===p.vehicle_id);
       const vname=v?`${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}`:'Véhicule inconnu';
       const stCol=p.status==='pending'?'var(--warn)':p.status==='accepted'?'var(--ok)':'var(--err)';
+      const stBg=p.status==='pending'?'#FFFBEB':p.status==='accepted'?'#ECFDF5':'#FEF2F2';
       const stLbl=p.status==='pending'?'En attente':p.status==='accepted'?'Accepté':'Refusé';
-      return`<div class="si"><div class="sav">${v?v.emoji||'🚗':'🚗'}</div><div class="sinf"><div class="sem">${vname}</div><div class="sst">→ ${esc(p.invited_email)} · <span style="color:${stCol}">${stLbl}</span></div></div><div class="sact">${p.status!=='rejected'?`<button class="btn btn-d btn-xs" onclick="revokeP('${p.id}')">Révoquer</button>`:''}</div></div>`;
+      return`<div class="si">
+        <div style="width:38px;height:38px;border-radius:10px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${v?v.emoji||'🚗':'🚗'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.86rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${vname}</div>
+          <div style="font-size:.72rem;color:var(--txm);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">→ ${esc(p.invited_email)}</div>
+          <div style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:700;background:${stBg};color:${stCol};margin-top:4px">${stLbl}</div>
+        </div>
+        <div style="flex-shrink:0">
+          ${p.status!=='rejected'?`<button class="btn btn-d btn-xs" onclick="revokeP('${p.id}')">Révoquer</button>`:''}
+        </div>
+      </div>`;
     }).join('');
+  }
+
+  // Véhicules partagés avec moi
   const shared=S.vehicles.filter(v=>v.user_id!==S.user.id);
   if(shared.length){
     h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🚗 Partagés avec moi</span></div>`;
     h+=shared.map(v=>{
       const p=S.partages.find(x=>x.vehicle_id===v.id&&x.invited_user_id===S.user.id);
-      return`<div class="si"><div class="sav">${v.emoji||'🚗'}</div><div class="sinf"><div class="sem">${esc(v.marque)} ${esc(v.modele)}</div><div class="sst">${esc(v.immatriculation)||'—'} · ${fmtKm(v.km_actuel)}</div></div><div class="sact">${p?`<button class="btn btn-d btn-xs" onclick="quitPartage('${p.id}')">Quitter</button>`:''}</div></div>`;
+      const sigCount=(S.signalements||[]).filter(s=>s.vehicle_id===v.id&&s.statut==='en_attente').length;
+      return`<div class="si" style="flex-direction:column;align-items:stretch;gap:10px">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:38px;height:38px;border-radius:10px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${v.emoji||'🚗'}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.86rem;font-weight:700">${esc(v.marque)} ${esc(v.modele)}</div>
+            <div style="font-size:.72rem;color:var(--txm);margin-top:2px">${esc(v.immatriculation)||'—'} · ${fmtKm(v.km_actuel)}</div>
+          </div>
+          ${p?`<button class="btn btn-d btn-xs" onclick="quitPartage('${p.id}')">Quitter</button>`:''}
+        </div>
+        ${isPro?`<button onclick="openSig('${v.id}')" style="width:100%;padding:9px;background:linear-gradient(135deg,#FEF2F2,#fff);border:1.5px solid #FECACA;border-radius:10px;font-family:inherit;font-size:.8rem;font-weight:700;color:#DC2626;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Signaler un problème
+        </button>`:''}
+      </div>`;
     }).join('');
   }
-  if(!h)h=`<div class="empty"><span class="empty-i">👥</span><div class="empty-t">Mode équipe</div><p class="empty-d">Partagez vos véhicules avec votre équipe.</p><button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button></div>`;
+
+  // Signalements reçus (propriétaire Pro)
+  if(isPro && S.signalements && S.signalements.length){
+    const pending_sigs=S.signalements.filter(s=>s.statut==='en_attente');
+    const done_sigs=S.signalements.filter(s=>s.statut!=='en_attente');
+    if(pending_sigs.length){
+      h+=`<div class="sec-hdr mt12">
+        <span class="sec-ttl">🚨 Signalements reçus</span>
+        <span style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:2px 8px;border-radius:8px;font-size:.65rem;font-weight:800">${pending_sigs.length}</span>
+      </div>`;
+      h+=pending_sigs.map(s=>{
+        const v=S.vehicles.find(x=>x.id===s.vehicle_id);
+        const catIcos={Mécanique:'🔧',Carrosserie:'🚗',Pneus:'🛞',Électrique:'⚡',Autre:'📋'};
+        const catBgs={Mécanique:'#FFF7ED',Carrosserie:'#F0F9FF',Pneus:'#F8FAFC',Électrique:'#FEFCE8',Autre:'#F8FAFC'};
+        return`<div class="sig-card ${s.urgent?'urgent':'normal'}">
+          <div class="sig-header">
+            <div class="sig-cat-ico" style="background:${catBgs[s.categorie]||'#F8FAFC'}">${catIcos[s.categorie]||'📋'}</div>
+            <div style="flex:1;min-width:0">
+              <div class="sig-titre">${esc(s.categorie)}</div>
+              <div class="sig-meta">${v?esc(v.marque)+' '+esc(v.modele):'Véhicule'} · ${esc(s.reporter_email||'')}</div>
+            </div>
+            <div class="sig-badge ${s.urgent?'urgent':'normal'}">${s.urgent?'🚨 Urgent':'Normal'}</div>
+          </div>
+          ${s.description?`<div class="sig-desc">${esc(s.description)}</div>`:''}
+          ${s.photo_url?`<img src="${esc(s.photo_url)}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;margin-bottom:8px">`:''}
+          <div class="sig-actions">
+            <button class="btn btn-p btn-xs" onclick="updateSigStatut('${s.id}','traite')">✅ Traité</button>
+            <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_cours')">🔧 En cours</button>
+            <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','rejete')">Rejeter</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    if(done_sigs.length){
+      h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ Signalements traités</span></div>`;
+      h+=done_sigs.slice(0,3).map(s=>{
+        const v=S.vehicles.find(x=>x.id===s.vehicle_id);
+        return`<div class="sig-card traite" style="opacity:.7">
+          <div class="sig-header">
+            <div style="flex:1"><div class="sig-titre">${esc(s.categorie)} — ${v?esc(v.marque)+' '+esc(v.modele):''}</div><div class="sig-meta">${esc(s.reporter_email||'')}</div></div>
+            <div class="sig-badge traite">${s.statut==='traite'?'Traité':'En cours'}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  if(!sent.length&&!shared.length&&!S.pending.length){
+    h=`<div class="empty"><span class="empty-i">👥</span><div class="empty-t">Mode équipe</div><p class="empty-d">Partagez vos véhicules avec votre équipe pour collaborer.</p><button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button></div>`;
+  }
   el.innerHTML=h;
 }
 
