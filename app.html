@@ -5511,11 +5511,11 @@ async function registerPush(){
     const reg=await navigator.serviceWorker.ready;
     const existing=await reg.pushManager.getSubscription();
     if(existing){
-      toast('Notifications déjà activées ✓','s');
       await savePushSubscription(existing);
+      updatePushUI(true);
       return;
     }
-    const permission=await Notification.requestPermission();
+    const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
     if(permission!=='granted'){toast('Permission refusée.','e');return;}
     const sub=await reg.pushManager.subscribe({
       userVisibleOnly:true,
@@ -5523,6 +5523,7 @@ async function registerPush(){
     });
     await savePushSubscription(sub);
     toast('🔔 Notifications activées !','s');
+    updatePushUI(true);
   }catch(e){
     toast('Erreur : '+e.message,'e');
   }
@@ -5571,7 +5572,11 @@ async function checkPushStatus(){
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    return !!sub;
+    if(sub) return true;
+    // Fallback Android TWA : souscription locale perdue après fermeture
+    if(!S.user?.id) return false;
+    const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
+    return !!(data?.endpoint);
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
