@@ -2769,10 +2769,14 @@ function renderView(){
           wrap.innerHTML='<span style="color:var(--ok)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications activées</span>';
           if(btnOn)btnOn.style.display='none';
           if(btnOff)btnOff.style.display='';
+          const btnTest=document.getElementById('btn-push-test');
+          if(btnTest)btnTest.style.display='';
         } else {
           wrap.textContent='Recevez une alerte avant chaque échéance.';
           if(btnOn)btnOn.style.display='';
           if(btnOff)btnOff.style.display='none';
+          const btnTest=document.getElementById('btn-push-test');
+          if(btnTest)btnTest.style.display='none';
         }
       });
     },100);
@@ -5558,6 +5562,15 @@ async function savePushSubscription(sub){
   });
 }
 
+async function testPushNotif(){
+  try{
+    const r=await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`);
+    const d=await r.json();
+    if(d.sent)toast('Notification envoyée ✓','s');
+    else toast('Erreur : '+JSON.stringify(d),'e');
+  }catch(e){toast('Erreur : '+e.message,'e');}
+}
+
 async function unregisterPush(){
   try{
     const reg=await navigator.serviceWorker.ready;
@@ -5579,12 +5592,7 @@ async function checkPushStatus(){
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub) return true;
-    // Fallback Android TWA : la souscription locale peut être perdue après fermeture
-    // On vérifie Supabase sans toucher à l'endpoint existant
-    if(!S.user?.id) return false;
-    const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
-    return !!(data?.endpoint);
+    return !!sub;
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
