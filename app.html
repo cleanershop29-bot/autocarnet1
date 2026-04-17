@@ -1917,6 +1917,10 @@ function showApp(){
   g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
   buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
   setTimeout(checkOnboarding,600);setTimeout(checkTuto,1000);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
+  // Rafraîchir silencieusement la souscription push si permission déjà accordée
+  if('serviceWorker' in navigator&&'PushManager' in window&&Notification.permission==='granted'){
+    navigator.serviceWorker.ready.then(reg=>reg.pushManager.getSubscription().then(sub=>{if(sub)savePushSubscription(sub);})).catch(()=>{});
+  }
   // Toast bienvenue Premium
   if(isPremium()&&!sessionStorage.getItem('ac_premium_welcomed')){
     sessionStorage.setItem('ac_premium_welcomed','1');
@@ -5544,30 +5548,9 @@ async function unregisterPush(){
 async function checkPushStatus(){
   if(!('serviceWorker' in navigator)||!('PushManager' in window))return false;
   try{
-    // Vérifier d'abord le navigateur
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub) return true;
-    // Si pas de souscription locale, vérifier Supabase
-    // (peut arriver après fermeture/réouverture sur mobile)
-    if(S.user?.id){
-      const r=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
-      if(r.data?.endpoint){
-        // Souscription dans Supabase mais perdue localement → réabonner silencieusement
-        try{
-          const permission=Notification.permission;
-          if(permission==='granted'){
-            const newSub=await reg.pushManager.subscribe({
-              userVisibleOnly:true,
-              applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-            });
-            await savePushSubscription(newSub);
-            return true;
-          }
-        }catch(e){ console.log('Réabonnement silencieux échoué:',e.message); }
-      }
-    }
-    return false;
+    return !!sub;
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
