@@ -2696,14 +2696,14 @@ async function sendInv(){
   // Générer un token unique
   const token=crypto.randomUUID().replace(/-/g,'');
   const tokenExpires=new Date(Date.now()+7*24*60*60*1000).toISOString();
+  const vehInfo=v?JSON.stringify({emoji:v.emoji||'🚗',marque:v.marque||'',modele:v.modele||'',immatriculation:v.immatriculation||''}):null;
+  const ownerName=S.user.user_metadata?.prenom||S.user.user_metadata?.name||'AutoCarnet';
   const{data:inv,error}=await sb.from('partages').insert({
     vehicle_id:vid,owner_id:S.user.id,invited_email:email,status:'pending',
-    token,token_expires_at:tokenExpires
+    token,token_expires_at:tokenExpires,veh_info:vehInfo
   }).select().single();
   if(error)return toast('Erreur : '+error.message,'e');
-  // Lien d'invitation dédié
   const inviteUrl=`${window.location.origin}/invite.html?token=${token}`;
-  const ownerName=S.user.user_metadata?.prenom||S.user.user_metadata?.name||'Un utilisateur';
   const msg=`${ownerName} vous invite sur AutoCarnet pour accéder au véhicule ${vname}.\n\nCliquez sur ce lien pour accepter :\n${inviteUrl}\n\n(Lien valable 7 jours)`;
   cm('inv');
   await loadPartages();

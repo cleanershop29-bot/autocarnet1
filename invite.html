@@ -173,16 +173,20 @@ async function loadInvitation(token){
       showInvalid('Ce lien d\'invitation a expiré. Demandez un nouveau lien à l\'expéditeur.');return;
     }
     _inv=data;
-    // Charger infos véhicule
-    const{data:veh}=await sb.from('vehicles').select('*').eq('id',data.vehicle_id).single();
-    // Charger infos propriétaire
-    const ownerInitial='A'; // pas d'accès direct aux user_metadata d'un autre user
-    g('inv-avatar').textContent=ownerInitial;
+    // Lire les infos véhicule depuis veh_info (stocké dans partages)
+    let veh=null;
+    if(data.veh_info){
+      try{veh=JSON.parse(data.veh_info);}catch(e){}
+    }
+    g('inv-avatar').textContent='🚗';
     g('inv-title').textContent='Vous avez été invité sur AutoCarnet';
-    g('inv-sub').textContent=`Rejoignez AutoCarnet pour accéder au véhicule partagé et collaborer avec votre équipe.`;
+    g('inv-sub').textContent='Rejoignez AutoCarnet pour accéder au véhicule partagé et collaborer avec votre équipe.';
     if(veh){
       g('inv-veh-ico').textContent=veh.emoji||'🚗';
       g('inv-veh-name').textContent=(veh.marque||'')+(veh.modele?' '+veh.modele:'');
+      if(veh.immatriculation){
+        g('inv-veh-name').textContent+=' — '+veh.immatriculation;
+      }
     }
     // Pré-remplir email si disponible
     if(data.invited_email){
