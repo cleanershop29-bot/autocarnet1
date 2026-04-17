@@ -1,88 +1,13 @@
 const SB_URL = 'https://qhacwsklhlsfyfxwnjff.supabase.co';
 const SB_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI5NzEyNiwiZXhwIjoyMDg5ODczMTI2fQ._glWcFJIdUUECVRiOiOUQCz5DN6A4Vz1fOiB1OdHpdw';
-const ADMIN_SECRET = 'AC2026admin';
+const VAPID_PUBLIC  = 'BE7KvvdlYZM6Ph2Eipldx1_wDUCrhSRn6FYP3CN9oQq6oRzR1T0UYecZ3xQMjruj0tTvWjwy54P7ZFJXyKNjW6Y';
+const VAPID_PRIVATE = 'y5GC26Lqyv-PEL85oUvfKSpPcwbSykYbHG_w1Ci-o3k';
+const ADMIN_SECRET  = 'AC2026admin';
 
-const SB_HEADERS = {
-  'apikey': SB_SERVICE_KEY,
-  'Authorization': `Bearer ${SB_SERVICE_KEY}`,
-  'Content-Type': 'application/json'
-};
+const webpush = require('web-push');
+const SB_HEADERS = { 'apikey': SB_SERVICE_KEY, 'Authorization': `Bearer ${SB_SERVICE_KEY}`, 'Content-Type': 'application/json' };
 
-const FIREBASE_PROJECT_ID = 'autocarnet-213ab';
-const FIREBASE_CLIENT_EMAIL = 'firebase-adminsdk-fbsvc@autocarnet-213ab.iam.gserviceaccount.com';
-const FIREBASE_PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDiaEmFM+tcs1qO\ntGeRMoMd4cnB3sGoyjZNUB+XcSCLymcW55iZX4Dtjh4rJzM+9+FKBhfJ4U5E1sVy\ngoEErYiU4wQHYFMBIAhx33zSTAZ2BxPO584VQC+zWOWdS7XWNvpqAwbqU8oeQOZB\n69nbv9z0XiVl1roSGZ82kYgTZ13qBT2Dren/UfHtcc4TQdTWwhFPAn99gFFWm5hJ\nCJn0cNsOS2N43MkUGGej4GazwfSK5WHTuoal/1l849G2wlVA8/7GPJr/LNE/HHDb\nKX70zaHlwGsCQBQV0H4BMp34rp8N4cUYAUwtZCfnlVaTLUdKQOqN37sExmGwITdA\n3sZ6w4v/AgMBAAECggEABUGZj1uct7q8O/rpOqA7FgsDZZpX0aTcLOBS02+/ay9o\nREpdKxZiBmHZxnOzB1+23cKVc8zkxclcrSNlfmfO93HryoYMd0a4m3guTC2SqtPQ\nPGn6SVkDonzKW+QBlTcSijqGwxLt6tTj45znomfqZ8v1v08EY94vaZNoXtb0AbZR\nQGICUhro6Wx6Mn7MGq+z+2nI7wLSc7sfdlzmuoPdNg29vC3OtaeJ6gy/sFkhIJ2U\nnICyPIiUaJxWkd31D/pFX4B28o7TQ+VSZH7M+YhjrAaepMCn6iAI4RgB5FXAUwSo\nMCps2WlnNlsuQAKCrvi4sKpzSQH89eWcOINeE1TgrQKBgQD2DzQf2YXTHv4ncLE8\nQQ0ssrQN88eupN22RK3d3m4M8b5VkfsSZ19vNtoALTHFm0D2vscDFg5ixvvVyao2\nzQLDdx+fZqx/h+1+j+Z3XXstJOWqnQGVPDxBnWcs9sHszFPp4V+/5xzdnGMn3OBT\no/qukvXFGsdgqZts89JsHUIBMwKBgQDrjdah1NPw/CbSeFVwCcA4zXnhCo/Bed5S\n1Zo8T3RW1SKAE4vWkMAcFL9w22TyJ6LdpkWVBaqkkfE1LrWIjHOR/6PZA/hmHxDy\n1Ftugc7uKeF0B3nG++lfR/ex5XcktVEU3t3y8AFcAEGk4RPheyIIQrw0F2EElANf\ncDLeU+xiBQKBgQCSnRiH6crNs2fpBEL3DiPVgF28+ob+zwm0s1OOIh0c5WZuAl/B\n5Yp98AcRl9xSTGH3JFHcyuWjgcFI77LWmG2PHonfJwSdsNaYVRIUCcV9bsDSWl85\nFv0oc6uopReEC3PspfexlvoiKi8C759S9yBFqRd8bKpkNGuCDf5RoVVU9QKBgH2V\n4LHlY54fAZ/DEmIqgLaILovh8qUHkZX+Vj4DapaFCeDZCvw5roMKOMs13YsRwM6F\nwKFkJQea28wr/BMyNsfHURb5++yOcZ3VxG2VfbsSzyXqem2xj0oCd7f8DFqg5PrI\nm/LTLRZc+KKsccoMuSdIVUk8kbg8JdQzYJuSiPv1AoGBAJPon9Jd69l3Efm5cPfy\nyOzgDvhHW/VVrHdm2RGTYC4sYPpf8WYJmbiHCAj3jiRTaD1svd+69wqnOlNYZ4Rb\n+/0FtT1h7AV2PCm69ngCXHQFem2XW6jlByiTHgt81plf+JmsPuZrt/P22JSZWobF\n/xBVvQZhV1v/rTL8Pl8ef2lo\n-----END PRIVATE KEY-----\n';
-
-// Générer un JWT pour FCM v1
-async function getAccessToken() {
-  const now = Math.floor(Date.now() / 1000);
-  const header = { alg: 'RS256', typ: 'JWT' };
-  const payload = {
-    iss: FIREBASE_CLIENT_EMAIL,
-    scope: 'https://www.googleapis.com/auth/firebase.messaging',
-    aud: 'https://oauth2.googleapis.com/token',
-    iat: now,
-    exp: now + 3600
-  };
-
-  const b64 = obj => Buffer.from(JSON.stringify(obj)).toString('base64url');
-  const signingInput = `${b64(header)}.${b64(payload)}`;
-
-  const { createSign } = require('crypto');
-  const sign = createSign('RSA-SHA256');
-  sign.update(signingInput);
-  const signature = sign.sign(FIREBASE_PRIVATE_KEY, 'base64url');
-  const jwt = `${signingInput}.${signature}`;
-
-  const r = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
-  });
-  const d = await r.json();
-  return d.access_token;
-}
-
-// Envoyer une notif via FCM v1
-async function sendFCM(endpoint, title, body, url) {
-  const token = endpoint.split('/').pop();
-  const accessToken = await getAccessToken();
-
-  const r = await fetch(`https://fcm.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/messages:send`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: {
-        token,
-        notification: { title, body },
-        webpush: {
-          notification: {
-            title,
-            body,
-            icon: 'https://autocarnet.fr/icon-192.png',
-            click_action: url || 'https://autocarnet.fr/app.html'
-          },
-          fcm_options: { link: url || 'https://autocarnet.fr/app.html' }
-        },
-        android: {
-          notification: { title, body, icon: 'icon-192', click_action: 'FLUTTER_NOTIFICATION_CLICK' }
-        }
-      }
-    })
-  });
-
-  if (!r.ok) {
-    const err = await r.json();
-    const code = err?.error?.details?.[0]?.errorCode || err?.error?.status;
-    if (code === 'UNREGISTERED' || code === 'INVALID_ARGUMENT') {
-      throw { statusCode: 410, message: 'Token invalide' };
-    }
-    throw { statusCode: r.status, message: JSON.stringify(err) };
-  }
-  return true;
-}
+webpush.setVapidDetails('mailto:contact@autocarnet.fr', VAPID_PUBLIC, VAPID_PRIVATE);
 
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
@@ -92,10 +17,10 @@ exports.handler = async (event) => {
   }
 
   const userId = params.get('user_id') || null;
-  const title  = params.get('title') || null;
-  const body   = params.get('body') || null;
+  const title  = params.get('title')   || null;
+  const body   = params.get('body')    || null;
 
-  // Mode instantané
+  // Mode instantané : title + body + user_id fournis directement
   if (userId && title && body) {
     const subRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${userId}&select=*`, { headers: SB_HEADERS });
     const subArr = await subRes.json();
@@ -103,15 +28,16 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ message: 'Pas de souscription' }) };
     }
     const sub = subArr[0];
+    const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
     try {
-      await sendFCM(sub.endpoint, title, body, 'https://autocarnet.fr/app.html');
+      await webpush.sendNotification(pushSub, JSON.stringify({ title, body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
       return { statusCode: 200, headers, body: JSON.stringify({ sent: 1 }) };
     } catch(e) {
-      return { statusCode: 200, headers, body: JSON.stringify({ error: e.message, statusCode: e.statusCode }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ error: e.message }) };
     }
   }
 
-  // Mode complet : rappels du jour
+  // Mode complet : scan de tous les rappels du jour
   const subsFilter = userId ? `user_id=eq.${userId}&select=*` : `select=*`;
   const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?${subsFilter}`, { headers: SB_HEADERS });
   const subs = await subsRes.json();
@@ -177,20 +103,25 @@ exports.handler = async (event) => {
         alerts.push({ title: '🔔 AutoCarnet', body: "Aucun rappel pour aujourd'hui ✓" });
       }
 
+      const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
+
       for (const alert of alerts) {
         try {
-          await sendFCM(sub.endpoint, alert.title, alert.body, 'https://autocarnet.fr/app.html');
+          await webpush.sendNotification(pushSub, JSON.stringify({ title: alert.title, body: alert.body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
           sent++;
         } catch(e) {
           if (e.statusCode === 410 || e.statusCode === 404) {
             expired++;
+            await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${sub.user_id}`, { method: 'DELETE', headers: SB_HEADERS });
             break;
           }
+          console.error('Push error:', e.message);
           errors++;
         }
       }
     } catch(e) {
       errors++;
+      console.error('Erreur user', sub.user_id, e.message);
     }
   }
 
