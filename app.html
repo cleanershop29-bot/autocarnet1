@@ -5566,8 +5566,13 @@ async function testPushNotif(){
   try{
     const r=await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`);
     const d=await r.json();
-    if(d.sent)toast('Notification envoyée ✓','s');
-    else toast('Erreur : '+JSON.stringify(d),'e');
+    if(d.sent){
+      toast('Notification envoyée ✓','s');
+    } else {
+      // Endpoint expiré — réabonner silencieusement et réessayer
+      toast('Réabonnement…','i');
+      await registerPush();
+    }
   }catch(e){toast('Erreur : '+e.message,'e');}
 }
 
@@ -5592,7 +5597,11 @@ async function checkPushStatus(){
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    return !!sub;
+    if(sub) return true;
+    // Fallback Android TWA : vérifier Supabase sans toucher à l'endpoint
+    if(!S.user?.id) return false;
+    const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
+    return !!(data?.endpoint);
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
