@@ -2772,13 +2772,14 @@ async function saveSig(){
   let photo_url=null;
   if(_sigPhotoFile){
     try{
-      const path=`signalements/${S.user.id}/${Date.now()}_${_sigPhotoFile.name}`;
+      const safeName=_sigPhotoFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+      const path=`signalements/${S.user.id}/${Date.now()}_${safeName}`;
       const{data:up,error:upe}=await sb.storage.from('factures').upload(path,_sigPhotoFile,{upsert:true});
       if(!upe&&up){
         const{data:pub}=sb.storage.from('factures').getPublicUrl(path);
         photo_url=pub?.publicUrl||null;
       }
-    }catch(e){}
+    }catch(e){console.error('Upload photo sig:',e);}
   }
   // Trouver le owner du véhicule
   const v=S.vehicles.find(x=>x.id===vid);
@@ -4945,7 +4946,7 @@ function renderFam(){
             <div class="sig-badge ${s.urgent?'urgent':'normal'}">${s.urgent?'🚨 Urgent':'Normal'}</div>
           </div>
           ${s.description?`<div class="sig-desc">${esc(s.description)}</div>`:''}
-          ${s.photo_url?`<img src="${esc(s.photo_url)}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;margin-bottom:8px">`:''}
+          ${s.photo_url?`<img src="${s.photo_url}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;margin-bottom:8px" onerror="this.style.display='none'">`:''}
           <div class="sig-actions">
             <button class="btn btn-p btn-xs" onclick="updateSigStatut('${s.id}','traite')">✅ Traité</button>
             <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_cours')">🔧 En cours</button>
