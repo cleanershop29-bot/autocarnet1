@@ -548,25 +548,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .sort-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
 .sort-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 /* ONBOARDING */
-#mo-onboard{position:fixed;inset:0;background:rgba(10,15,30,.7);z-index:800;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(8px)}
-#mo-onboard.open{opacity:1;pointer-events:all}
-#mo-onboard.open .ob-sheet{transform:translateY(0)}
-.ob-sheet{background:#fff;border-radius:32px 32px 0 0;width:100%;padding:0 0 40px;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto}
-.ob-header{padding:20px 24px 0;display:flex;flex-direction:column;align-items:center}
-.ob-handle{width:40px;height:5px;background:linear-gradient(90deg,#CBD5E1,#94A3B8);border-radius:3px;margin-bottom:20px}
-.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:0}
-.ob-dot{width:8px;height:8px;border-radius:50%;background:#E2E8F0;transition:.3s cubic-bezier(.34,1.56,.64,1)}
-.ob-dot.on{background:linear-gradient(135deg,#3B82F6,#2563EB);width:28px;border-radius:4px;box-shadow:0 2px 8px rgba(37,99,235,.35)}
-.ob-body{padding:24px 24px 0}
-.ob-ico{display:flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:24px;margin:0 auto 20px;position:relative}
-.ob-ttl{font-family:inherit;font-size:1.3rem;font-weight:900;text-align:center;margin-bottom:10px;letter-spacing:-.03em;color:var(--txt)}
-.ob-txt{font-size:.88rem;color:var(--txm);text-align:center;line-height:1.7;margin-bottom:24px;font-weight:500}
-.ob-feat{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
-.ob-feat-row{display:flex;align-items:center;gap:14px;border-radius:14px;padding:13px 14px;border:1px solid rgba(184,196,216,.6);background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.ob-feat-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ob-feat-txt{font-size:.87rem;font-weight:700;color:var(--txt)}
-.ob-feat-sub{font-size:.75rem;color:var(--txm);margin-top:2px;font-weight:500}
-/* Plan cards dans l'onboarding */
+/* Plan cards dans l'onboarding tutoriel */
 .ob-plan{border-radius:16px;padding:14px 16px;margin-bottom:8px;border:1.5px solid rgba(184,196,216,.6);background:#fff;cursor:pointer;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .ob-plan.pop{border-color:#10B981;background:linear-gradient(160deg,#F0FDF4,#fff);box-shadow:0 3px 14px rgba(16,185,129,.12)}
 .ob-plan.feat{border-color:var(--primary);background:linear-gradient(160deg,#EFF6FF,#fff);box-shadow:0 3px 14px rgba(37,99,235,.12)}
@@ -964,87 +946,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 <div id="tc"></div>
 
 <!-- ONBOARDING -->
-<div id="mo-onboard">
-  <div class="ob-sheet">
-    <div class="ob-header">
-      <div class="ob-handle"></div>
-      <div class="ob-dots">
-        <div class="ob-dot on"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-      </div>
-    </div>
-    <div class="ob-body">
-      <!-- Étape 1 : Bienvenue -->
-      <div class="ob-step" id="ob-s1">
-        <div class="ob-ico" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
-        </div>
-        <div class="ob-ttl">Bienvenue sur AutoCarnet !</div>
-        <div class="ob-txt">Fini les carnets papier perdus et les CT ratés.<br><strong style="color:var(--txt)">2 minutes</strong> suffisent pour configurer votre premier véhicule.</div>
-        <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="showOnboardStep(2)">Découvrir →</button>
-      </div>
-      <!-- Étape 2 : Fonctionnalités -->
-      <div class="ob-step hidden" id="ob-s2">
-        <div class="ob-ttl">Tout ce dont vous avez besoin</div>
-        <div class="ob-txt" style="margin-bottom:20px">Un seul endroit pour tout gérer.</div>
-        <div class="ob-feat">
-          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#ECFDF5"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div><div class="ob-feat-txt">Historique complet</div><div class="ob-feat-sub">Chaque entretien enregistré en un tap</div></div></div>
-          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#FEF3C7"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><div class="ob-feat-txt">Rappels automatiques</div><div class="ob-feat-sub">CT, vidange, assurance — jamais oublié</div></div></div>
-          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#EFF6FF"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="ob-feat-txt">Export PDF & CSV</div><div class="ob-feat-sub">Historique complet pour la revente</div></div></div>
-          <div class="ob-feat-row"><div class="ob-feat-ico" style="background:#FEF9C3"><span style="font-size:1.2rem">⛽</span></div><div><div class="ob-feat-txt">Prix carburant en direct</div><div class="ob-feat-sub">Stations les moins chères autour de vous</div></div></div>
-        </div>
-        <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(3)">Suivant →</button>
-      </div>
-      <!-- Étape 3 : Les plans -->
-      <div class="ob-step hidden" id="ob-s3">
-        <div class="ob-ttl">Choisissez votre formule</div>
-        <div class="ob-txt" style="margin-bottom:18px">Commencez gratuitement, évoluez selon vos besoins.</div>
-        <div class="ob-plan">
-          <div class="ob-plan-header">
-            <div class="ob-plan-name">Gratuit</div>
-            <div class="ob-plan-price">0€ <span>/ toujours</span></div>
-          </div>
-          <div class="ob-plan-desc">1 véhicule · Entretiens illimités · Rappels · Prix carburant</div>
-        </div>
-        <div class="ob-plan pop">
-          <div class="ob-plan-header">
-            <div class="ob-plan-name" style="color:#065F46">👨‍👩‍👧 Famille</div>
-            <div style="display:flex;align-items:center;gap:7px">
-              <div class="ob-plan-price">1,99€ <span>/mois</span></div>
-              <div class="ob-plan-chip chip-green">7j offerts</div>
-            </div>
-          </div>
-          <div class="ob-plan-desc">3 véhicules · Documents · Photos factures · Partage famille</div>
-        </div>
-        <div class="ob-plan feat">
-          <div class="ob-plan-header">
-            <div class="ob-plan-name" style="color:#1D4ED8">🚀 Pro</div>
-            <div style="display:flex;align-items:center;gap:7px">
-              <div class="ob-plan-price">4,99€ <span>/mois</span></div>
-              <div class="ob-plan-chip chip-blue">7j offerts</div>
-            </div>
-          </div>
-          <div class="ob-plan-desc">Véhicules illimités · Export · Flotte · Mode équipe</div>
-        </div>
-        <div style="font-size:.73rem;color:var(--txm);text-align:center;margin:12px 0 18px;font-weight:500">Sans engagement · Annulation à tout moment</div>
-        <button class="btn btn-p" style="width:100%;padding:13px" onclick="showOnboardStep(4)">Continuer →</button>
-      </div>
-      <!-- Étape 4 : C'est parti -->
-      <div class="ob-step hidden" id="ob-s4">
-        <div class="ob-ico" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);box-shadow:0 6px 24px rgba(245,158,11,.25)">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <div class="ob-ttl">C'est parti ! 🎉</div>
-        <div class="ob-txt">Votre carnet d'entretien intelligent est prêt.<br>Ajoutez votre premier véhicule — <strong style="color:var(--txt)">moins de 30 secondes.</strong></div>
-        <button class="btn btn-p" style="width:100%;margin-top:4px;padding:15px;font-size:.95rem" onclick="onboardFinish()">🚗 Ajouter mon véhicule</button>
-        <button onclick="closeOnboarding()" style="width:100%;margin-top:10px;background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;font-weight:600">Passer →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- TUTORIEL GUIDÉ -->
 <div id="mo-tuto">
   <div class="tuto-backdrop" onclick="tutoSkip()"></div>
@@ -1159,14 +1060,50 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         </div>
       </div>
 
-      <!-- Étape 5 : C'est parti ! -->
+      <!-- Étape 5 : Mode équipe & partage -->
       <div class="tuto-step" id="tuto-s5">
+        <div class="tuto-ico" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6.5" r="3"/><circle cx="6.5" cy="6.5" r="1.2" fill="#2563EB" stroke="none"/><path d="M9.2 9.2L19 19"/><path d="M15 15l2-2"/><path d="M17.5 17.5l2-2"/><circle cx="17" cy="5" r="2.2"/><circle cx="17" cy="5" r="0.9" fill="#2563EB" stroke="none"/><path d="M15.4 6.8L11 11.2"/></svg>
+        </div>
+        <div class="tuto-ttl">Partagez vos véhicules</div>
+        <div class="tuto-txt">Invitez un proche ou un collègue en un lien.<br>Il accède au véhicule, peut ajouter des entretiens et signaler des problèmes — <strong style="color:var(--txt)">vous gardez le contrôle.</strong></div>
+        <div class="tuto-features">
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#ECFDF5">👨‍👩‍👧</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Plan Famille</div>
+              <div class="tuto-feat-sub">Partagez jusqu'à 3 véhicules avec votre famille</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#EFF6FF">🚀</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Plan Pro</div>
+              <div class="tuto-feat-sub">Flotte illimitée · Signalements · Mode équipe complet</div>
+            </div>
+          </div>
+          <div class="tuto-feat">
+            <div class="tuto-feat-ico" style="background:#F8FAFC">🔒</div>
+            <div class="tuto-feat-body">
+              <div class="tuto-feat-ttl">Vous restez maître</div>
+              <div class="tuto-feat-sub">Révoquez l'accès à tout moment depuis l'onglet Équipe</div>
+            </div>
+          </div>
+        </div>
+        <div class="tuto-actions">
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoNext()">J'ai compris →</button>
+          <button class="tuto-btn-skip" onclick="tutoSkip()">Passer</button>
+        </div>
+      </div>
+
+      <!-- Étape 6 : C'est parti ! -->
+      <div class="tuto-step" id="tuto-s6">
         <div class="tuto-ico" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);font-size:2.5rem">🎉</div>
         <div class="tuto-ttl">Votre carnet est lancé !</div>
         <div class="tuto-txt" id="tuto-recap">Tout est configuré. Vous recevrez vos rappels automatiquement.</div>
         <div class="tuto-features" id="tuto-recap-feats"></div>
         <div class="tuto-actions">
-          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="tutoFinish()">Découvrir AutoCarnet →</button>
+          <button class="btn btn-p" style="width:100%;padding:14px;font-size:.95rem" onclick="closeTuto()">Découvrir AutoCarnet →</button>
         </div>
       </div>
 
@@ -2022,7 +1959,7 @@ function showApp(){
   g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
   buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
   updateNavAvatar();
-  setTimeout(checkOnboarding,600);setTimeout(checkTuto,1000);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
+  setTimeout(checkTuto,600);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
   if('serviceWorker' in navigator&&'PushManager' in window&&Notification.permission==='granted'){
     navigator.serviceWorker.ready.then(reg=>reg.pushManager.getSubscription().then(sub=>{if(sub)savePushSubscription(sub);})).catch(()=>{});
   }
@@ -5703,7 +5640,7 @@ function copyLink(url){
 // TUTORIEL GUIDÉ — 5 ÉTAPES
 // ═══════════════════════════════════
 let _tutoStep = 1;
-const TUTO_STEPS = 5;
+const TUTO_STEPS = 6;
 const _tutoState = {vehicleAdded: false, entretienAdded: false, pushEnabled: false};
 
 function checkTuto(){
@@ -5809,7 +5746,7 @@ function tutoFinish(){
   if(recapEl && feats.length){
     recapEl.innerHTML = feats.map(f=>`<div class="tuto-feat" style="padding:10px 14px"><span style="font-size:.84rem;font-weight:600;color:var(--txt)">${f}</span></div>`).join('');
   }
-  tutoGoTo(5);
+  tutoGoTo(6);
 }
 
 function closeTuto(){
@@ -5823,41 +5760,6 @@ function closeTuto(){
   if(!S.vehicles.length) setTimeout(()=>openVeh(), 300);
 }
 
-// Surcharge de tutoFinish pour vraiment fermer
-const _tutoFinishOrig = tutoFinish;
-// Le bouton "Découvrir" dans l'étape 5 appelle closeTuto
-document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelector('#tuto-s5 .btn')?.addEventListener('click',()=>{
-    closeTuto();
-  },true);
-});
-
-
-function checkOnboarding(){
-  if(localStorage.getItem('ac_onboarded')) return;
-  if(S.vehicles.length) return; // déjà des véhicules = pas nouveau
-  showOnboarding();
-}
-function showOnboarding(){
-  g('mo-onboard').classList.add('open');
-  document.body.style.overflow='hidden';
-  showOnboardStep(1);
-}
-function showOnboardStep(n){
-  document.querySelectorAll('.ob-step').forEach(s=>s.classList.add('hidden'));
-  g('ob-s'+n)?.classList.remove('hidden');
-  // Points de progression (4 maintenant)
-  document.querySelectorAll('.ob-dot').forEach((d,i)=>d.classList.toggle('on',i+1===n));
-}
-function closeOnboarding(){
-  localStorage.setItem('ac_onboarded','1');
-  g('mo-onboard').classList.remove('open');
-  document.body.style.overflow='';
-}
-function onboardFinish(){
-  closeOnboarding();
-  setTimeout(()=>openVeh(),200);
-}
 
 
 /* ══ PANNEAU ADMIN ══ */
