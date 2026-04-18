@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AutoCarnet Premium — Plans Famille & Pro | Carnet entretien voiture</title>
+<title>AutoCarnet Premium — Plans Famille &amp; Pro | Carnet entretien voiture</title>
 <meta name="description" content="Passez au plan Famille (1,99€/mois) ou Pro (4,99€/mois) pour débloquer véhicules illimités, photos de factures, export PDF et mode équipe. Essai 7 jours gratuit.">
-<meta property="og:title" content="AutoCarnet — Plans Famille & Pro">
+<meta property="og:title" content="AutoCarnet — Plans Famille &amp; Pro">
 <meta property="og:description" content="Véhicules illimités, photos de factures, export PDF, mode équipe. À partir de 1,99€/mois. Essai 7 jours gratuit.">
 <meta property="og:url" content="https://autocarnet.fr/premium.html">
 <meta property="og:type" content="website">
@@ -13,195 +13,229 @@
 <meta property="og:site_name" content="AutoCarnet">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://autocarnet.fr/premium.html">
-<meta name="theme-color" content="#0A0F1E">
-<link rel="icon" href="icon-192.png">
-
-
+<meta name="theme-color" content="#070C1A">
+<link rel="icon" href="/icon-192.png">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --ink:#0A0F1E;
-  --ink2:#1E2740;
-  --slate:#64748B;
-  --muted:#94A3B8;
-  --border:#E2E8F0;
-  --bg:#FFFFFF;
-  --bg2:#F8FAFC;
-  --accent:#2563EB;
-  --accent-lt:#EFF6FF;
-  --green:#10B981;
-  --green-lt:#ECFDF5;
-  --green-dk:#065F46;
-  --gold:#F59E0B;
-  --gold-lt:#FEF3C7;
-  --gold-mid:#FDE68A;
-  --r:16px;
+  --primary:#2563EB;
+  --primary-dk:#1D4ED8;
+  --primary-lt:#EFF6FF;
+  --ok:#059669;--ok-bg:#ECFDF5;--ok-dk:#065F46;
+  --gold:#F59E0B;--gold-bg:#FEF3C7;--gold-mid:#FDE68A;
+  --navy:#070C1A;--navy2:#0A0F1E;--navy3:#1E2740;
+  --border:#B8C4D8;
+  --surface:#fff;--bg:#F8FAFC;
+  --txt:#0A0F1E;--txm:#64748B;--txl:#94A3B8;
+  --r:14px;
 }
 html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--surface);color:var(--txt);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(226,232,240,.6);box-shadow:0 1px 12px rgba(0,0,0,.05)}
-.nav-in{width:100%;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:1rem;color:var(--ink)}
-.logo-mark{width:32px;height:32px;background:var(--ink);border-radius:9px;display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
-.nav-back{font-size:.82rem;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid var(--border);border-radius:10px;transition:.15s}
-.nav-back:hover{background:var(--bg2)}
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:56px;
+  display:flex;align-items:center;padding:0 20px;
+  background:linear-gradient(160deg,#1E3A8A 0%,#1D4ED8 60%,#2563EB 100%);
+  box-shadow:0 2px 20px rgba(37,99,235,.4);
+}
+.nav-inner{width:100%;max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:9px}
+.nav-icon{width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center}
+.nav-name{font-size:1.05rem;font-weight:900;color:#fff;letter-spacing:-.03em}
+.nav-name span{color:rgba(255,255,255,.45)}
+.nav-back{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:10px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.22);color:#fff;font-size:.78rem;font-weight:700;transition:.15s}
 
-/* HERO */
-.hero{padding:100px 20px 64px;text-align:center;background:var(--bg);position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
-.b1{width:500px;height:400px;background:radial-gradient(circle,#FDE68A,transparent 70%);top:-100px;left:-100px}
-.b2{width:400px;height:350px;background:radial-gradient(circle,#BFDBFE,transparent 70%);top:0;right:-80px}
-.b3{width:350px;height:300px;background:radial-gradient(circle,#A7F3D0,transparent 70%);bottom:-80px;left:40%}
+/* ─── HERO ─── */
+.hero{
+  padding:84px 20px 64px;text-align:center;
+  background:var(--navy);
+  background-image:
+    radial-gradient(ellipse at 20% 20%,rgba(245,158,11,.12) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(37,99,235,.16) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(5,150,105,.08) 0%,transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+  position:relative;overflow:hidden;
+}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,var(--surface));pointer-events:none}
+.hero-inner{max-width:640px;margin:0 auto;position:relative;z-index:1}
 
-.hero-inner{max-width:680px;margin:0 auto;position:relative}
-.pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--border);padding:5px 14px 5px 8px;border-radius:100px;font-size:.72rem;font-weight:800;margin-bottom:26px;box-shadow:0 2px 8px rgba(0,0,0,.06);color:var(--ink)}
+.pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:5px 14px 5px 8px;border-radius:100px;font-size:.72rem;font-weight:700;margin-bottom:26px}
 .pill-star{font-size:.85rem}
 
-h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:clamp(2.1rem,6.5vw,3.5rem);font-weight:800;line-height:1.06;letter-spacing:-.04em;margin-bottom:18px;color:var(--ink)}
-h1 em{font-style:normal;color:var(--accent)}
-.hero-p{font-size:.97rem;color:var(--slate);line-height:1.75;margin-bottom:40px;max-width:440px;margin-left:auto;margin-right:auto;font-weight:500}
+h1{font-size:clamp(2.1rem,6.5vw,3.5rem);font-weight:800;line-height:1.06;letter-spacing:-.04em;margin-bottom:18px;color:#fff}
+h1 em{font-style:normal;background:linear-gradient(90deg,#FCD34D,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-p{font-size:.97rem;color:rgba(255,255,255,.5);line-height:1.75;margin-bottom:40px;max-width:420px;margin-left:auto;margin-right:auto;font-weight:500}
 
-/* PLAN CARDS HERO */
-.hero-plans{display:grid;grid-template-columns:1fr;gap:12px;max-width:480px;margin:0 auto 28px}
-@media(min-width:480px){.hero-plans{grid-template-columns:1fr 1fr}}
-.hplan{border-radius:18px;padding:22px;text-align:left;display:flex;flex-direction:column;position:relative}
-.hplan.famille{background:#fff;border:2px solid var(--green)}
-.hplan.pro{background:#fff;border:2px solid var(--gold);box-shadow:0 8px 28px rgba(245,158,11,.18)}
-.hplan-chip{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:800;padding:3px 12px;border-radius:100px;white-space:nowrap;color:#fff}
+/* Hero plan cards */
+.hero-plans{display:grid;grid-template-columns:1fr;gap:12px;max-width:460px;margin:0 auto 24px}
+@media(min-width:460px){.hero-plans{grid-template-columns:1fr 1fr}}
+.hplan{border-radius:18px;padding:22px;text-align:left;display:flex;flex-direction:column;position:relative;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);transition:.18s}
+.hplan.famille{border-color:rgba(5,150,105,.5);background:rgba(5,150,105,.08)}
+.hplan.pro{border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.08);box-shadow:0 8px 28px rgba(245,158,11,.12)}
+.hplan-chip{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:800;padding:3px 12px;border-radius:100px;white-space:nowrap;color:#fff}
 .chip-gold{background:var(--gold)}
-.chip-green{background:var(--green)}
-.hplan-name{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--slate);margin-bottom:10px;margin-top:4px}
-.hplan-price{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:2.4rem;font-weight:800;letter-spacing:-.05em;margin-bottom:4px;line-height:1;color:var(--ink)}
-.hplan-price span{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.8rem;font-weight:500;color:var(--slate)}
-.hplan-sub{font-size:.74rem;color:var(--slate);margin-bottom:16px;font-weight:500;flex:1;line-height:1.55}
-.btn-famille{display:block;text-align:center;padding:12px;background:var(--green);color:#fff;border-radius:12px;font-size:.86rem;font-weight:800;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;border:none;cursor:pointer;width:100%;letter-spacing:-.01em}
-.btn-pro{display:block;text-align:center;padding:12px;background:var(--gold);color:#fff;border-radius:12px;font-size:.86rem;font-weight:800;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;border:none;cursor:pointer;width:100%;letter-spacing:-.01em}
+.chip-green{background:var(--ok)}
+.hplan-name{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-bottom:10px;margin-top:4px}
+.hplan-price{font-size:2.4rem;font-weight:800;letter-spacing:-.05em;margin-bottom:4px;line-height:1;color:#fff}
+.hplan-price span{font-size:.8rem;font-weight:500;color:rgba(255,255,255,.45)}
+.hplan-sub{font-size:.74rem;color:rgba(255,255,255,.45);margin-bottom:16px;font-weight:500;flex:1;line-height:1.55}
+.btn-famille{display:block;text-align:center;padding:12px;background:var(--ok);color:#fff;border-radius:12px;font-size:.86rem;font-weight:800;border:none;cursor:pointer;width:100%;letter-spacing:-.01em;font-family:inherit;transition:.15s;box-shadow:0 4px 14px rgba(5,150,105,.3)}
+.btn-famille:active{transform:scale(.97)}
+.btn-pro{display:block;text-align:center;padding:12px;background:var(--gold);color:#fff;border-radius:12px;font-size:.86rem;font-weight:800;border:none;cursor:pointer;width:100%;letter-spacing:-.01em;font-family:inherit;transition:.15s;box-shadow:0 4px 14px rgba(245,158,11,.3)}
+.btn-pro:active{transform:scale(.97)}
 
-.trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin-top:16px}
-.trust-item{display:flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:var(--slate)}
-.trust-item::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px}
+.trust-item{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35)}
+.trust-item::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(5,150,105,.7);flex-shrink:0}
 
-/* SECTION COMMONS */
-.sec-eyebrow{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:10px;text-align:center}
-h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:clamp(1.6rem,4.5vw,2.3rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:10px;text-align:center;color:var(--ink)}
+/* ─── SECTIONS ─── */
+.eyebrow{font-size:.67rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--primary);margin-bottom:10px;text-align:center}
+h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:14px;text-align:center;color:var(--txt)}
+.section{padding:72px 20px}
+.section-inner{max-width:700px;margin:0 auto}
+.section-inner.narrow{max-width:580px}
+.light{background:var(--surface)}
+.grey{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.dark{
+  background:var(--navy2);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+}
 
-/* COMPARE */
-.compare-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border)}
-.compare-inner{max-width:720px;margin:0 auto}
+/* ─── COMPARE ─── */
 .compare-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:32px}
 @media(min-width:560px){.compare-grid{grid-template-columns:repeat(3,1fr)}}
-.ccard{background:#fff;border-radius:var(--r);padding:22px;border:1.5px solid var(--border);display:flex;flex-direction:column}
-.ccard.famille{border-color:var(--green)}
-.ccard.pro{border-color:var(--gold);box-shadow:0 4px 20px rgba(245,158,11,.14);position:relative}
-.cplan{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--slate);margin-bottom:10px}
-.cprice{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:2rem;font-weight:800;letter-spacing:-.05em;margin-bottom:16px;line-height:1.1;color:var(--ink)}
-.cprice span{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.7rem;font-weight:500;color:var(--slate);letter-spacing:0}
+.ccard{background:var(--surface);border-radius:var(--r);padding:22px;border:1.5px solid var(--border);display:flex;flex-direction:column}
+.ccard.hi-green{border-color:var(--ok)}
+.ccard.hi-gold{border-color:var(--gold);box-shadow:0 4px 20px rgba(245,158,11,.12);position:relative}
+.cplan{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--txm);margin-bottom:10px}
+.cprice{font-size:2rem;font-weight:800;letter-spacing:-.05em;margin-bottom:16px;line-height:1.1;color:var(--txt)}
+.cprice span{font-size:.7rem;font-weight:500;color:var(--txm)}
 .cfeats{list-style:none;display:flex;flex-direction:column;gap:8px;flex:1}
-.cfeats li{font-size:.78rem;display:flex;align-items:flex-start;gap:8px;font-weight:500;color:var(--ink)}
-.cfeats li.off{color:var(--muted)}
+.cfeats li{font-size:.78rem;display:flex;align-items:flex-start;gap:8px;font-weight:500;color:var(--txt)}
+.cfeats li.off{color:var(--txl)}
 .ck{font-weight:800;flex-shrink:0;font-size:.78rem}
-.ck-b{color:var(--accent)}.ck-g{color:var(--green)}.ck-gold{color:var(--gold)}.ck-no{color:var(--muted)}
-.ccta{display:block;text-align:center;margin-top:18px;padding:11px;border-radius:11px;font-size:.84rem;font-weight:800;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;cursor:pointer;border:none;width:100%;letter-spacing:-.01em}
-.ccta-ghost{background:var(--bg2);color:var(--ink);border:1.5px solid var(--border)}
-.ccta-green{background:var(--green);color:#fff}
+.ck-b{color:var(--primary)}.ck-g{color:var(--ok)}.ck-gold{color:var(--gold)}.ck-no{color:var(--txl)}
+.ccta{display:block;text-align:center;margin-top:18px;padding:11px;border-radius:11px;font-size:.84rem;font-weight:800;cursor:pointer;border:none;width:100%;letter-spacing:-.01em;font-family:inherit;transition:.15s}
+.ccta:active{transform:scale(.97)}
+.ccta-ghost{background:var(--bg);color:var(--txt);border:1.5px solid var(--border)}
+.ccta-green{background:var(--ok);color:#fff}
 .ccta-gold{background:var(--gold);color:#fff}
 
-/* FEATURES */
-.feat-sec{padding:72px 20px}
-.feat-inner{max-width:600px;margin:0 auto}
+/* ─── FEATURES DÉTAILLÉES ─── */
 .feat-list{margin-top:32px;display:flex;flex-direction:column;gap:10px}
-.feat-item{background:#fff;border-radius:var(--r);padding:20px;border:1.5px solid var(--border);display:flex;align-items:flex-start;gap:14px}
-.feat-ico{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
-.fi-b{background:var(--accent-lt)}.fi-g{background:#ECFDF5}.fi-o{background:#FFFBEB}
-.fi-p{background:#F5F3FF}.fi-r{background:#FEF2F2}.fi-c{background:#ECFEFF}
-.feat-t{font-size:.9rem;font-weight:800;margin-bottom:4px;color:var(--ink)}
-.feat-d{font-size:.8rem;color:var(--slate);line-height:1.68;font-weight:500}
+.feat-item{background:var(--bg);border-radius:var(--r);padding:20px;border:1.5px solid var(--border);display:flex;align-items:flex-start;gap:14px;transition:.18s}
+.feat-item:hover{border-color:rgba(37,99,235,.25);box-shadow:0 4px 16px rgba(37,99,235,.06)}
+.feat-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.feat-t{font-size:.9rem;font-weight:800;margin-bottom:4px;color:var(--txt)}
+.feat-d{font-size:.8rem;color:var(--txm);line-height:1.68;font-weight:500}
 .feat-badge{display:inline-block;font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;letter-spacing:.02em}
-.fb-pro{background:var(--gold-lt);color:#92400E;border:1px solid var(--gold-mid)}
-.fb-both{background:var(--green-lt);color:var(--green-dk);border:1px solid #A7F3D0}
+.fb-pro{background:var(--gold-bg);color:#92400E;border:1px solid var(--gold-mid)}
+.fb-both{background:var(--ok-bg);color:var(--ok-dk);border:1px solid #A7F3D0}
 
-/* TESTIMONIALS */
-.testi-sec{padding:72px 20px;background:var(--bg2);border-top:1px solid var(--border)}
-.testi-inner{max-width:600px;margin:0 auto}
-.testi-grid{margin-top:32px;display:flex;flex-direction:column;gap:12px}
-.testi{background:#fff;border-radius:var(--r);padding:20px;border:1.5px solid var(--border)}
-.testi-stars{color:var(--gold);font-size:.9rem;margin-bottom:10px;letter-spacing:2px}
-.testi-txt{font-size:.85rem;color:var(--ink);line-height:1.7;font-weight:500;margin-bottom:12px;font-style:italic}
-.testi-author{display:flex;align-items:center;gap:10px}
-.testi-avatar{width:36px;height:36px;border-radius:50%;background:var(--ink);display:grid;place-items:center;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.84rem;font-weight:800;flex-shrink:0}
-.testi-name{font-size:.82rem;font-weight:800;color:var(--ink)}
-.testi-role{font-size:.72rem;color:var(--slate);font-weight:500}
+/* ─── VALEURS ─── */
+.values-grid{margin-top:32px;display:flex;flex-direction:column;gap:12px}
+.value-card{background:var(--surface);border-radius:var(--r);padding:22px;border:1.5px solid var(--border);display:flex;align-items:flex-start;gap:14px;transition:.18s}
+.value-card:hover{border-color:rgba(37,99,235,.25)}
+.value-ico{font-size:1.6rem;flex-shrink:0;width:42px;text-align:center}
+.value-t{font-size:.9rem;font-weight:800;margin-bottom:5px;color:var(--txt)}
+.value-d{font-size:.8rem;color:var(--txm);line-height:1.68;font-weight:500}
 
-/* FAQ */
-.faq-sec{padding:72px 20px}
-.faq-inner{max-width:600px;margin:0 auto}
-.faq-list{margin-top:32px;display:flex;flex-direction:column;gap:10px}
-.faq-item{background:var(--bg2);border-radius:var(--r);padding:18px 20px;border:1px solid var(--border)}
-.faq-q{font-size:.9rem;font-weight:800;color:var(--ink);margin-bottom:8px}
-.faq-a{font-size:.82rem;color:var(--slate);line-height:1.75;font-weight:500}
+/* ─── FAQ ─── */
+.faq-list{margin-top:32px;display:flex;flex-direction:column;gap:8px}
+.faq-item{border:1.5px solid var(--border);border-radius:14px;overflow:hidden;transition:.18s;background:var(--bg)}
+.faq-item.open{border-color:rgba(37,99,235,.28);background:var(--surface)}
+.faq-q{padding:17px 18px;font-size:.88rem;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;user-select:none;color:var(--txt)}
+.faq-ic{color:var(--primary);flex-shrink:0;transition:transform .22s cubic-bezier(.22,1,.36,1)}
+.faq-item.open .faq-ic{transform:rotate(45deg)}
+.faq-a{font-size:.83rem;color:var(--txm);line-height:1.78;font-weight:500;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .32s ease,padding .3s ease}
+.faq-item.open .faq-a{max-height:260px;padding:0 18px 17px}
 
-/* CTA FINAL */
-.cta-sec{padding:80px 20px;text-align:center;background:var(--ink);position:relative;overflow:hidden}
-.cta-sec::before{content:'';position:absolute;width:600px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.15),transparent 65%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
-.cta-sec::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.1),transparent 65%);bottom:-200px;right:-100px;pointer-events:none}
-.cta-sec h2{color:#fff;margin-bottom:12px;position:relative}
-.cta-sec p{font-size:.92rem;color:rgba(255,255,255,.6);margin-bottom:30px;line-height:1.75;font-weight:500;position:relative}
-.cta-btns{display:flex;flex-direction:column;gap:10px;align-items:center;position:relative;max-width:320px;margin:0 auto}
-.btn-cta-famille{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 28px;border-radius:13px;font-size:.92rem;font-weight:800;background:var(--green);color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;border:none;cursor:pointer;width:100%}
-.btn-cta-pro{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 28px;border-radius:13px;font-size:.92rem;font-weight:800;background:var(--gold);color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;border:none;cursor:pointer;width:100%}
-.cta-back{display:block;margin-top:20px;font-size:.78rem;color:rgba(255,255,255,.4);font-weight:600;position:relative}
+/* ─── FINAL CTA ─── */
+.final{
+  padding:80px 20px;text-align:center;
+  background:var(--navy);
+  background-image:
+    radial-gradient(ellipse at 30% 0%,rgba(245,158,11,.14) 0%,transparent 50%),
+    radial-gradient(ellipse at 70% 100%,rgba(5,150,105,.1) 0%,transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+}
+.final h2{color:#fff;font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:14px}
+.final p{font-size:.92rem;color:rgba(255,255,255,.45);margin-bottom:32px;line-height:1.78;font-weight:500}
+.final-btns{display:flex;flex-direction:column;gap:10px;align-items:center;max-width:300px;margin:0 auto}
+.btn-final-famille{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 28px;border-radius:13px;font-size:.92rem;font-weight:800;background:var(--ok);color:#fff;font-family:inherit;border:none;cursor:pointer;width:100%;box-shadow:0 4px 18px rgba(5,150,105,.35);transition:.15s}
+.btn-final-famille:active{transform:scale(.97)}
+.btn-final-pro{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 28px;border-radius:13px;font-size:.92rem;font-weight:800;background:var(--gold);color:#fff;font-family:inherit;border:none;cursor:pointer;width:100%;box-shadow:0 4px 18px rgba(245,158,11,.35);transition:.15s}
+.btn-final-pro:active{transform:scale(.97)}
+.final-back{display:block;margin-top:20px;font-size:.78rem;color:rgba(255,255,255,.3);font-weight:600}
+.final-back:hover{color:rgba(255,255,255,.5)}
 
-footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;background:#fff}
-.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
-.footer-links a{font-size:.76rem;color:var(--slate);font-weight:600}
-.footer-copy{font-size:.7rem;color:var(--muted);font-weight:500}
+/* ─── FOOTER ─── */
+footer{padding:28px 20px;border-top:1px solid var(--border);text-align:center;background:var(--surface)}
+.foot-brand{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+.foot-icon{width:24px;height:24px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center}
+.foot-name{font-size:.92rem;font-weight:900;color:var(--txm);letter-spacing:-.02em}
+.foot-name span{color:var(--primary)}
+.foot-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.foot-links a{font-size:.75rem;color:var(--txm);font-weight:600}
+.foot-copy{font-size:.68rem;color:var(--txl);margin-bottom:3px;font-weight:500}
+.foot-legal{font-size:.66rem;color:var(--txl)}
+
+/* ─── REVEAL ─── */
+.rv{opacity:1}
+.rv.init{opacity:0;transform:translateY(20px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.rv.init.show{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <div class="nav-in">
-    <a href="/" class="nav-logo">
-      <div class="logo-mark">🚗</div>
-      AutoCarnet
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <div class="nav-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+      </div>
+      <div class="nav-name">Auto<span>Carnet</span></div>
     </a>
-    <a href="/app.html" class="nav-back">← Retour à l'app</a>
+    <a href="/app.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour à l'app
+    </a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-bg">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-  </div>
   <div class="hero-inner">
-    <div class="pill"><span class="pill-star">✨</span> Plans Premium · 7 jours offerts</div>
-    <h1>Choisissez le plan<br>qui vous <em>correspond</em></h1>
-    <p class="hero-p">Essai gratuit 7 jours. Annulable à tout moment. Aucune carte bancaire requise pour commencer.</p>
-
-    <div class="hero-plans">
+    <div class="rv">
+      <div class="pill"><span class="pill-star">✨</span> Plans Premium · 7 jours offerts</div>
+    </div>
+    <div class="rv d1">
+      <h1>Choisissez le plan<br>qui vous <em>correspond</em></h1>
+    </div>
+    <div class="rv d2">
+      <p class="hero-p">Essai gratuit 7 jours. Annulable à tout moment. Aucune carte bancaire requise pour commencer.</p>
+    </div>
+    <div class="rv d2 hero-plans">
       <div class="hplan famille">
         <div class="hplan-name">👨‍👩‍👧 Famille</div>
         <div class="hplan-price">1,99€<span>/mois</span></div>
-        <div class="hplan-sub">3 véhicules · entretiens illimités · documents & photos</div>
+        <div class="hplan-sub">3 véhicules · entretiens illimités · documents &amp; photos</div>
         <button class="btn-famille" onclick="stripeCheckout('famille')">Essayer 7 jours →</button>
       </div>
       <div class="hplan pro">
+        <div class="hplan-chip chip-gold">Recommandé</div>
         <div class="hplan-name">🚀 Pro</div>
         <div class="hplan-price">4,99€<span>/mois</span></div>
-        <div class="hplan-sub">tout illimité · toutes les fonctionnalités</div>
+        <div class="hplan-sub">Tout illimité · toutes les fonctionnalités</div>
         <button class="btn-pro" onclick="stripeCheckout('pro')">Essayer 7 jours →</button>
       </div>
     </div>
-
-    <div class="trust-row">
-      <div class="trust-item">Paiement sécurisé</div>
+    <div class="rv d3 trust-row">
+      <div class="trust-item">Paiement sécurisé Stripe</div>
       <div class="trust-item">Annulable à tout moment</div>
       <div class="trust-item">Sans engagement</div>
     </div>
@@ -209,40 +243,38 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
 </section>
 
 <!-- COMPARAISON -->
-<section class="compare-sec">
-  <div class="compare-inner">
-    <div class="sec-eyebrow">Comparaison</div>
-    <h2>Gratuit ou payant ?<br>La différence est claire</h2>
+<section class="section grey">
+  <div class="section-inner">
+    <div class="rv eyebrow">Comparaison</div>
+    <div class="rv d1"><h2>Gratuit ou payant ?<br>La différence est claire</h2></div>
     <div class="compare-grid">
 
       <!-- Gratuit -->
-      <div class="ccard">
+      <div class="ccard rv">
         <div class="cplan">Gratuit</div>
         <div class="cprice">0€<span> / mois</span></div>
         <ul class="cfeats">
           <li><span class="ck ck-b">✓</span>1 véhicule</li>
           <li><span class="ck ck-b">✓</span>Entretiens illimités</li>
           <li><span class="ck ck-b">✓</span>Rappels date &amp; km</li>
-          <li><span class="ck ck-b">✓</span>PWA installable</li>
-          <li style="background:linear-gradient(90deg,#FEF9C3,#FEF3C7);border-radius:8px;padding:4px 7px;margin-left:-7px;margin-right:-7px"><span class="ck" style="color:#D97706">✓</span><span style="color:#92400E;font-weight:700">⛽ Prix carburant <span style="background:#D97706;color:#fff;font-size:.55rem;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:800">NOUVEAU</span></span></li>
-          <li class="off"><span class="ck ck-no">✕</span>Documents</li>
+          <li style="background:linear-gradient(90deg,#FEF9C3,#FEF3C7);border-radius:8px;padding:4px 7px;margin-left:-7px;margin-right:-7px"><span class="ck" style="color:#D97706">✓</span><span style="color:#92400E;font-weight:700">⛽ Prix carburant <span style="background:#D97706;color:#fff;font-size:.55rem;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:800">GRATUIT</span></span></li>
+          <li class="off"><span class="ck ck-no">✕</span>Documents véhicule</li>
           <li class="off"><span class="ck ck-no">✕</span>Photos factures</li>
           <li class="off"><span class="ck ck-no">✕</span>Export PDF &amp; CSV</li>
           <li class="off"><span class="ck ck-no">✕</span>Mode équipe</li>
           <li class="off"><span class="ck ck-no">✕</span>Véhicules illimités</li>
         </ul>
-        <a href="/app.html" class="ccta ccta-ghost">Commencer</a>
+        <a href="/app.html" class="ccta ccta-ghost">Commencer gratuitement</a>
       </div>
 
       <!-- Famille -->
-      <div class="ccard famille">
-        <div class="cplan" style="color:var(--green-dk)">👨‍👩‍👧 Famille</div>
+      <div class="ccard hi-green rv d1">
+        <div class="cplan" style="color:var(--ok-dk)">👨‍👩‍👧 Famille</div>
         <div class="cprice">1,99€<span> / mois</span></div>
         <ul class="cfeats">
           <li><span class="ck ck-g">✓</span>3 véhicules</li>
           <li><span class="ck ck-g">✓</span>Entretiens illimités</li>
           <li><span class="ck ck-g">✓</span>Rappels date &amp; km</li>
-          <li><span class="ck ck-g">✓</span>PWA installable</li>
           <li><span class="ck ck-g">✓</span>Documents véhicule</li>
           <li><span class="ck ck-g">✓</span>Photos de factures</li>
           <li><span class="ck ck-g">✓</span>Partage famille</li>
@@ -254,14 +286,13 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
       </div>
 
       <!-- Pro -->
-      <div class="ccard pro">
+      <div class="ccard hi-gold rv d2">
         <div class="cplan" style="color:#92400E;margin-top:8px">🚀 Pro</div>
         <div class="cprice">4,99€<span> / mois</span></div>
         <ul class="cfeats">
           <li><span class="ck ck-gold">⭐</span>Véhicules illimités</li>
           <li><span class="ck ck-gold">⭐</span>Entretiens illimités</li>
           <li><span class="ck ck-gold">⭐</span>Rappels date &amp; km</li>
-          <li><span class="ck ck-gold">⭐</span>PWA installable</li>
           <li><span class="ck ck-gold">⭐</span>Documents véhicule</li>
           <li><span class="ck ck-gold">⭐</span>Photos de factures</li>
           <li><span class="ck ck-gold">⭐</span>Export PDF &amp; CSV</li>
@@ -277,125 +308,173 @@ footer{padding:24px 20px;border-top:1px solid var(--border);text-align:center;ba
 </section>
 
 <!-- FEATURES DÉTAILLÉES -->
-<section class="feat-sec">
-  <div class="feat-inner">
-    <div class="sec-eyebrow">Ce que vous débloquez</div>
-    <h2>Tout AutoCarnet,<br>sans restriction</h2>
+<section class="section light">
+  <div class="section-inner narrow">
+    <div class="rv eyebrow">Ce que vous débloquez</div>
+    <div class="rv d1"><h2>Tout AutoCarnet,<br>sans restriction</h2></div>
     <div class="feat-list">
-      <div class="feat-item">
-        <div class="feat-ico fi-b">🚗</div>
-        <div><div class="feat-t">Véhicules illimités <span class="feat-badge fb-pro">Pro</span></div><div class="feat-d">Voiture, moto, camping-car, utilitaire — ajoutez autant de véhicules que vous voulez. Idéal pour les professionnels gérant une flotte.</div></div>
+      <div class="feat-item rv">
+        <div class="feat-ico" style="background:#EFF6FF">🚗</div>
+        <div>
+          <div class="feat-t">Véhicules illimités <span class="feat-badge fb-pro">Pro</span></div>
+          <div class="feat-d">Voiture, moto, camping-car, utilitaire — ajoutez autant de véhicules que vous voulez. Idéal pour les professionnels gérant une flotte.</div>
+        </div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico fi-g">🔧</div>
-        <div><div class="feat-t">Entretiens illimités <span class="feat-badge fb-pro">Pro</span></div><div class="feat-d">Enregistrez chaque intervention sans limite de nombre. Gardez un historique complet sur toute la durée de vie de vos véhicules.</div></div>
+      <div class="feat-item rv d1">
+        <div class="feat-ico" style="background:#ECFDF5">🔧</div>
+        <div>
+          <div class="feat-t">Entretiens illimités <span class="feat-badge fb-pro">Pro</span></div>
+          <div class="feat-d">Enregistrez chaque intervention sans limite. Gardez un historique complet sur toute la durée de vie de vos véhicules.</div>
+        </div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico fi-b">📷</div>
-        <div><div class="feat-t">Photos de factures <span class="feat-badge fb-both">Famille & Pro</span></div><div class="feat-d">Photographiez vos factures directement depuis l'application. Retrouvez-les en un tap pour vos garanties, remboursements ou lors de la revente.</div></div>
+      <div class="feat-item rv">
+        <div class="feat-ico" style="background:#EFF6FF">📷</div>
+        <div>
+          <div class="feat-t">Photos de factures <span class="feat-badge fb-both">Famille &amp; Pro</span></div>
+          <div class="feat-d">Photographiez vos factures directement depuis l'application. Retrouvez-les en un tap pour vos garanties, remboursements ou lors de la revente.</div>
+        </div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico fi-p">📁</div>
-        <div><div class="feat-t">Documents véhicule <span class="feat-badge fb-both">Famille & Pro</span></div><div class="feat-d">Carte grise, assurance, certificat de contrôle technique, garanties — centralisés avec alertes d'expiration automatiques.</div></div>
+      <div class="feat-item rv d1">
+        <div class="feat-ico" style="background:#F5F3FF">📁</div>
+        <div>
+          <div class="feat-t">Documents véhicule <span class="feat-badge fb-both">Famille &amp; Pro</span></div>
+          <div class="feat-d">Carte grise, assurance, certificat CT, garanties — centralisés avec alertes d'expiration automatiques.</div>
+        </div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico fi-o">⛽</div>
-        <div><div class="feat-t">Prix carburant en direct <span class="feat-badge" style="background:#FEF3C7;color:#92400E;border:1px solid #F59E0B">Tous les plans</span></div><div class="feat-d">Trouvez les stations-service les moins chères autour de vous en temps réel. Données officielles du gouvernement français.</div></div>
+      <div class="feat-item rv">
+        <div class="feat-ico" style="background:#FFFBEB">⛽</div>
+        <div>
+          <div class="feat-t">Prix carburant en direct <span class="feat-badge" style="background:var(--gold-bg);color:#92400E;border:1px solid var(--gold)">Tous les plans</span></div>
+          <div class="feat-d">Trouvez les stations les moins chères autour de vous en temps réel. Données officielles du gouvernement français.</div>
+        </div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico fi-r">📊</div>
-        <div><div class="feat-t">Export PDF &amp; CSV <span class="feat-badge fb-pro">Pro</span></div><div class="feat-d">Générez un rapport complet de chaque véhicule en un tap. Pratique pour la comptabilité, les assurances et la revente.</div></div>
+      <div class="feat-item rv d1">
+        <div class="feat-ico" style="background:#FEF2F2">📊</div>
+        <div>
+          <div class="feat-t">Export PDF &amp; CSV <span class="feat-badge fb-pro">Pro</span></div>
+          <div class="feat-d">Générez un rapport complet de chaque véhicule en un tap. Pratique pour la comptabilité, les assurances et la revente.</div>
+        </div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico fi-c">👥</div>
-        <div><div class="feat-t">Mode équipe multi-utilisateurs <span class="feat-badge fb-pro">Pro</span></div><div class="feat-d">Partagez vos véhicules avec votre équipe. Chaque collaborateur accède depuis son propre téléphone et peut ajouter des entretiens.</div></div>
+      <div class="feat-item rv">
+        <div class="feat-ico" style="background:#ECFEFF">👥</div>
+        <div>
+          <div class="feat-t">Mode équipe multi-utilisateurs <span class="feat-badge fb-pro">Pro</span></div>
+          <div class="feat-d">Partagez vos véhicules avec votre équipe. Chaque collaborateur accède depuis son propre téléphone et peut ajouter des entretiens.</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- VALEURS -->
-<section class="testi-sec">
-  <div class="testi-inner">
-    <div class="sec-eyebrow">Pourquoi AutoCarnet</div>
-    <h2>Un projet honnête,<br>fait pour durer</h2>
-    <div class="testi-grid">
-      <div class="testi">
-        <div style="font-size:1.5rem;margin-bottom:10px">🇫🇷</div>
-        <div class="feat-t" style="margin-bottom:6px">Fait en Bretagne, France</div>
-        <div class="feat-d">AutoCarnet est un projet indépendant, créé et maintenu par un seul développeur. Pas de VC, pas d'investisseur, pas d'agenda caché.</div>
+<section class="section grey">
+  <div class="section-inner narrow">
+    <div class="rv eyebrow">Pourquoi AutoCarnet</div>
+    <div class="rv d1"><h2>Un projet honnête,<br>fait pour durer</h2></div>
+    <div class="values-grid">
+      <div class="value-card rv">
+        <div class="value-ico">🇫🇷</div>
+        <div>
+          <div class="value-t">Fait en Bretagne, France</div>
+          <div class="value-d">AutoCarnet est un projet indépendant, créé et maintenu par un seul développeur. Pas de VC, pas d'investisseur, pas d'agenda caché.</div>
+        </div>
       </div>
-      <div class="testi">
-        <div style="font-size:1.5rem;margin-bottom:10px">🚫</div>
-        <div class="feat-t" style="margin-bottom:6px">Zéro publicité, toujours</div>
-        <div class="feat-d">Vos données ne sont jamais vendues ni partagées. Le modèle économique c'est l'abonnement — pas la pub. C'est aussi simple que ça.</div>
+      <div class="value-card rv d1">
+        <div class="value-ico">🚫</div>
+        <div>
+          <div class="value-t">Zéro publicité, toujours</div>
+          <div class="value-d">Vos données ne sont jamais vendues ni partagées. Le modèle économique c'est l'abonnement — pas la pub.</div>
+        </div>
       </div>
-      <div class="testi">
-        <div style="font-size:1.5rem;margin-bottom:10px">💳</div>
-        <div class="feat-t" style="margin-bottom:6px">Paiement via Stripe</div>
-        <div class="feat-d">Les paiements sont traités par Stripe, référence mondiale du paiement sécurisé. AutoCarnet ne stocke aucune information bancaire.</div>
+      <div class="value-card rv d2">
+        <div class="value-ico">💳</div>
+        <div>
+          <div class="value-t">Paiement via Stripe</div>
+          <div class="value-d">Les paiements sont traités par Stripe, référence mondiale du paiement sécurisé. AutoCarnet ne stocke aucune information bancaire.</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="faq-sec">
-  <div class="faq-inner">
-    <div class="sec-eyebrow">Questions fréquentes</div>
-    <h2>Vous avez des questions ?</h2>
+<section class="section light">
+  <div class="section-inner narrow">
+    <div class="rv eyebrow">Questions fréquentes</div>
+    <div class="rv d1"><h2>Vous avez des questions ?</h2></div>
     <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q">Est-ce que je peux annuler à tout moment ?</div>
+      <div class="faq-item rv">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Est-ce que je peux annuler à tout moment ?
+          <span class="faq-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">Oui, sans engagement ni frais. Vous pouvez annuler votre abonnement à tout moment depuis votre espace client. L'accès reste actif jusqu'à la fin de la période en cours.</div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">Que se passe-t-il après les 7 jours d'essai ?</div>
+      <div class="faq-item rv d1">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Que se passe-t-il après les 7 jours d'essai ?
+          <span class="faq-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">À la fin de l'essai gratuit, vous passez automatiquement au plan choisi. Vous pouvez annuler avant la fin de l'essai sans être débité.</div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">Quelle est la différence entre Famille et Pro ?</div>
-        <div class="faq-a">Le plan Famille permet 3 véhicules avec des entretiens illimités, les documents, photos de factures et le comparateur de prix carburant. Le plan Pro débloque tout sans limite : véhicules illimités, entretiens illimités, export PDF/CSV et mode équipe multi-utilisateurs. Le comparateur de prix carburant est disponible sur tous les plans, y compris gratuit.</div>
+      <div class="faq-item rv d2">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Quelle est la différence entre Famille et Pro ?
+          <span class="faq-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-a">Le plan Famille permet 3 véhicules avec entretiens illimités, documents, photos de factures et prix carburant. Le plan Pro débloque tout sans limite : véhicules illimités, export PDF/CSV et mode équipe multi-utilisateurs.</div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">Mes données sont-elles en sécurité ?</div>
-        <div class="faq-a">Oui. Vos données sont stockées de manière sécurisée sur des serveurs certifiés en Europe. Elles ne sont ni vendues ni partagées avec des tiers. Vous restez propriétaire de vos données à tout moment.</div>
+      <div class="faq-item rv">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Mes données sont-elles en sécurité ?
+          <span class="faq-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
+        <div class="faq-a">Oui. Vos données sont stockées de manière sécurisée sur des serveurs certifiés en Europe. Elles ne sont ni vendues ni partagées. Vous restez propriétaire de vos données à tout moment.</div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">Le paiement est-il sécurisé ?</div>
+      <div class="faq-item rv d1">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Le paiement est-il sécurisé ?
+          <span class="faq-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </div>
         <div class="faq-a">Les paiements sont traités par Stripe, la référence mondiale du paiement en ligne. AutoCarnet ne stocke aucune information bancaire.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section class="cta-sec">
+<!-- FINAL CTA -->
+<section class="final">
   <h2>Choisissez votre plan</h2>
   <p>Famille à 1,99€/mois ou Pro à 4,99€/mois.<br>7 jours offerts, annulable à tout moment.</p>
-  <div class="cta-btns">
-    <button class="btn-cta-famille" onclick="stripeCheckout('famille')">👨‍👩‍👧 Famille — Essayer 7 jours</button>
-    <button class="btn-cta-pro" onclick="stripeCheckout('pro')">🚀 Pro — Essayer 7 jours</button>
+  <div class="final-btns">
+    <button class="btn-final-famille" onclick="stripeCheckout('famille')">👨‍👩‍👧 Famille — Essayer 7 jours</button>
+    <button class="btn-final-pro" onclick="stripeCheckout('pro')">🚀 Pro — Essayer 7 jours</button>
   </div>
-  <a href="/app.html" class="cta-back">Retourner à l'application gratuite</a>
+  <a href="/app.html" class="final-back">Retourner à l'application gratuite</a>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <div class="footer-links">
+  <div class="foot-brand">
+    <div class="foot-icon">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+    </div>
+    <span class="foot-name">Auto<span>Carnet</span></span>
+  </div>
+  <div class="foot-links">
     <a href="/">Accueil</a>
     <a href="/app.html">Application</a>
     <a href="/blog.html">Blog</a>
     <a href="/faq.html">FAQ</a>
     <a href="/cgu.html">CGU</a>
+    <a href="/politique-confidentialite.html">Confidentialité</a>
     <a href="/mentions-legales.html">Mentions légales</a>
-    <a href="/cdn-cgi/l/email-protection#5a3b2f2e35393b28343f2e2a28351a3d373b333674393537">Contact</a>
+    <a href="mailto:contact@autocarnet.fr">Contact</a>
   </div>
-  <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en Bretagne, France</div>
-  <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Projet indépendant · Auto-entrepreneur · SIRET 914 511 639 00025</div>
+  <div class="foot-copy">© 2026 AutoCarnet · Carnet d'entretien numérique · Fait avec ❤️ en Bretagne, France</div>
+  <div class="foot-legal">Projet indépendant · Auto-entrepreneur · SIRET 914 511 639 00025</div>
 </footer>
 
-<!-- JS INTACT -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
 async function stripeCheckout(plan){
   try{
@@ -411,6 +490,17 @@ async function stripeCheckout(plan){
     alert('Erreur de connexion.');
   }
 }
+
+/* Reveal */
+const rvEls=document.querySelectorAll('.rv');
+requestAnimationFrame(()=>{
+  rvEls.forEach(el=>el.classList.add('init'));
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');obs.unobserve(e.target);}});
+  },{threshold:0.06,rootMargin:'0px 0px -16px 0px'});
+  rvEls.forEach(el=>obs.observe(el));
+  setTimeout(()=>rvEls.forEach(el=>el.classList.add('show')),1400);
+});
 </script>
 </body>
 </html>
