@@ -1260,6 +1260,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           </div>
         </div>
         <!-- SECTION DOCUMENTS VÉHICULE -->
+        <div id="veh-doc-section">
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:14px 0 8px;border-top:1px solid var(--border);padding-top:12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documents du véhicule</div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:8px 0 6px">🪪 Carte grise</div>
         <div class="fr">
@@ -1288,6 +1289,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">Nom</label><input class="fc" id="vdoc-autre-nom" placeholder="Ex: Malus, Leasing…"></div>
           <div class="fg"><label class="fl">Photo</label><input class="fc" type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"></div>
         </div>
+        </div><!-- /veh-doc-section -->
       </div>
     </div>
     <div class="mft">
@@ -2630,6 +2632,7 @@ async function delEnt(){
 
 /* FAMILLE */
 async function sendInv(){
+  if(getUserPlan()==='free')return showUpgradeModal('Le partage de véhicule est disponible avec les plans Famille et Pro.');
   const vid=g('inv-v').value,email=g('inv-e').value.trim().toLowerCase();
   if(!vid)return toast('Sélectionnez un véhicule.','e');
   if(!email)return toast('Email requis.','e');
@@ -2941,6 +2944,7 @@ function getCostsByYear(vid){
 
 /* PDF */
 function exportPDF(vid){
+  if(getUserPlan()==='free')return showUpgradeModal("L'export PDF est disponible avec les plans Famille et Pro.");
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   const list=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const total=list.reduce((s,e)=>s+(e.cout||0),0);
@@ -5226,6 +5230,15 @@ async function openVeh(id){
     document.querySelectorAll('.epb').forEach(b=>b.classList.toggle('on',b.dataset.em==='🚗'));
   }
   initFlotteSection();
+  // Cacher la section documents si plan gratuit
+  const docSection=document.getElementById('veh-doc-section');
+  if(docSection){
+    if(getUserPlan()==='free'){
+      docSection.innerHTML='<div style="background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:10px;padding:10px 13px;font-size:.78rem;color:#1E40AF;cursor:pointer" onclick="showUpgradeModal(\'Les documents véhicule sont disponibles avec les plans Famille et Pro.\')">🔒 <strong>Documents véhicule</strong> — Disponible en plan Famille et Pro <span style="margin-left:4px;text-decoration:underline">Passer à un plan supérieur →</span></div>';
+    }else{
+      docSection.style.display='';
+    }
+  }
   om('veh');
 }
 
@@ -5527,6 +5540,7 @@ function renderProfil(){
 }
 
 function exportCSV(vid){
+  if(getUserPlan()==='free')return showUpgradeModal("L'export CSV est disponible avec les plans Famille et Pro.");
   const v=S.vehicles.find(x=>x.id===vid); if(!v) return;
   const list=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(a.date)-new Date(b.date));
   let csv='Date,Type,Kilométrage,Garage,Coût (€),Notes,Rappel date,Rappel km\n';
@@ -5544,6 +5558,7 @@ function exportCSV(vid){
 }
 
 function exportAllCSV(){
+  if(getUserPlan()==='free')return showUpgradeModal("L'export CSV est disponible avec les plans Famille et Pro.");
   if(!S.ents.length) return toast('Aucun entretien à exporter.','i');
   let csv='Véhicule,Date,Type,Kilométrage,Garage,Coût (€),Notes\n';
   S.ents.forEach(e=>{
@@ -5561,6 +5576,7 @@ function exportAllCSV(){
 }
 
 function exportAllPDF(){
+  if(getUserPlan()==='free')return showUpgradeModal("L'export PDF est disponible avec les plans Famille et Pro.");
   if(!S.vehicles.length) return toast('Aucun véhicule.','i');
   S.vehicles.forEach(v=>exportPDF(v.id));
 }
@@ -5841,7 +5857,7 @@ async function goToStripeCheckout(plan){
 }
 const PLANS={
   free:{max_vehs:1,max_ents:Infinity},
-  famille:{max_vehs:3,max_ents:10},
+  famille:{max_vehs:3,max_ents:Infinity},
   pro:{max_vehs:Infinity,max_ents:Infinity}
 };
 function getUserPlan(){
