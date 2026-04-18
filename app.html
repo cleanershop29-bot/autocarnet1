@@ -1964,7 +1964,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],signalements:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte'};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],signalements:[],mesSignalements:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte'};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -2208,7 +2208,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.signalements=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.signalements=[];S.mesSignalements=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -2730,9 +2730,13 @@ async function sendInv(){
 /* ══ SIGNALEMENTS ══ */
 async function loadSignalements(){
   if(!S.user?.id)return;
-  // Charger les signalements dont on est propriétaire (owner_id)
-  const{data,error}=await sb.from('signalements').select('*').eq('owner_id',S.user.id).order('created_at',{ascending:false});
-  if(!error) S.signalements=data||[];
+  // Charger les signalements reçus (owner) ET envoyés (reporter)
+  const[{data:owned},{data:reported}]=await Promise.all([
+    sb.from('signalements').select('*').eq('owner_id',S.user.id).order('created_at',{ascending:false}),
+    sb.from('signalements').select('*').eq('reporter_id',S.user.id).order('created_at',{ascending:false})
+  ]);
+  S.signalements=owned||[];
+  S.mesSignalements=reported||[];
 }
 
 let _sigUrgent=false;
@@ -2831,6 +2835,20 @@ async function saveSig(){
   cm('sig');_sigPhotos=[];
   await loadSignalements();
   renderView();
+}
+
+function toggleAcc(id){
+  const el=g(id);if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+async function deleteSig(id){
+  cfm('Supprimer ce signalement ?','Cette action est irréversible.',async()=>{
+    const{error}=await sb.from('signalements').delete().eq('id',id);
+    if(error)return toast('Erreur : '+error.message,'e');
+    toast('Signalement supprimé.','i');
+    await loadSignalements();renderView();
+  });
 }
 
 async function updateSigStatut(id,statut){
@@ -4955,7 +4973,11 @@ function renderFam(){
     h+=`<div class="sec-hdr mt12"><span class="sec-ttl">🚗 Partagés avec moi</span></div>`;
     h+=shared.map(v=>{
       const p=S.partages.find(x=>x.vehicle_id===v.id&&x.invited_user_id===S.user.id);
-      const sigCount=(S.signalements||[]).filter(s=>s.vehicle_id===v.id&&s.statut==='en_attente').length;
+      // Signalements envoyés par moi pour ce véhicule
+      const mesSigs=(S.mesSignalements||[]).filter(s=>s.vehicle_id===v.id);
+      const sigsEnAttente=mesSigs.filter(s=>s.statut==='en_attente').length;
+      const catIcos={Mécanique:'🔧',Carrosserie:'🚗',Pneus:'🛞',Électrique:'⚡',Autre:'📋'};
+      const accordionId=`sig-acc-${v.id}`;
       return`<div class="si" style="flex-direction:column;align-items:stretch;gap:10px">
         <div style="display:flex;align-items:center;gap:11px">
           <div style="width:38px;height:38px;border-radius:10px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${v.emoji||'🚗'}</div>
@@ -4966,9 +4988,40 @@ function renderFam(){
           ${p?`<button class="btn btn-d btn-xs" onclick="quitPartage('${p.id}')">Quitter</button>`:''}
         </div>
         ${isPro?`<button onclick="openSig('${v.id}')" style="width:100%;padding:9px;background:linear-gradient(135deg,#FEF2F2,#fff);border:1.5px solid #FECACA;border-radius:10px;font-family:inherit;font-size:.8rem;font-weight:700;color:#DC2626;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           Signaler un problème
         </button>`:''}
+        ${mesSigs.length?`
+        <button onclick="toggleAcc('${accordionId}')" style="width:100%;padding:8px 12px;background:#F8FAFC;border:1px solid rgba(184,196,216,.5);border-radius:10px;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:7px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            Mes signalements (${mesSigs.length})
+            ${sigsEnAttente?`<span style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:1px 6px;border-radius:6px;font-size:.62rem;font-weight:800">${sigsEnAttente} en attente</span>`:''}
+          </span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="${accordionId}" style="display:none">
+          ${mesSigs.map(s=>{
+            const statutCol=s.statut==='en_attente'?'#D97706':s.statut==='traite'?'#059669':'#64748B';
+            const statutLbl=s.statut==='en_attente'?'En attente':s.statut==='en_cours'?'En cours':s.statut==='traite'?'Traité':'Rejeté';
+            return`<div style="padding:10px;background:#fff;border:1px solid rgba(184,196,216,.4);border-radius:10px;margin-bottom:6px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span style="font-size:1rem">${catIcos[s.categorie]||'📋'}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:.82rem;font-weight:700">${esc(s.categorie)}</div>
+                  <div style="font-size:.7rem;color:var(--txm)">${new Date(s.created_at).toLocaleDateString('fr-FR')}</div>
+                </div>
+                <span style="font-size:.65rem;font-weight:700;color:${statutCol};background:${statutCol}18;padding:2px 7px;border-radius:6px;border:1px solid ${statutCol}44">${statutLbl}</span>
+              </div>
+              ${s.description?`<div style="font-size:.78rem;color:var(--txm);margin-bottom:6px">${esc(s.description)}</div>`:''}
+              ${s.commentaire_gerant?`<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px 10px;font-size:.78rem;color:#1E40AF">
+                <span style="font-weight:700;display:block;margin-bottom:2px">💬 Réponse du gérant</span>
+                ${esc(s.commentaire_gerant)}
+              </div>`:`<div style="font-size:.72rem;color:var(--txl);font-style:italic">Aucune réponse pour le moment…</div>`}
+              <button onclick="deleteSig('${s.id}')" style="margin-top:8px;padding:4px 10px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:7px;font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer">🗑️ Supprimer</button>
+            </div>`;
+          }).join('')}
+        </div>`:''}
       </div>`;
     }).join('');
   }
@@ -5014,6 +5067,7 @@ function renderFam(){
             <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_cours')">🔧 En cours</button>
             <button class="btn btn-s btn-xs" onclick="openEntFromSig(${JSON.stringify(s).replace(/"/g,'&quot;')})">+ Entretien</button>
             <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','rejete')">Rejeter</button>
+            <button class="btn btn-d btn-xs" onclick="deleteSig('${s.id}')">🗑️</button>
           </div>
         </div>`;
       }).join('');
@@ -5043,6 +5097,7 @@ function renderFam(){
             </div>
             <div class="sig-badge traite" style="font-size:.6rem">${s.statut==='traite'?'Traité':s.statut==='en_cours'?'En cours':'Rejeté'}</div>
             <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_attente')" style="flex-shrink:0">↩</button>
+            <button class="btn btn-d btn-xs" onclick="deleteSig('${s.id}')" style="flex-shrink:0">🗑️</button>
           </div>`).join('');
         h+=`</div>`;
       });
