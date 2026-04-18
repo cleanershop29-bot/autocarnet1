@@ -4959,10 +4959,18 @@ function renderFam(){
       h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ Signalements traités</span></div>`;
       h+=done_sigs.slice(0,3).map(s=>{
         const v=S.vehicles.find(x=>x.id===s.vehicle_id);
-        return`<div class="sig-card traite" style="opacity:.7">
+        const catIcos={Mécanique:'🔧',Carrosserie:'🚗',Pneus:'🛞',Électrique:'⚡',Autre:'📋'};
+        return`<div class="sig-card traite" style="opacity:.8">
           <div class="sig-header">
-            <div style="flex:1"><div class="sig-titre">${esc(s.categorie)} — ${v?esc(v.marque)+' '+esc(v.modele):''}</div><div class="sig-meta">${esc(s.reporter_email||'')}</div></div>
+            <div class="sig-cat-ico" style="background:#F0FDF4">${catIcos[s.categorie]||'📋'}</div>
+            <div style="flex:1;min-width:0">
+              <div class="sig-titre">${esc(s.categorie)} — ${v?esc(v.marque)+' '+esc(v.modele):''}</div>
+              <div class="sig-meta">${esc(s.reporter_email||'')}</div>
+            </div>
             <div class="sig-badge traite">${s.statut==='traite'?'Traité':'En cours'}</div>
+          </div>
+          <div class="sig-actions">
+            <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_attente')">↩ Remettre en attente</button>
           </div>
         </div>`;
       }).join('');
