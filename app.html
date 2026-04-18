@@ -1506,13 +1506,21 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         <button class="urgence-btn on normal" id="sig-urg-normal" onclick="setSigUrgence(false)">Normal</button>
         <button class="urgence-btn urgent" id="sig-urg-urgent" onclick="setSigUrgence(true)">🚨 Urgent</button>
       </div>
-      <!-- Photo optionnelle -->
+      <!-- Photos optionnelles (max 3) -->
+      <div style="font-size:.75rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Photos <span style="font-weight:400;text-transform:none">(optionnel, max 3)</span></div>
       <input type="file" id="sig-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onSigPhotoSelected(this)">
-      <button type="button" onclick="g('sig-photo-input').click()" style="width:100%;padding:10px;border:1.5px dashed rgba(184,196,216,.8);border-radius:10px;background:#F8FAFC;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Ajouter une photo (optionnel)
-      </button>
-      <div id="sig-photo-preview" style="margin-bottom:4px"></div>
+      <input type="file" id="sig-photo-input-gal" accept="image/*" style="display:none" onchange="onSigPhotoSelected(this)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <button type="button" onclick="g('sig-photo-input').click()" style="padding:10px;border:1.5px dashed rgba(184,196,216,.8);border-radius:10px;background:#F8FAFC;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Caméra
+        </button>
+        <button type="button" onclick="g('sig-photo-input-gal').click()" style="padding:10px;border:1.5px dashed rgba(184,196,216,.8);border-radius:10px;background:#F8FAFC;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Galerie
+        </button>
+      </div>
+      <div id="sig-photo-preview" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"></div>
     </div>
     <div class="mft">
       <button class="btn btn-s btn-sm" onclick="cm('sig')">Annuler</button>
@@ -2729,7 +2737,7 @@ async function loadSignalements(){
 
 let _sigUrgent=false;
 let _sigCat='Mécanique';
-let _sigPhotoFile=null;
+let _sigPhotos=[]; // array de {file, previewUrl}
 
 function openSig(vid){
   if(getUserPlan()!=='pro')return showUpgradeModal('Le signalement de problème est réservé au plan Pro.');
@@ -2738,10 +2746,8 @@ function openSig(vid){
   g('sig-veh-name').textContent=(v.emoji||'🚗')+' '+v.marque+' '+v.modele;
   g('sig-desc').value='';
   g('sig-photo-preview').innerHTML='';
-  _sigUrgent=false;_sigCat='Mécanique';_sigPhotoFile=null;
-  // Reset chips
+  _sigUrgent=false;_sigCat='Mécanique';_sigPhotos=[];
   document.querySelectorAll('#sig-cats .chip-cat').forEach(b=>b.classList.toggle('on',b.dataset.cat==='Mécanique'));
-  // Reset urgence
   g('sig-urg-normal').classList.add('on');g('sig-urg-urgent').classList.remove('on');
   om('sig');
 }
@@ -2756,32 +2762,49 @@ function setSigUrgence(urgent){
   g('sig-urg-urgent').classList.toggle('on',urgent);
 }
 function onSigPhotoSelected(input){
-  const file=input.files[0];if(!file)return;
-  _sigPhotoFile=file;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    g('sig-photo-preview').innerHTML=`<img src="${e.target.result}" style="width:100%;border-radius:8px;max-height:120px;object-fit:cover;margin-top:4px">`;
-  };
-  reader.readAsDataURL(file);
+  const files=Array.from(input.files);if(!files.length)return;
+  files.forEach(file=>{
+    if(_sigPhotos.length>=3){toast('Maximum 3 photos.','i');return;}
+    const reader=new FileReader();
+    reader.onload=e=>{
+      _sigPhotos.push({file,previewUrl:e.target.result});
+      renderSigPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
 }
+function renderSigPreviews(){
+  const el=g('sig-photo-preview');if(!el)return;
+  el.innerHTML=_sigPhotos.map((p,i)=>`
+    <div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;flex-shrink:0">
+      <img src="${p.previewUrl}" style="width:100%;height:100%;object-fit:cover">
+      <button onclick="removeSigPhoto(${i})" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:#fff;font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+    </div>`).join('');
+}
+function removeSigPhoto(i){
+  _sigPhotos.splice(i,1);
+  renderSigPreviews();
+}
+
 async function saveSig(){
   const vid=g('sig-vid').value;
   const desc=g('sig-desc').value.trim();
   if(!vid)return toast('Véhicule manquant.','e');
   const btn=g('btn-sv-sig');btn.disabled=true;btn.textContent='Envoi…';
-  let photo_url=null;
-  if(_sigPhotoFile){
+  // Upload toutes les photos
+  const photo_urls=[];
+  for(const p of _sigPhotos){
     try{
-      const safeName=_sigPhotoFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+      const safeName=p.file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
       const path=`signalements/${S.user.id}/${Date.now()}_${safeName}`;
-      const{data:up,error:upe}=await sb.storage.from('factures').upload(path,_sigPhotoFile,{upsert:true});
+      const{data:up,error:upe}=await sb.storage.from('factures').upload(path,p.file,{upsert:true});
       if(!upe&&up){
         const{data:pub}=sb.storage.from('factures').getPublicUrl(path);
-        photo_url=pub?.publicUrl||null;
+        if(pub?.publicUrl) photo_urls.push(pub.publicUrl);
       }
     }catch(e){console.error('Upload photo sig:',e);}
   }
-  // Trouver le owner du véhicule
   const v=S.vehicles.find(x=>x.id===vid);
   const owner_id=v?.user_id||S.user.id;
   const{error}=await sb.from('signalements').insert({
@@ -2791,13 +2814,13 @@ async function saveSig(){
     reporter_email:S.user.email,
     categorie:_sigCat,
     description:desc||null,
-    photo_url,
+    photo_url:photo_urls[0]||null, // première photo dans photo_url (compatibilité)
+    photos_urls:photo_urls.length>0?JSON.stringify(photo_urls):null,
     urgent:_sigUrgent,
     statut:'en_attente'
   });
   btn.disabled=false;btn.textContent='Envoyer le signalement';
   if(error)return toast('Erreur : '+error.message,'e');
-  // Notifier le propriétaire
   if(owner_id&&owner_id!==S.user.id){
     const vName=v?(v.marque+' '+v.modele):'Véhicule';
     const title=encodeURIComponent(_sigUrgent?'🚨 Problème urgent signalé':'⚠️ Nouveau signalement');
@@ -2805,16 +2828,43 @@ async function saveSig(){
     fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${owner_id}&title=${title}&body=${body}`).catch(()=>{});
   }
   toast('Signalement envoyé !','s');
-  cm('sig');
+  cm('sig');_sigPhotos=[];
   await loadSignalements();
   renderView();
 }
+
 async function updateSigStatut(id,statut){
   const{error}=await sb.from('signalements').update({statut}).eq('id',id).eq('owner_id',S.user.id);
   if(error)return toast('Erreur : '+error.message,'e');
-  const labels={traite:'Marqué comme traité ✅',en_cours:'En cours 🔧',rejete:'Rejeté'};
+  const labels={traite:'Marqué comme traité ✅',en_cours:'En cours 🔧',rejete:'Rejeté',en_attente:'Remis en attente'};
   toast(labels[statut]||'Mis à jour','s');
   await loadSignalements();renderView();
+}
+
+async function saveSigCommentaire(id,commentaire){
+  const{error}=await sb.from('signalements').update({commentaire_gerant:commentaire}).eq('id',id).eq('owner_id',S.user.id);
+  if(error)return toast('Erreur sauvegarde commentaire.','e');
+  toast('Commentaire enregistré','s');
+  await loadSignalements();renderView();
+}
+
+function openEntFromSig(sig){
+  // Pré-remplir le formulaire entretien avec les infos du signalement
+  if(!S.vehicles.length)return toast("Aucun véhicule disponible.",'e');
+  const v=S.vehicles.find(x=>x.id===sig.vehicle_id);
+  cm('sig'); // fermer si ouvert
+  openEnt(null, sig.vehicle_id);
+  // Pré-remplir après ouverture du modal
+  setTimeout(()=>{
+    const noteEl=g('e-nt');
+    if(noteEl&&sig.description) noteEl.value=sig.description;
+    // Trouver le type correspondant à la catégorie
+    const catToType={Mécanique:'autre',Carrosserie:'carrosserie',Pneus:'pneus_rot',Électrique:'electrique',Autre:'autre'};
+    const typeEl=g('e-ty');
+    if(typeEl&&catToType[sig.categorie]){
+      typeEl.value=catToType[sig.categorie];
+    }
+  },200);
 }
 
 async function acceptInv(pid){
@@ -4927,6 +4977,9 @@ function renderFam(){
   if(isPro && S.signalements && S.signalements.length){
     const pending_sigs=S.signalements.filter(s=>s.statut==='en_attente');
     const done_sigs=S.signalements.filter(s=>s.statut!=='en_attente');
+    const catIcos={Mécanique:'🔧',Carrosserie:'🚗',Pneus:'🛞',Électrique:'⚡',Autre:'📋'};
+    const catBgs={Mécanique:'#FFF7ED',Carrosserie:'#F0F9FF',Pneus:'#F8FAFC',Électrique:'#FEFCE8',Autre:'#F8FAFC'};
+
     if(pending_sigs.length){
       h+=`<div class="sec-hdr mt12">
         <span class="sec-ttl">🚨 Signalements reçus</span>
@@ -4934,46 +4987,65 @@ function renderFam(){
       </div>`;
       h+=pending_sigs.map(s=>{
         const v=S.vehicles.find(x=>x.id===s.vehicle_id);
-        const catIcos={Mécanique:'🔧',Carrosserie:'🚗',Pneus:'🛞',Électrique:'⚡',Autre:'📋'};
-        const catBgs={Mécanique:'#FFF7ED',Carrosserie:'#F0F9FF',Pneus:'#F8FAFC',Électrique:'#FEFCE8',Autre:'#F8FAFC'};
+        // Multi-photos
+        let photos=[];
+        if(s.photos_urls){try{photos=JSON.parse(s.photos_urls);}catch(e){}}
+        if(!photos.length&&s.photo_url) photos=[s.photo_url];
+        const photosHtml=photos.length?`<div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto">${photos.map(url=>`<img src="${url}" style="height:80px;border-radius:8px;object-fit:cover;cursor:pointer;flex-shrink:0" onclick="openLightbox('${url}')" onerror="this.style.display='none'">`).join('')}</div>`:'';
+        // Commentaire gérant
+        const commentHtml=`<div style="margin-bottom:10px">
+          <textarea id="comment-${s.id}" rows="2" placeholder="Votre réponse au conducteur…" style="width:100%;padding:8px 10px;border:1.5px solid rgba(184,196,216,.7);border-radius:8px;font-family:inherit;font-size:.78rem;resize:none;outline:none">${esc(s.commentaire_gerant||'')}</textarea>
+          <button onclick="saveSigCommentaire('${s.id}',g('comment-${s.id}').value)" style="margin-top:4px;padding:5px 12px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:.74rem;font-weight:700;cursor:pointer">Envoyer réponse</button>
+        </div>`;
         return`<div class="sig-card ${s.urgent?'urgent':'normal'}">
           <div class="sig-header">
             <div class="sig-cat-ico" style="background:${catBgs[s.categorie]||'#F8FAFC'}">${catIcos[s.categorie]||'📋'}</div>
             <div style="flex:1;min-width:0">
               <div class="sig-titre">${esc(s.categorie)}</div>
-              <div class="sig-meta">${v?esc(v.marque)+' '+esc(v.modele):'Véhicule'} · ${esc(s.reporter_email||'')}</div>
+              <div class="sig-meta">${v?esc(v.marque)+' '+esc(v.modele):'Véhicule'} · ${esc(s.reporter_email||'')} · <span style="color:var(--txl)">${new Date(s.created_at).toLocaleDateString('fr-FR')}</span></div>
             </div>
             <div class="sig-badge ${s.urgent?'urgent':'normal'}">${s.urgent?'🚨 Urgent':'Normal'}</div>
           </div>
           ${s.description?`<div class="sig-desc">${esc(s.description)}</div>`:''}
-          ${s.photo_url?`<img src="${s.photo_url}" style="width:100%;border-radius:8px;max-height:140px;object-fit:cover;margin-bottom:8px" onerror="this.style.display='none'">`:''}
+          ${photosHtml}
+          ${commentHtml}
           <div class="sig-actions">
             <button class="btn btn-p btn-xs" onclick="updateSigStatut('${s.id}','traite')">✅ Traité</button>
             <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_cours')">🔧 En cours</button>
+            <button class="btn btn-s btn-xs" onclick="openEntFromSig(${JSON.stringify(s).replace(/"/g,'&quot;')})">+ Entretien</button>
             <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','rejete')">Rejeter</button>
           </div>
         </div>`;
       }).join('');
     }
+
+    // Historique par véhicule
     if(done_sigs.length){
-      h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ Signalements traités</span></div>`;
-      h+=done_sigs.slice(0,3).map(s=>{
-        const v=S.vehicles.find(x=>x.id===s.vehicle_id);
-        const catIcos={Mécanique:'🔧',Carrosserie:'🚗',Pneus:'🛞',Électrique:'⚡',Autre:'📋'};
-        return`<div class="sig-card traite" style="opacity:.8">
-          <div class="sig-header">
-            <div class="sig-cat-ico" style="background:#F0FDF4">${catIcos[s.categorie]||'📋'}</div>
+      // Grouper par véhicule
+      const byVeh={};
+      done_sigs.forEach(s=>{
+        if(!byVeh[s.vehicle_id])byVeh[s.vehicle_id]=[];
+        byVeh[s.vehicle_id].push(s);
+      });
+      h+=`<div class="sec-hdr mt12"><span class="sec-ttl">✅ Historique signalements</span></div>`;
+      Object.entries(byVeh).forEach(([vid,sigs])=>{
+        const v=S.vehicles.find(x=>x.id===vid);
+        const vName=v?(v.emoji||'🚗')+' '+v.marque+' '+v.modele:'Véhicule';
+        h+=`<div style="background:#F8FAFC;border-radius:12px;padding:10px 12px;margin-bottom:8px;border:1px solid rgba(184,196,216,.4)">
+          <div style="font-size:.8rem;font-weight:700;color:var(--txt);margin-bottom:8px">${vName}</div>`;
+        h+=sigs.map(s=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(184,196,216,.3)">
+            <span style="font-size:1rem">${catIcos[s.categorie]||'📋'}</span>
             <div style="flex:1;min-width:0">
-              <div class="sig-titre">${esc(s.categorie)} — ${v?esc(v.marque)+' '+esc(v.modele):''}</div>
-              <div class="sig-meta">${esc(s.reporter_email||'')}</div>
+              <div style="font-size:.8rem;font-weight:600;color:var(--txt)">${esc(s.categorie)}</div>
+              <div style="font-size:.7rem;color:var(--txm)">${new Date(s.created_at).toLocaleDateString('fr-FR')} · ${esc(s.reporter_email||'')}</div>
+              ${s.commentaire_gerant?`<div style="font-size:.72rem;color:var(--primary);margin-top:2px;font-style:italic">💬 ${esc(s.commentaire_gerant)}</div>`:''}
             </div>
-            <div class="sig-badge traite">${s.statut==='traite'?'Traité':'En cours'}</div>
-          </div>
-          <div class="sig-actions">
-            <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_attente')">↩ Remettre en attente</button>
-          </div>
-        </div>`;
-      }).join('');
+            <div class="sig-badge traite" style="font-size:.6rem">${s.statut==='traite'?'Traité':s.statut==='en_cours'?'En cours':'Rejeté'}</div>
+            <button class="btn btn-s btn-xs" onclick="updateSigStatut('${s.id}','en_attente')" style="flex-shrink:0">↩</button>
+          </div>`).join('');
+        h+=`</div>`;
+      });
     }
   }
 
