@@ -797,6 +797,152 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .profil-card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .profil-card-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .profil-card-ttl{font-size:.88rem;font-weight:800;color:var(--txt)}
+/* ===== JUMEAU NUMÉRIQUE ===== */
+#mo-jumeau-onb{position:fixed;inset:0;z-index:600;background:rgba(10,15,30,.7);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px)}
+#mo-jumeau-onb.open{opacity:1;pointer-events:all}
+.jonb-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;padding:0 0 env(safe-area-inset-bottom,20px);transform:translateY(100%);transition:transform .3s cubic-bezier(.33,1,.68,1);max-height:92vh;overflow-y:auto}
+#mo-jumeau-onb.open .jonb-sheet{transform:translateY(0)}
+.jonb-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
+.jonb-header{padding:16px 20px 0;text-align:center}
+.jonb-emoji{font-size:2.4rem;margin-bottom:8px}
+.jonb-title{font-size:1.05rem;font-weight:800;color:var(--txt);letter-spacing:-.3px;margin-bottom:5px}
+.jonb-sub{font-size:.76rem;color:var(--txm);line-height:1.5;margin-bottom:18px}
+.jonb-progress{display:flex;gap:6px;padding:0 20px;margin-bottom:22px}
+.jonb-dot{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background .3s}
+.jonb-dot.active{background:var(--primary)}
+.jonb-dot.done{background:var(--ok)}
+.jonb-step{display:none;padding:0 20px}
+.jonb-step.active{display:block}
+.jonb-q{font-size:.84rem;font-weight:700;color:var(--txt);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.jonb-qnum{width:22px;height:22px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:800;color:#fff;flex-shrink:0}
+.jonb-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.jonb-opt{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:all .15s;background:#fff}
+.jonb-opt:active{transform:scale(.98)}
+.jonb-opt.sel{border-color:var(--primary);background:var(--primary-lt)}
+.jonb-opt-ico{font-size:1.25rem;flex-shrink:0;width:34px;text-align:center}
+.jonb-opt-txt strong{display:block;font-size:.82rem;font-weight:700;color:var(--txt)}
+.jonb-opt-txt span{font-size:.7rem;color:var(--txm);margin-top:1px;display:block}
+.jonb-opt.sel .jonb-opt-txt strong{color:var(--primary)}
+.jonb-chk{margin-left:auto;flex-shrink:0;width:20px;height:20px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;color:#fff;transition:all .15s}
+.jonb-opt.sel .jonb-chk{background:var(--primary);border-color:var(--primary)}
+.jonb-nav{display:flex;gap:10px;padding:0 20px 20px}
+.jonb-skip{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.83rem;font-weight:600;cursor:pointer}
+.jonb-next{flex:2;padding:12px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.86rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.jonb-next:disabled{opacity:.4;cursor:not-allowed}
+.ju-hdr{background:linear-gradient(135deg,#1E3A8A,#2563EB);padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(37,99,235,.3)}
+.ju-hdr-l .jh-t{font-size:.98rem;font-weight:800;color:#fff;letter-spacing:-.3px}
+.ju-hdr-l .jh-s{font-size:.68rem;color:rgba(255,255,255,.65);margin-top:1px}
+.ju-hdr-ico{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid rgba(255,255,255,.2)}
+.ju-vsel{margin:12px 14px 0;background:#fff;border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);border:1.5px solid var(--border);cursor:pointer}
+.ju-vsel-em{font-size:1.35rem}
+.ju-vsel-info{flex:1}
+.ju-vsel-name{font-size:.88rem;font-weight:700;color:var(--txt)}
+.ju-vsel-sub{font-size:.7rem;color:var(--txm);margin-top:1px}
+.ju-score{margin:11px 14px 0;background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:15px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 4px 20px rgba(37,99,235,.35);position:relative;overflow:hidden}
+.ju-score::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;background:rgba(255,255,255,.06);border-radius:50%}
+.ju-sc-circle{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(255,255,255,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.ju-sc-val{font-size:1.35rem;font-weight:900;color:#fff;line-height:1}
+.ju-sc-max{font-size:.56rem;color:rgba(255,255,255,.6)}
+.ju-sc-info{flex:1}
+.ju-sc-lbl{font-size:.66rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.ju-sc-title{font-size:.98rem;font-weight:800;color:#fff;margin:2px 0}
+.ju-sc-desc{font-size:.7rem;color:rgba(255,255,255,.75);line-height:1.4}
+.ju-sc-badges{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.ju-badge{padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700}
+.jub-r{background:rgba(220,38,38,.3);color:#FCA5A5}
+.jub-w{background:rgba(217,119,6,.3);color:#FCD34D}
+.jub-ok{background:rgba(5,150,105,.3);color:#6EE7B7}
+.ju-prec{margin:10px 14px 0;background:#fff;border-radius:var(--r-sm);padding:10px 14px;box-shadow:var(--sh);border:1.5px solid var(--border)}
+.ju-prec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.ju-prec-lbl{font-size:.7rem;font-weight:700;color:var(--txm)}
+.ju-prec-val{font-size:.7rem;font-weight:800;color:var(--primary)}
+.ju-prec-bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.ju-prec-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#3B82F6,#2563EB);transition:width .8s ease}
+.ju-prec-acts{display:flex;gap:5px;flex-wrap:wrap}
+.ju-prec-act{font-size:.63rem;font-weight:600;color:var(--primary);background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:20px;padding:3px 8px;cursor:pointer;white-space:nowrap}
+.ju-sec{margin:13px 14px 7px;font-size:.68rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:6px}
+.ju-sec::after{content:'';flex:1;height:1px;background:var(--border)}
+.ju-sil{margin:0 14px;background:#fff;border-radius:var(--r);padding:13px;box-shadow:var(--sh);border:1.5px solid var(--border)}
+.ju-vtabs{display:flex;background:var(--bg);border-radius:var(--r-sm);padding:3px;margin-bottom:13px;gap:2px}
+.ju-vt{flex:1;padding:6px;border:none;background:none;border-radius:8px;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s;font-family:inherit}
+.ju-vt.active{background:#fff;color:var(--primary);box-shadow:var(--sh)}
+.ju-svgwrap{position:relative;width:100%}
+.ju-svgwrap svg{width:100%;height:auto;display:block}
+.jhot{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:10}
+.jhot-d{width:21px;height:21px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:800;color:#fff;transition:transform .15s}
+.jhot:active .jhot-d{transform:scale(.88)}
+.jhot-d.ok{background:var(--ok)}
+.jhot-d.warn{background:var(--warn)}
+.jhot-d.err{background:var(--err)}
+.jhot-d.grey{background:var(--txl)}
+.jhot-d.est{opacity:.75}
+.jhot-d.err{animation:hotP 1.8s ease infinite}
+@keyframes hotP{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5),0 2px 8px rgba(0,0,0,.25)}70%{box-shadow:0 0 0 7px rgba(220,38,38,0),0 2px 8px rgba(0,0,0,.25)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0),0 2px 8px rgba(0,0,0,.25)}}
+.ju-legend{display:flex;gap:9px;margin-top:11px;padding-top:9px;border-top:1px solid var(--border);flex-wrap:wrap}
+.ju-leg-i{display:flex;align-items:center;gap:4px;font-size:.63rem;color:var(--txm);font-weight:500}
+.ju-leg-d{width:7px;height:7px;border-radius:50%}
+.ju-complist{margin:0 14px;display:flex;flex-direction:column;gap:7px}
+.jcomp{background:#fff;border-radius:var(--r-sm);padding:11px 13px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh);border:1.5px solid var(--border);cursor:pointer;transition:.15s}
+.jcomp:active{transform:scale(.98)}
+.jcomp.err{border-left:3px solid var(--err)}
+.jcomp.warn{border-left:3px solid var(--warn)}
+.jcomp.ok{border-left:3px solid var(--ok)}
+.jcomp.grey{border-left:3px solid var(--txl)}
+.jcomp-ico{width:35px;height:35px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.jcomp-ico.err{background:var(--err-bg)}
+.jcomp-ico.warn{background:var(--warn-bg)}
+.jcomp-ico.ok{background:var(--ok-bg)}
+.jcomp-ico.grey{background:#F1F5F9}
+.jcomp-info{flex:1;min-width:0}
+.jcomp-name{font-size:.81rem;font-weight:700;color:var(--txt)}
+.jcomp-sub{font-size:.68rem;color:var(--txm);margin-top:2px}
+.jcomp-est{font-size:.6rem;color:var(--warn);font-weight:600}
+.jcomp-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.jcomp-pill{padding:3px 8px;border-radius:20px;font-size:.6rem;font-weight:700}
+.jcomp-pill.err{background:var(--err-bg);color:var(--err)}
+.jcomp-pill.warn{background:var(--warn-bg);color:var(--warn)}
+.jcomp-pill.ok{background:var(--ok-bg);color:var(--ok)}
+.jcomp-pill.grey{background:#F1F5F9;color:var(--txl)}
+.jcomp-bw{width:50px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.jcomp-bar{height:100%;border-radius:2px}
+.jcomp-bar.err{background:var(--err)}
+.jcomp-bar.warn{background:var(--warn)}
+.jcomp-bar.ok{background:var(--ok)}
+.jcomp-bar.grey{background:var(--txl)}
+#mo-jcomp{position:fixed;inset:0;z-index:600;background:rgba(10,15,30,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
+#mo-jcomp.open{opacity:1;pointer-events:all}
+.jcs-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,16px)}
+#mo-jcomp.open .jcs-sheet{transform:translateY(0)}
+.jcs-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
+.jcs-head{padding:13px 17px 0}
+.jcs-trow{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+.jcs-ico{width:43px;height:43px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.jcs-name{font-size:.98rem;font-weight:800;color:var(--txt)}
+.jcs-cat{font-size:.68rem;color:var(--txm);margin-top:2px}
+.jcs-usure{padding:0 17px;margin-bottom:13px}
+.jcs-ulbl{display:flex;justify-content:space-between;margin-bottom:5px}
+.jcs-ulbl span{font-size:.68rem;font-weight:600;color:var(--txm)}
+.jcs-ulbl strong{font-size:.68rem;font-weight:800}
+.jcs-ubg{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.jcs-ubar{height:100%;border-radius:4px;transition:width .8s ease}
+.jcs-grid{padding:0 17px;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px}
+.jcs-box{background:#F8FAFC;border-radius:9px;padding:9px 11px}
+.jcs-blbl{font-size:.6rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em}
+.jcs-bval{font-size:.83rem;font-weight:700;color:var(--txt);margin-top:3px}
+.jcs-conseil{margin:0 17px 13px;border-radius:10px;padding:10px 12px;border:1.5px solid}
+.jcs-ctitle{font-size:.68rem;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:4px}
+.jcs-ctxt{font-size:.74rem;line-height:1.5}
+.jcs-btns{padding:0 17px 20px;display:flex;flex-direction:column;gap:9px}
+.jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.jcs-baff{width:100%;padding:12px;border:1.5px solid #FED7AA;border-radius:var(--r-sm);background:#FFF7ED;color:#C2410C;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.jcs-div{display:flex;align-items:center;gap:8px}
+.jcs-div::before,.jcs-div::after{content:'';flex:1;height:1px;background:var(--border)}
+.jcs-div span{font-size:.6rem;color:var(--txl);font-weight:600}
+.jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer}
+.ju-empty{padding:48px 24px;text-align:center}
+.ju-empty-ico{font-size:3rem;margin-bottom:12px}
+.ju-empty-t{font-size:1rem;font-weight:700;color:var(--txt);margin-bottom:6px}
+.ju-empty-s{font-size:.8rem;color:var(--txm);line-height:1.5;margin-bottom:20px}
 </style>
 </head>
 <body>
@@ -890,6 +1036,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     <div class="tab" id="t-fam"><div id="fm-ctn"></div></div>
     <div class="tab" id="t-profil"><div id="pr-ctn"></div></div>
     <div class="tab" id="t-flotte"><div id="fl-ctn"></div></div>
+    <div class="tab" id="t-jumeau"><div id="ju-ctn"></div></div>
   </div>
   <nav class="navbar">
     <button class="nb on" id="nb-dash" onclick="nav('dash')">
@@ -913,6 +1060,8 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       </svg></span>Flotte</button>
     <button class="nb" id="nb-rap" onclick="nav('rap')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Rappels<div class="rdot hidden" id="rdot"></div></button>
+    <button class="nb" id="nb-jumeau" onclick="nav('jumeau')">
+      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07M8.46 8.46a5 5 0 000 7.07"/></svg></span>Jumeau</button>
     <button id="fab" onclick="handleFab()">+</button>
     <button class="nb" id="nb-fam" onclick="nav('fam')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Équipe</button>
@@ -2426,6 +2575,11 @@ async function saveVeh(){
   if(finalVid) await saveVehDocs(finalVid, S.user.id);
 
   cm('veh');await loadVehs();await loadEnts();await loadDocuments();nav('dash');
+  // Déclencher onboarding jumeau si nouveau véhicule
+  if(!id && payload_id_temp){
+    JU.vid=payload_id_temp;
+    setTimeout(()=>openJumeauOnb(),700);
+  }
 }
 
 async function uploadDocPhoto(file, uid, vid, type){
@@ -2964,6 +3118,7 @@ function renderView(){
   else if(v==='rap')renderRap();
   else if(v==='fam')renderFam();
   else if(v==='flotte')renderFlotte();
+  else if(v==='jumeau')renderJumeau();
   else if(v==='profil'){
     renderProfil();
     setTimeout(()=>checkPushStatus().then(active=>updatePushUI(active)),100);
@@ -5115,7 +5270,7 @@ function riHTML(r){
 }
 
 /* NAV - 5 onglets fixes, jamais de vue cachée */
-const TAB_ORDER=['dash','flotte','rap','fam','profil','vehs','ent'];
+const TAB_ORDER=['dash','flotte','rap','jumeau','fam','profil','vehs','ent'];
 function nav(view){
   vib();scrollTop();
   if(S.view==='ent'&&view!=='ent')S.filterYear='all';
@@ -6581,5 +6736,376 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
   </div>
 </div>
+
+<!-- MODAL ONBOARDING JUMEAU -->
+<div id="mo-jumeau-onb">
+  <div class="jonb-sheet">
+    <div class="jonb-handle"></div>
+    <div class="jonb-header">
+      <div class="jonb-emoji">🧬</div>
+      <div class="jonb-title">Activez votre Jumeau Numérique</div>
+      <div class="jonb-sub">3 questions rapides pour estimer l'état de votre véhicule instantanément.</div>
+    </div>
+    <div class="jonb-progress">
+      <div class="jonb-dot active" id="jdot-0"></div>
+      <div class="jonb-dot" id="jdot-1"></div>
+      <div class="jonb-dot" id="jdot-2"></div>
+    </div>
+    <!-- Étape 1 -->
+    <div class="jonb-step active" id="jonb-step-0">
+      <div class="jonb-q"><div class="jonb-qnum">1</div>Depuis combien de temps avez-vous ce véhicule ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(0,'moins_1an',this)"><div class="jonb-opt-ico">🆕</div><div class="jonb-opt-txt"><strong>Moins d'1 an</strong><span>Véhicule récent ou tout juste acheté</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'1_3ans',this)"><div class="jonb-opt-ico">📅</div><div class="jonb-opt-txt"><strong>1 à 3 ans</strong><span>Véhicule relativement récent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'3_5ans',this)"><div class="jonb-opt-ico">🔧</div><div class="jonb-opt-txt"><strong>3 à 5 ans</strong><span>Quelques entretiens déjà effectués</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'plus_5ans',this)"><div class="jonb-opt-ico">🚗</div><div class="jonb-opt-txt"><strong>Plus de 5 ans</strong><span>Véhicule avec un historique conséquent</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 2 -->
+    <div class="jonb-step" id="jonb-step-1">
+      <div class="jonb-q"><div class="jonb-qnum">2</div>Quel est l'état de votre suivi d'entretien ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(1,'complet',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Entretien à jour et documenté</strong><span>J'ai toutes mes factures et mon carnet</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'incomplet',this)"><div class="jonb-opt-ico">📋</div><div class="jonb-opt-txt"><strong>Partiellement suivi</strong><span>Quelques entretiens faits, pas tout tracé</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'aucun',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Peu ou pas suivi</strong><span>Je ne sais pas vraiment ce qui a été fait</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 3 -->
+    <div class="jonb-step" id="jonb-step-2">
+      <div class="jonb-q"><div class="jonb-qnum">3</div>Quel est votre usage habituel ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(2,'urbain',this)"><div class="jonb-opt-ico">🏙️</div><div class="jonb-opt-txt"><strong>Urbain / courtes distances</strong><span>Principalement en ville, moins de 10 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'mixte',this)"><div class="jonb-opt-ico">🛣️</div><div class="jonb-opt-txt"><strong>Usage mixte</strong><span>Ville et route, 10 000 à 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'intensif',this)"><div class="jonb-opt-ico">🚀</div><div class="jonb-opt-txt"><strong>Usage intensif</strong><span>Longs trajets ou pro, plus de 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <div class="jonb-nav">
+      <button class="jonb-skip" onclick="jonbSkip()">Passer</button>
+      <button class="jonb-next" id="jonb-btn-next" onclick="jonbNext()" disabled>Suivant →</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM SHEET COMPOSANT JUMEAU -->
+<div id="mo-jcomp" onclick="if(event.target===this)closeJumeauComp()">
+  <div class="jcs-sheet">
+    <div class="jcs-handle"></div>
+    <div class="jcs-head">
+      <div class="jcs-trow">
+        <div class="jcs-ico" id="jcs-ico">⚙️</div>
+        <div><div class="jcs-name" id="jcs-name">—</div><div class="jcs-cat" id="jcs-cat">—</div></div>
+      </div>
+    </div>
+    <div class="jcs-usure">
+      <div class="jcs-ulbl"><span>Usure estimée</span><strong id="jcs-uval">—</strong></div>
+      <div class="jcs-ubg"><div class="jcs-ubar" id="jcs-ubar" style="width:0%"></div></div>
+    </div>
+    <div class="jcs-grid">
+      <div class="jcs-box"><div class="jcs-blbl">Dernier entretien</div><div class="jcs-bval" id="jcs-last-date">—</div></div>
+      <div class="jcs-box"><div class="jcs-blbl">Km au remplacement</div><div class="jcs-bval" id="jcs-last-km">—</div></div>
+      <div class="jcs-box"><div class="jcs-blbl">Parcouru depuis</div><div class="jcs-bval" id="jcs-since-km">—</div></div>
+      <div class="jcs-box"><div class="jcs-blbl">Coût estimé</div><div class="jcs-bval" id="jcs-cost">—</div></div>
+    </div>
+    <div class="jcs-conseil" id="jcs-conseil">
+      <div class="jcs-ctitle" id="jcs-ctitle">—</div>
+      <div class="jcs-ctxt" id="jcs-ctxt">—</div>
+    </div>
+    <div class="jcs-btns">
+      <button class="jcs-bp" onclick="jumeauPlanifier()">📅 Planifier l'entretien</button>
+      <button class="jcs-baff" id="jcs-baff" onclick="jumeauOscaro()">🛒 Voir les pièces sur Oscaro</button>
+      <div class="jcs-div"><span>ou</span></div>
+      <button class="jcs-bs" onclick="closeJumeauComp()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// JUMEAU NUMÉRIQUE — AutoCarnet
+// ============================================================
+
+const JU_COMPOSANTS=[
+  {id:'huile',       label:'Huile moteur',           ico:'🛢️',cat:'Moteur · Critique',       poids:3,skmo:8000, skmr:10000,smo:10,smr:12,cout:'60–100€',   types:['vidange','filtre_huile','revision']},
+  {id:'courroie',    label:'Courroie distribution',  ico:'⚙️',cat:'Moteur · Critique',       poids:3,skmo:60000,skmr:80000,smo:48,smr:60,cout:'350–600€', types:['courroie','sangle_dist','chaine_dist']},
+  {id:'freins_av',   label:'Plaquettes avant',        ico:'🔴',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:30000,smo:28,smr:36,cout:'80–150€',  types:['freins']},
+  {id:'freins_ar',   label:'Plaquettes arrière',      ico:'⭕',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:30000,smo:28,smr:36,cout:'70–130€',  types:['freins']},
+  {id:'liq_frein',   label:'Liquide de frein',        ico:'🧴',cat:'Freinage · Important',   poids:2,skmo:null, skmr:null, smo:20,smr:24,cout:'30–60€',    types:['liq_frein']},
+  {id:'pneus_av',    label:'Pneus avant',             ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:40000,smo:36,smr:48,cout:'200–400€', types:['pneus','pneus_sais']},
+  {id:'pneus_ar',    label:'Pneus arrière',           ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:40000,smo:36,smr:48,cout:'180–380€', types:['pneus','pneus_sais']},
+  {id:'batterie',    label:'Batterie 12V',            ico:'🔋',cat:'Électrique · Important', poids:2,skmo:null, skmr:null, smo:40,smr:60,cout:'80–150€',   types:['batterie']},
+  {id:'embrayage',   label:'Embrayage',               ico:'🔄',cat:'Transmission · Important',poids:2,skmo:70000,skmr:100000,smo:null,smr:null,cout:'400–800€',types:['embrayage']},
+  {id:'courroie_acc',label:'Courroie accessoires',    ico:'🔗',cat:'Moteur · Important',     poids:2,skmo:45000,skmr:60000,smo:36,smr:48,cout:'80–180€',  types:['courroie_acc']},
+  {id:'amortisseurs',label:'Amortisseurs',            ico:'🔩',cat:'Suspension · Important', poids:2,skmo:60000,skmr:80000,smo:72,smr:96,cout:'300–600€',  types:['amortisseurs']},
+  {id:'liq_refroid', label:'Liquide refroidissement', ico:'🌡️',cat:'Refroid. · Important',  poids:2,skmo:null, skmr:null, smo:36,smr:48,cout:'20–60€',    types:['liq_refroid']},
+  {id:'filtre_air',  label:'Filtre à air',            ico:'💨',cat:'Filtres · Confort',      poids:1,skmo:15000,skmr:20000,smo:18,smr:24,cout:'20–50€',    types:['filtre_air']},
+  {id:'filtre_hab',  label:'Filtre habitacle',        ico:'🌬️',cat:'Filtres · Confort',     poids:1,skmo:10000,skmr:15000,smo:10,smr:12,cout:'15–35€',    types:['filtre_hab']},
+  {id:'bougies',     label:'Bougies',                 ico:'⚡',cat:'Moteur · Confort',       poids:1,skmo:22000,skmr:30000,smo:28,smr:36,cout:'40–120€',   types:['bougies']},
+  {id:'clim',        label:'Climatisation',           ico:'❄️',cat:'Confort',               poids:1,skmo:null, skmr:null, smo:18,smr:24,cout:'80–150€',   types:['clim']},
+  {id:'ct',          label:'Contrôle technique',      ico:'✅',cat:'Administratif',          poids:1,skmo:null, skmr:null, smo:20,smr:24,cout:'55–80€',    types:['ct']},
+  {id:'essuie_gl',   label:'Essuie-glaces',           ico:'🌧️',cat:'Divers',               poids:1,skmo:null, skmr:null, smo:10,smr:12,cout:'20–50€',    types:['essuie_gl']},
+];
+
+const JU_HOTS_SIDE={
+  huile:'78,40',courroie:'70,55',freins_av:'74,80',freins_ar:'24,80',
+  liq_frein:'86,68',pneus_av:'74,93',pneus_ar:'24,93',batterie:'87,52',
+  embrayage:'50,65',courroie_acc:'62,58',amortisseurs:'36,70',
+  liq_refroid:'88,70',filtre_air:'76,48',filtre_hab:'50,30',
+  bougies:'72,45',clim:'40,55',ct:'30,35',essuie_gl:'55,22'
+};
+const JU_HOTS_TOP={
+  huile:'50,18',courroie:'65,22',freins_av:'84,20',freins_ar:'84,80',
+  pneus_av:'16,20',pneus_ar:'16,80',batterie:'35,22',embrayage:'50,60',
+  filtre_hab:'50,52',amortisseurs:'50,75',filtre_air:'65,28',bougies:'60,18',liq_refroid:'38,28'
+};
+const JU_OSCARO={
+  huile:'huile+moteur+5W30',courroie:'courroie+distribution+kit',
+  freins_av:'plaquettes+frein+avant',freins_ar:'plaquettes+frein+arriere',
+  liq_frein:'liquide+frein+DOT4',pneus_av:'pneus+ete',pneus_ar:'pneus+ete',
+  batterie:'batterie+voiture',embrayage:'kit+embrayage',
+  courroie_acc:'courroie+accessoires',amortisseurs:'amortisseurs+avant',
+  liq_refroid:'liquide+refroidissement',filtre_air:'filtre+air+moteur',
+  filtre_hab:'filtre+habitacle+pollen',bougies:'bougies+allumage',
+  clim:'recharge+climatisation',essuie_gl:'essuie+glaces'
+};
+
+const JU_SVG_SIDE=`<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="jbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8D4E8"/><stop offset="55%" stop-color="#A8B8D0"/><stop offset="100%" stop-color="#7A8FA6"/></linearGradient><linearGradient id="jroof" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D8E2F0"/><stop offset="100%" stop-color="#B0C0D5"/></linearGradient><linearGradient id="jglass" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#DBEAFE" stop-opacity=".85"/><stop offset="100%" stop-color="#93C5FD" stop-opacity=".55"/></linearGradient><linearGradient id="jwheel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3D4A5C"/><stop offset="100%" stop-color="#1E2733"/></linearGradient><linearGradient id="jrim" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9CA8B8"/><stop offset="100%" stop-color="#6B7685"/></linearGradient><filter id="jsh"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#00000022"/></filter></defs><ellipse cx="200" cy="172" rx="175" ry="9" fill="rgba(0,0,0,.08)"/><path d="M52,148 L52,105 Q52,90 62,80 L95,52 Q118,32 155,26 L230,24 Q268,24 295,38 L336,68 Q348,80 350,98 L350,148 Z" fill="url(#jbg)" filter="url(#jsh)"/><path d="M75,95 Q120,78 200,75 Q270,73 330,85 L330,92 Q270,80 200,83 Q120,85 75,102 Z" fill="rgba(255,255,255,.16)"/><path d="M97,80 Q118,55 155,38 L230,33 Q268,33 290,48 L326,75 L320,75 Q298,60 268,48 L228,40 Q190,37 158,45 L118,62 L100,80 Z" fill="url(#jroof)"/><path d="M102,79 L118,62 Q140,47 163,42 L188,39 L188,75 L150,76 Q128,76 108,82 Z" fill="url(#jglass)" stroke="#93C5FD" stroke-width=".7"/><path d="M192,39 L228,40 Q264,42 288,52 L320,72 L306,76 Q280,63 248,56 L210,50 L192,75 Z" fill="url(#jglass)" stroke="#93C5FD" stroke-width=".7"/><path d="M188,39 L188,76 L192,76 L192,39 Z" fill="#8FA5BE" opacity=".8"/><path d="M62,108 Q120,102 200,102 Q280,102 342,108" stroke="rgba(255,255,255,.3)" stroke-width="1.2" fill="none"/><path d="M58,140 Q60,148 68,150 L340,150 Q348,148 350,140 L350,136 Q348,144 340,146 L68,146 Q60,144 58,136 Z" fill="#8FA5BE"/><path d="M336,68 Q348,80 352,100 L352,140 Q350,148 342,150 L338,150 L338,100 Q338,85 330,75 Z" fill="#8FA5BE"/><path d="M326,68 Q336,72 340,80 L340,96 L326,96 Q320,90 318,80 Z" fill="#FEF08A" stroke="#EAB308" stroke-width=".5"/><path d="M52,105 Q52,90 62,80 L66,80 Q57,90 57,105 L57,140 Q55,148 52,150 L50,150 L50,140 Z" fill="#8FA5BE"/><path d="M62,80 L79,80 Q84,85 84,96 L64,96 Q58,90 58,82 Z" fill="#FCA5A5" stroke="#DC2626" stroke-width=".5"/><rect x="144" y="103" width="14" height="4" rx="2" fill="#94A3B8" opacity=".8"/><rect x="248" y="103" width="14" height="4" rx="2" fill="#94A3B8" opacity=".8"/><circle cx="100" cy="156" r="30" fill="#1E2733"/><circle cx="100" cy="156" r="28" fill="url(#jwheel)"/><circle cx="100" cy="156" r="19" fill="url(#jrim)"/><circle cx="100" cy="156" r="15" fill="#4A5568"/><circle cx="100" cy="156" r="5" fill="#64748B"/><line x1="100" y1="141" x2="100" y2="151" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="161" x2="100" y2="171" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="85" y1="156" x2="95" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="105" y1="156" x2="115" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="89" y1="145" x2="96" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="104" y1="160" x2="111" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="111" y1="145" x2="104" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="96" y1="160" x2="89" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><circle cx="100" cy="156" r="3.5" fill="#94A3B8"/><circle cx="310" cy="156" r="30" fill="#1E2733"/><circle cx="310" cy="156" r="28" fill="url(#jwheel)"/><circle cx="310" cy="156" r="19" fill="url(#jrim)"/><circle cx="310" cy="156" r="15" fill="#4A5568"/><circle cx="310" cy="156" r="5" fill="#64748B"/><line x1="310" y1="141" x2="310" y2="151" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="310" y1="161" x2="310" y2="171" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="295" y1="156" x2="305" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="315" y1="156" x2="325" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="299" y1="145" x2="306" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="314" y1="160" x2="321" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="321" y1="145" x2="314" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="306" y1="160" x2="299" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><circle cx="310" cy="156" r="3.5" fill="#94A3B8"/><path d="M68,148 Q70,126 100,126 Q130,126 132,148" fill="#94A3B8" stroke="#7A8FA6" stroke-width=".5"/><path d="M278,148 Q280,126 310,126 Q340,126 342,148" fill="#94A3B8" stroke="#7A8FA6" stroke-width=".5"/></svg>`;
+
+const JU_SVG_TOP=`<svg viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg"><path d="M80,30 Q150,10 220,30 L245,60 Q260,100 265,160 L265,340 Q260,400 245,440 L220,470 Q150,490 80,470 L55,440 Q40,400 35,340 L35,160 Q40,100 55,60 Z" fill="#B0C0D5"/><path d="M90,35 Q150,18 210,35 L235,60 Q245,90 248,130 L52,130 Q55,90 65,60 Z" fill="#A0B4C8" opacity=".8"/><rect x="65" y="130" width="170" height="35" rx="4" fill="#DBEAFE" opacity=".6"/><rect x="52" y="165" width="196" height="170" rx="6" fill="#94A3B8" opacity=".5"/><rect x="65" y="335" width="170" height="30" rx="4" fill="#DBEAFE" opacity=".5"/><path d="M90,365 Q150,345 210,365 L235,440 Q245,465 220,470 L80,470 Q55,465 65,440 Z" fill="#A0B4C8" opacity=".7"/><rect x="22" y="90" width="30" height="50" rx="8" fill="#374151"/><rect x="248" y="90" width="30" height="50" rx="8" fill="#374151"/><rect x="22" y="360" width="30" height="50" rx="8" fill="#374151"/><rect x="248" y="360" width="30" height="50" rx="8" fill="#374151"/><line x1="52" y1="250" x2="248" y2="250" stroke="#CBD5E1" stroke-width="1.5"/></svg>`;
+
+let JU={vid:null,vehIdx:0,data:{},onbAnswers:[null,null,null],onbStep:0,compOpen:null,vue:'side'};
+
+function renderJumeau(){
+  const ctn=document.getElementById('ju-ctn');
+  if(!S.vehicles||!S.vehicles.length){
+    ctn.innerHTML=`<div class="ju-empty"><div class="ju-empty-ico">🧬</div><div class="ju-empty-t">Jumeau Numérique</div><div class="ju-empty-s">Ajoutez un véhicule pour activer votre jumeau numérique et voir l'état de chaque composant.</div><button class="btn btn-p" onclick="fabAction('veh')">+ Ajouter un véhicule</button></div>`;
+    return;
+  }
+  if(!JU.vid||!S.vehicles.find(v=>v.id===JU.vid)){
+    JU.vehIdx=S.vehicles.findIndex(v=>v.id===S.selVeh);
+    if(JU.vehIdx<0)JU.vehIdx=0;
+    JU.vid=S.vehicles[JU.vehIdx]?.id;
+  }
+  const v=S.vehicles.find(x=>x.id===JU.vid);
+  if(!v)return;
+  // Déclencher onboarding si pas encore fait
+  if(!v.jumeau_onboarding_done){
+    setTimeout(()=>openJumeauOnb(),300);
+  }
+  jumeauCalculer(v);
+  const score=jumeauScore();
+  const prec=jumeauPrecision();
+  ctn.innerHTML=`
+    <div class="ju-hdr"><div class="ju-hdr-l"><div class="jh-t">🧬 Jumeau Numérique</div><div class="jh-s">État en temps réel de votre véhicule</div></div><div class="ju-hdr-ico">⚙️</div></div>
+    <div class="ju-vsel" onclick="jumeauCycleVeh()"><div class="ju-vsel-em">${v.emoji||'🚗'}</div><div class="ju-vsel-info"><div class="ju-vsel-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?' · '+v.annee:''}</div><div class="ju-vsel-sub">${[v.immatriculation,v.km_actuel?v.km_actuel.toLocaleString('fr')+' km':null,v.carburant].filter(Boolean).join(' · ')}</div></div><div style="color:var(--txl)">▾</div></div>
+    <div class="ju-score"><div class="ju-sc-circle"><div class="ju-sc-val">${score.val}</div><div class="ju-sc-max">/100</div></div><div class="ju-sc-info"><div class="ju-sc-lbl">Score santé</div><div class="ju-sc-title">${score.title}</div><div class="ju-sc-desc">${score.desc}</div><div class="ju-sc-badges">${score.badges}</div></div></div>
+    <div class="ju-prec"><div class="ju-prec-hdr"><div class="ju-prec-lbl">Précision du jumeau</div><div class="ju-prec-val">${prec}%</div></div><div class="ju-prec-bg"><div class="ju-prec-bar" style="width:${prec}%"></div></div><div class="ju-prec-acts">${prec<90?'<span class="ju-prec-act" onclick="fabAction(\'ent\')">+ Ajouter un entretien</span>':''}<span class="ju-prec-act" onclick="openJumeauOnb()">Affiner le profil</span></div></div>
+    <div class="ju-sec">Visualisation</div>
+    <div class="ju-sil">
+      <div class="ju-vtabs"><button class="ju-vt active" id="jvt-side" onclick="jumeauVue('side')">Vue latérale</button><button class="ju-vt" id="jvt-top" onclick="jumeauVue('top')">Vue de dessus</button></div>
+      <div class="ju-svgwrap" id="ju-svgwrap-side">${JU_SVG_SIDE}<div id="ju-hots-side">${jumeauHots('side')}</div></div>
+      <div class="ju-svgwrap" id="ju-svgwrap-top" style="display:none">${JU_SVG_TOP}<div id="ju-hots-top">${jumeauHots('top')}</div></div>
+      <div class="ju-legend"><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--err)"></div>Urgent</div><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--warn)"></div>À surveiller</div><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--ok)"></div>OK</div><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--txl)"></div>Inconnu</div><div class="ju-leg-i" style="font-style:italic;font-size:.6rem">~ Estimé</div></div>
+    </div>
+    <div class="ju-sec">Composants</div>
+    <div class="ju-complist">${jumeauCompList()}</div>
+    <div style="height:16px"></div>`;
+}
+
+function jumeauCalculer(v){
+  JU.data={};
+  const km=v.km_actuel||0;
+  const now=new Date();
+  const ents=(S.ents||[]).filter(e=>e.vehicle_id===v.id);
+  JU_COMPOSANTS.forEach(comp=>{
+    const matching=ents.filter(e=>comp.types.includes(e.type)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const last=matching[0]||null;
+    if(last){
+      const lastDate=new Date(last.date);
+      const lastKm=last.km||0;
+      const kmSince=km-lastKm;
+      const moisSince=Math.floor((now-lastDate)/(1000*60*60*24*30));
+      const status=juCalcStatus(comp,kmSince,moisSince);
+      const usure=juCalcUsure(comp,kmSince,moisSince);
+      JU.data[comp.id]={status,usure,lastDate:lastDate.toLocaleDateString('fr-FR',{month:'short',year:'numeric'}),lastKm:lastKm.toLocaleString('fr')+' km',sinceKm:kmSince>0?kmSince.toLocaleString('fr')+' km':'—',estimated:false,cout:comp.cout,conseil:juConseil(comp,status,false)};
+    } else {
+      JU.data[comp.id]={...juEstimer(comp,v,km,now),cout:comp.cout};
+    }
+  });
+}
+
+function juCalcStatus(comp,kmSince,moisSince){
+  let sk=0,sm=0;
+  if(comp.skmo&&kmSince>=comp.skmr)sk=2;else if(comp.skmo&&kmSince>=comp.skmo)sk=1;
+  if(comp.smo&&moisSince>=comp.smr)sm=2;else if(comp.smo&&moisSince>=comp.smo)sm=1;
+  const s=Math.max(sk,sm);
+  return s===2?'err':s===1?'warn':'ok';
+}
+function juCalcUsure(comp,kmSince,moisSince){
+  let pk=0,pm=0;
+  if(comp.skmr)pk=Math.min(100,Math.round(kmSince/comp.skmr*100));
+  if(comp.smr)pm=Math.min(100,Math.round(moisSince/comp.smr*100));
+  return Math.max(pk,pm);
+}
+function juEstimer(comp,v,km,now){
+  const anc=v.jumeau_anciennete||'inconnu';
+  const etat=v.jumeau_etat_carnet||'aucun';
+  const fAnc={moins_1an:0.1,'1_3ans':0.3,'3_5ans':0.55,plus_5ans:0.75,inconnu:0.5}[anc]||0.5;
+  const fEtat={complet:-0.2,incomplet:0.1,aucun:0.25}[etat]||0;
+  const usure=Math.min(95,Math.round((fAnc+fEtat)*80));
+  let status='grey';
+  if(comp.skmo||comp.smo){
+    if(usure>=75)status='err';
+    else if(usure>=45)status='warn';
+    else if(anc!=='inconnu')status='ok';
+  }
+  return{status,usure,lastDate:'—',lastKm:'—',sinceKm:'—',estimated:true,conseil:juConseil(comp,status,true)};
+}
+function juConseil(comp,status,est){
+  const p=est?'(Estimation) ':'';
+  if(status==='err')return{type:'err',title:'⚠️ Intervention urgente',txt:p+comp.label+' dépasse le seuil recommandé. Planifiez une intervention rapidement.'};
+  if(status==='warn')return{type:'warn',title:'📋 À surveiller',txt:p+comp.label+' approche de son échéance. À planifier dans les prochains mois.'};
+  if(status==='ok')return{type:'ok',title:'✅ Bon état',txt:p+comp.label+' est dans les normes. Vérification selon préconisations constructeur.'};
+  return{type:'grey',title:'ℹ️ Aucune donnée',txt:'Ajoutez la date du dernier '+comp.label.toLowerCase()+' pour un suivi précis.'};
+}
+function jumeauScore(){
+  let tot=0,poids=0,nbr=0,nbw=0,nbo=0;
+  JU_COMPOSANTS.forEach(c=>{
+    const d=JU.data[c.id];
+    if(!d||d.status==='grey')return;
+    const pts=d.status==='ok'?100:d.status==='warn'?50:10;
+    tot+=pts*c.poids;poids+=c.poids*100;
+    if(d.status==='err')nbr++;else if(d.status==='warn')nbw++;else nbo++;
+  });
+  const val=poids>0?Math.round(tot/poids*100):0;
+  const title=val>=80?'Bon état':val>=55?'État moyen':val>=30?'Attention requise':'Intervention urgente';
+  const desc=`${nbr?nbr+' composant(s) urgent(s)':''}${nbw?(nbr?', ':'')+nbw+' à surveiller':''}${nbo?', '+nbo+' OK':''}`;
+  const badges=`${nbr?`<span class="ju-badge jub-r">🔴 ${nbr} urgent${nbr>1?'s':''}</span>`:''}${nbw?`<span class="ju-badge jub-w">🟡 ${nbw} à surveiller</span>`:''}${nbo?`<span class="ju-badge jub-ok">🟢 ${nbo} OK</span>`:''}`;
+  return{val,title,desc,badges};
+}
+function jumeauPrecision(){
+  const total=JU_COMPOSANTS.length;
+  const avecDonnees=Object.values(JU.data).filter(d=>!d.estimated).length;
+  return Math.round(avecDonnees/total*100);
+}
+function jumeauHots(vue){
+  const map=vue==='side'?JU_HOTS_SIDE:JU_HOTS_TOP;
+  return Object.entries(map).map(([id,pos])=>{
+    const d=JU.data[id];if(!d)return'';
+    const[l,t]=pos.split(',');
+    const icon=d.status==='err'?'!':d.status==='warn'?'~':d.status==='ok'?'✓':'?';
+    const estCls=d.estimated?' est':'';
+    return`<div class="jhot" style="left:${l}%;top:${t}%" onclick="openJumeauComp('${id}')"><div class="jhot-d ${d.status}${estCls}">${icon}</div></div>`;
+  }).join('');
+}
+function jumeauCompList(){
+  const order=['err','warn','ok','grey'];
+  return [...JU_COMPOSANTS].sort((a,b)=>{
+    const sa=JU.data[a.id]?.status||'grey';
+    const sb=JU.data[b.id]?.status||'grey';
+    if(order.indexOf(sa)!==order.indexOf(sb))return order.indexOf(sa)-order.indexOf(sb);
+    return b.poids-a.poids;
+  }).map(comp=>{
+    const d=JU.data[comp.id];if(!d)return'';
+    const pill=d.status==='err'?'Urgent':d.status==='warn'?'Surveiller':d.status==='ok'?'OK':'Inconnu';
+    const sub=d.estimated?`<span class="jcomp-est">~ Estimation</span>`:`<span style="color:var(--txm);font-size:.68rem">${d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
+    return`<div class="jcomp ${d.status}" onclick="openJumeauComp('${comp.id}')"><div class="jcomp-ico ${d.status}">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name">${comp.label}</div><div class="jcomp-sub">${sub}</div></div><div class="jcomp-r"><span class="jcomp-pill ${d.status}">${pill}</span><div class="jcomp-bw"><div class="jcomp-bar ${d.status}" style="width:${d.usure}%"></div></div></div></div>`;
+  }).join('');
+}
+function jumeauVue(vue){
+  JU.vue=vue;
+  document.getElementById('jvt-side')?.classList.toggle('active',vue==='side');
+  document.getElementById('jvt-top')?.classList.toggle('active',vue==='top');
+  const sw=document.getElementById('ju-svgwrap-side');
+  const tw=document.getElementById('ju-svgwrap-top');
+  if(sw)sw.style.display=vue==='side'?'block':'none';
+  if(tw)tw.style.display=vue==='top'?'block':'none';
+}
+function jumeauCycleVeh(){
+  if(!S.vehicles?.length)return;
+  JU.vehIdx=(JU.vehIdx+1)%S.vehicles.length;
+  JU.vid=S.vehicles[JU.vehIdx].id;
+  renderJumeau();
+}
+function openJumeauComp(id){
+  const comp=JU_COMPOSANTS.find(c=>c.id===id);
+  const d=JU.data[id];
+  if(!comp||!d)return;
+  JU.compOpen=id;
+  const sc=d.status==='err'?'var(--err)':d.status==='warn'?'var(--warn)':d.status==='ok'?'var(--ok)':'var(--txl)';
+  const icoBg=d.status==='err'?'var(--err-bg)':d.status==='warn'?'var(--warn-bg)':d.status==='ok'?'var(--ok-bg)':'#F1F5F9';
+  document.getElementById('jcs-ico').textContent=comp.ico;
+  document.getElementById('jcs-ico').style.background=icoBg;
+  document.getElementById('jcs-name').textContent=comp.label;
+  document.getElementById('jcs-cat').textContent=comp.cat+(d.estimated?' · Estimation':'');
+  document.getElementById('jcs-uval').textContent=d.status==='grey'?'—':d.usure+'%';
+  document.getElementById('jcs-uval').style.color=sc;
+  document.getElementById('jcs-ubar').style.width=d.usure+'%';
+  document.getElementById('jcs-ubar').style.background=sc;
+  document.getElementById('jcs-last-date').textContent=d.lastDate;
+  document.getElementById('jcs-last-km').textContent=d.lastKm;
+  document.getElementById('jcs-since-km').textContent=d.sinceKm;
+  document.getElementById('jcs-cost').textContent=d.cout;
+  const cc={err:{bg:'#FFF7ED',border:'#FED7AA',tc:'#C2410C',xc:'#7C2D12'},warn:{bg:'#FFFBEB',border:'#FDE68A',tc:'#B45309',xc:'#78350F'},ok:{bg:'#F0FDF4',border:'#BBF7D0',tc:'#15803D',xc:'#14532D'},grey:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'}}[d.conseil.type]||{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'};
+  const cel=document.getElementById('jcs-conseil');
+  cel.style.background=cc.bg;cel.style.borderColor=cc.border;
+  document.getElementById('jcs-ctitle').textContent=d.conseil.title;
+  document.getElementById('jcs-ctitle').style.color=cc.tc;
+  document.getElementById('jcs-ctxt').textContent=d.conseil.txt;
+  document.getElementById('jcs-ctxt').style.color=cc.xc;
+  document.getElementById('jcs-baff').style.display=JU_OSCARO[id]?'flex':'none';
+  document.getElementById('mo-jcomp').classList.add('open');
+}
+function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove('open');}
+function jumeauPlanifier(){
+  closeJumeauComp();
+  const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
+  if(!comp)return;
+  openEnt(null,JU.vid);
+  setTimeout(()=>{const sel=document.getElementById('e-ty');if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}},350);
+}
+function jumeauOscaro(){
+  const id=JU.compOpen;
+  const v=S.vehicles.find(x=>x.id===JU.vid);
+  if(!id||!v)return;
+  const q=encodeURIComponent(`${JU_OSCARO[id]||id} ${v.marque} ${v.modele} ${v.annee||''}`);
+  window.open(`https://www.oscaro.com/recherche?q=${q}`,'_blank');
+}
+// ONBOARDING
+function openJumeauOnb(){
+  JU.onbStep=0;JU.onbAnswers=[null,null,null];
+  juOnbUI();
+  document.getElementById('mo-jumeau-onb').classList.add('open');
+}
+function jonbSelect(step,val,el){
+  JU.onbAnswers[step]=val;
+  el.closest('.jonb-opts').querySelectorAll('.jonb-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('jonb-btn-next').disabled=false;
+}
+async function jonbNext(){
+  if(JU.onbStep<2){
+    JU.onbStep++;juOnbUI();
+    document.getElementById('jonb-btn-next').disabled=JU.onbAnswers[JU.onbStep]===null;
+    document.getElementById('jonb-btn-next').textContent=JU.onbStep===2?'Activer mon jumeau →':'Suivant →';
+  } else {await jonbSave();}
+}
+function jonbSkip(){document.getElementById('mo-jumeau-onb').classList.remove('open');}
+function juOnbUI(){
+  document.querySelectorAll('.jonb-step').forEach((s,i)=>s.classList.toggle('active',i===JU.onbStep));
+  document.querySelectorAll('.jonb-dot').forEach((d,i)=>{d.classList.toggle('done',i<JU.onbStep);d.classList.toggle('active',i===JU.onbStep);});
+  document.getElementById('jonb-btn-next').disabled=JU.onbAnswers[JU.onbStep]===null;
+}
+async function jonbSave(){
+  const v=S.vehicles.find(x=>x.id===JU.vid);
+  if(!v)return;
+  const{error}=await sb.from('vehicles').update({jumeau_onboarding_done:true,jumeau_anciennete:JU.onbAnswers[0],jumeau_etat_carnet:JU.onbAnswers[1]}).eq('id',JU.vid).eq('user_id',S.user.id);
+  if(!error){
+    v.jumeau_onboarding_done=true;v.jumeau_anciennete=JU.onbAnswers[0];v.jumeau_etat_carnet=JU.onbAnswers[1];
+    document.getElementById('mo-jumeau-onb').classList.remove('open');
+    toast('Jumeau activé ! 🧬','s');
+    renderJumeau();
+  } else {toast('Erreur lors de la sauvegarde','e');}
+}
+</script>
 </body>
 </html>
