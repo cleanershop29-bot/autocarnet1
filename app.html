@@ -6742,39 +6742,76 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     <div class="jonb-header">
       <div class="jonb-emoji">🧬</div>
       <div class="jonb-title">Activez votre Jumeau Numérique</div>
-      <div class="jonb-sub">3 questions rapides pour estimer l'état de votre véhicule instantanément.</div>
+      <div class="jonb-sub">6 questions pour une estimation chirurgicale de l'état de votre véhicule.</div>
     </div>
     <div class="jonb-progress">
       <div class="jonb-dot active" id="jdot-0"></div>
       <div class="jonb-dot" id="jdot-1"></div>
       <div class="jonb-dot" id="jdot-2"></div>
+      <div class="jonb-dot" id="jdot-3"></div>
+      <div class="jonb-dot" id="jdot-4"></div>
+      <div class="jonb-dot" id="jdot-5"></div>
     </div>
-    <!-- Étape 1 -->
+    <!-- Étape 1 : Km à l'achat -->
     <div class="jonb-step active" id="jonb-step-0">
-      <div class="jonb-q"><div class="jonb-qnum">1</div>Depuis combien de temps avez-vous ce véhicule ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">1</div>À combien de km était le véhicule quand vous l'avez eu ?</div>
       <div class="jonb-opts">
-        <div class="jonb-opt" onclick="jonbSelect(0,'moins_1an',this)"><div class="jonb-opt-ico">🆕</div><div class="jonb-opt-txt"><strong>Moins d'1 an</strong><span>Véhicule récent ou tout juste acheté</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(0,'1_3ans',this)"><div class="jonb-opt-ico">📅</div><div class="jonb-opt-txt"><strong>1 à 3 ans</strong><span>Véhicule relativement récent</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(0,'3_5ans',this)"><div class="jonb-opt-ico">🔧</div><div class="jonb-opt-txt"><strong>3 à 5 ans</strong><span>Quelques entretiens déjà effectués</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(0,'plus_5ans',this)"><div class="jonb-opt-ico">🚗</div><div class="jonb-opt-txt"><strong>Plus de 5 ans</strong><span>Véhicule avec un historique conséquent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'neuf',this)"><div class="jonb-opt-ico">🆕</div><div class="jonb-opt-txt"><strong>Neuf (0 km)</strong><span>Acheté ou reçu neuf chez un concessionnaire</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'1_30k',this)"><div class="jonb-opt-ico">🟢</div><div class="jonb-opt-txt"><strong>1 à 30 000 km</strong><span>Peu kilométré, véhicule jeune</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'30_80k',this)"><div class="jonb-opt-ico">🟡</div><div class="jonb-opt-txt"><strong>30 000 à 80 000 km</strong><span>Occasion classique</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'80_150k',this)"><div class="jonb-opt-ico">🟠</div><div class="jonb-opt-txt"><strong>80 000 à 150 000 km</strong><span>Véhicule avec un historique conséquent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'plus_150k',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Plus de 150 000 km</strong><span>Véhicule très kilométré</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
-    <!-- Étape 2 -->
+    <!-- Étape 2 : Suivi entretien -->
     <div class="jonb-step" id="jonb-step-1">
-      <div class="jonb-q"><div class="jonb-qnum">2</div>Quel est l'état de votre suivi d'entretien ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">2</div>Quel est le niveau de suivi des entretiens ?</div>
       <div class="jonb-opts">
-        <div class="jonb-opt" onclick="jonbSelect(1,'complet',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Entretien à jour et documenté</strong><span>J'ai toutes mes factures et mon carnet</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(1,'incomplet',this)"><div class="jonb-opt-ico">📋</div><div class="jonb-opt-txt"><strong>Partiellement suivi</strong><span>Quelques entretiens faits, pas tout tracé</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(1,'aucun',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Peu ou pas suivi</strong><span>Je ne sais pas vraiment ce qui a été fait</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'rigoureux',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Rigoureux</strong><span>Toujours fait à temps, factures disponibles</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'correct',this)"><div class="jonb-opt-ico">📋</div><div class="jonb-opt-txt"><strong>Correct</strong><span>Entretiens faits, parfois un peu en retard</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'irregulier',this)"><div class="jonb-opt-ico">⚠️</div><div class="jonb-opt-txt"><strong>Irrégulier</strong><span>Souvent en retard, suivi approximatif</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'inconnu',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Inconnu</strong><span>Acheté d'occasion, historique non disponible</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
-    <!-- Étape 3 -->
+    <!-- Étape 3 : Courroie -->
     <div class="jonb-step" id="jonb-step-2">
-      <div class="jonb-q"><div class="jonb-qnum">3</div>Quel est votre usage habituel ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">3</div>Votre courroie de distribution a été changée il y a… ?</div>
       <div class="jonb-opts">
-        <div class="jonb-opt" onclick="jonbSelect(2,'urbain',this)"><div class="jonb-opt-ico">🏙️</div><div class="jonb-opt-txt"><strong>Urbain / courtes distances</strong><span>Principalement en ville, moins de 10 000 km/an</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(2,'mixte',this)"><div class="jonb-opt-ico">🛣️</div><div class="jonb-opt-txt"><strong>Usage mixte</strong><span>Ville et route, 10 000 à 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(2,'intensif',this)"><div class="jonb-opt-ico">🚀</div><div class="jonb-opt-txt"><strong>Usage intensif</strong><span>Longs trajets ou pro, plus de 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'moins_30k',this)"><div class="jonb-opt-ico">🟢</div><div class="jonb-opt-txt"><strong>Moins de 30 000 km</strong><span>Changée récemment, encore bonne durée</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'30_60k',this)"><div class="jonb-opt-ico">🟡</div><div class="jonb-opt-txt"><strong>30 000 à 60 000 km</strong><span>À mi-vie, à surveiller</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'plus_60k',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Plus de 60 000 km</strong><span>Approche ou dépasse le seuil — urgent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'inconnu',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Je ne sais pas</strong><span>Historique inconnu ou non communiqué</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'chaine',this)"><div class="jonb-opt-ico">🔗</div><div class="jonb-opt-txt"><strong>Chaîne (pas de courroie)</strong><span>Mon véhicule est équipé d'une chaîne de distribution</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 4 : Usage -->
+    <div class="jonb-step" id="jonb-step-3">
+      <div class="jonb-q"><div class="jonb-qnum">4</div>Quel est votre usage habituel ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(3,'urbain',this)"><div class="jonb-opt-ico">🏙️</div><div class="jonb-opt-txt"><strong>Urbain / courtes distances</strong><span>Principalement en ville, stops fréquents</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(3,'mixte',this)"><div class="jonb-opt-ico">🛣️</div><div class="jonb-opt-txt"><strong>Mixte</strong><span>Ville et routes, trajets variés</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(3,'route',this)"><div class="jonb-opt-ico">🛤️</div><div class="jonb-opt-txt"><strong>Route / autoroute</strong><span>Surtout des longs trajets à vitesse stable</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(3,'intensif',this)"><div class="jonb-opt-ico">🚀</div><div class="jonb-opt-txt"><strong>Intensif / professionnel</strong><span>Utilisation quotidienne intensive ou pro</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 5 : Km par an -->
+    <div class="jonb-step" id="jonb-step-4">
+      <div class="jonb-q"><div class="jonb-qnum">5</div>Combien de kilomètres faites-vous par an en moyenne ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(4,'moins_8k',this)"><div class="jonb-opt-ico">🐢</div><div class="jonb-opt-txt"><strong>Moins de 8 000 km/an</strong><span>Utilisation occasionnelle ou urbaine courte</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(4,'8_15k',this)"><div class="jonb-opt-ico">🚗</div><div class="jonb-opt-txt"><strong>8 000 à 15 000 km/an</strong><span>Usage courant, moyenne nationale</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(4,'15_25k',this)"><div class="jonb-opt-ico">🏎️</div><div class="jonb-opt-txt"><strong>15 000 à 25 000 km/an</strong><span>Usage régulier, trajets quotidiens</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(4,'plus_25k',this)"><div class="jonb-opt-ico">🚀</div><div class="jonb-opt-txt"><strong>Plus de 25 000 km/an</strong><span>Grand rouleur ou usage professionnel</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 6 : Signes -->
+    <div class="jonb-step" id="jonb-step-5">
+      <div class="jonb-q"><div class="jonb-qnum">6</div>Observez-vous des signes particuliers sur le véhicule ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(5,'rien',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Aucun signe particulier</strong><span>Tout semble fonctionner normalement</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(5,'voyant',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Voyant(s) allumé(s)</strong><span>Un ou plusieurs témoins sur le tableau de bord</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(5,'bruit',this)"><div class="jonb-opt-ico">🔊</div><div class="jonb-opt-txt"><strong>Bruits ou vibrations</strong><span>Sons anormaux, vibrations au freinage ou en roulant</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(5,'plusieurs',this)"><div class="jonb-opt-ico">⚠️</div><div class="jonb-opt-txt"><strong>Plusieurs anomalies</strong><span>Combinaison de voyants, bruits, pertes de performance</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
     <div class="jonb-nav">
@@ -6946,82 +6983,141 @@ function juCalcUsure(comp,kmSince,moisSince){
   return Math.max(pk,pm);
 }
 function juEstimer(comp,v,km,now){
-  // Estimation précise basée sur l'âge réel du véhicule et le km total
   const annee=v.annee?parseInt(v.annee):null;
-  const ageVehiculeMois=annee?Math.floor((now-new Date(annee+'-06-01'))/(1000*60*60*24*30)):null;
   const kmTotal=km||0;
+  const ageVehiculeMois=annee?Math.max(1,Math.floor((now-new Date(annee+'-07-01'))/(1000*60*60*24*30))):null;
 
-  // Facteurs onboarding
-  const anc=v.jumeau_anciennete||'inconnu';
-  const etat=v.jumeau_etat_carnet||'inconnu';
-  const usage=v.jumeau_usage||'mixte';
-  const signes=v.jumeau_signes||'rien';
-  const dernierEnt=v.jumeau_dernier_entretien||'inconnu';
+  // Données profil
+  const etat=v.jumeau_etat_carnet||'inconnu';           // rigoureux/correct/irregulier/inconnu
+  const usage=v.jumeau_usage||'mixte';                   // urbain/mixte/route/intensif
+  const signes=v.jumeau_signes||'rien';                  // rien/voyant/bruit/plusieurs
+  const courroieInfo=v.jumeau_courroie_info||null;       // moins_30k/30_60k/plus_60k/inconnu/chaine
+  const kmAchat=(v.jumeau_km_achat!=null&&v.jumeau_km_achat!=='')?parseInt(v.jumeau_km_achat):null;
+  const kmAnnuel=v.jumeau_km_annuel||null;               // moins_8k/8_15k/15_25k/plus_25k
 
-  // Si on a l'année du véhicule et le km, on peut faire une estimation réelle
-  if(annee&&kmTotal>0&&ageVehiculeMois!==null){
-    // On estime le km depuis le dernier entretien probable selon le suivi déclaré
-    const facteurSuivi={rigoureux:0.5,correct:0.7,irregulier:0.85,inconnu:1.0}[etat]||0.8;
-    const facteurDernier={moins_6mois:0.15,'6_12mois':0.35,'1_2ans':0.6,plus_2ans:0.9,inconnu:0.7}[dernierEnt]||0.7;
-
-    // Km estimé depuis le dernier entretien du composant spécifique
-    // On suppose que le dernier entretien a été fait il y a X% du cycle normal
-    let kmEstimeSince=0,moisEstimeSince=0;
-
-    if(comp.skmr){
-      // Pour les composants avec seuil km : on estime le km depuis dernier remplacement
-      // = km total × facteur suivi (si suivi rigoureux → peu de km sans remplacement)
-      const cycleKm=comp.skmr;
-      kmEstimeSince=Math.min(kmTotal,Math.round(kmTotal*(facteurSuivi*facteurDernier)));
-      // Si le km total dépasse déjà le seuil rouge → forcément dépassé
-      if(kmTotal>cycleKm)kmEstimeSince=Math.min(kmTotal,Math.round(cycleKm*facteurDernier*1.1));
-    }
-
-    if(comp.smr){
-      // Pour les composants avec seuil temps : on estime les mois depuis dernier remplacement
-      const cycleMois=comp.smr;
-      moisEstimeSince=Math.min(ageVehiculeMois,Math.round(ageVehiculeMois*(facteurSuivi*facteurDernier)));
-      if(ageVehiculeMois>cycleMois)moisEstimeSince=Math.min(ageVehiculeMois,Math.round(cycleMois*facteurDernier*1.1));
-    }
-
-    // Ajustements par composant selon usage et signes
-    const multUsage={urbain:{freins_av:1.3,freins_ar:1.2,huile:1.1},route:{courroie:1.1,embrayage:1.1},intensif:{huile:1.3,freins_av:1.4,freins_ar:1.3,courroie:1.15,embrayage:1.2}}[usage]||{};
-    const multComp=multUsage[comp.id]||1;
-    kmEstimeSince=Math.round(kmEstimeSince*multComp);
-    moisEstimeSince=Math.round(moisEstimeSince*multComp);
-
-    // Bonus si signes alarmants
-    if(signes==='voyant'&&['huile','batterie','alternateur'].includes(comp.id)){kmEstimeSince=Math.round(kmEstimeSince*1.2);moisEstimeSince=Math.round(moisEstimeSince*1.2);}
-    if(signes==='bruit'&&['amortisseurs','freins_av','freins_ar','courroie_acc'].includes(comp.id)){kmEstimeSince=Math.round(kmEstimeSince*1.2);moisEstimeSince=Math.round(moisEstimeSince*1.2);}
-    if(signes==='plusieurs'){kmEstimeSince=Math.round(kmEstimeSince*1.15);moisEstimeSince=Math.round(moisEstimeSince*1.15);}
-
-    const status=juCalcStatus(comp,kmEstimeSince,moisEstimeSince);
-    const usure=juCalcUsure(comp,kmEstimeSince,moisEstimeSince);
-
-    return{
-      status,usure,
-      lastDate:'Estimé',
-      lastKm:'—',
-      sinceKm:kmEstimeSince>0?'~'+kmEstimeSince.toLocaleString('fr')+' km':'—',
-      estimated:true,
-      conseil:juConseil(comp,status,true)
-    };
+  // --- Cas spécial : chaîne de distribution ---
+  if(comp.id==='courroie'&&courroieInfo==='chaine'){
+    return{status:'ok',usure:0,lastDate:'Chaîne',lastKm:'—',sinceKm:'— (chaîne)',estimated:true,
+      conseil:{type:'ok',title:'✅ Chaîne de distribution',txt:'Votre véhicule est équipé d\'une chaîne, pas de remplacement préventif nécessaire en usage normal.'}};
   }
 
-  // Fallback si pas d'année : estimation par onboarding seul
-  const fAnc={moins_1an:0.08,'1_3ans':0.28,'3_5ans':0.52,plus_5ans:0.72,inconnu:0.5}[anc]||0.5;
-  const fEtat={rigoureux:-0.18,correct:-0.05,irregulier:0.15,inconnu:0.25}[etat]||0;
-  const fUsage={urbain:0.05,mixte:0,route:-0.03,intensif:0.18}[usage]||0;
-  const fSignes={rien:0,voyant:0.12,bruit:0.1,plusieurs:0.2}[signes]||0;
-  const fDernier={moins_6mois:-0.15,'6_12mois':-0.05,'1_2ans':0.12,plus_2ans:0.25,inconnu:0.1}[dernierEnt]||0;
-  const usure=Math.min(95,Math.max(0,Math.round((fAnc+fEtat+fUsage+fSignes+fDernier)*80)));
-  let status='grey';
-  if(comp.skmo||comp.smo){
-    if(usure>=72)status='err';
-    else if(usure>=42)status='warn';
-    else if(anc!=='inconnu')status='ok';
+  // Probabilité qu'un cycle d'entretien ait été RESPECTÉ (1 = toujours fait, 0 = jamais)
+  const probCycle={rigoureux:0.97,correct:0.82,irregulier:0.38,inconnu:0.48}[etat]||0.48;
+
+  // km/an réel pour projections temporelles
+  const kmPerYear={moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[kmAnnuel]||15000;
+
+  // ==================== CALCUL KM DEPUIS DERNIER REMPLACEMENT ====================
+  let kmEstimeSince=0;
+  if(comp.skmr&&kmTotal>0){
+
+    // -- Override direct pour la courroie (question spécifique) --
+    if(comp.id==='courroie'&&courroieInfo&&courroieInfo!=='inconnu'){
+      const courroieKmMap={moins_30k:20000,'30_60k':45000,plus_60k:68000};
+      kmEstimeSince=courroieKmMap[courroieInfo]||kmTotal;
+    }
+    // -- Calcul général basé sur les cycles --
+    else{
+      // Nombre de cycles complets attendus sur la vie totale du véhicule
+      const cyclesTotal=Math.floor(kmTotal/comp.skmr);
+
+      if(cyclesTotal===0){
+        // Premier cycle pas encore atteint → km parcourus = km depuis naissance
+        kmEstimeSince=kmTotal;
+      } else {
+        // Combien de ces cycles ont réellement été effectués ?
+        let cyclesFaits;
+        if(etat==='rigoureux'){
+          cyclesFaits=cyclesTotal; // Toujours fait → on est dans le cycle en cours
+        } else if(etat==='correct'){
+          cyclesFaits=Math.round(cyclesTotal*probCycle);
+          cyclesFaits=Math.max(cyclesTotal>=1?1:0,cyclesFaits); // Au moins 1 si >=1 cycle attendu
+        } else {
+          // irregulier/inconnu : conservateur → floor
+          cyclesFaits=Math.floor(cyclesTotal*probCycle);
+          // Si >=2 cycles attendus et au moins correct historique → au moins 1 fait
+          if(cyclesFaits===0&&cyclesTotal>=2&&etat!=='inconnu') cyclesFaits=1;
+        }
+
+        if(cyclesFaits>=cyclesTotal){
+          // Dernier remplacement au bon moment → on est dans le cycle courant
+          const kmInCycle=kmTotal-(cyclesTotal*comp.skmr);
+          kmEstimeSince=kmInCycle===0?comp.skmr:kmInCycle;
+        } else if(cyclesFaits===0){
+          // Jamais changé
+          kmEstimeSince=kmTotal;
+        } else {
+          // Dernier remplacement estimé au km : cyclesFaits * skmr
+          kmEstimeSince=Math.max(0,kmTotal-cyclesFaits*comp.skmr);
+        }
+      }
+
+      // Correction si km à l'achat connu : ancre sur les km réels depuis achat
+      if(kmAchat!=null){
+        const kmSincePurchase=Math.max(0,kmTotal-kmAchat);
+        // Si depuis l'achat on n'a pas encore atteint un cycle → on ne peut pas dépasser ça
+        if(kmSincePurchase<comp.skmr&&etat!=='irregulier'&&etat!=='inconnu'){
+          // Part avant achat : kmAchat * (1 - probCycle) estime le résidu
+          const residuAvantAchat=Math.round(kmAchat*Math.max(0,1-probCycle)*0.7);
+          kmEstimeSince=Math.min(kmEstimeSince,kmSincePurchase+residuAvantAchat);
+        }
+      }
+    }
+
+    // -- Multiplicateurs d'usage --
+    const multUsage={
+      urbain:{freins_av:1.35,freins_ar:1.25,huile:1.2,embrayage:1.3,bougies:1.15,filtre_air:1.1},
+      route:{courroie:0.85,pneus_av:0.88,pneus_ar:0.88,embrayage:0.85,freins_av:0.9,freins_ar:0.9},
+      intensif:{huile:1.4,freins_av:1.5,freins_ar:1.4,courroie:1.2,embrayage:1.3,bougies:1.2,pneus_av:1.2,pneus_ar:1.2}
+    }[usage]||{};
+    kmEstimeSince=Math.round(kmEstimeSince*(multUsage[comp.id]||1));
+
+    // -- Multiplicateurs signes --
+    if(signes==='voyant'&&['huile','batterie','alternateur'].includes(comp.id))kmEstimeSince=Math.round(kmEstimeSince*1.35);
+    if(signes==='bruit'&&['amortisseurs','freins_av','freins_ar','courroie_acc','embrayage'].includes(comp.id))kmEstimeSince=Math.round(kmEstimeSince*1.35);
+    if(signes==='plusieurs')kmEstimeSince=Math.round(kmEstimeSince*1.25);
   }
-  return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:'—',estimated:true,conseil:juConseil(comp,status,true)};
+
+  // ==================== CALCUL MOIS DEPUIS DERNIER REMPLACEMENT ====================
+  let moisEstimeSince=0;
+  if(comp.smr&&ageVehiculeMois!=null){
+    const moisTotal=ageVehiculeMois;
+    const cyclesTotal=Math.floor(moisTotal/comp.smr);
+
+    if(cyclesTotal===0){
+      moisEstimeSince=moisTotal;
+    } else {
+      let cyclesFaits;
+      if(etat==='rigoureux'){
+        cyclesFaits=cyclesTotal;
+      } else if(etat==='correct'){
+        cyclesFaits=Math.max(cyclesTotal>=1?1:0,Math.round(cyclesTotal*probCycle));
+      } else {
+        cyclesFaits=Math.floor(cyclesTotal*probCycle);
+        if(cyclesFaits===0&&cyclesTotal>=2&&etat!=='inconnu') cyclesFaits=1;
+      }
+
+      if(cyclesFaits>=cyclesTotal){
+        const moisInCycle=moisTotal-(cyclesTotal*comp.smr);
+        moisEstimeSince=moisInCycle===0?comp.smr:moisInCycle;
+      } else if(cyclesFaits===0){
+        moisEstimeSince=moisTotal;
+      } else {
+        moisEstimeSince=Math.max(0,moisTotal-cyclesFaits*comp.smr);
+      }
+    }
+
+    // Usure accélérée en urbain pour composants sensibles à la chaleur/humidité
+    if(usage==='urbain'&&['liq_frein','liq_refroid','clim','batterie'].includes(comp.id))moisEstimeSince=Math.round(moisEstimeSince*1.1);
+    if(signes==='voyant'&&['batterie','liq_frein'].includes(comp.id))moisEstimeSince=Math.round(moisEstimeSince*1.3);
+    if(signes==='plusieurs')moisEstimeSince=Math.round(moisEstimeSince*1.2);
+  }
+
+  const status=juCalcStatus(comp,kmEstimeSince,moisEstimeSince);
+  const usure=juCalcUsure(comp,kmEstimeSince,moisEstimeSince);
+  const sinceKmStr=kmEstimeSince>0?'~'+Math.round(kmEstimeSince).toLocaleString('fr')+' km':'—';
+
+  return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,conseil:juConseil(comp,status,true)};
 }
 function juConseil(comp,status,est){
   const p=est?'(Estimation) ':'';
@@ -7130,7 +7226,7 @@ function jumeauOscaro(){
 }
 // ONBOARDING
 function openJumeauOnb(){
-  JU.onbStep=0;JU.onbAnswers=[null,null,null];
+  JU.onbStep=0;JU.onbAnswers=[null,null,null,null,null,null];
   juOnbUI();
   document.getElementById('mo-jumeau-onb').classList.add('open');
 }
@@ -7141,10 +7237,10 @@ function jonbSelect(step,val,el){
   document.getElementById('jonb-btn-next').disabled=false;
 }
 async function jonbNext(){
-  if(JU.onbStep<2){
+  if(JU.onbStep<5){
     JU.onbStep++;juOnbUI();
     document.getElementById('jonb-btn-next').disabled=JU.onbAnswers[JU.onbStep]===null;
-    document.getElementById('jonb-btn-next').textContent=JU.onbStep===2?'Activer mon jumeau →':'Suivant →';
+    document.getElementById('jonb-btn-next').textContent=JU.onbStep===5?'Activer mon jumeau →':'Suivant →';
   } else {await jonbSave();}
 }
 function jonbSkip(){document.getElementById('mo-jumeau-onb').classList.remove('open');}
@@ -7156,9 +7252,26 @@ function juOnbUI(){
 async function jonbSave(){
   const v=S.vehicles.find(x=>x.id===JU.vid);
   if(!v)return;
-  const{error}=await sb.from('vehicles').update({jumeau_onboarding_done:true,jumeau_anciennete:JU.onbAnswers[0],jumeau_etat_carnet:JU.onbAnswers[1]}).eq('id',JU.vid).eq('user_id',S.user.id);
+  // Convertir le km achat en valeur numérique
+  const kmAchatMap={neuf:0,'1_30k':15000,'30_80k':55000,'80_150k':115000,plus_150k:175000};
+  const kmAchatVal=kmAchatMap[JU.onbAnswers[0]]??null;
+  const{error}=await sb.from('vehicles').update({
+    jumeau_onboarding_done:true,
+    jumeau_km_achat:kmAchatVal,
+    jumeau_etat_carnet:JU.onbAnswers[1],
+    jumeau_courroie_info:JU.onbAnswers[2],
+    jumeau_usage:JU.onbAnswers[3],
+    jumeau_km_annuel:JU.onbAnswers[4],
+    jumeau_signes:JU.onbAnswers[5]
+  }).eq('id',JU.vid).eq('user_id',S.user.id);
   if(!error){
-    v.jumeau_onboarding_done=true;v.jumeau_anciennete=JU.onbAnswers[0];v.jumeau_etat_carnet=JU.onbAnswers[1];
+    v.jumeau_onboarding_done=true;
+    v.jumeau_km_achat=kmAchatVal;
+    v.jumeau_etat_carnet=JU.onbAnswers[1];
+    v.jumeau_courroie_info=JU.onbAnswers[2];
+    v.jumeau_usage=JU.onbAnswers[3];
+    v.jumeau_km_annuel=JU.onbAnswers[4];
+    v.jumeau_signes=JU.onbAnswers[5];
     document.getElementById('mo-jumeau-onb').classList.remove('open');
     toast('Jumeau activé ! 🧬','s');
     renderJumeau();
