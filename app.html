@@ -933,6 +933,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jcs-ctitle{font-size:.68rem;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:4px}
 .jcs-ctxt{font-size:.74rem;line-height:1.5}
 .jcs-btns{padding:0 17px 20px;display:flex;flex-direction:column;gap:9px}
+.jcs-bv{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#059669,#047857);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,.3)}
 .jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
 .jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer}
 .ju-empty{padding:48px 24px;text-align:center}
@@ -6842,8 +6843,8 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
       <div class="jcs-ctxt" id="jcs-ctxt">—</div>
     </div>
     <div class="jcs-btns">
-      <button class="jcs-bp" onclick="jumeauPlanifier()">📅 Planifier l'entretien</button>
-
+      <button class="jcs-bv" id="jcs-bv" onclick="jumeauMarquerFait()">✅ Remplacement effectué</button>
+      <button class="jcs-bp" onclick="jumeauPlanifier()">📅 Planifier le prochain</button>
       <button class="jcs-bs" onclick="closeJumeauComp()">Fermer</button>
     </div>
   </div>
@@ -7196,6 +7197,24 @@ function openJumeauComp(id){
   document.getElementById('mo-jcomp').classList.add('open');
 }
 function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove('open');}
+function jumeauMarquerFait(){
+  closeJumeauComp();
+  const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
+  const v=S.vehicles.find(x=>x.id===JU.vid);
+  if(!comp||!v)return;
+  openEnt(null,JU.vid);
+  setTimeout(()=>{
+    // type
+    const sel=document.getElementById('e-ty');
+    if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}
+    // date = aujourd'hui
+    const dtEl=document.getElementById('e-dt');
+    if(dtEl)dtEl.value=new Date().toISOString().split('T')[0];
+    // km = km actuel du vehicule
+    const kmEl=document.getElementById('e-km');
+    if(kmEl&&v.km_actuel)kmEl.value=v.km_actuel;
+  },350);
+}
 function jumeauPlanifier(){
   closeJumeauComp();
   const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
