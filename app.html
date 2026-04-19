@@ -934,10 +934,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jcs-ctxt{font-size:.74rem;line-height:1.5}
 .jcs-btns{padding:0 17px 20px;display:flex;flex-direction:column;gap:9px}
 .jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
-.jcs-baff{width:100%;padding:12px;border:1.5px solid #FED7AA;border-radius:var(--r-sm);background:#FFF7ED;color:#C2410C;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
-.jcs-div{display:flex;align-items:center;gap:8px}
-.jcs-div::before,.jcs-div::after{content:'';flex:1;height:1px;background:var(--border)}
-.jcs-div span{font-size:.6rem;color:var(--txl);font-weight:600}
 .jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer}
 .ju-empty{padding:48px 24px;text-align:center}
 .ju-empty-ico{font-size:3rem;margin-bottom:12px}
@@ -6847,8 +6843,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
     <div class="jcs-btns">
       <button class="jcs-bp" onclick="jumeauPlanifier()">📅 Planifier l'entretien</button>
-      <button class="jcs-baff" id="jcs-baff" onclick="jumeauOscaro()">🛒 Voir les pièces sur Oscaro</button>
-      <div class="jcs-div"><span>ou</span></div>
+
       <button class="jcs-bs" onclick="closeJumeauComp()">Fermer</button>
     </div>
   </div>
@@ -6892,16 +6887,7 @@ const JU_HOTS_TOP={
   pneus_av:'16,20',pneus_ar:'16,80',batterie:'35,22',embrayage:'50,60',
   filtre_hab:'50,52',amortisseurs:'50,75',filtre_air:'65,28',bougies:'60,18',liq_refroid:'38,28'
 };
-const JU_OSCARO={
-  huile:'huile+moteur+5W30',courroie:'courroie+distribution+kit',
-  freins_av:'plaquettes+frein+avant',freins_ar:'plaquettes+frein+arriere',
-  liq_frein:'liquide+frein+DOT4',pneus_av:'pneus+ete',pneus_ar:'pneus+ete',
-  batterie:'batterie+voiture',embrayage:'kit+embrayage',
-  courroie_acc:'courroie+accessoires',amortisseurs:'amortisseurs+avant',
-  liq_refroid:'liquide+refroidissement',filtre_air:'filtre+air+moteur',
-  filtre_hab:'filtre+habitacle+pollen',bougies:'bougies+allumage',
-  clim:'recharge+climatisation',essuie_gl:'essuie+glaces'
-};
+
 
 const JU_SVG_SIDE=`<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="jbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8D4E8"/><stop offset="55%" stop-color="#A8B8D0"/><stop offset="100%" stop-color="#7A8FA6"/></linearGradient><linearGradient id="jroof" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D8E2F0"/><stop offset="100%" stop-color="#B0C0D5"/></linearGradient><linearGradient id="jglass" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#DBEAFE" stop-opacity=".85"/><stop offset="100%" stop-color="#93C5FD" stop-opacity=".55"/></linearGradient><linearGradient id="jwheel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3D4A5C"/><stop offset="100%" stop-color="#1E2733"/></linearGradient><linearGradient id="jrim" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9CA8B8"/><stop offset="100%" stop-color="#6B7685"/></linearGradient><filter id="jsh"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#00000022"/></filter></defs><ellipse cx="200" cy="172" rx="175" ry="9" fill="rgba(0,0,0,.08)"/><path d="M52,148 L52,105 Q52,90 62,80 L95,52 Q118,32 155,26 L230,24 Q268,24 295,38 L336,68 Q348,80 350,98 L350,148 Z" fill="url(#jbg)" filter="url(#jsh)"/><path d="M75,95 Q120,78 200,75 Q270,73 330,85 L330,92 Q270,80 200,83 Q120,85 75,102 Z" fill="rgba(255,255,255,.16)"/><path d="M97,80 Q118,55 155,38 L230,33 Q268,33 290,48 L326,75 L320,75 Q298,60 268,48 L228,40 Q190,37 158,45 L118,62 L100,80 Z" fill="url(#jroof)"/><path d="M102,79 L118,62 Q140,47 163,42 L188,39 L188,75 L150,76 Q128,76 108,82 Z" fill="url(#jglass)" stroke="#93C5FD" stroke-width=".7"/><path d="M192,39 L228,40 Q264,42 288,52 L320,72 L306,76 Q280,63 248,56 L210,50 L192,75 Z" fill="url(#jglass)" stroke="#93C5FD" stroke-width=".7"/><path d="M188,39 L188,76 L192,76 L192,39 Z" fill="#8FA5BE" opacity=".8"/><path d="M62,108 Q120,102 200,102 Q280,102 342,108" stroke="rgba(255,255,255,.3)" stroke-width="1.2" fill="none"/><path d="M58,140 Q60,148 68,150 L340,150 Q348,148 350,140 L350,136 Q348,144 340,146 L68,146 Q60,144 58,136 Z" fill="#8FA5BE"/><path d="M336,68 Q348,80 352,100 L352,140 Q350,148 342,150 L338,150 L338,100 Q338,85 330,75 Z" fill="#8FA5BE"/><path d="M326,68 Q336,72 340,80 L340,96 L326,96 Q320,90 318,80 Z" fill="#FEF08A" stroke="#EAB308" stroke-width=".5"/><path d="M52,105 Q52,90 62,80 L66,80 Q57,90 57,105 L57,140 Q55,148 52,150 L50,150 L50,140 Z" fill="#8FA5BE"/><path d="M62,80 L79,80 Q84,85 84,96 L64,96 Q58,90 58,82 Z" fill="#FCA5A5" stroke="#DC2626" stroke-width=".5"/><rect x="144" y="103" width="14" height="4" rx="2" fill="#94A3B8" opacity=".8"/><rect x="248" y="103" width="14" height="4" rx="2" fill="#94A3B8" opacity=".8"/><circle cx="100" cy="156" r="30" fill="#1E2733"/><circle cx="100" cy="156" r="28" fill="url(#jwheel)"/><circle cx="100" cy="156" r="19" fill="url(#jrim)"/><circle cx="100" cy="156" r="15" fill="#4A5568"/><circle cx="100" cy="156" r="5" fill="#64748B"/><line x1="100" y1="141" x2="100" y2="151" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="161" x2="100" y2="171" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="85" y1="156" x2="95" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="105" y1="156" x2="115" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="89" y1="145" x2="96" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="104" y1="160" x2="111" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="111" y1="145" x2="104" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="96" y1="160" x2="89" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><circle cx="100" cy="156" r="3.5" fill="#94A3B8"/><circle cx="310" cy="156" r="30" fill="#1E2733"/><circle cx="310" cy="156" r="28" fill="url(#jwheel)"/><circle cx="310" cy="156" r="19" fill="url(#jrim)"/><circle cx="310" cy="156" r="15" fill="#4A5568"/><circle cx="310" cy="156" r="5" fill="#64748B"/><line x1="310" y1="141" x2="310" y2="151" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="310" y1="161" x2="310" y2="171" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="295" y1="156" x2="305" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="315" y1="156" x2="325" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="299" y1="145" x2="306" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="314" y1="160" x2="321" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="321" y1="145" x2="314" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="306" y1="160" x2="299" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><circle cx="310" cy="156" r="3.5" fill="#94A3B8"/><path d="M68,148 Q70,126 100,126 Q130,126 132,148" fill="#94A3B8" stroke="#7A8FA6" stroke-width=".5"/><path d="M278,148 Q280,126 310,126 Q340,126 342,148" fill="#94A3B8" stroke="#7A8FA6" stroke-width=".5"/></svg>`;
 
@@ -7206,7 +7192,7 @@ function openJumeauComp(id){
   document.getElementById('jcs-ctitle').style.color=cc.tc;
   document.getElementById('jcs-ctxt').textContent=d.conseil.txt;
   document.getElementById('jcs-ctxt').style.color=cc.xc;
-  document.getElementById('jcs-baff').style.display=JU_OSCARO[id]?'flex':'none';
+
   document.getElementById('mo-jcomp').classList.add('open');
 }
 function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove('open');}
@@ -7217,13 +7203,7 @@ function jumeauPlanifier(){
   openEnt(null,JU.vid);
   setTimeout(()=>{const sel=document.getElementById('e-ty');if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}},350);
 }
-function jumeauOscaro(){
-  const id=JU.compOpen;
-  const v=S.vehicles.find(x=>x.id===JU.vid);
-  if(!id||!v)return;
-  const q=encodeURIComponent(`${JU_OSCARO[id]||id} ${v.marque} ${v.modele} ${v.annee||''}`);
-  window.open(`https://www.oscaro.com/recherche?q=${q}`,'_blank');
-}
+
 // ONBOARDING
 function openJumeauOnb(){
   JU.onbStep=0;JU.onbAnswers=[null,null,null,null,null,null];
