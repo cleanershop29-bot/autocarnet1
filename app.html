@@ -1015,6 +1015,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     <div class="appbar-logo"><div class="appbar-logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><span style="color:var(--txt)">Auto</span><span style="color:var(--primary)">Carnet</span></div>
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btn-search-toggle" onclick="toggleSearch()" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txm)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <button onclick="openCarburantPage()" title="Prix carburant" style="width:34px;height:34px;border:none;background:var(--bg);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14"/><path d="M3 22h12"/><path d="M7 6V4"/><path d="M11 6V4"/><path d="M15 10h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9l-3-4"/></svg></button>
       <button onclick="nav('profil')" id="appbar-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2563EB,#1D4ED8);border:2px solid rgba(37,99,235,.25);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:transform .15s cubic-bezier(.34,1.56,.64,1)" id="appbar-avatar-btn">?</button>
     </div>
   </div>
@@ -1060,14 +1061,11 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       </svg></span>Flotte</button>
     <button class="nb" id="nb-rap" onclick="nav('rap')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Rappels<div class="rdot hidden" id="rdot"></div></button>
-    <button class="nb" id="nb-jumeau" onclick="nav('jumeau')">
-      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07M8.46 8.46a5 5 0 000 7.07"/></svg></span>Jumeau</button>
     <button id="fab" onclick="handleFab()">+</button>
     <button class="nb" id="nb-fam" onclick="nav('fam')">
       <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Équipe</button>
-    <button class="nb" id="nb-carb" onclick="openCarburantPage()">
-      <span class="nb-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14"/><path d="M3 22h12"/><path d="M7 6V4"/><path d="M11 6V4"/><path d="M15 10h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9l-3-4"/></svg></span>
-      <span style="font-size:.58rem;font-weight:600;color:#F59E0B">Carburant</span></button>
+    <button class="nb" id="nb-jumeau" onclick="nav('jumeau')">
+      <span class="nb-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07M8.46 8.46a5 5 0 000 7.07"/></svg></span>Jumeau</button>
     <button class="nb hidden" id="nb-profil" onclick="nav('profil')"></button>
   </nav>
 </div>
@@ -6744,39 +6742,63 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     <div class="jonb-header">
       <div class="jonb-emoji">🧬</div>
       <div class="jonb-title">Activez votre Jumeau Numérique</div>
-      <div class="jonb-sub">3 questions rapides pour estimer l'état de votre véhicule instantanément.</div>
+      <div class="jonb-sub">Quelques questions pour estimer précisément l'état de chaque composant de votre véhicule.</div>
     </div>
     <div class="jonb-progress">
       <div class="jonb-dot active" id="jdot-0"></div>
       <div class="jonb-dot" id="jdot-1"></div>
       <div class="jonb-dot" id="jdot-2"></div>
+      <div class="jonb-dot" id="jdot-3"></div>
+      <div class="jonb-dot" id="jdot-4"></div>
     </div>
-    <!-- Étape 1 -->
+    <!-- Étape 1 — Ancienneté -->
     <div class="jonb-step active" id="jonb-step-0">
-      <div class="jonb-q"><div class="jonb-qnum">1</div>Depuis combien de temps avez-vous ce véhicule ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">1</div>Depuis combien de temps possédez-vous ce véhicule ?</div>
       <div class="jonb-opts">
-        <div class="jonb-opt" onclick="jonbSelect(0,'moins_1an',this)"><div class="jonb-opt-ico">🆕</div><div class="jonb-opt-txt"><strong>Moins d'1 an</strong><span>Véhicule récent ou tout juste acheté</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(0,'1_3ans',this)"><div class="jonb-opt-ico">📅</div><div class="jonb-opt-txt"><strong>1 à 3 ans</strong><span>Véhicule relativement récent</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(0,'3_5ans',this)"><div class="jonb-opt-ico">🔧</div><div class="jonb-opt-txt"><strong>3 à 5 ans</strong><span>Quelques entretiens déjà effectués</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(0,'plus_5ans',this)"><div class="jonb-opt-ico">🚗</div><div class="jonb-opt-txt"><strong>Plus de 5 ans</strong><span>Véhicule avec un historique conséquent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'moins_1an',this)"><div class="jonb-opt-ico">🆕</div><div class="jonb-opt-txt"><strong>Moins d'1 an</strong><span>Récemment acheté — neuf ou occasion</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'1_3ans',this)"><div class="jonb-opt-ico">📅</div><div class="jonb-opt-txt"><strong>1 à 3 ans</strong><span>Premiers entretiens effectués</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'3_5ans',this)"><div class="jonb-opt-ico">🔧</div><div class="jonb-opt-txt"><strong>3 à 5 ans</strong><span>Véhicule avec un historique notable</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(0,'plus_5ans',this)"><div class="jonb-opt-ico">🚗</div><div class="jonb-opt-txt"><strong>Plus de 5 ans</strong><span>Long historique, plusieurs révisions</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
-    <!-- Étape 2 -->
+    <!-- Étape 2 — Suivi entretien -->
     <div class="jonb-step" id="jonb-step-1">
-      <div class="jonb-q"><div class="jonb-qnum">2</div>Quel est l'état de votre suivi d'entretien ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">2</div>Comment décririez-vous le suivi d'entretien de ce véhicule ?</div>
       <div class="jonb-opts">
-        <div class="jonb-opt" onclick="jonbSelect(1,'complet',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Entretien à jour et documenté</strong><span>J'ai toutes mes factures et mon carnet</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(1,'incomplet',this)"><div class="jonb-opt-ico">📋</div><div class="jonb-opt-txt"><strong>Partiellement suivi</strong><span>Quelques entretiens faits, pas tout tracé</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(1,'aucun',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Peu ou pas suivi</strong><span>Je ne sais pas vraiment ce qui a été fait</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'rigoureux',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Rigoureux — carnet à jour</strong><span>Toutes les révisions faites dans les temps, factures disponibles</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'correct',this)"><div class="jonb-opt-ico">👍</div><div class="jonb-opt-txt"><strong>Correct — globalement suivi</strong><span>La plupart des entretiens effectués, quelques retards</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'irregulier',this)"><div class="jonb-opt-ico">⚠️</div><div class="jonb-opt-txt"><strong>Irrégulier — quelques oublis</strong><span>Des entretiens sautés ou réalisés en retard</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(1,'inconnu',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Inconnu — véhicule repris</strong><span>Historique non disponible, voiture d'occasion sans carnet</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
-    <!-- Étape 3 -->
+    <!-- Étape 3 — Usage -->
     <div class="jonb-step" id="jonb-step-2">
-      <div class="jonb-q"><div class="jonb-qnum">3</div>Quel est votre usage habituel ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">3</div>Quel est votre usage principal du véhicule ?</div>
       <div class="jonb-opts">
-        <div class="jonb-opt" onclick="jonbSelect(2,'urbain',this)"><div class="jonb-opt-ico">🏙️</div><div class="jonb-opt-txt"><strong>Urbain / courtes distances</strong><span>Principalement en ville, moins de 10 000 km/an</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(2,'mixte',this)"><div class="jonb-opt-ico">🛣️</div><div class="jonb-opt-txt"><strong>Usage mixte</strong><span>Ville et route, 10 000 à 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(2,'intensif',this)"><div class="jonb-opt-ico">🚀</div><div class="jonb-opt-txt"><strong>Usage intensif</strong><span>Longs trajets ou pro, plus de 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'urbain',this)"><div class="jonb-opt-ico">🏙️</div><div class="jonb-opt-txt"><strong>Urbain — trajets courts</strong><span>Ville, moins de 10 000 km/an — usage moteur difficile à froid</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'mixte',this)"><div class="jonb-opt-ico">🛣️</div><div class="jonb-opt-txt"><strong>Mixte — ville et route</strong><span>Entre 10 000 et 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'route',this)"><div class="jonb-opt-ico">🚀</div><div class="jonb-opt-txt"><strong>Grands trajets — autoroute</strong><span>Longs déplacements réguliers, plus de 25 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'intensif',this)"><div class="jonb-opt-ico">⚡</div><div class="jonb-opt-txt"><strong>Usage intensif — professionnel</strong><span>VTC, commercial, artisan — plus de 40 000 km/an</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 4 — Comportement récent -->
+    <div class="jonb-step" id="jonb-step-3">
+      <div class="jonb-q"><div class="jonb-qnum">4</div>Avez-vous remarqué des signes particuliers récemment ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(3,'rien',this)"><div class="jonb-opt-ico">😊</div><div class="jonb-opt-txt"><strong>Rien d'anormal</strong><span>Véhicule roule bien, aucun bruit ni voyant</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(3,'voyant',this)"><div class="jonb-opt-ico">💡</div><div class="jonb-opt-txt"><strong>Un voyant allumé</strong><span>Témoin moteur, huile, ou autre voyant présent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(3,'bruit',this)"><div class="jonb-opt-ico">🔊</div><div class="jonb-opt-txt"><strong>Bruit ou vibration inhabituel</strong><span>Grincement, claquement, à froid ou en roulant</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(3,'plusieurs',this)"><div class="jonb-opt-ico">🚨</div><div class="jonb-opt-txt"><strong>Plusieurs signes à la fois</strong><span>Voyant + bruit, ou baisse de performance</span></div><div class="jonb-chk">✓</div></div>
+      </div>
+    </div>
+    <!-- Étape 5 — Dernier entretien -->
+    <div class="jonb-step" id="jonb-step-4">
+      <div class="jonb-q"><div class="jonb-qnum">5</div>À quand remonte le dernier entretien professionnel ?</div>
+      <div class="jonb-opts">
+        <div class="jonb-opt" onclick="jonbSelect(4,'moins_6mois',this)"><div class="jonb-opt-ico">✨</div><div class="jonb-opt-txt"><strong>Moins de 6 mois</strong><span>Révision récente chez un professionnel</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(4,'6_12mois',this)"><div class="jonb-opt-ico">📆</div><div class="jonb-opt-txt"><strong>6 à 12 mois</strong><span>Dans l'année écoulée</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(4,'1_2ans',this)"><div class="jonb-opt-ico">⏳</div><div class="jonb-opt-txt"><strong>1 à 2 ans</strong><span>Quelques révisions en retard possibles</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(4,'plus_2ans',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Plus de 2 ans ou inconnu</strong><span>Long délai — plusieurs composants probablement à vérifier</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
     <div class="jonb-nav">
@@ -6812,8 +6834,6 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
     <div class="jcs-btns">
       <button class="jcs-bp" onclick="jumeauPlanifier()">📅 Planifier l'entretien</button>
-      <button class="jcs-baff" id="jcs-baff" onclick="jumeauOscaro()">🛒 Voir les pièces sur Oscaro</button>
-      <div class="jcs-div"><span>ou</span></div>
       <button class="jcs-bs" onclick="closeJumeauComp()">Fermer</button>
     </div>
   </div>
@@ -6870,9 +6890,102 @@ const JU_OSCARO={
 
 const JU_SVG_SIDE=`<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="jbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8D4E8"/><stop offset="55%" stop-color="#A8B8D0"/><stop offset="100%" stop-color="#7A8FA6"/></linearGradient><linearGradient id="jroof" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D8E2F0"/><stop offset="100%" stop-color="#B0C0D5"/></linearGradient><linearGradient id="jglass" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#DBEAFE" stop-opacity=".85"/><stop offset="100%" stop-color="#93C5FD" stop-opacity=".55"/></linearGradient><linearGradient id="jwheel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3D4A5C"/><stop offset="100%" stop-color="#1E2733"/></linearGradient><linearGradient id="jrim" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9CA8B8"/><stop offset="100%" stop-color="#6B7685"/></linearGradient><filter id="jsh"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#00000022"/></filter></defs><ellipse cx="200" cy="172" rx="175" ry="9" fill="rgba(0,0,0,.08)"/><path d="M52,148 L52,105 Q52,90 62,80 L95,52 Q118,32 155,26 L230,24 Q268,24 295,38 L336,68 Q348,80 350,98 L350,148 Z" fill="url(#jbg)" filter="url(#jsh)"/><path d="M75,95 Q120,78 200,75 Q270,73 330,85 L330,92 Q270,80 200,83 Q120,85 75,102 Z" fill="rgba(255,255,255,.16)"/><path d="M97,80 Q118,55 155,38 L230,33 Q268,33 290,48 L326,75 L320,75 Q298,60 268,48 L228,40 Q190,37 158,45 L118,62 L100,80 Z" fill="url(#jroof)"/><path d="M102,79 L118,62 Q140,47 163,42 L188,39 L188,75 L150,76 Q128,76 108,82 Z" fill="url(#jglass)" stroke="#93C5FD" stroke-width=".7"/><path d="M192,39 L228,40 Q264,42 288,52 L320,72 L306,76 Q280,63 248,56 L210,50 L192,75 Z" fill="url(#jglass)" stroke="#93C5FD" stroke-width=".7"/><path d="M188,39 L188,76 L192,76 L192,39 Z" fill="#8FA5BE" opacity=".8"/><path d="M62,108 Q120,102 200,102 Q280,102 342,108" stroke="rgba(255,255,255,.3)" stroke-width="1.2" fill="none"/><path d="M58,140 Q60,148 68,150 L340,150 Q348,148 350,140 L350,136 Q348,144 340,146 L68,146 Q60,144 58,136 Z" fill="#8FA5BE"/><path d="M336,68 Q348,80 352,100 L352,140 Q350,148 342,150 L338,150 L338,100 Q338,85 330,75 Z" fill="#8FA5BE"/><path d="M326,68 Q336,72 340,80 L340,96 L326,96 Q320,90 318,80 Z" fill="#FEF08A" stroke="#EAB308" stroke-width=".5"/><path d="M52,105 Q52,90 62,80 L66,80 Q57,90 57,105 L57,140 Q55,148 52,150 L50,150 L50,140 Z" fill="#8FA5BE"/><path d="M62,80 L79,80 Q84,85 84,96 L64,96 Q58,90 58,82 Z" fill="#FCA5A5" stroke="#DC2626" stroke-width=".5"/><rect x="144" y="103" width="14" height="4" rx="2" fill="#94A3B8" opacity=".8"/><rect x="248" y="103" width="14" height="4" rx="2" fill="#94A3B8" opacity=".8"/><circle cx="100" cy="156" r="30" fill="#1E2733"/><circle cx="100" cy="156" r="28" fill="url(#jwheel)"/><circle cx="100" cy="156" r="19" fill="url(#jrim)"/><circle cx="100" cy="156" r="15" fill="#4A5568"/><circle cx="100" cy="156" r="5" fill="#64748B"/><line x1="100" y1="141" x2="100" y2="151" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="161" x2="100" y2="171" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="85" y1="156" x2="95" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="105" y1="156" x2="115" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="89" y1="145" x2="96" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="104" y1="160" x2="111" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="111" y1="145" x2="104" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="96" y1="160" x2="89" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><circle cx="100" cy="156" r="3.5" fill="#94A3B8"/><circle cx="310" cy="156" r="30" fill="#1E2733"/><circle cx="310" cy="156" r="28" fill="url(#jwheel)"/><circle cx="310" cy="156" r="19" fill="url(#jrim)"/><circle cx="310" cy="156" r="15" fill="#4A5568"/><circle cx="310" cy="156" r="5" fill="#64748B"/><line x1="310" y1="141" x2="310" y2="151" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="310" y1="161" x2="310" y2="171" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="295" y1="156" x2="305" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="315" y1="156" x2="325" y2="156" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="299" y1="145" x2="306" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="314" y1="160" x2="321" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="321" y1="145" x2="314" y2="152" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><line x1="306" y1="160" x2="299" y2="167" stroke="#8FA0B5" stroke-width="2.5" stroke-linecap="round"/><circle cx="310" cy="156" r="3.5" fill="#94A3B8"/><path d="M68,148 Q70,126 100,126 Q130,126 132,148" fill="#94A3B8" stroke="#7A8FA6" stroke-width=".5"/><path d="M278,148 Q280,126 310,126 Q340,126 342,148" fill="#94A3B8" stroke="#7A8FA6" stroke-width=".5"/></svg>`;
 
-const JU_SVG_TOP=`<svg viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg"><path d="M80,30 Q150,10 220,30 L245,60 Q260,100 265,160 L265,340 Q260,400 245,440 L220,470 Q150,490 80,470 L55,440 Q40,400 35,340 L35,160 Q40,100 55,60 Z" fill="#B0C0D5"/><path d="M90,35 Q150,18 210,35 L235,60 Q245,90 248,130 L52,130 Q55,90 65,60 Z" fill="#A0B4C8" opacity=".8"/><rect x="65" y="130" width="170" height="35" rx="4" fill="#DBEAFE" opacity=".6"/><rect x="52" y="165" width="196" height="170" rx="6" fill="#94A3B8" opacity=".5"/><rect x="65" y="335" width="170" height="30" rx="4" fill="#DBEAFE" opacity=".5"/><path d="M90,365 Q150,345 210,365 L235,440 Q245,465 220,470 L80,470 Q55,465 65,440 Z" fill="#A0B4C8" opacity=".7"/><rect x="22" y="90" width="30" height="50" rx="8" fill="#374151"/><rect x="248" y="90" width="30" height="50" rx="8" fill="#374151"/><rect x="22" y="360" width="30" height="50" rx="8" fill="#374151"/><rect x="248" y="360" width="30" height="50" rx="8" fill="#374151"/><line x1="52" y1="250" x2="248" y2="250" stroke="#CBD5E1" stroke-width="1.5"/></svg>`;
+const JU_SVG_TOP=`<svg viewBox="0 0 300 540" xmlns="http://www.w3.org/2000/svg">
+  <!-- Labels avant/arrière -->
+  <text x="150" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#2563EB" font-family="sans-serif" letter-spacing="2">AVANT</text>
+  <line x1="60" y1="22" x2="110" y2="22" stroke="#2563EB" stroke-width="1" opacity=".4"/>
+  <line x1="190" y1="22" x2="240" y2="22" stroke="#2563EB" stroke-width="1" opacity=".4"/>
+  <!-- Flèche avant -->
+  <polygon points="150,26 145,34 150,31 155,34" fill="#2563EB" opacity=".6"/>
 
-let JU={vid:null,vehIdx:0,data:{},onbAnswers:[null,null,null],onbStep:0,compOpen:null,vue:'side'};
+  <!-- Carrosserie principale -->
+  <path d="M80,60 Q150,38 220,60 L245,90 Q260,130 265,190 L265,370 Q260,430 245,470 L220,500 Q150,520 80,500 L55,470 Q40,430 35,370 L35,190 Q40,130 55,90 Z" fill="#B0C0D5"/>
+
+  <!-- Capot avant avec relief -->
+  <path d="M90,65 Q150,46 210,65 L235,90 Q245,120 248,160 L52,160 Q55,120 65,90 Z" fill="#A0B4C8" opacity=".9"/>
+  <!-- Ligne centrale capot -->
+  <line x1="150" y1="60" x2="150" y2="160" stroke="#94A3B8" stroke-width=".8" opacity=".5"/>
+  <!-- Prise d'air capot -->
+  <rect x="120" y="90" width="60" height="8" rx="4" fill="#8898B0" opacity=".5"/>
+
+  <!-- Feux avant (jaune) -->
+  <rect x="52" y="62" width="38" height="20" rx="5" fill="#FEF08A" stroke="#EAB308" stroke-width="1"/>
+  <rect x="210" y="62" width="38" height="20" rx="5" fill="#FEF08A" stroke="#EAB308" stroke-width="1"/>
+  <!-- DRL avant -->
+  <rect x="56" y="66" width="28" height="5" rx="2.5" fill="#FEF9C3"/>
+  <rect x="216" y="66" width="28" height="5" rx="2.5" fill="#FEF9C3"/>
+
+  <!-- Calandre -->
+  <rect x="100" y="155" width="100" height="12" rx="3" fill="#6B7A8F"/>
+  <rect x="110" y="157" width="26" height="4" rx="2" fill="#8898B0"/>
+  <rect x="142" y="157" width="16" height="4" rx="2" fill="#8898B0"/>
+  <rect x="164" y="157" width="26" height="4" rx="2" fill="#8898B0"/>
+
+  <!-- Pare-brise avant -->
+  <rect x="65" y="162" width="170" height="38" rx="5" fill="#DBEAFE" opacity=".7" stroke="#93C5FD" stroke-width=".8"/>
+  <!-- Reflet pare-brise -->
+  <rect x="72" y="165" width="70" height="5" rx="2.5" fill="rgba(255,255,255,.4)"/>
+
+  <!-- Tableau de bord -->
+  <rect x="52" y="198" width="196" height="14" rx="3" fill="#7A8FA6" opacity=".6"/>
+
+  <!-- Habitacle -->
+  <rect x="52" y="210" width="196" height="175" rx="6" fill="#94A3B8" opacity=".45"/>
+  <!-- Sièges avant -->
+  <rect x="68" y="218" width="68" height="75" rx="8" fill="#7A8FA6" opacity=".7"/>
+  <rect x="164" y="218" width="68" height="75" rx="8" fill="#7A8FA6" opacity=".7"/>
+  <!-- Console centrale -->
+  <rect x="138" y="225" width="24" height="62" rx="4" fill="#6B7A8F" opacity=".6"/>
+  <!-- Sièges arrière -->
+  <rect x="62" y="305" width="176" height="68" rx="8" fill="#7A8FA6" opacity=".65"/>
+  <!-- Appuie-têtes -->
+  <rect x="72" y="300" width="32" height="12" rx="4" fill="#8898B0" opacity=".6"/>
+  <rect x="118" y="300" width="32" height="12" rx="4" fill="#8898B0" opacity=".6"/>
+  <rect x="164" y="300" width="32" height="12" rx="4" fill="#8898B0" opacity=".6"/>
+
+  <!-- Montant milieu -->
+  <line x1="52" y1="385" x2="248" y2="385" stroke="#8898B0" stroke-width="1.5"/>
+
+  <!-- Pare-brise arrière -->
+  <rect x="65" y="387" width="170" height="35" rx="5" fill="#DBEAFE" opacity=".6" stroke="#93C5FD" stroke-width=".8"/>
+  <rect x="72" y="390" width="60" height="5" rx="2.5" fill="rgba(255,255,255,.35)"/>
+
+  <!-- Coffre -->
+  <path d="M90,424 Q150,405 210,424 L235,470 Q245,495 220,500 L80,500 Q55,495 65,470 Z" fill="#A0B4C8" opacity=".8"/>
+  <!-- Poignée coffre -->
+  <rect x="130" y="450" width="40" height="6" rx="3" fill="#8898B0"/>
+
+  <!-- Feux arrière (rouge) -->
+  <rect x="52" y="493" width="38" height="16" rx="5" fill="#FCA5A5" stroke="#DC2626" stroke-width="1"/>
+  <rect x="210" y="493" width="38" height="16" rx="5" fill="#FCA5A5" stroke="#DC2626" stroke-width="1"/>
+  <!-- Détail feux arrière -->
+  <rect x="56" y="496" width="28" height="5" rx="2.5" fill="#FEE2E2"/>
+  <rect x="214" y="496" width="28" height="5" rx="2.5" fill="#FEE2E2"/>
+
+  <!-- Roues -->
+  <rect x="18" y="105" width="34" height="58" rx="10" fill="#374151"/>
+  <rect x="22" y="109" width="26" height="50" rx="7" fill="#4B5563"/>
+  <rect x="248" y="105" width="34" height="58" rx="10" fill="#374151"/>
+  <rect x="250" y="109" width="26" height="50" rx="7" fill="#4B5563"/>
+  <rect x="18" y="385" width="34" height="58" rx="10" fill="#374151"/>
+  <rect x="22" y="389" width="26" height="50" rx="7" fill="#4B5563"/>
+  <rect x="248" y="385" width="34" height="58" rx="10" fill="#374151"/>
+  <rect x="250" y="389" width="26" height="50" rx="7" fill="#4B5563"/>
+
+  <!-- Labels AVANT sur feux -->
+  <text x="71" y="59" text-anchor="middle" font-size="7" fill="#92400E" font-family="sans-serif" font-weight="700">AV</text>
+  <text x="229" y="59" text-anchor="middle" font-size="7" fill="#92400E" font-family="sans-serif" font-weight="700">AV</text>
+  <!-- Labels ARRIÈRE sur feux -->
+  <text x="71" y="524" text-anchor="middle" font-size="7" fill="#7F1D1D" font-family="sans-serif" font-weight="700">AR</text>
+  <text x="229" y="524" text-anchor="middle" font-size="7" fill="#7F1D1D" font-family="sans-serif" font-weight="700">AR</text>
+
+  <!-- Label ARRIÈRE en bas -->
+  <text x="150" y="538" text-anchor="middle" font-size="11" font-weight="700" fill="#DC2626" font-family="sans-serif" letter-spacing="2">ARRIÈRE</text>
+  <line x1="60" y1="532" x2="110" y2="532" stroke="#DC2626" stroke-width="1" opacity=".4"/>
+  <line x1="190" y1="532" x2="240" y2="532" stroke="#DC2626" stroke-width="1" opacity=".4"/>
+</svg>`;
+
+let JU={vid:null,vehIdx:0,data:{},onbAnswers:[null,null,null,null,null],onbStep:0,compOpen:null,vue:'side'};
 
 function renderJumeau(){
   const ctn=document.getElementById('ju-ctn');
@@ -6895,7 +7008,7 @@ function renderJumeau(){
   const score=jumeauScore();
   const prec=jumeauPrecision();
   ctn.innerHTML=`
-    <div class="ju-hdr"><div class="ju-hdr-l"><div class="jh-t">🧬 Jumeau Numérique</div><div class="jh-s">État en temps réel de votre véhicule</div></div><div class="ju-hdr-ico">⚙️</div></div>
+    <div class="ju-hdr"><div class="ju-hdr-l"><div class="jh-t">🧬 Jumeau Numérique</div><div class="jh-s">État en temps réel de votre véhicule</div></div><div class="ju-hdr-ico" onclick="openJumeauOnb()" style="cursor:pointer" title="Affiner le profil">⚙️</div></div>
     <div class="ju-vsel" onclick="jumeauCycleVeh()"><div class="ju-vsel-em">${v.emoji||'🚗'}</div><div class="ju-vsel-info"><div class="ju-vsel-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?' · '+v.annee:''}</div><div class="ju-vsel-sub">${[v.immatriculation,v.km_actuel?v.km_actuel.toLocaleString('fr')+' km':null,v.carburant].filter(Boolean).join(' · ')}</div></div><div style="color:var(--txl)">▾</div></div>
     <div class="ju-score"><div class="ju-sc-circle"><div class="ju-sc-val">${score.val}</div><div class="ju-sc-max">/100</div></div><div class="ju-sc-info"><div class="ju-sc-lbl">Score santé</div><div class="ju-sc-title">${score.title}</div><div class="ju-sc-desc">${score.desc}</div><div class="ju-sc-badges">${score.badges}</div></div></div>
     <div class="ju-prec"><div class="ju-prec-hdr"><div class="ju-prec-lbl">Précision du jumeau</div><div class="ju-prec-val">${prec}%</div></div><div class="ju-prec-bg"><div class="ju-prec-bar" style="width:${prec}%"></div></div><div class="ju-prec-acts">${prec<90?'<span class="ju-prec-act" onclick="fabAction(\'ent\')">+ Ajouter un entretien</span>':''}<span class="ju-prec-act" onclick="openJumeauOnb()">Affiner le profil</span></div></div>
@@ -6948,14 +7061,46 @@ function juCalcUsure(comp,kmSince,moisSince){
 }
 function juEstimer(comp,v,km,now){
   const anc=v.jumeau_anciennete||'inconnu';
-  const etat=v.jumeau_etat_carnet||'aucun';
-  const fAnc={moins_1an:0.1,'1_3ans':0.3,'3_5ans':0.55,plus_5ans:0.75,inconnu:0.5}[anc]||0.5;
-  const fEtat={complet:-0.2,incomplet:0.1,aucun:0.25}[etat]||0;
-  const usure=Math.min(95,Math.round((fAnc+fEtat)*80));
+  const etat=v.jumeau_etat_carnet||'inconnu';
+  const usage=v.jumeau_usage||'mixte';
+  const signes=v.jumeau_signes||'rien';
+  const dernierEnt=v.jumeau_dernier_entretien||'inconnu';
+
+  // Facteur ancienneté — base d'usure
+  const fAnc={moins_1an:0.08,'1_3ans':0.28,'3_5ans':0.52,plus_5ans:0.72,inconnu:0.5}[anc]||0.5;
+
+  // Facteur suivi entretien — modifie l'usure estimée
+  const fEtat={rigoureux:-0.18,correct:-0.05,irregulier:0.15,inconnu:0.25}[etat]||0;
+
+  // Facteur usage — l'usage intensif use plus vite
+  const fUsage={urbain:0.05,mixte:0,route:-0.05,intensif:0.18}[usage]||0;
+
+  // Facteur signes — voyant ou bruit augmente la probabilité d'urgence
+  const fSignes={rien:0,voyant:0.15,bruit:0.12,plusieurs:0.25}[signes]||0;
+
+  // Facteur dernier entretien pro
+  const fDernier={moins_6mois:-0.15,'6_12mois':-0.05,'1_2ans':0.12,plus_2ans:0.25,inconnu:0.1}[dernierEnt]||0;
+
+  // Certains composants sont plus impactés par des facteurs spécifiques
+  let bonus=0;
+  // Usage urbain = freinages fréquents → freins s'usent plus
+  if(usage==='urbain'&&(comp.id==='freins_av'||comp.id==='freins_ar'))bonus+=0.1;
+  // Usage intensif = courroie et embrayage sous pression
+  if((usage==='intensif'||usage==='route')&&(comp.id==='courroie'||comp.id==='embrayage'))bonus+=0.08;
+  // Voyant ou bruit = composants électriques/moteur plus suspects
+  if(signes==='voyant'&&(comp.id==='batterie'||comp.id==='alternateur'||comp.id==='huile'))bonus+=0.12;
+  if(signes==='bruit'&&(comp.id==='amortisseurs'||comp.id==='freins_av'||comp.id==='freins_ar'||comp.id==='courroie_acc'))bonus+=0.12;
+  if(signes==='plusieurs')bonus+=0.08;
+  // Entretien irrégulier = filtre et huile particulièrement suspects
+  if((etat==='irregulier'||etat==='inconnu')&&(comp.id==='huile'||comp.id==='filtre_air'||comp.id==='filtre_hab'))bonus+=0.08;
+
+  const totalFactor=fAnc+fEtat+fUsage+fSignes+fDernier+bonus;
+  const usure=Math.min(95,Math.max(0,Math.round(totalFactor*80)));
+
   let status='grey';
   if(comp.skmo||comp.smo){
-    if(usure>=75)status='err';
-    else if(usure>=45)status='warn';
+    if(usure>=72)status='err';
+    else if(usure>=42)status='warn';
     else if(anc!=='inconnu')status='ok';
   }
   return{status,usure,lastDate:'—',lastKm:'—',sinceKm:'—',estimated:true,conseil:juConseil(comp,status,true)};
@@ -7052,7 +7197,6 @@ function openJumeauComp(id){
   document.getElementById('jcs-ctitle').style.color=cc.tc;
   document.getElementById('jcs-ctxt').textContent=d.conseil.txt;
   document.getElementById('jcs-ctxt').style.color=cc.xc;
-  document.getElementById('jcs-baff').style.display=JU_OSCARO[id]?'flex':'none';
   document.getElementById('mo-jcomp').classList.add('open');
 }
 function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove('open');}
@@ -7063,16 +7207,9 @@ function jumeauPlanifier(){
   openEnt(null,JU.vid);
   setTimeout(()=>{const sel=document.getElementById('e-ty');if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}},350);
 }
-function jumeauOscaro(){
-  const id=JU.compOpen;
-  const v=S.vehicles.find(x=>x.id===JU.vid);
-  if(!id||!v)return;
-  const q=encodeURIComponent(`${JU_OSCARO[id]||id} ${v.marque} ${v.modele} ${v.annee||''}`);
-  window.open(`https://www.oscaro.com/recherche?q=${q}`,'_blank');
-}
 // ONBOARDING
 function openJumeauOnb(){
-  JU.onbStep=0;JU.onbAnswers=[null,null,null];
+  JU.onbStep=0;JU.onbAnswers=[null,null,null,null,null];
   juOnbUI();
   document.getElementById('mo-jumeau-onb').classList.add('open');
 }
@@ -7083,10 +7220,10 @@ function jonbSelect(step,val,el){
   document.getElementById('jonb-btn-next').disabled=false;
 }
 async function jonbNext(){
-  if(JU.onbStep<2){
+  if(JU.onbStep<4){
     JU.onbStep++;juOnbUI();
     document.getElementById('jonb-btn-next').disabled=JU.onbAnswers[JU.onbStep]===null;
-    document.getElementById('jonb-btn-next').textContent=JU.onbStep===2?'Activer mon jumeau →':'Suivant →';
+    document.getElementById('jonb-btn-next').textContent=JU.onbStep===4?'Activer mon jumeau →':'Suivant →';
   } else {await jonbSave();}
 }
 function jonbSkip(){document.getElementById('mo-jumeau-onb').classList.remove('open');}
@@ -7098,9 +7235,21 @@ function juOnbUI(){
 async function jonbSave(){
   const v=S.vehicles.find(x=>x.id===JU.vid);
   if(!v)return;
-  const{error}=await sb.from('vehicles').update({jumeau_onboarding_done:true,jumeau_anciennete:JU.onbAnswers[0],jumeau_etat_carnet:JU.onbAnswers[1]}).eq('id',JU.vid).eq('user_id',S.user.id);
+  const{error}=await sb.from('vehicles').update({
+    jumeau_onboarding_done:true,
+    jumeau_anciennete:JU.onbAnswers[0],
+    jumeau_etat_carnet:JU.onbAnswers[1],
+    jumeau_usage:JU.onbAnswers[2],
+    jumeau_signes:JU.onbAnswers[3],
+    jumeau_dernier_entretien:JU.onbAnswers[4]
+  }).eq('id',JU.vid).eq('user_id',S.user.id);
   if(!error){
-    v.jumeau_onboarding_done=true;v.jumeau_anciennete=JU.onbAnswers[0];v.jumeau_etat_carnet=JU.onbAnswers[1];
+    v.jumeau_onboarding_done=true;
+    v.jumeau_anciennete=JU.onbAnswers[0];
+    v.jumeau_etat_carnet=JU.onbAnswers[1];
+    v.jumeau_usage=JU.onbAnswers[2];
+    v.jumeau_signes=JU.onbAnswers[3];
+    v.jumeau_dernier_entretien=JU.onbAnswers[4];
     document.getElementById('mo-jumeau-onb').classList.remove('open');
     toast('Jumeau activé ! 🧬','s');
     renderJumeau();
