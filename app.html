@@ -960,9 +960,9 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ju-sc-desc{font-size:.7rem;color:rgba(255,255,255,.72);line-height:1.4}
 .ju-sc-badges{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
 .ju-badge{padding:3px 8px;border-radius:20px;font-size:.6rem;font-weight:700}
-.jub-r{background:rgba(220,38,38,.3);color:#FCA5A5}
-.jub-w{background:rgba(217,119,6,.3);color:#FCD34D}
-.jub-ok{background:rgba(5,150,105,.3);color:#6EE7B7}
+.jub-r{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)}
+.jub-w{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+.jub-ok{background:rgba(255,255,255,.08);color:rgba(255,255,255,.55)}
 
 /* ── PRÉCISION ── */
 .ju-prec{margin:10px 14px 0;background:#fff;border-radius:var(--r-sm);padding:11px 14px;box-shadow:0 1px 6px rgba(0,0,0,.06);border:1.5px solid rgba(184,196,216,.5)}
@@ -976,7 +976,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ju-prec-act:active{transform:scale(.96)}
 
 /* ── BANNIÈRE PROCHAIN ENTRETIEN ── */
-.ju-next-banner{margin:10px 14px 0;border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;border:1.5px solid}
+.ju-next-banner{margin:10px 14px 0;border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;border:1.5px solid var(--border);background:#F8FAFC}
 .ju-next-banner:active{transform:scale(.99)}
 .ju-next-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .ju-next-info{flex:1;min-width:0}
@@ -1023,39 +1023,39 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ju-cat-hdr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .ju-cat-group{margin-bottom:10px}
 .jcomp{background:#fff;border-radius:var(--r-sm);padding:11px 13px;display:flex;align-items:center;gap:11px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:6px;border:1.5px solid rgba(184,196,216,.4);cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
-.jcomp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px}
+.jcomp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;display:none}
 .jcomp.err::before{background:var(--err)}
 .jcomp.warn::before{background:var(--warn)}
 .jcomp.ok::before{background:var(--ok)}
 .jcomp.grey::before{background:var(--txl)}
 .jcomp:active{transform:scale(.985);box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .jcomp-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.jcomp-ico.err{background:#FFF0F0}
-.jcomp-ico.warn{background:#FFFBEB}
-.jcomp-ico.ok{background:#F0FDF4}
+.jcomp-ico.err{background:#F1F5F9}
+.jcomp-ico.warn{background:#F1F5F9}
+.jcomp-ico.ok{background:#F1F5F9}
 .jcomp-ico.grey{background:#F1F5F9}
 .jcomp-info{flex:1;min-width:0}
 .jcomp-name{font-size:.82rem;font-weight:700;color:var(--txt)}
 .jcomp-sub{font-size:.68rem;color:var(--txm);margin-top:3px}
 .jcomp-sub-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .jcomp-kr{font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:8px;white-space:nowrap}
-.jcomp-kr.ok{background:var(--ok-bg);color:var(--ok)}
-.jcomp-kr.warn{background:var(--warn-bg);color:var(--warn)}
-.jcomp-kr.err{background:var(--err-bg);color:var(--err)}
-.jcomp-est{font-size:.6rem;color:#B45309;font-weight:600;background:#FFFBEB;padding:1px 5px;border-radius:6px}
+.jcomp-kr.ok{background:#F1F5F9;color:#64748B}
+.jcomp-kr.warn{background:#EFF6FF;color:var(--primary)}
+.jcomp-kr.err{background:#FEE2E2;color:#DC2626}
+.jcomp-est{font-size:.6rem;color:#94A3B8;font-weight:600;background:#F1F5F9;padding:1px 5px;border-radius:6px}
 .jcomp-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .jcomp-pill{padding:3px 9px;border-radius:20px;font-size:.6rem;font-weight:700}
-.jcomp-pill.err{background:var(--err-bg);color:var(--err)}
-.jcomp-pill.warn{background:var(--warn-bg);color:var(--warn)}
-.jcomp-pill.ok{background:var(--ok-bg);color:var(--ok)}
+.jcomp-pill.err{background:#FEE2E2;color:#DC2626}
+.jcomp-pill.warn{background:#F1F5F9;color:#64748B}
+.jcomp-pill.ok{background:#F1F5F9;color:#94A3B8}
 .jcomp-pill.grey{background:#F1F5F9;color:var(--txl)}
 
 /* ── BARRE USURE GRADUÉE ── */
 .jcomp-bw{width:52px;height:6px;background:var(--border);border-radius:3px;overflow:visible;position:relative}
 .jcomp-bar-track{position:absolute;inset:0;border-radius:3px;overflow:hidden;display:flex}
-.jcomp-bar-z1{flex:0 0 60%;background:linear-gradient(90deg,#22C55E,#86EFAC)}
-.jcomp-bar-z2{flex:0 0 25%;background:linear-gradient(90deg,#F59E0B,#FCD34D)}
-.jcomp-bar-z3{flex:0 0 15%;background:linear-gradient(90deg,#EF4444,#FCA5A5)}
+.jcomp-bar-z1{flex:0 0 60%;background:linear-gradient(90deg,#DBEAFE,#93C5FD)}
+.jcomp-bar-z2{flex:0 0 25%;background:linear-gradient(90deg,#60A5FA,#3B82F6)}
+.jcomp-bar-z3{flex:0 0 15%;background:linear-gradient(90deg,#1D4ED8,#1E3A8A)}
 .jcomp-bar-cursor{position:absolute;top:50%;transform:translateY(-50%);width:3px;height:10px;background:#1E293B;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.35);transition:left .6s cubic-bezier(.22,1,.36,1);pointer-events:none}
 
 /* ── BOTTOM SHEET COMPOSANT ── */
@@ -1076,17 +1076,17 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 /* Barre usure graduée dans la fiche */
 .jcs-ubg{height:10px;background:#F1F5F9;border-radius:5px;overflow:visible;position:relative;margin-bottom:7px}
 .jcs-utrack{position:absolute;inset:0;border-radius:5px;overflow:hidden;display:flex}
-.jcs-uz1{flex:0 0 60%;background:linear-gradient(90deg,#22C55E,#86EFAC)}
-.jcs-uz2{flex:0 0 25%;background:linear-gradient(90deg,#F59E0B,#FCD34D)}
-.jcs-uz3{flex:0 0 15%;background:linear-gradient(90deg,#EF4444,#FCA5A5)}
+.jcs-uz1{flex:0 0 60%;background:linear-gradient(90deg,#DBEAFE,#93C5FD)}
+.jcs-uz2{flex:0 0 25%;background:linear-gradient(90deg,#60A5FA,#3B82F6)}
+.jcs-uz3{flex:0 0 15%;background:linear-gradient(90deg,#1D4ED8,#1E3A8A)}
 .jcs-ucursor{position:absolute;top:50%;transform:translate(-50%,-50%);width:4px;height:16px;background:#1E293B;border-radius:2px;box-shadow:0 1px 5px rgba(0,0,0,.3);transition:left 1s cubic-bezier(.22,1,.36,1)}
-.jcs-umark{position:absolute;left:60%;top:-3px;width:2px;height:16px;background:rgba(217,119,6,.5);border-radius:1px;pointer-events:none}
+.jcs-umark{position:absolute;left:60%;top:-3px;width:2px;height:16px;background:rgba(37,99,235,.35);border-radius:1px;pointer-events:none}
 .jcs-ubar{display:none}/* legacy — remplacé par curseur */
 .jcs-grid{padding:0 18px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
 .jcs-box{background:#F8FAFC;border-radius:10px;padding:10px 12px;border:1px solid rgba(184,196,216,.3);min-width:0;overflow:hidden}
 .jcs-blbl{font-size:.6rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jcs-bval{font-size:.84rem;font-weight:800;color:var(--txt);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jcs-conseil{margin:0 18px 14px;border-radius:12px;padding:12px 14px;border:1.5px solid;min-width:0;overflow:hidden}
+.jcs-conseil{margin:0 18px 14px;border-radius:12px;padding:12px 14px;border:1.5px solid var(--border);background:#F8FAFC;min-width:0;overflow:hidden}
 .jcs-ctitle{font-size:.72rem;font-weight:800;margin-bottom:5px;overflow-wrap:break-word;word-break:break-word;line-height:1.4}
 .jcs-ctxt{font-size:.76rem;line-height:1.6;color:var(--txm);overflow-wrap:break-word;word-break:break-word}
 .jcs-hist{margin:0 18px 14px}
@@ -1103,7 +1103,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jcs-bv{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#059669,#047857);color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(5,150,105,.3)}
 .jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.3)}
 .jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.82rem;font-weight:500;cursor:pointer}
-.jcs-kmrest{margin:0 18px 14px;border-radius:var(--r-sm);padding:11px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px solid;min-width:0;overflow:hidden}
+.jcs-kmrest{margin:0 18px 14px;border-radius:var(--r-sm);padding:11px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px solid var(--border);background:#F8FAFC;min-width:0;overflow:hidden}
 .jcs-kmrest-lbl{font-size:.68rem;font-weight:700;line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .jcs-kmrest-val{font-size:.95rem;font-weight:900;white-space:nowrap;text-align:right;flex-shrink:0}
 .ju-empty{padding:52px 24px;text-align:center}
@@ -7740,7 +7740,8 @@ function renderJumeau(){
 
   // ── Anneau SVG score ──
   const R=30,C=2*Math.PI*R;
-  const scoreColor=score.val>=80?'#22C55E':score.val>=55?'#F59E0B':score.val>=30?'#EF4444':'#DC2626';
+  // Option A monochrome : anneau toujours blanc/bleu clair sur fond bleu foncé
+  const scoreColor=score.val>=80?'#93C5FD':score.val>=55?'#60A5FA':score.val>=30?'#3B82F6':'#BFDBFE';
   const dash=Math.round((score.val/100)*C);
   const ringHTML=`
     <div class="ju-sc-ring">
@@ -7821,9 +7822,9 @@ function renderJumeau(){
     <div class="ju-sil">
       <div class="ju-svgwrap" id="ju-svgwrap-top">${JU_SVG_TOP}<div id="ju-hots-top">${jumeauHots('top')}</div></div>
       <div class="ju-legend">
-        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--err)"></div>À vérifier</div>
-        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--warn)"></div>À surveiller</div>
-        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--ok)"></div>OK</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:#DC2626"></div>À vérifier</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:#94A3B8"></div>À surveiller</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:#CBD5E1"></div>OK</div>
         <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--txl)"></div>Inconnu</div>
         <div class="ju-leg-i" style="font-style:italic;font-size:.6rem;color:var(--txl)">~ Estimé</div>
       </div>
@@ -7853,10 +7854,11 @@ function juNextBanner(v){
   const comp=urgent[0];
   const d=JU.data[comp.id];
   const isErr=d.status==='err';
-  const bg=isErr?'#FFF5F5':'#FFFBEB';
-  const border=isErr?'#FECACA':'#FDE68A';
-  const icoBg=isErr?'#FEE2E2':'#FEF3C7';
-  const color=isErr?'#DC2626':'#D97706';
+  // Option A monochrome
+  const bg=isErr?'#FEF2F2':'#F8FAFC';
+  const border=isErr?'#FECACA':'#E2E8F0';
+  const icoBg=isErr?'#FEE2E2':'#F1F5F9';
+  const color=isErr?'#DC2626':'var(--primary)';
   const label=isErr?'⚠️ Intervention prioritaire':'⏰ À planifier';
   // Afficher le texte de retard uniquement si cohérent avec le statut
   const _kr=d.kmRestants;
@@ -8707,15 +8709,13 @@ function openJumeauComp(id){
       ?(kr.unit==='mois'?'⚠️ Échéance dépassée':'⚠️ Échéance dépassée')
       :(kr.unit==='mois'?'📅 Prochain remplacement':'📅 Prochain remplacement');
     if(krLbl)krLbl.textContent=unitLabel;
+    // Option A monochrome : bleu pour prochain, rouge uniquement si err
     if(d.status==='err'||kr.depasse){
-      krWrap.style.background='linear-gradient(135deg,#FFF5F5,#FEE2E2)';krWrap.style.borderColor='#FECACA';
+      krWrap.style.background='#FEF2F2';krWrap.style.borderColor='#FECACA';
       if(krLbl)krLbl.style.color='#DC2626';krVal.style.color='#DC2626';
-    } else if(d.status==='warn'){
-      krWrap.style.background='linear-gradient(135deg,#FFFBEB,#FEF3C7)';krWrap.style.borderColor='#FDE68A';
-      if(krLbl)krLbl.style.color='#D97706';krVal.style.color='#D97706';
     } else {
-      krWrap.style.background='linear-gradient(135deg,#F0FDF4,#DCFCE7)';krWrap.style.borderColor='#BBF7D0';
-      if(krLbl)krLbl.style.color='#15803D';krVal.style.color='#15803D';
+      krWrap.style.background='#F8FAFC';krWrap.style.borderColor='#E2E8F0';
+      if(krLbl)krLbl.style.color='var(--primary)';krVal.style.color='var(--primary)';
     }
     const krPrefix=kr.depasse?'':(kr.unit==='mois'?'dans ':'dans ');
     krVal.textContent=krPrefix+kr.txt+(kr.estimated?' · estimation':'');
@@ -8724,7 +8724,8 @@ function openJumeauComp(id){
   }
 
   // Conseil
-  const cc={err:{bg:'#FFF5F5',border:'#FECACA',tc:'#DC2626',xc:'#7C2D12'},warn:{bg:'#FFFBEB',border:'#FDE68A',tc:'#B45309',xc:'#78350F'},ok:{bg:'#F0FDF4',border:'#BBF7D0',tc:'#15803D',xc:'#14532D'},grey:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'}}[d.conseil?.type||'grey']||{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'};
+  // Option A monochrome : fond blanc/gris, rouge uniquement pour err
+  const cc={err:{bg:'#FEF2F2',border:'#FECACA',tc:'#DC2626',xc:'#7C2D12'},warn:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--primary)',xc:'var(--txm)'},ok:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'},grey:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'}}[d.conseil?.type||'grey']||{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'};
   const cel=document.getElementById('jcs-conseil');
   cel.style.background=cc.bg;cel.style.borderColor=cc.border;
   document.getElementById('jcs-ctitle').textContent=d.conseil?.title||'';
