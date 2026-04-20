@@ -729,16 +729,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid var(--border);background:#FAFBFF;flex-shrink:0}
 .multi-field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 /* ── Résumé des interventions dans le modal principal ── */
-.multi-sel-list{padding:10px 18px;flex:1;overflow-y:auto}
-.multi-sel-empty{padding:14px 0;text-align:center;font-size:.84rem;color:var(--txm)}
-.multi-sel-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
-.multi-sel-row:last-child{border-bottom:none}
-.multi-sel-ico{font-size:1rem;flex-shrink:0;width:22px;text-align:center}
-.multi-sel-label{flex:1;font-size:.84rem;font-weight:600;color:var(--txt);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.multi-sel-price{width:90px;flex-shrink:0}
-.multi-sel-price input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:7px 8px;font-family:inherit;font-size:.84rem;font-weight:700;text-align:right;background:#fff;outline:none;color:var(--txt)}
-.multi-sel-price input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.1)}
-.multi-sel-del{width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--txl);cursor:pointer;font-size:1.1rem;padding:4px}
+.multi-sel-list{display:none}
 .multi-add-btn{width:100%;margin:8px 0 0;padding:12px;border:1.5px dashed var(--primary);border-radius:10px;background:var(--primary-lt);color:var(--primary);font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
 .multi-add-btn:active{opacity:.8}
 /* ── Modal sélecteur d'interventions ── */
@@ -784,7 +775,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .multi-global-photo-btn:active{transform:scale(.99)}
 .multi-global-photo-btn.has-photo{border-style:solid;border-color:#10B981;background:#F0FDF4;color:#059669;font-weight:700}
 .multi-global-photo-remove{font-size:.72rem;color:var(--err);font-weight:600;cursor:pointer;text-align:center;margin-top:5px;display:block}
-.multi-footer{padding:12px 18px 14px;border-top:1px solid var(--border);background:#fff;flex-shrink:0}
+.multi-footer{padding:12px 18px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);background:#fff;flex-shrink:0}
 .multi-footer-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .multi-footer-count{font-size:.8rem;font-weight:700;color:var(--txt)}
 .multi-footer-total{font-size:.84rem;font-weight:800;color:var(--ok)}
@@ -1518,10 +1509,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     </div>
     <!-- Input photo global caché -->
     <input type="file" id="multi-photo-input" accept="image/*,application/pdf" style="display:none" onchange="onMultiPhotoSelected(this)">
-    <!-- Résumé des interventions sélectionnées -->
-    <div class="multi-sel-list" id="multi-sel-list">
-      <div class="multi-sel-empty" id="multi-sel-empty">Aucune intervention ajoutée</div>
-    </div>
+    <div style="flex:1;overflow-y:auto">
     <!-- Zone photo / document globale -->
     <div class="multi-global-photo">
       <button class="multi-add-btn" onclick="openPicker()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter des interventions</button>
@@ -1536,6 +1524,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       <div class="multi-detail-lbl" style="margin-bottom:6px">🔧 Main d’œuvre (optionnel)</div>
       <input class="multi-cost-input" id="multi-mo" type="number" inputmode="decimal" placeholder="Montant main d’œuvre (€)" min="0" step="0.01" oninput="updateMultiFooter()">
     </div>
+    </div><!-- fin scroll -->
     <div class="multi-footer">
       <div class="multi-footer-info">
         <div class="multi-footer-count" id="multi-count">0 intervention sélectionnée</div>
@@ -7118,10 +7107,10 @@ function _renderMultiGlobalPhoto(){
   if(_multiGlobalPhoto){
     const isPdf=_multiGlobalPhoto.type==='application/pdf';
     btn.className='multi-global-photo-btn has-photo';
-    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> ${isPdf?'PDF joint':'Photo jointe'} — ${_multiGlobalPhoto.name||'Fichier'}`;
+    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> ${isPdf?'Document PDF joint':'Photo jointe'}`;
     wrap.innerHTML=isPdf
-      ?`<div style="background:#FEF9F0;border:1px solid #FDE68A;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#92400E"><span>📄</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(_multiGlobalPhoto.name)}</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕</span></div>`
-      :`<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#1D4ED8"><span>🖼️</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_multiGlobalPhoto.name||'Photo jointe'}</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕</span></div>`;
+      ?`<div style="background:#FEF9F0;border:1px solid #FDE68A;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#92400E"><span>📄</span><span style="flex:1">Document PDF joint</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕ Supprimer</span></div>`
+      :`<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#1D4ED8"><span>🖼️</span><span style="flex:1">Photo de la facture jointe</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕ Supprimer</span></div>`;
   } else {
     btn.className='multi-global-photo-btn';
     btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Joindre une photo ou un document PDF`;
@@ -7769,7 +7758,7 @@ function renderJumeau(){
         <span class="ju-ft-dot" style="background:var(--txl)"></span>Tous
       </button>
       <button class="ju-ft ${flt==='urgent'?'active':''}" onclick="juSetFilter('urgent')">
-        <span class="ju-ft-dot" style="background:var(--err)"></span>Urgents
+        <span class="ju-ft-dot" style="background:var(--err)"></span>À vérifier
       </button>
       <button class="ju-ft ${flt==='watch'?'active':''}" onclick="juSetFilter('watch')">
         <span class="ju-ft-dot" style="background:var(--warn)"></span>À surveiller
@@ -7831,7 +7820,7 @@ function renderJumeau(){
     <div class="ju-sil">
       <div class="ju-svgwrap" id="ju-svgwrap-top">${JU_SVG_TOP}<div id="ju-hots-top">${jumeauHots('top')}</div></div>
       <div class="ju-legend">
-        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--err)"></div>Urgent</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--err)"></div>À vérifier</div>
         <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--warn)"></div>À surveiller</div>
         <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--ok)"></div>OK</div>
         <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--txl)"></div>Inconnu</div>
