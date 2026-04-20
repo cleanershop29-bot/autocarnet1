@@ -1881,13 +1881,21 @@ const TYPES=[
   {id:'equilibrage',label:'Équilibrage',ico:'⚖️',ikm:10000,imo:12,cat:'Pneus'},
   {id:'embrayage',label:'Embrayage',ico:'🔄',ikm:100000,imo:null,cat:'Transmission'},
   {id:'boite_vit',label:'Boîte de vitesses',ico:'⚙️',ikm:null,imo:null,cat:'Transmission'},
+  {id:'huile_boite_m',label:'Huile boîte manuelle',ico:'🔧',ikm:60000,imo:48,cat:'Transmission'},
+  {id:'huile_boite_a',label:'Huile boîte automatique',ico:'🤖',ikm:60000,imo:48,cat:'Transmission'},
   {id:'differentiel',label:'Différentiel',ico:'🔁',ikm:null,imo:null,cat:'Transmission'},
   {id:'cardan',label:'Cardan / homocinétique',ico:'🔗',ikm:null,imo:null,cat:'Transmission'},
   {id:'amortisseurs',label:'Amortisseurs',ico:'🔩',ikm:80000,imo:96,cat:'Suspension'},
   {id:'roulement',label:'Roulement de roue',ico:'🔵',ikm:null,imo:null,cat:'Suspension'},
   {id:'rotule',label:'Rotule / barre stab.',ico:'🔩',ikm:null,imo:null,cat:'Suspension'},
+  {id:'pompe_eau',label:'Pompe à eau',ico:'💧',ikm:80000,imo:60,cat:'Refroid.'},
+  {id:'disques_av',label:'Disques avant',ico:'🔴',ikm:80000,imo:null,cat:'Freinage'},
+  {id:'disques_ar',label:'Disques arrière',ico:'⭕',ikm:100000,imo:null,cat:'Freinage'},
+  {id:'geometrie',label:'Géométrie / parallélisme',ico:'📐',ikm:30000,imo:24,cat:'Pneus'},
+  {id:'catalyseur',label:'Pot catalytique',ico:'🌫️',ikm:120000,imo:null,cat:'Moteur'},
+  {id:'bougies_prech',label:'Bougies préchauffage',ico:'🔥',ikm:60000,imo:48,cat:'Moteur'},
   {id:'batterie',label:'Batterie',ico:'🔋',ikm:null,imo:60,cat:'Électrique'},
-  {id:'alternateur',label:'Alternateur',ico:'⚡',ikm:null,imo:null,cat:'Électrique'},
+  {id:'alternateur',label:'Alternateur',ico:'⚡',ikm:null,imo:120,cat:'Électrique'},
   {id:'demarreur',label:'Démarreur',ico:'🔑',ikm:null,imo:null,cat:'Électrique'},
   {id:'ampoules',label:'Ampoules / éclairage',ico:'💡',ikm:null,imo:null,cat:'Électrique'},
   {id:'liq_refroid',label:'Liquide de refroidissement',ico:'🌡️',ikm:null,imo:48,cat:'Refroid.'},
@@ -2056,7 +2064,7 @@ const CAR_DB={
 const BRANDS=Object.keys(CAR_DB);
 
 let sb;
-const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],signalements:[],mesSignalements:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte'};
+const S={user:null,vehicles:[],ents:[],partages:[],pending:[],rappels_custom:[],documents:[],signalements:[],mesSignalements:[],view:'dash',selVeh:null,cfmCb:null,filterEnt:'all',expandedVeh:null,searchEnt:'',sortEnt:'date',filterYear:'all',carbLat:null,carbLon:null,carbCp:null,rapFilterVeh:'all',vehSort:'alerte',_entAccordion:{}};
 
 const g=id=>document.getElementById(id);
 const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
@@ -2300,7 +2308,7 @@ async function saveNewPass(){
 }
 
 function resetState(){
-  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.signalements=[];S.mesSignalements=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';
+  S.user=null;S.vehicles=[];S.ents=[];S.partages=[];S.pending=[];S.rappels_custom=[];S.documents=[];S.veh_notes=[];S.signalements=[];S.mesSignalements=[];S.selVeh=null;S.cfmCb=null;S.searchEnt='';S.filterYear='all';S.expandedVeh=null;S.carbLat=null;S.carbLon=null;S.carbCp=null;S.rapFilterVeh='all';S._entAccordion={};
   document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';
 }
@@ -4632,13 +4640,63 @@ function renderEnt(){
   </div>`;
 
   if(!ents.length)h+=`<div class="empty" style="padding:28px"><span class="empty-i" style="font-size:2rem">📋</span><div class="empty-t">Aucun entretien</div><p class="empty-d">Appuyez sur + pour ajouter le premier.</p></div>`;
-  else h+=ents.map(e=>eiHTML(e,v)).join('');
+  else {
+    // Groupement par catégorie (accordion)
+    const catOrder=['Moteur','Filtres','Freinage','Pneus','Transmission','Suspension','Électrique','Refroid.','Climatisation','Administratif','Divers','Moto','Carrosserie','Camping-car'];
+    const bycat={};
+    ents.forEach(e=>{
+      const cat=getType(e.type).cat||'Divers';
+      if(!bycat[cat])bycat[cat]=[];
+      bycat[cat].push(e);
+    });
+    // Trier les catégories selon catOrder
+    const cats=Object.keys(bycat).sort((a,b)=>{
+      const ia=catOrder.indexOf(a),ib=catOrder.indexOf(b);
+      if(ia===-1&&ib===-1)return a.localeCompare(b);
+      if(ia===-1)return 1;if(ib===-1)return-1;
+      return ia-ib;
+    });
+    // Catégorie ouverte par défaut = celle avec l'entretien le plus récent
+    const mostRecentCat=ents.length?getType(ents[0].type).cat||'Divers':'';
+    if(!S._entAccordion)S._entAccordion={};
+    if(!(mostRecentCat in S._entAccordion))S._entAccordion[mostRecentCat]=true;
+    const catAccentColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Carrosserie':'#0891B2','Camping-car':'#059669'};
+    cats.forEach(cat=>{
+      const catEnts=bycat[cat];
+      const lastEnt=catEnts[0];
+      const lastTi=getType(lastEnt.type);
+      const accent=catAccentColors[cat]||'#94A3B8';
+      const isOpen=!!S._entAccordion[cat];
+      const totalCout=catEnts.reduce((s,e)=>s+(e.cout||0),0);
+      const catId='acc-cat-'+S.selVeh+'-'+cat.replace(/[^a-z]/gi,'');
+      h+=`<div style="margin-bottom:8px;border-radius:var(--r);overflow:hidden;border:1px solid rgba(184,196,216,.5);box-shadow:0 1px 4px rgba(0,0,0,.04)">`;
+      h+=`<button onclick="toggleEntAccordion('${catId}','${cat.replace(/'/g,'\\\'')}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:11px 13px;background:#fff;border:none;cursor:pointer;font-family:inherit;text-align:left">`;
+      h+=`<div style="width:32px;height:32px;border-radius:9px;background:${accent}18;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;border:1px solid ${accent}33">${lastTi.ico}</div>`;
+      h+=`<div style="flex:1;min-width:0">`;
+      h+=`<div style="font-size:.84rem;font-weight:700;color:var(--txt)">${cat} <span style="font-size:.72rem;font-weight:600;color:var(--txm);background:var(--bg);padding:1px 7px;border-radius:10px;margin-left:4px">${catEnts.length}</span></div>`;
+      h+=`<div style="font-size:.68rem;color:var(--txm);margin-top:1px">Dernier : ${fmtDate(lastEnt.date)}${totalCout?` · ${fmtCout(totalCout)}`:''}</div>`;
+      h+=`</div>`;
+      h+=`<svg style="flex-shrink:0;transition:transform .2s;transform:rotate(${isOpen?'90deg':'0deg'})" id="${catId}-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+      h+=`</button>`;
+      h+=`<div id="${catId}" style="display:${isOpen?'block':'none'};border-top:1px solid rgba(184,196,216,.3)">`;
+      h+=catEnts.map(e=>eiHTML(e,v)).join('');
+      h+=`</div></div>`;
+    });
+  }
   el.innerHTML=h;
   setTimeout(initSwipe,50);
 }
 
 function setFilter(f){S.filterEnt=f;renderEnt();}
-function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';renderEnt();}
+function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';S._entAccordion={};renderEnt();}
+function toggleEntAccordion(catId,cat){
+  if(!S._entAccordion)S._entAccordion={};
+  S._entAccordion[cat]=!S._entAccordion[cat];
+  const body=document.getElementById(catId);
+  const chev=document.getElementById(catId+'-chev');
+  if(body){body.style.display=S._entAccordion[cat]?'block':'none';}
+  if(chev){chev.style.transform=S._entAccordion[cat]?'rotate(90deg)':'rotate(0deg)';}
+}
 
 function getRapItem(r){
   const v=r.v;
@@ -6887,6 +6945,15 @@ const JU_COMPOSANTS=[
   {id:'clim',        label:'Climatisation',           ico:'❄️',cat:'Confort',               poids:1,skmo:null, skmr:null, smo:18,smr:24,cout:'100–200€',  types:['clim']},
   {id:'ct',          label:'Contrôle technique',      ico:'✅',cat:'Administratif',          poids:1,skmo:null, skmr:null, smo:20,smr:24,cout:'70–90€',    types:['ct']},
   {id:'essuie_gl',   label:'Essuie-glaces',           ico:'🌧️',cat:'Divers',               poids:1,skmo:null, skmr:null, smo:10,smr:12,cout:'25–55€',    types:['essuie_gl']},
+  {id:'disques_av',  label:'Disques avant',           ico:'🔴',cat:'Freinage · Important',  poids:2,skmo:60000,skmr:80000,smo:null,smr:null,cout:'150–350€', types:['disques','disques_av']},
+  {id:'disques_ar',  label:'Disques arrière',         ico:'⭕',cat:'Freinage · Important',  poids:2,skmo:80000,skmr:100000,smo:null,smr:null,cout:'120–280€',types:['disques','disques_ar']},
+  {id:'pompe_eau',   label:'Pompe à eau',             ico:'💧',cat:'Refroid. · Important',  poids:2,skmo:60000,skmr:80000,smo:48,smr:60,cout:'200–500€',  types:['pompe_eau']},
+  {id:'huile_boite_m',label:'Huile boîte manuelle',  ico:'⚙️',cat:'Transmission · Confort',poids:1,skmo:45000,skmr:60000,smo:36,smr:48,cout:'80–150€',   types:['huile_boite_m','boite_vit']},
+  {id:'huile_boite_a',label:'Huile boîte auto',      ico:'🤖',cat:'Transmission · Confort',poids:1,skmo:45000,skmr:60000,smo:36,smr:48,cout:'150–300€',  types:['huile_boite_a']},
+  {id:'alternateur', label:'Alternateur',             ico:'⚡',cat:'Électrique · Important',poids:2,skmo:null, skmr:null, smo:84,smr:120,cout:'300–700€', types:['alternateur']},
+  {id:'geometrie',   label:'Géométrie / parallélisme',ico:'📐',cat:'Pneus · Confort',       poids:1,skmo:22000,skmr:30000,smo:18,smr:24,cout:'60–120€',   types:['parallelisme','geometrie']},
+  {id:'catalyseur',  label:'Pot catalytique',         ico:'🌫️',cat:'Moteur · Important',  poids:2,skmo:100000,skmr:120000,smo:null,smr:null,cout:'400–1500€',types:['catalyseur','fap']},
+  {id:'bougies_prech',label:'Bougies préchauffage',  ico:'🔥',cat:'Moteur · Confort',      poids:1,skmo:45000,skmr:60000,smo:36,smr:48,cout:'80–180€',   types:['bougies_prech']},
 ];
 
 const JU_HOTS_SIDE={
@@ -6894,12 +6961,17 @@ const JU_HOTS_SIDE={
   liq_frein:'86,68',pneus_av:'74,93',pneus_ar:'24,93',batterie:'87,52',
   embrayage:'50,65',courroie_acc:'62,58',amortisseurs:'36,70',
   liq_refroid:'88,70',filtre_air:'76,48',filtre_hab:'50,30',
-  bougies:'72,45',clim:'40,55',ct:'30,35',essuie_gl:'55,22'
+  bougies:'72,45',clim:'40,55',ct:'30,35',essuie_gl:'55,22',
+  disques_av:'80,80',disques_ar:'18,80',pompe_eau:'82,60',
+  huile_boite_m:'50,70',huile_boite_a:'50,70',alternateur:'85,45',
+  geometrie:'74,95',catalyseur:'60,50',bougies_prech:'68,42'
 };
 const JU_HOTS_TOP={
   huile:'50,18',courroie:'65,22',freins_av:'84,20',freins_ar:'84,80',
   pneus_av:'16,20',pneus_ar:'16,80',batterie:'35,22',embrayage:'50,60',
-  filtre_hab:'50,52',amortisseurs:'50,75',filtre_air:'65,28',bougies:'60,18',liq_refroid:'38,28'
+  filtre_hab:'50,52',amortisseurs:'50,75',filtre_air:'65,28',bougies:'60,18',liq_refroid:'38,28',
+  disques_av:'82,22',disques_ar:'82,78',pompe_eau:'42,22',
+  alternateur:'30,30',geometrie:'18,25',catalyseur:'55,35',bougies_prech:'62,22'
 };
 
 
@@ -6944,27 +7016,101 @@ function renderJumeau(){
     <div style="height:16px"></div>`;
 }
 
+function juGetDateMiseEnCirculation(v){
+  // Priorité 1 : date_emission de la carte grise dans S.documents
+  const cgDoc=(S.documents||[]).find(d=>d.vehicle_id===v.id&&d.type==='Carte grise'&&d.date_emission);
+  if(cgDoc?.date_emission) return new Date(cgDoc.date_emission);
+  // Priorité 2 : année du véhicule (1er janvier pour être conservateur)
+  if(v.annee) return new Date(parseInt(v.annee)+'-01-01');
+  return null;
+}
+
+function juGetKmAnnuelReel(v){
+  // Calcule le km annuel réel depuis l'historique des entretiens avec km
+  const ents=(S.ents||[]).filter(e=>e.vehicle_id===v.id&&e.km&&e.km>0&&e.date)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(ents.length>=2){
+    const first=ents[0], last=ents[ents.length-1];
+    const kmDiff=last.km-first.km;
+    const daysDiff=(new Date(last.date)-new Date(first.date))/(1000*60*60*24);
+    if(kmDiff>0&&daysDiff>90){ // au moins 3 mois de données
+      return Math.round(kmDiff/(daysDiff/365));
+    }
+  }
+  // Sinon depuis le km actuel et la date de mise en circulation
+  const dateMEC=juGetDateMiseEnCirculation(v);
+  if(dateMEC&&v.km_actuel>0){
+    const annees=(new Date()-dateMEC)/(1000*60*60*24*365);
+    if(annees>0.5) return Math.round(v.km_actuel/annees);
+  }
+  // Fallback sur tranches onboarding
+  return {moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000;
+}
+
+function juIsCompApplicable(comp, v){
+  const carb=v.carburant||'essence';
+  const trans=v.transmission||'';
+  const isElec=carb==='electrique';
+  const isHybride=carb==='hybride'||carb==='hybride_r';
+  const isAuto=trans==='automatique'||trans==='cvt';
+  const isManuelle=trans==='manuelle'||trans===''||trans==='semi-auto';
+  // Électrique : pas de moteur thermique
+  if(isElec&&['huile','courroie','courroie_acc','bougies','bougies_prech','embrayage','huile_boite_m','catalyseur','filtre_air'].includes(comp.id)) return false;
+  // Bougies préchauffage : diesel uniquement
+  if(comp.id==='bougies_prech'&&carb!=='diesel') return false;
+  // Embrayage : pas sur boîte auto pure
+  if(comp.id==='embrayage'&&isAuto&&!isManuelle) return false;
+  // Huile boîte manuelle : pas sur auto
+  if(comp.id==='huile_boite_m'&&(isAuto||isElec)) return false;
+  // Huile boîte auto : pas sur manuelle
+  if(comp.id==='huile_boite_a'&&(isManuelle&&!isAuto||isElec)) return false;
+  // Catalyseur : pas sur électrique pur (déjà couvert) ni diesel (FAP à la place)
+  if(comp.id==='catalyseur'&&carb==='diesel') return false;
+  return true;
+}
+
 function jumeauCalculer(v){
   JU.data={};
   const km=v.km_actuel||0;
   const now=new Date();
   const ents=(S.ents||[]).filter(e=>e.vehicle_id===v.id);
+  // Calcul km annuel réel une seule fois
+  JU._kmAnnuelReel=juGetKmAnnuelReel(v);
+  JU._dateMEC=juGetDateMiseEnCirculation(v);
+
   JU_COMPOSANTS.forEach(comp=>{
+    // Filtrage selon carburant/transmission
+    if(!juIsCompApplicable(comp,v)){
+      JU.data[comp.id]={status:'grey',usure:0,lastDate:'N/A',lastKm:'—',sinceKm:'—',estimated:false,cout:comp.cout,kmRestants:null,conseil:{type:'grey',title:'ℹ️ Non applicable',txt:'Ce composant ne s\'applique pas à votre véhicule ('+((v.carburant||'essence')+', '+(v.transmission||'boîte standard'))+').'},notApplicable:true};
+      return;
+    }
     const matching=ents.filter(e=>comp.types.includes(e.type)).sort((a,b)=>new Date(b.date)-new Date(a.date));
     const last=matching[0]||null;
     if(last){
       const lastDate=new Date(last.date);
       const lastKm=last.km||0;
-      const kmSince=km-lastKm;
+      const kmSince=lastKm>0?(km-lastKm):0;
       const moisSince=Math.floor((now-lastDate)/(1000*60*60*24*30));
-      const status=juCalcStatus(comp,kmSince,moisSince);
-      const usure=juCalcUsure(comp,kmSince,moisSince);
-      const kmRestants=juCalcKmRestants(comp,kmSince,moisSince,false,v);
-      JU.data[comp.id]={status,usure,lastDate:lastDate.toLocaleDateString('fr-FR',{month:'short',year:'numeric'}),lastKm:lastKm.toLocaleString('fr')+' km',sinceKm:kmSince>0?kmSince.toLocaleString('fr')+' km':'—',estimated:false,cout:comp.cout,kmRestants,conseil:juConseil(comp,status,false)};
+      // Appliquer facteur usage sur kmSince réel aussi
+      const kmSinceAdj=juAppliquerUsage(comp,kmSince,v);
+      const status=juCalcStatus(comp,kmSinceAdj,moisSince);
+      const usure=juCalcUsure(comp,kmSinceAdj,moisSince);
+      const kmRestants=juCalcKmRestants(comp,kmSinceAdj,moisSince,false,v);
+      JU.data[comp.id]={status,usure,lastDate:lastDate.toLocaleDateString('fr-FR',{month:'short',year:'numeric'}),lastKm:lastKm>0?lastKm.toLocaleString('fr')+' km':'—',sinceKm:kmSince>0?kmSince.toLocaleString('fr')+' km':'—',estimated:false,cout:comp.cout,kmRestants,conseil:juConseil(comp,status,false)};
     } else {
       JU.data[comp.id]={...juEstimer(comp,v,km,now),cout:comp.cout};
     }
   });
+}
+
+function juAppliquerUsage(comp,kmSince,v){
+  const usage=v.jumeau_usage||'mixte';
+  const multUsage={
+    urbain:{freins_av:1.35,freins_ar:1.25,disques_av:1.3,disques_ar:1.2,huile:1.2,embrayage:1.3,bougies:1.15,bougies_prech:1.1,filtre_air:1.1,geometrie:1.2},
+    route:{courroie:0.85,pneus_av:0.88,pneus_ar:0.88,embrayage:0.85,freins_av:0.9,freins_ar:0.9,disques_av:0.88,disques_ar:0.88},
+    intensif:{huile:1.4,freins_av:1.5,freins_ar:1.4,disques_av:1.45,disques_ar:1.35,courroie:1.2,embrayage:1.3,bougies:1.2,bougies_prech:1.15,pneus_av:1.2,pneus_ar:1.2,pompe_eau:1.1,geometrie:1.3}
+  }[usage]||{};
+  return Math.round(kmSince*(multUsage[comp.id]||1));
 }
 
 function juCalcStatus(comp,kmSince,moisSince){
@@ -6987,17 +7133,19 @@ function juCalcUsure(comp,kmSince,moisSince){
   return Math.min(100,Math.max(pk,pm));
 }
 function juEstimer(comp,v,km,now){
-  const annee=v.annee?parseInt(v.annee):null;
+  // Utiliser la vraie date MEC si disponible (calculée dans jumeauCalculer)
+  const dateMEC=JU._dateMEC||null;
+  const ageVehiculeMois=dateMEC?Math.max(1,Math.floor((now-dateMEC)/(1000*60*60*24*30))):null;
   const kmTotal=km||0;
-  const ageVehiculeMois=annee?Math.max(1,Math.floor((now-new Date(annee+'-07-01'))/(1000*60*60*24*30))):null;
 
   // Données profil
-  const etat=v.jumeau_etat_carnet||'inconnu';           // rigoureux/correct/irregulier/inconnu
-  const usage=v.jumeau_usage||'mixte';                   // urbain/mixte/route/intensif
-  const signes=v.jumeau_signes||'rien';                  // rien/voyant/bruit/plusieurs
-  const courroieInfo=v.jumeau_courroie_info||null;       // moins_30k/30_60k/plus_60k/inconnu/chaine
+  const etat=v.jumeau_etat_carnet||'inconnu';
+  const usage=v.jumeau_usage||'mixte';
+  const signes=v.jumeau_signes||'rien';
+  const courroieInfo=v.jumeau_courroie_info||null;
   const kmAchat=(v.jumeau_km_achat!=null&&v.jumeau_km_achat!=='')?parseInt(v.jumeau_km_achat):null;
-  const kmAnnuel=v.jumeau_km_annuel||null;               // moins_8k/8_15k/15_25k/plus_25k
+  // Utiliser le km annuel réel calculé (JU._kmAnnuelReel) plutôt que les tranches onboarding
+  const kmPerYear=JU._kmAnnuelReel||({moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000);
 
   // --- Cas spécial : chaîne de distribution ---
   if(comp.id==='courroie'&&courroieInfo==='chaine'){
@@ -7005,80 +7153,53 @@ function juEstimer(comp,v,km,now){
       conseil:{type:'ok',title:'✅ Chaîne de distribution',txt:'Votre véhicule est équipé d\'une chaîne, pas de remplacement préventif nécessaire en usage normal.'}};
   }
 
-  // Probabilité qu'un cycle d'entretien ait été RESPECTÉ (1 = toujours fait, 0 = jamais)
+  // Probabilité qu'un cycle d'entretien ait été RESPECTÉ
   const probCycle={rigoureux:0.97,correct:0.82,irregulier:0.38,inconnu:0.48}[etat]||0.48;
-
-  // km/an réel pour projections temporelles
-  const kmPerYear={moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[kmAnnuel]||15000;
 
   // ==================== CALCUL KM DEPUIS DERNIER REMPLACEMENT ====================
   let kmEstimeSince=0;
   if(comp.skmr&&kmTotal>0){
-
-    // -- Override direct pour la courroie (question spécifique) --
+    // Override direct pour la courroie
     if(comp.id==='courroie'&&courroieInfo&&courroieInfo!=='inconnu'){
       const courroieKmMap={moins_30k:20000,'30_60k':45000,plus_60k:68000};
       kmEstimeSince=courroieKmMap[courroieInfo]||kmTotal;
-    }
-    // -- Calcul général basé sur les cycles --
-    else{
-      // Nombre de cycles complets attendus sur la vie totale du véhicule
+    } else {
       const cyclesTotal=Math.floor(kmTotal/comp.skmr);
-
       if(cyclesTotal===0){
-        // Premier cycle pas encore atteint → km parcourus = km depuis naissance
         kmEstimeSince=kmTotal;
       } else {
-        // Combien de ces cycles ont réellement été effectués ?
         let cyclesFaits;
-        if(etat==='rigoureux'){
-          cyclesFaits=cyclesTotal; // Toujours fait → on est dans le cycle en cours
-        } else if(etat==='correct'){
+        if(etat==='rigoureux') cyclesFaits=cyclesTotal;
+        else if(etat==='correct'){
           cyclesFaits=Math.round(cyclesTotal*probCycle);
-          cyclesFaits=Math.max(cyclesTotal>=1?1:0,cyclesFaits); // Au moins 1 si >=1 cycle attendu
+          cyclesFaits=Math.max(cyclesTotal>=1?1:0,cyclesFaits);
         } else {
-          // irregulier/inconnu : conservateur → floor
           cyclesFaits=Math.floor(cyclesTotal*probCycle);
-          // Si >=2 cycles attendus et au moins correct historique → au moins 1 fait
           if(cyclesFaits===0&&cyclesTotal>=2&&etat!=='inconnu') cyclesFaits=1;
         }
-
         if(cyclesFaits>=cyclesTotal){
-          // Dernier remplacement au bon moment → on est dans le cycle courant
           const kmInCycle=kmTotal-(cyclesTotal*comp.skmr);
           kmEstimeSince=kmInCycle===0?comp.skmr:kmInCycle;
         } else if(cyclesFaits===0){
-          // Jamais changé
           kmEstimeSince=kmTotal;
         } else {
-          // Dernier remplacement estimé au km : cyclesFaits * skmr
           kmEstimeSince=Math.max(0,kmTotal-cyclesFaits*comp.skmr);
         }
       }
-
-      // Correction si km à l'achat connu : ancre sur les km réels depuis achat
+      // Correction km à l'achat
       if(kmAchat!=null){
         const kmSincePurchase=Math.max(0,kmTotal-kmAchat);
-        // Si depuis l'achat on n'a pas encore atteint un cycle → on ne peut pas dépasser ça
         if(kmSincePurchase<comp.skmr&&etat!=='irregulier'&&etat!=='inconnu'){
-          // Part avant achat : kmAchat * (1 - probCycle) estime le résidu
           const residuAvantAchat=Math.round(kmAchat*Math.max(0,1-probCycle)*0.7);
           kmEstimeSince=Math.min(kmEstimeSince,kmSincePurchase+residuAvantAchat);
         }
       }
     }
-
-    // -- Multiplicateurs d'usage --
-    const multUsage={
-      urbain:{freins_av:1.35,freins_ar:1.25,huile:1.2,embrayage:1.3,bougies:1.15,filtre_air:1.1},
-      route:{courroie:0.85,pneus_av:0.88,pneus_ar:0.88,embrayage:0.85,freins_av:0.9,freins_ar:0.9},
-      intensif:{huile:1.4,freins_av:1.5,freins_ar:1.4,courroie:1.2,embrayage:1.3,bougies:1.2,pneus_av:1.2,pneus_ar:1.2}
-    }[usage]||{};
-    kmEstimeSince=Math.round(kmEstimeSince*(multUsage[comp.id]||1));
-
-    // -- Multiplicateurs signes --
+    // Multiplicateurs d'usage
+    kmEstimeSince=juAppliquerUsage(comp,kmEstimeSince,v);
+    // Multiplicateurs signes
     if(signes==='voyant'&&['huile','batterie','alternateur'].includes(comp.id))kmEstimeSince=Math.round(kmEstimeSince*1.35);
-    if(signes==='bruit'&&['amortisseurs','freins_av','freins_ar','courroie_acc','embrayage'].includes(comp.id))kmEstimeSince=Math.round(kmEstimeSince*1.35);
+    if(signes==='bruit'&&['amortisseurs','freins_av','freins_ar','disques_av','disques_ar','courroie_acc','embrayage'].includes(comp.id))kmEstimeSince=Math.round(kmEstimeSince*1.35);
     if(signes==='plusieurs')kmEstimeSince=Math.round(kmEstimeSince*1.25);
   }
 
@@ -7087,20 +7208,16 @@ function juEstimer(comp,v,km,now){
   if(comp.smr&&ageVehiculeMois!=null){
     const moisTotal=ageVehiculeMois;
     const cyclesTotal=Math.floor(moisTotal/comp.smr);
-
     if(cyclesTotal===0){
       moisEstimeSince=moisTotal;
     } else {
       let cyclesFaits;
-      if(etat==='rigoureux'){
-        cyclesFaits=cyclesTotal;
-      } else if(etat==='correct'){
-        cyclesFaits=Math.max(cyclesTotal>=1?1:0,Math.round(cyclesTotal*probCycle));
-      } else {
+      if(etat==='rigoureux') cyclesFaits=cyclesTotal;
+      else if(etat==='correct') cyclesFaits=Math.max(cyclesTotal>=1?1:0,Math.round(cyclesTotal*probCycle));
+      else {
         cyclesFaits=Math.floor(cyclesTotal*probCycle);
         if(cyclesFaits===0&&cyclesTotal>=2&&etat!=='inconnu') cyclesFaits=1;
       }
-
       if(cyclesFaits>=cyclesTotal){
         const moisInCycle=moisTotal-(cyclesTotal*comp.smr);
         moisEstimeSince=moisInCycle===0?comp.smr:moisInCycle;
@@ -7110,10 +7227,8 @@ function juEstimer(comp,v,km,now){
         moisEstimeSince=Math.max(0,moisTotal-cyclesFaits*comp.smr);
       }
     }
-
-    // Usure accélérée en urbain pour composants sensibles à la chaleur/humidité
-    if(usage==='urbain'&&['liq_frein','liq_refroid','clim','batterie'].includes(comp.id))moisEstimeSince=Math.round(moisEstimeSince*1.1);
-    if(signes==='voyant'&&['batterie','liq_frein'].includes(comp.id))moisEstimeSince=Math.round(moisEstimeSince*1.3);
+    if(usage==='urbain'&&['liq_frein','liq_refroid','clim','batterie','alternateur'].includes(comp.id))moisEstimeSince=Math.round(moisEstimeSince*1.1);
+    if(signes==='voyant'&&['batterie','liq_frein','alternateur'].includes(comp.id))moisEstimeSince=Math.round(moisEstimeSince*1.3);
     if(signes==='plusieurs')moisEstimeSince=Math.round(moisEstimeSince*1.2);
   }
 
@@ -7121,11 +7236,11 @@ function juEstimer(comp,v,km,now){
   const usure=juCalcUsure(comp,kmEstimeSince,moisEstimeSince);
   const sinceKmStr=kmEstimeSince>0?'~'+Math.round(kmEstimeSince).toLocaleString('fr')+' km':'—';
   const kmRestants=juCalcKmRestants(comp,kmEstimeSince,moisEstimeSince,true,v);
-
   return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,kmRestants,conseil:juConseil(comp,status,true)};
 }
 function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
-  const kmPerYear={moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000;
+  // Utiliser le km annuel réel calculé si disponible
+  const kmPerYear=JU._kmAnnuelReel||({moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000);
   const kmPerMois=kmPerYear/12;
   const prefixe=estimated?'~ ':'';
 
@@ -7272,6 +7387,51 @@ function juConseil(comp,status,est){
       warn:{title:'📋 Essuie-glaces bientôt à changer',txt:'Les balais approchent de leur fin de vie (stries, bruit de frottement). À remplacer avant la saison des pluies.'},
       ok:{title:'✅ Essuie-glaces OK',txt:'En bon état. Nettoyez régulièrement le pare-brise et les balais pour éviter les stries et prolonger leur durée de vie.'},
     },
+    disques_av:{
+      err:{title:'🚨 Disques avant à remplacer — Urgence sécurité',txt:'Les disques avant sont en limite d\'usure. Des disques voilés ou trop minces allongent les distances de freinage et peuvent provoquer des vibrations dangereuses. À remplacer par paire avec les plaquettes.'},
+      warn:{title:'⚠️ Disques avant à surveiller',txt:'Les disques avant approchent de leur limite. Faites vérifier leur épaisseur et leur état de surface lors du prochain entretien. Prévoir remplacement avec les plaquettes.'},
+      ok:{title:'✅ Disques avant en bon état',txt:'Les disques sont dans les normes d\'usure. Évitez les freinages brusques répétés à haute vitesse qui surchauffent et voilent les disques.'},
+    },
+    disques_ar:{
+      err:{title:'🚨 Disques arrière à remplacer',txt:'Les disques arrière dépassent leur seuil d\'usure. Bien que moins sollicités que l\'avant, leur remplacement est obligatoire pour maintenir l\'équilibre de freinage.'},
+      warn:{title:'⚠️ Disques arrière à inspecter',txt:'Les disques arrière approchent de leur limite. À vérifier lors du prochain entretien et à planifier avec les plaquettes arrière.'},
+      ok:{title:'✅ Disques arrière OK',txt:'Les disques arrière sont en bon état. Les disques arrière s\'usent généralement 2× moins vite que l\'avant sur les véhicules à traction avant.'},
+    },
+    pompe_eau:{
+      err:{title:'🚨 Pompe à eau — Risque de surchauffe',txt:'La pompe à eau assure la circulation du liquide de refroidissement. Une pompe défaillante entraîne une surchauffe moteur pouvant provoquer un joint de culasse cassé (réparation 1 500–4 000€). Intervention urgente requise.'},
+      warn:{title:'⚠️ Pompe à eau à planifier',txt:'La pompe approche de ses limites. À remplacer idéalement en même temps que la courroie de distribution (même démontage = économie de main-d\'œuvre). Kit complet recommandé.'},
+      ok:{title:'✅ Pompe à eau en bon état',txt:'La pompe fonctionne normalement. Surveillez tout signe de fuite sous le véhicule ou de montée en température anormale.'},
+    },
+    huile_boite_m:{
+      err:{title:'⚠️ Huile de boîte manuelle dégradée',txt:'Une huile de boîte vieille provoque des difficultés à passer les vitesses, des bruits et une usure prématurée des synchroniseurs. Vidange à effectuer rapidement.'},
+      warn:{title:'📋 Huile boîte manuelle à renouveler',txt:'L\'huile de boîte approche de son intervalle de remplacement. À inclure dans le prochain entretien général.'},
+      ok:{title:'✅ Huile boîte manuelle OK',txt:'L\'huile de boîte est en bon état. Des difficultés à passer les vitesses (surtout à froid) peuvent signaler une dégradation précoce.'},
+    },
+    huile_boite_a:{
+      err:{title:'⚠️ Huile boîte automatique dégradée',txt:'L\'huile ATF vieillie dégrade les performances de la boîte, provoque des à-coups au passage des rapports et peut endommager irrémédiablement les composants (réparation 2 000–5 000€). Vidange urgente.'},
+      warn:{title:'📋 Huile boîte automatique à renouveler',txt:'L\'huile ATF approche de sa limite. Une boîte automatique bien entretenue peut dépasser 300 000 km. À ne pas négliger.'},
+      ok:{title:'✅ Huile boîte auto OK',txt:'L\'huile ATF est en bon état. Des à-coups légers ou retards au passage des rapports peuvent indiquer une dégradation à surveiller.'},
+    },
+    alternateur:{
+      err:{title:'⚠️ Alternateur en fin de vie',txt:'Un alternateur défaillant ne recharge plus la batterie. Le véhicule peut tomber en panne à tout moment (batterie à plat en roulant). Des bruits de frottement ou un voyant batterie allumé sont des signes typiques. Intervention requise.'},
+      warn:{title:'📋 Alternateur à surveiller',txt:'L\'alternateur approche de sa durée de vie moyenne (10 ans). Faites tester la charge lors du prochain entretien. Un alternateur qui faillit provoque souvent des pannes de batterie en cascade.'},
+      ok:{title:'✅ Alternateur en bon état',txt:'L\'alternateur fonctionne normalement. Les trajets très courts (moins de 5 km) sollicitent davantage l\'alternateur car la batterie n\'a pas le temps de se recharger complètement.'},
+    },
+    geometrie:{
+      err:{title:'⚠️ Géométrie à corriger',txt:'Un mauvais parallélisme provoque une usure asymétrique et prématurée des pneus, une dérive du véhicule et une surconsommation de carburant. Réglage à effectuer rapidement.'},
+      warn:{title:'📋 Géométrie à vérifier',txt:'Il est temps de faire contrôler le parallélisme. Un choc sur un trottoir ou un nid-de-poule peut désrégler la géométrie même sur un véhicule récent.'},
+      ok:{title:'✅ Géométrie correcte',txt:'Le parallélisme est dans les normes. Faites vérifier la géométrie après tout choc important ou remplacement de pièces de suspension.'},
+    },
+    catalyseur:{
+      err:{title:'⚠️ Pot catalytique en fin de vie',txt:'Un catalyseur usé ou colmaté augmente les émissions polluantes et peut provoquer une contre-pression moteur (perte de puissance, surconsommation). Le voyant antipollution peut s\'allumer. À remplacer.'},
+      warn:{title:'📋 Catalyseur à surveiller',txt:'Le catalyseur approche de sa durée de vie estimée. Des ralentissements à froid inhabituels ou une odeur d\'œuf pourri peuvent signaler un début de dégradation.'},
+      ok:{title:'✅ Catalyseur en bon état',txt:'Le catalyseur fonctionne normalement. Évitez de rouler sur des routes accidentées qui pourraient l\'endommager mécaniquement par impact.'},
+    },
+    bougies_prech:{
+      err:{title:'⚠️ Bougies de préchauffage défaillantes',txt:'Des bougies de préchauffage usées provoquent des difficultés de démarrage à froid, des ratés et une surconsommation diesel au démarrage. En hiver, le démarrage peut devenir impossible. Remplacement du jeu complet recommandé.'},
+      warn:{title:'📋 Bougies de préchauffage à remplacer',txt:'Les bougies approchent de leur durée de vie. À remplacer avant l\'hiver pour garantir les démarrages à froid. Coût modéré et intervention accessible.'},
+      ok:{title:'✅ Bougies de préchauffage OK',txt:'Les bougies préchauffent correctement. Le voyant de préchauffage qui tarde à s\'éteindre en hiver peut indiquer une bougie défaillante isolée.'},
+    },
   };
   const msgs=C[comp.id];
   const suf=est?' · Donnée estimée':'';
@@ -7290,7 +7450,20 @@ function jumeauScore(){
   let tot=0,poids=0,nbr=0,nbw=0,nbo=0;
   JU_COMPOSANTS.forEach(c=>{
     const d=JU.data[c.id];
-    if(!d||d.status==='grey')return;
+    // Exclure les composants non applicables
+    if(!d||d.notApplicable)return;
+    if(d.status==='grey'){
+      // Composant critique inconnu → compté comme warn (prudence)
+      if(c.poids>=2){
+        tot+=50*c.poids; poids+=c.poids*100; nbw++;
+      }
+      // Composant normal inconnu → pas comptabilisé dans le score mais dans le dénominateur
+      // (évite d'avoir 100/100 avec plein d'inconnus)
+      else{
+        tot+=60*c.poids; poids+=c.poids*100;
+      }
+      return;
+    }
     const pts=d.status==='ok'?100:d.status==='warn'?50:10;
     tot+=pts*c.poids;poids+=c.poids*100;
     if(d.status==='err')nbr++;else if(d.status==='warn')nbw++;else nbo++;
@@ -7302,9 +7475,25 @@ function jumeauScore(){
   return{val,title,desc,badges};
 }
 function jumeauPrecision(){
-  const total=JU_COMPOSANTS.length;
-  const avecDonnees=Object.values(JU.data).filter(d=>!d.estimated).length;
-  return Math.round(avecDonnees/total*100);
+  const applicable=JU_COMPOSANTS.filter(c=>JU.data[c.id]&&!JU.data[c.id].notApplicable);
+  const total=applicable.length;
+  if(!total)return 0;
+  // Score pondéré : entretien réel récent = 100%, réel ancien = 70%, estimé = 30%, inconnu = 0%
+  const now=new Date();
+  let score=0;
+  applicable.forEach(c=>{
+    const d=JU.data[c.id];
+    if(!d||d.status==='grey'){score+=0;return;}
+    if(!d.estimated){
+      // Entretien réel — pénalité si très ancien (>3 ans)
+      const lastD=d.lastDate&&d.lastDate!=='—'?new Date(d.lastDate):null;
+      const moisAge=lastD?Math.floor((now-lastD)/(1000*60*60*24*30)):99;
+      score+=(moisAge<36)?1:0.7;
+    } else {
+      score+=0.3;
+    }
+  });
+  return Math.round(score/total*100);
 }
 function jumeauHots(vue){
   const map=JU_HOTS_TOP;
@@ -7319,24 +7508,27 @@ function jumeauHots(vue){
 function jumeauCompList(){
   const order=['err','warn','ok','grey'];
   return [...JU_COMPOSANTS].sort((a,b)=>{
-    const sa=JU.data[a.id]?.status||'grey';
-    const sb=JU.data[b.id]?.status||'grey';
+    const da=JU.data[a.id],db=JU.data[b.id];
+    if(da?.notApplicable&&!db?.notApplicable)return 1;
+    if(!da?.notApplicable&&db?.notApplicable)return -1;
+    const sa=da?.status||'grey';
+    const sb=db?.status||'grey';
     if(order.indexOf(sa)!==order.indexOf(sb))return order.indexOf(sa)-order.indexOf(sb);
     return b.poids-a.poids;
   }).map(comp=>{
     const d=JU.data[comp.id];if(!d)return'';
+    // Composant non applicable : afficher en grisé discret
+    if(d.notApplicable){
+      return`<div class="jcomp grey" style="opacity:.45" onclick="openJumeauComp('${comp.id}')"><div class="jcomp-ico grey">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name" style="text-decoration:line-through">${comp.label}</div><div class="jcomp-sub" style="font-size:.66rem;color:var(--txl)">Non applicable à ce véhicule</div></div><div class="jcomp-r"><span class="jcomp-pill grey">N/A</span></div></div>`;
+    }
     const pill=d.status==='err'?'Urgent':d.status==='warn'?'Surveiller':d.status==='ok'?'OK':'Inconnu';
-    const dateInfo=d.estimated?'<span class="jcomp-est">~ Estimation</span>':`<span style="color:var(--txm);font-size:.68rem">${d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
+    const dateInfo=d.estimated?'<span class="jcomp-est">~ Estimation</span>':`<span style="color:var(--txm);font-size:.68rem">${d.lastDate&&d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
     let krTag='';
     if(d.kmRestants&&d.status!=='grey'){
       const kr=d.kmRestants;
-      if(kr.depasse){
-        krTag=`<span class="jcomp-kr err">${kr.txt}</span>`;
-      } else if(d.status==='warn'||d.status==='err'){
-        krTag=`<span class="jcomp-kr warn">${kr.txt}</span>`;
-      } else {
-        krTag=`<span class="jcomp-kr ok">${kr.txt}</span>`;
-      }
+      if(kr.depasse){krTag=`<span class="jcomp-kr err">${kr.txt}</span>`;}
+      else if(d.status==='warn'||d.status==='err'){krTag=`<span class="jcomp-kr warn">${kr.txt}</span>`;}
+      else{krTag=`<span class="jcomp-kr ok">${kr.txt}</span>`;}
     }
     const sub=`<span class="jcomp-sub-row">${dateInfo}${krTag}</span>`;
     return`<div class="jcomp ${d.status}" onclick="openJumeauComp('${comp.id}')"><div class="jcomp-ico ${d.status}">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name">${comp.label}</div><div class="jcomp-sub">${sub}</div></div><div class="jcomp-r"><span class="jcomp-pill ${d.status}">${pill}</span><div class="jcomp-bw"><div class="jcomp-bar ${d.status}" style="width:${d.usure}%"></div></div></div></div>`;
@@ -7414,17 +7606,55 @@ function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove(
 function jumeauMarquerFait(){
   closeJumeauComp();
   const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
+  if(!comp)return;
+  // Afficher bottom sheet de choix de date
+  const today=new Date().toISOString().split('T')[0];
+  const existing=document.getElementById('mo-ju-date');
+  if(existing)existing.remove();
+  const mo=document.createElement('div');
+  mo.id='mo-ju-date';
+  mo.style.cssText='position:fixed;inset:0;z-index:700;background:rgba(10,15,30,.6);display:flex;align-items:flex-end;backdrop-filter:blur(3px)';
+  mo.innerHTML=`
+    <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;padding:0 0 env(safe-area-inset-bottom,20px);box-shadow:0 -8px 40px rgba(0,0,0,.15)">
+      <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0"></div>
+      <div style="padding:16px 20px 6px;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:6px">${comp.ico}</div>
+        <div style="font-size:.95rem;font-weight:800;color:var(--txt);margin-bottom:4px">${comp.label}</div>
+        <div style="font-size:.78rem;color:var(--txm)">Quand a été effectué ce remplacement ?</div>
+      </div>
+      <div style="padding:12px 20px;display:flex;flex-direction:column;gap:10px">
+        <button onclick="juDateChoisie('${today}')" style="width:100%;padding:14px;background:linear-gradient(135deg,#059669,#047857);border:none;border-radius:12px;font-family:inherit;font-size:.9rem;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          ✅ Aujourd'hui — ${new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long'})}
+        </button>
+        <div style="background:#F8FAFC;border:1.5px solid var(--border);border-radius:12px;padding:14px">
+          <div style="font-size:.75rem;font-weight:700;color:var(--txm);margin-bottom:8px">📅 Choisir une autre date</div>
+          <input type="date" id="ju-date-picker" class="fc" value="${today}" max="${today}" style="margin-bottom:10px">
+          <button onclick="juDateChoisie(document.getElementById('ju-date-picker').value)" style="width:100%;padding:11px;background:var(--primary);border:none;border-radius:10px;font-family:inherit;font-size:.86rem;font-weight:700;color:#fff;cursor:pointer">
+            Valider cette date
+          </button>
+        </div>
+        <button onclick="document.getElementById('mo-ju-date').remove()" style="width:100%;padding:11px;background:none;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.84rem;font-weight:600;color:var(--txm);cursor:pointer">
+          Annuler
+        </button>
+      </div>
+    </div>`;
+  mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
+  document.body.appendChild(mo);
+}
+
+function juDateChoisie(dateStr){
+  const mo=document.getElementById('mo-ju-date');
+  if(mo)mo.remove();
+  if(!dateStr)return;
+  const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
   const v=S.vehicles.find(x=>x.id===JU.vid);
   if(!comp||!v)return;
   openEnt(null,JU.vid);
   setTimeout(()=>{
-    // type
     const sel=document.getElementById('e-ty');
     if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}
-    // date = aujourd'hui
     const dtEl=document.getElementById('e-dt');
-    if(dtEl)dtEl.value=new Date().toISOString().split('T')[0];
-    // km = km actuel du vehicule
+    if(dtEl)dtEl.value=dateStr;
     const kmEl=document.getElementById('e-km');
     if(kmEl&&v.km_actuel)kmEl.value=v.km_actuel;
   },350);
@@ -7439,6 +7669,20 @@ function jumeauPlanifier(){
 
 // ONBOARDING
 function openJumeauOnb(){
+  const v=S.vehicles.find(x=>x.id===JU.vid);
+  // Si onboarding déjà fait, demander confirmation avant de réinitialiser
+  if(v&&v.jumeau_onboarding_done){
+    cfm(
+      '♻️ Refaire le profil du jumeau ?',
+      'Vos réponses précédentes seront remplacées. Vos entretiens et données du carnet restent intacts.',
+      ()=>{
+        JU.onbStep=0;JU.onbAnswers=[null,null,null,null,null,null];
+        juOnbUI();
+        document.getElementById('mo-jumeau-onb').classList.add('open');
+      }
+    );
+    return;
+  }
   JU.onbStep=0;JU.onbAnswers=[null,null,null,null,null,null];
   juOnbUI();
   document.getElementById('mo-jumeau-onb').classList.add('open');
