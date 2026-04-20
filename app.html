@@ -7857,7 +7857,10 @@ function juNextBanner(v){
   const icoBg=isErr?'#FEE2E2':'#FEF3C7';
   const color=isErr?'#DC2626':'#D97706';
   const label=isErr?'⚠️ Intervention prioritaire':'⏰ À planifier';
-  const sub=d.kmRestants?d.kmRestants.txt:(d.lastDate&&d.lastDate!=='Estimé'?'Dernier : '+d.lastDate:'Estimation');
+  // Afficher le texte de retard uniquement si cohérent avec le statut
+  const _kr=d.kmRestants;
+  const subFromKr=_kr&&(!_kr.depasse||(d.status==='err'))?_kr.txt:null;
+  const sub=subFromKr||(d.lastDate&&d.lastDate!=='Estimé'?'Dernier : '+d.lastDate:'Estimation');
   return`<div class="ju-next-banner" style="background:${bg};border-color:${border}" onclick="openJumeauComp('${comp.id}')">
     <div class="ju-next-ico" style="background:${icoBg}">${comp.ico}</div>
     <div class="ju-next-info">
@@ -7920,7 +7923,9 @@ function juIsCompApplicable(comp, v){
   const isManuelle=trans==='manuelle'||trans===''||trans==='semi-auto';
   // Électrique : pas de moteur thermique
   if(isElec&&['huile','courroie','courroie_acc','bougies','bougies_prech','embrayage','huile_boite_m','catalyseur','filtre_air'].includes(comp.id)) return false;
-  // Bougies préchauffage : diesel uniquement
+  // Bougies d'allumage : essence/hybride uniquement (pas sur diesel)
+  if(comp.id==='bougies'&&(carb==='diesel'||carb==='gpl'&&false)) return false;
+  // Bougies préchauffage : diesel uniquement (pas sur essence)
   if(comp.id==='bougies_prech'&&carb!=='diesel') return false;
   // Embrayage : pas sur boîte auto pure
   if(comp.id==='embrayage'&&isAuto&&!isManuelle) return false;
@@ -8273,13 +8278,15 @@ function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
   const isPureMois=!comp.skmo&&comp.smo;
   const faibleRouleur=kmPerYear<9000;
 
-  // Calcul brut mois restants
+  // Calcul brut mois restants — depuis smr (seuil rouge)
   let moisRestants=null;
-  if(comp.smo&&comp.smo>0) moisRestants=comp.smo-moisSince;
+  if(comp.smr&&comp.smr>0) moisRestants=comp.smr-moisSince;
 
-  // Calcul brut km restants
+  // Calcul brut km restants — depuis skmr (seuil rouge = err)
+  // Si on n'a pas dépassé skmr, afficher km avant skmr (pas skmo)
+  // Cela garantit que "retard" = réellement dépassé le seuil critique
   let kmRestants=null;
-  if(comp.skmo&&comp.skmo>0) kmRestants=comp.skmo-kmSince;
+  if(comp.skmr&&comp.skmr>0) kmRestants=comp.skmr-kmSince;
 
   // ── Cas 1 : composant purement temporel ou faible rouleur avec seuil mois ──
   if(isPureMois||(faibleRouleur&&comp.smo)){
@@ -8590,8 +8597,15 @@ function jumeauCompList(){
       let krTag='';
       if(d.kmRestants&&d.status!=='grey'){
         const kr=d.kmRestants;
-        const krc=kr.depasse?'err':(d.status==='warn'||d.status==='err'?'warn':'ok');
-        krTag=`<span class="jcomp-kr ${krc}">${kr.txt}</span>`;
+        // Afficher "retard" uniquement si le statut est réellement err
+        // Évite "X km de retard" sur une barre verte ou orange
+        if(kr.depasse&&d.status!=='err'){
+          // Incohérence : kmRestants dit dépassé mais statut pas err → ne pas afficher
+          krTag='';
+        } else {
+          const krc=kr.depasse?'err':(d.status==='warn'?'warn':'ok');
+          krTag=`<span class="jcomp-kr ${krc}">${kr.txt}</span>`;
+        }
       }
       // Barre usure graduée avec curseur
       const usurePct=Math.min(100,Math.max(0,d.usure||0));
@@ -8681,7 +8695,9 @@ function openJumeauComp(id){
   const krWrap=document.getElementById('jcs-kmrest-wrap');
   const krVal=document.getElementById('jcs-kmrest');
   const krLbl=document.querySelector('.jcs-kmrest-lbl');
-  if(d.kmRestants&&d.status!=='grey'){
+  // Afficher kmRestants seulement si cohérent avec le statut
+  const _showKr=d.kmRestants&&d.status!=='grey'&&(!d.kmRestants.depasse||(d.status==='err'));
+  if(_showKr){
     krWrap.style.display='flex';
     const kr=d.kmRestants;
     const unitLabel=kr.unit==='mois'?'⏱ Temps restant avant échéance':'📍 Kilométrage restant avant échéance';
