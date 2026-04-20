@@ -7637,9 +7637,10 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
     <div class="jcs-grid">
       <div class="jcs-box"><div class="jcs-blbl">Dernier entretien</div><div class="jcs-bval" id="jcs-last-date">—</div></div>
-      <div class="jcs-box"><div class="jcs-blbl">Km au remplacement</div><div class="jcs-bval" id="jcs-last-km">—</div></div>
-      <div class="jcs-box"><div class="jcs-blbl">Parcouru depuis</div><div class="jcs-bval" id="jcs-since-km">—</div></div>
       <div class="jcs-box"><div class="jcs-blbl">Coût estimé</div><div class="jcs-bval" id="jcs-cost">—</div></div>
+      <!-- cases supprimées : km au remplacement, parcouru depuis -->
+      <div style="display:none" id="jcs-last-km-wrap"><div class="jcs-bval" id="jcs-last-km">—</div></div>
+      <div style="display:none" id="jcs-since-km-wrap"><div class="jcs-bval" id="jcs-since-km">—</div></div>
     </div>
     <div class="jcs-kmrest" id="jcs-kmrest-wrap">
       <div class="jcs-kmrest-lbl">📍 Kilométrage restant avant échéance</div>
@@ -8696,20 +8697,28 @@ function openJumeauComp(id){
   const krVal=document.getElementById('jcs-kmrest');
   const krLbl=document.querySelector('.jcs-kmrest-lbl');
   // Afficher kmRestants seulement si cohérent avec le statut
-  const _showKr=d.kmRestants&&d.status!=='grey'&&(!d.kmRestants.depasse||(d.status==='err'));
+  // Option B : toujours afficher "prochain remplacement" si on a les données
+  const _showKr=d.kmRestants&&d.status!=='grey';
   if(_showKr){
     krWrap.style.display='flex';
     const kr=d.kmRestants;
-    const unitLabel=kr.unit==='mois'?'⏱ Temps restant avant échéance':'📍 Kilométrage restant avant échéance';
+    // Option B : "Prochain remplacement estimé dans X"
+    const unitLabel=kr.depasse
+      ?(kr.unit==='mois'?'⚠️ Échéance dépassée':'⚠️ Échéance dépassée')
+      :(kr.unit==='mois'?'📅 Prochain remplacement':'📅 Prochain remplacement');
     if(krLbl)krLbl.textContent=unitLabel;
-    if(kr.depasse){
-      krWrap.style.background='linear-gradient(135deg,#FFF7ED,#FEF3C7)';krWrap.style.borderColor='#FED7AA';
-      if(krLbl)krLbl.style.color='#C2410C';krVal.style.color='#C2410C';
+    if(d.status==='err'||kr.depasse){
+      krWrap.style.background='linear-gradient(135deg,#FFF5F5,#FEE2E2)';krWrap.style.borderColor='#FECACA';
+      if(krLbl)krLbl.style.color='#DC2626';krVal.style.color='#DC2626';
+    } else if(d.status==='warn'){
+      krWrap.style.background='linear-gradient(135deg,#FFFBEB,#FEF3C7)';krWrap.style.borderColor='#FDE68A';
+      if(krLbl)krLbl.style.color='#D97706';krVal.style.color='#D97706';
     } else {
-      krWrap.style.background='linear-gradient(135deg,#F0F9FF,#E0F2FE)';krWrap.style.borderColor='#BAE6FD';
-      if(krLbl)krLbl.style.color='#0369A1';krVal.style.color='#0369A1';
+      krWrap.style.background='linear-gradient(135deg,#F0FDF4,#DCFCE7)';krWrap.style.borderColor='#BBF7D0';
+      if(krLbl)krLbl.style.color='#15803D';krVal.style.color='#15803D';
     }
-    krVal.textContent=kr.txt+(kr.estimated?' · estimation':'');
+    const krPrefix=kr.depasse?'':(kr.unit==='mois'?'dans ':'dans ');
+    krVal.textContent=krPrefix+kr.txt+(kr.estimated?' · estimation':'');
   } else {
     krWrap.style.display='none';
   }
