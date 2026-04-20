@@ -748,15 +748,16 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .multi-item.sel .multi-item-chk{background:var(--primary);border-color:var(--primary)}
 .multi-item-detail{display:none;padding:0 12px 12px;border-top:1px solid rgba(37,99,235,.1)}
 .multi-item.sel .multi-item-detail{display:block}
-.multi-item-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;align-items:start}
 .multi-detail-lbl{font-size:.65rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-.multi-cost-input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.92rem;font-weight:700;background:#fff;outline:none;color:var(--txt);transition:.15s;box-sizing:border-box}
+.multi-cost-input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.92rem;font-weight:700;background:#fff;outline:none;color:var(--txt);transition:.15s;box-sizing:border-box;margin-top:8px}
 .multi-cost-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.multi-photo-btn{width:100%;padding:11px 8px;border:1.5px dashed var(--border);border-radius:9px;background:#FAFBFF;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:600;color:var(--txm);transition:.15s;box-sizing:border-box}
-.multi-photo-btn:active{transform:scale(.98)}
-.multi-photo-btn.has-photo{border-style:solid;border-color:#10B981;background:#F0FDF4;color:#059669;font-weight:700}
-.multi-photo-preview{width:100%;height:70px;object-fit:cover;border-radius:8px;margin-top:6px;cursor:pointer;display:block}
-.multi-photo-remove{font-size:.65rem;color:var(--err);font-weight:600;cursor:pointer;text-align:center;margin-top:3px;display:block;padding:2px}
+/* Photo globale facture */
+.multi-global-photo{padding:10px 14px 4px;border-top:1px solid var(--border)}
+.multi-global-photo-btn{width:100%;padding:13px;border:1.5px dashed var(--border);border-radius:10px;background:#FAFBFF;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:.84rem;font-weight:600;color:var(--txm);transition:.15s}
+.multi-global-photo-btn:active{transform:scale(.99)}
+.multi-global-photo-btn.has-photo{border-style:solid;border-color:#10B981;background:#F0FDF4;color:#059669;font-weight:700}
+.multi-global-photo-preview{width:100%;max-height:120px;object-fit:cover;border-radius:9px;margin-top:8px;cursor:pointer;display:block}
+.multi-global-photo-remove{font-size:.72rem;color:var(--err);font-weight:600;cursor:pointer;text-align:center;margin-top:5px;display:block}
 .multi-footer{padding:12px 18px 14px;border-top:1px solid var(--border);background:#fff}
 .multi-footer-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .multi-footer-count{font-size:.8rem;font-weight:700;color:var(--txt)}
@@ -1489,9 +1490,18 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         <input class="fc" id="multi-garage" placeholder="Nom du garage ou du lieu">
       </div>
     </div>
-    <!-- Input photo caché — déclenché par chaque bouton photo -->
-    <input type="file" id="multi-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onMultiPhotoSelected(this)">
+    <!-- Input photo global caché -->
+    <input type="file" id="multi-photo-input" accept="image/*,application/pdf" style="display:none" onchange="onMultiPhotoSelected(this)">
     <div class="multi-list" id="multi-list"></div>
+    <!-- Zone photo / document globale -->
+    <div class="multi-global-photo">
+      <div class="multi-detail-lbl">📷 Photo ou document de la facture</div>
+      <button class="multi-global-photo-btn" id="multi-global-photo-btn" onclick="g('multi-photo-input').click()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Joindre une photo ou un document PDF
+      </button>
+      <div id="multi-global-photo-preview-wrap"></div>
+    </div>
     <div class="multi-footer">
       <div class="multi-footer-info">
         <div class="multi-footer-count" id="multi-count">0 intervention sélectionnée</div>
@@ -6857,26 +6867,21 @@ async function doGoogleLogin(){
 
 /* ══ MULTI-ENTRETIEN ══ */
 let _multiSel={};       // {typeId: coutValue|null}
-let _multiPhotos={};    // {typeId: File}
-let _multiPhotosPreviews={}; // {typeId: objectURL}
-let _multiCurrentPhotoTypeId=null; // typeId en cours de sélection photo
+let _multiGlobalPhoto=null;        // File unique pour toute la facture
+let _multiGlobalPhotoPreview=null; // ObjectURL
 
 function openMultiEnt(forcedVid){
   if(!S.vehicles.length)return toast("Ajoutez d'abord un véhicule.",'e');
   _multiSel={};
-  // Révoquer les ObjectURLs existants
-  Object.values(_multiPhotosPreviews).forEach(u=>{try{URL.revokeObjectURL(u);}catch(e){}});
-  _multiPhotos={};
-  _multiPhotosPreviews={};
-  _multiCurrentPhotoTypeId=null;
+  if(_multiGlobalPhotoPreview)try{URL.revokeObjectURL(_multiGlobalPhotoPreview);}catch(e){}
+  _multiGlobalPhoto=null;_multiGlobalPhotoPreview=null;
   const selV=g('multi-vh');
   selV.innerHTML=S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
   if(forcedVid)selV.value=forcedVid;
   g('multi-dt').value=new Date().toISOString().split('T')[0];
-  g('multi-km').value='';
-  g('multi-garage').value='';
-  renderMultiList();
-  updateMultiFooter();
+  g('multi-km').value='';g('multi-garage').value='';
+  renderMultiList();updateMultiFooter();
+  _renderMultiGlobalPhoto();
   om('multi');
 }
 
@@ -6916,7 +6921,6 @@ function renderMultiList(){
 
 function _buildMultiItemHTML(t){
   const isSel=_multiSel[t.id]!==undefined;
-  const previewUrl=_multiPhotosPreviews[t.id]||null;
   const costVal=isSel&&_multiSel[t.id]!=null?_multiSel[t.id]:'';
   return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}">
     <div class="multi-item-row" onclick="toggleMultiItem('${t.id}')">
@@ -6925,63 +6929,47 @@ function _buildMultiItemHTML(t){
       <div class="multi-item-chk">${isSel?'✓':''}</div>
     </div>
     <div class="multi-item-detail">
-      <div class="multi-item-detail-grid">
-        <div>
-          <div class="multi-detail-lbl">💶 Montant (€)</div>
-          <input class="multi-cost-input" type="number" inputmode="decimal"
-            placeholder="Saisir le montant" min="0" step="0.01"
-            value="${costVal}"
-            oninput="onMultiCostInput('${t.id}',this.value)"
-            id="micost-${t.id}">
-        </div>
-        <div>
-          <div class="multi-detail-lbl">📷 Photo / Facture</div>
-          <button class="multi-photo-btn ${previewUrl?'has-photo':''}" id="miphoto-${t.id}"
-            onclick="triggerMultiPhoto('${t.id}')">
-            ${previewUrl
-              ?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Photo ajoutée`
-              :`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Ajouter`}
-          </button>
-          ${previewUrl?`
-            <img class="multi-photo-preview" src="${previewUrl}" onclick="openPhotoFullscreen('${previewUrl}')" alt="">
-            <span class="multi-photo-remove" onclick="removeMultiPhoto('${t.id}')">✕ Supprimer</span>
-          `:''}
-        </div>
-      </div>
+      <div class="multi-detail-lbl">💶 Montant (€)</div>
+      <input class="multi-cost-input" type="number" inputmode="decimal"
+        placeholder="Saisir le montant" min="0" step="0.01"
+        value="${costVal}"
+        oninput="onMultiCostInput('${t.id}',this.value)"
+        id="micost-${t.id}">
     </div>
   </div>`;
 }
 
-function triggerMultiPhoto(typeId){
-  _multiCurrentPhotoTypeId=typeId;
-  const inp=g('multi-photo-input');
-  if(inp){inp.value='';inp.click();}
-}
-
 function onMultiPhotoSelected(inp){
-  const typeId=_multiCurrentPhotoTypeId;
-  if(!typeId||!inp.files||!inp.files[0])return;
+  if(!inp.files||!inp.files[0])return;
   const file=inp.files[0];
-  // Révoquer l'ancien aperçu si existant
-  if(_multiPhotosPreviews[typeId])try{URL.revokeObjectURL(_multiPhotosPreviews[typeId]);}catch(e){}
-  _multiPhotos[typeId]=file;
-  _multiPhotosPreviews[typeId]=URL.createObjectURL(file);
-  // Mettre à jour uniquement cet item sans re-render complet
-  const itemEl=document.getElementById('mi-'+typeId);
-  if(itemEl){
-    const t=TYPES.find(x=>x.id===typeId);
-    if(t)itemEl.outerHTML=_buildMultiItemHTML(t);
-  }
-  renderMultiCatBadges();
+  if(_multiGlobalPhotoPreview)try{URL.revokeObjectURL(_multiGlobalPhotoPreview);}catch(e){}
+  _multiGlobalPhoto=file;
+  _multiGlobalPhotoPreview=file.type==='application/pdf'?null:URL.createObjectURL(file);
+  _renderMultiGlobalPhoto();
 }
 
-function removeMultiPhoto(typeId){
-  if(_multiPhotosPreviews[typeId])try{URL.revokeObjectURL(_multiPhotosPreviews[typeId]);}catch(e){}
-  delete _multiPhotos[typeId];
-  delete _multiPhotosPreviews[typeId];
-  const t=TYPES.find(x=>x.id===typeId);
-  const itemEl=document.getElementById('mi-'+typeId);
-  if(itemEl&&t)itemEl.outerHTML=_buildMultiItemHTML(t);
+function _renderMultiGlobalPhoto(){
+  const btn=g('multi-global-photo-btn');
+  const wrap=g('multi-global-photo-preview-wrap');
+  if(!btn||!wrap)return;
+  if(_multiGlobalPhoto){
+    const isPdf=_multiGlobalPhoto.type==='application/pdf';
+    btn.className='multi-global-photo-btn has-photo';
+    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> ${isPdf?'PDF joint':'Photo jointe'} — ${_multiGlobalPhoto.name||'Fichier'}`;
+    wrap.innerHTML=isPdf
+      ?`<div style="background:#FEF9F0;border:1px solid #FDE68A;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#92400E"><span>📄</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(_multiGlobalPhoto.name)}</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕</span></div>`
+      :`<img class="multi-global-photo-preview" src="${_multiGlobalPhotoPreview}" onclick="openPhotoFullscreen('${_multiGlobalPhotoPreview}')" alt=""><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕ Supprimer</span>`;
+  } else {
+    btn.className='multi-global-photo-btn';
+    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Joindre une photo ou un document PDF`;
+    wrap.innerHTML='';
+  }
+}
+
+function removeMultiGlobalPhoto(){
+  if(_multiGlobalPhotoPreview)try{URL.revokeObjectURL(_multiGlobalPhotoPreview);}catch(e){}
+  _multiGlobalPhoto=null;_multiGlobalPhotoPreview=null;
+  _renderMultiGlobalPhoto();
 }
 
 function toggleMultiCat(id,btn){
@@ -7058,6 +7046,8 @@ async function saveMultiEnt(){
   btn.textContent='Enregistrement…';
 
   let ok=0,err=0;
+  const createdIds=[];
+
   for(const typeId of types){
     const cout=_multiSel[typeId]!=null?parseFloat(_multiSel[typeId]):null;
     const ti=getType(typeId);
@@ -7065,42 +7055,41 @@ async function saveMultiEnt(){
     if(ti.imo){const d=new Date(dt);d.setMonth(d.getMonth()+ti.imo);rappelDate=d.toISOString().split('T')[0];}
     if(ti.ikm&&km)rappelKm=km+ti.ikm;
     const entId=crypto.randomUUID();
-    const p={
+    const{error}=await sb.from('entretiens').insert({
       id:entId,vehicle_id:vid,user_id:S.user.id,
       type:typeId,date:dt,km,garage,cout,
       rappel_date:rappelDate,rappel_km:rappelKm,
-      note:null,pieces:null,technicien:null,duree_minutes:null,garantie_mois:null,
-      photo_url:null
-    };
-    const{error}=await sb.from('entretiens').insert(p);
-    if(error){err++;console.error('Multi ent error:',error);continue;}
-    ok++;
+      note:null,pieces:null,technicien:null,duree_minutes:null,garantie_mois:null,photo_url:null
+    });
+    if(error){err++;console.error('Multi ent error:',error);}
+    else{ok++;createdIds.push(entId);}
+  }
 
-    // Upload photo si présente pour cet entretien
-    if(_multiPhotos[typeId]){
-      try{
-        const file=_multiPhotos[typeId];
-        const isPdf=file.type==='application/pdf';
-        const isPng=file.type==='image/png';
-        const ext=isPdf?'pdf':isPng?'png':'jpg';
-        const ct=isPdf?'application/pdf':isPng?'image/png':'image/jpeg';
-        const path=`${S.user.id}/${entId}_0.${ext}`;
-        const{error:upErr}=await sb.storage.from('factures').upload(path,file,{upsert:false,contentType:ct});
-        if(!upErr){
-          const{data:urlData}=sb.storage.from('factures').getPublicUrl(path);
-          const photoUrl=urlData?.publicUrl||null;
-          if(photoUrl){
-            // Lier la photo à l'entretien
+  // Upload photo globale une seule fois, liée à tous les entretiens créés
+  if(_multiGlobalPhoto&&createdIds.length){
+    try{
+      const file=_multiGlobalPhoto;
+      const isPdf=file.type==='application/pdf';
+      const isPng=file.type==='image/png';
+      const ext=isPdf?'pdf':isPng?'png':'jpg';
+      const ct=isPdf?'application/pdf':isPng?'image/png':'image/jpeg';
+      const path=`${S.user.id}/multi_${Date.now()}.${ext}`;
+      const{error:upErr}=await sb.storage.from('factures').upload(path,file,{upsert:false,contentType:ct});
+      if(!upErr){
+        const{data:urlData}=sb.storage.from('factures').getPublicUrl(path);
+        const photoUrl=urlData?.publicUrl||null;
+        if(photoUrl){
+          // Lier la photo à chaque entretien créé
+          for(const entId of createdIds){
             await sb.from('entretien_photos').insert({entretien_id:entId,user_id:S.user.id,url:photoUrl,nom:file.name||null});
-            // Mettre à jour photo_url sur l'entretien
             await sb.from('entretiens').update({photo_url:photoUrl}).eq('id',entId).eq('user_id',S.user.id);
           }
         }
-      }catch(e){console.error('Photo upload error:',e);}
-    }
+      }
+    }catch(e){console.error('Photo upload error:',e);}
   }
 
-  // Mettre à jour km véhicule si fourni et supérieur à l'actuel
+  // Km véhicule
   if(km&&ok>0){
     const v=S.vehicles.find(x=>x.id===vid);
     if(v&&km>(v.km_actuel||0)){
@@ -7109,9 +7098,18 @@ async function saveMultiEnt(){
     }
   }
 
-  // Nettoyer les ObjectURLs
-  Object.values(_multiPhotosPreviews).forEach(u=>{try{URL.revokeObjectURL(u);}catch(e){}});
-  _multiSel={};_multiPhotos={};_multiPhotosPreviews={};
+  if(_multiGlobalPhotoPreview)try{URL.revokeObjectURL(_multiGlobalPhotoPreview);}catch(e){}
+  _multiSel={};_multiGlobalPhoto=null;_multiGlobalPhotoPreview=null;
+  btn.disabled=false;
+  cm('multi');
+  await loadEnts();
+  renderView();
+  jumeauRefreshSiVehicule(vid);
+  if(err>0)toast(`${ok} enregistré${ok>1?'s':''}, ${err} erreur${err>1?'s':''}  ⚠️`,'i');
+  else toast(`✅ ${ok} entretien${ok>1?'s':''} enregistré${ok>1?'s':''} !`,'s');
+  vib([50,30,50]);
+  setTimeout(()=>openVehDetail(vid),100);
+}
   btn.disabled=false;
   cm('multi');
   await loadEnts();
