@@ -719,40 +719,51 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 /* ═══ MULTI-ENTRETIEN ═══ */
 #mo-multi{position:fixed;inset:0;z-index:500;background:rgba(10,15,30,.6);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
 #mo-multi.open{opacity:1;pointer-events:all}
-.multi-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,0px)}
+.multi-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:93vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,0px)}
 #mo-multi.open .multi-sheet{transform:translateY(0)}
 .multi-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 6px}
-.multi-hdr{padding:0 18px 12px;border-bottom:1px solid var(--border)}
-.multi-hdr-title{font-size:1rem;font-weight:900;color:var(--txt);letter-spacing:-.02em}
-.multi-hdr-sub{font-size:.72rem;color:var(--txm);margin-top:3px}
-.multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--border)}
-.multi-field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.multi-list{flex:1;overflow-y:auto;padding:10px 18px}
-.multi-cat{margin-bottom:2px}
-.multi-cat-hdr{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--bg);border-radius:var(--r-sm);cursor:pointer;border:none;width:100%;font-family:inherit;font-size:.78rem;font-weight:700;color:var(--txt);margin-bottom:4px;transition:.15s}
+.multi-hdr{padding:0 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.multi-hdr-l .multi-hdr-title{font-size:1rem;font-weight:900;color:var(--txt);letter-spacing:-.02em}
+.multi-hdr-l .multi-hdr-sub{font-size:.72rem;color:var(--txm);margin-top:3px}
+.multi-hdr-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txm);font-size:1rem;flex-shrink:0}
+.multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid var(--border);background:#FAFBFF}
+.multi-field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.multi-list{flex:1;overflow-y:auto;padding:8px 14px 4px}
+.multi-cat{margin-bottom:3px}
+.multi-cat-hdr{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg);border-radius:10px;cursor:pointer;border:none;width:100%;font-family:inherit;font-size:.8rem;font-weight:700;color:var(--txt);margin-bottom:4px;transition:.15s;text-align:left}
 .multi-cat-hdr:active{transform:scale(.99)}
 .multi-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.multi-cat-count{font-size:.64rem;font-weight:700;background:var(--primary);color:#fff;padding:1px 6px;border-radius:10px;margin-left:auto}
-.multi-cat-chev{flex-shrink:0;transition:transform .2s;color:var(--txl)}
-.multi-cat-body{display:none;margin-bottom:6px}
+.multi-cat-count{font-size:.64rem;font-weight:700;background:var(--primary);color:#fff;padding:2px 7px;border-radius:10px;margin-left:auto;flex-shrink:0}
+.multi-cat-chev{flex-shrink:0;transition:transform .2s;color:var(--txl);margin-left:4px}
+.multi-cat-body{display:none;margin-bottom:4px}
 .multi-cat-body.open{display:block}
-.multi-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm);cursor:pointer;border:1.5px solid transparent;margin-bottom:4px;background:#fff;transition:.12s}
+.multi-item{border-radius:12px;cursor:pointer;border:1.5px solid var(--border);margin-bottom:7px;background:#fff;transition:.12s;overflow:hidden}
 .multi-item:active{transform:scale(.99)}
-.multi-item.sel{border-color:var(--primary);background:var(--primary-lt)}
-.multi-item-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;background:var(--bg)}
+.multi-item.sel{border-color:var(--primary);background:#F8FBFF}
+.multi-item-row{display:flex;align-items:center;gap:10px;padding:11px 12px}
+.multi-item-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;background:var(--bg)}
 .multi-item.sel .multi-item-ico{background:#DBEAFE}
-.multi-item-label{flex:1;font-size:.82rem;font-weight:600;color:var(--txt)}
-.multi-item-cost{width:72px;flex-shrink:0}
-.multi-item-cost input{width:100%;padding:5px 7px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.78rem;text-align:right;background:#fff;outline:none;display:none}
-.multi-item.sel .multi-item-cost input{display:block}
-.multi-item-chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.12s}
-.multi-item.sel .multi-item-chk{background:var(--primary);border-color:var(--primary);color:#fff}
-.multi-footer{padding:12px 18px;border-top:1px solid var(--border);background:#fff}
+.multi-item-label{flex:1;font-size:.84rem;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.multi-item-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.12s;font-size:.68rem;color:#fff}
+.multi-item.sel .multi-item-chk{background:var(--primary);border-color:var(--primary)}
+.multi-item-detail{display:none;padding:0 12px 12px;border-top:1px solid rgba(37,99,235,.1)}
+.multi-item.sel .multi-item-detail{display:block}
+.multi-item-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;align-items:start}
+.multi-detail-lbl{font-size:.65rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.multi-cost-input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.92rem;font-weight:700;background:#fff;outline:none;color:var(--txt);transition:.15s;box-sizing:border-box}
+.multi-cost-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.multi-photo-btn{width:100%;padding:11px 8px;border:1.5px dashed var(--border);border-radius:9px;background:#FAFBFF;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:600;color:var(--txm);transition:.15s;box-sizing:border-box}
+.multi-photo-btn:active{transform:scale(.98)}
+.multi-photo-btn.has-photo{border-style:solid;border-color:#10B981;background:#F0FDF4;color:#059669;font-weight:700}
+.multi-photo-preview{width:100%;height:70px;object-fit:cover;border-radius:8px;margin-top:6px;cursor:pointer;display:block}
+.multi-photo-remove{font-size:.65rem;color:var(--err);font-weight:600;cursor:pointer;text-align:center;margin-top:3px;display:block;padding:2px}
+.multi-footer{padding:12px 18px 14px;border-top:1px solid var(--border);background:#fff}
 .multi-footer-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .multi-footer-count{font-size:.8rem;font-weight:700;color:var(--txt)}
-.multi-footer-total{font-size:.82rem;font-weight:800;color:var(--ok)}
-.multi-save-btn{width:100%;padding:14px;background:linear-gradient(135deg,#3B82F6,#2563EB);border:none;border-radius:var(--r-sm);font-family:inherit;font-size:.92rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
-.multi-save-btn:disabled{opacity:.4;cursor:not-allowed}
+.multi-footer-total{font-size:.84rem;font-weight:800;color:var(--ok)}
+.multi-save-btn{width:100%;padding:15px;background:linear-gradient(135deg,#3B82F6,#2563EB);border:none;border-radius:12px;font-family:inherit;font-size:.94rem;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.3);transition:.15s}
+.multi-save-btn:disabled{opacity:.38;cursor:not-allowed;box-shadow:none}
+.multi-save-btn:not(:disabled):active{transform:scale(.98)}
 
 /* ═══ CHOIX MODE ENTRETIEN ═══ */
 #mo-ent-choice{position:fixed;inset:0;z-index:500;background:rgba(10,15,30,.6);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
@@ -1452,38 +1463,41 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   <div class="multi-sheet">
     <div class="multi-handle"></div>
     <div class="multi-hdr">
-      <div class="multi-hdr-title">🧾 Saisie par facture</div>
-      <div class="multi-hdr-sub">Cochez toutes les interventions effectuées</div>
+      <div class="multi-hdr-l">
+        <div class="multi-hdr-title">🧾 Saisie par facture</div>
+        <div class="multi-hdr-sub">Cochez et renseignez chaque intervention</div>
+      </div>
+      <button class="multi-hdr-close" onclick="cm('multi')">✕</button>
     </div>
     <div class="multi-fields">
       <div>
         <label class="fl">Véhicule</label>
-        <select class="fc" id="multi-vh" style="font-size:.88rem"></select>
+        <select class="fc" id="multi-vh"></select>
       </div>
       <div class="multi-field-row">
         <div>
-          <label class="fl">Date</label>
-          <input class="fc" id="multi-dt" type="date" style="font-size:.88rem">
+          <label class="fl">Date de l'intervention</label>
+          <input class="fc" id="multi-dt" type="date">
         </div>
         <div>
-          <label class="fl">Km du véhicule</label>
-          <input class="fc" id="multi-km" type="number" inputmode="numeric" placeholder="Ex: 87500" style="font-size:.88rem">
+          <label class="fl">Km compteur</label>
+          <input class="fc" id="multi-km" type="number" inputmode="numeric" placeholder="Ex: 87 500">
         </div>
       </div>
       <div>
         <label class="fl">Garage / Lieu</label>
-        <input class="fc" id="multi-garage" placeholder="Nom du garage" style="font-size:.88rem">
+        <input class="fc" id="multi-garage" placeholder="Nom du garage ou du lieu">
       </div>
     </div>
+    <!-- Input photo caché — déclenché par chaque bouton photo -->
+    <input type="file" id="multi-photo-input" accept="image/*" capture="environment" style="display:none" onchange="onMultiPhotoSelected(this)">
     <div class="multi-list" id="multi-list"></div>
     <div class="multi-footer">
       <div class="multi-footer-info">
         <div class="multi-footer-count" id="multi-count">0 intervention sélectionnée</div>
         <div class="multi-footer-total" id="multi-total"></div>
       </div>
-      <button class="multi-save-btn" id="multi-save-btn" onclick="saveMultiEnt()" disabled>
-        Enregistrer
-      </button>
+      <button class="multi-save-btn" id="multi-save-btn" onclick="saveMultiEnt()" disabled>Enregistrer</button>
     </div>
   </div>
 </div>
@@ -6842,11 +6856,19 @@ async function doGoogleLogin(){
 }
 
 /* ══ MULTI-ENTRETIEN ══ */
-let _multiSel={};// {typeId: coutValue}
+let _multiSel={};       // {typeId: coutValue|null}
+let _multiPhotos={};    // {typeId: File}
+let _multiPhotosPreviews={}; // {typeId: objectURL}
+let _multiCurrentPhotoTypeId=null; // typeId en cours de sélection photo
 
 function openMultiEnt(forcedVid){
   if(!S.vehicles.length)return toast("Ajoutez d'abord un véhicule.",'e');
   _multiSel={};
+  // Révoquer les ObjectURLs existants
+  Object.values(_multiPhotosPreviews).forEach(u=>{try{URL.revokeObjectURL(u);}catch(e){}});
+  _multiPhotos={};
+  _multiPhotosPreviews={};
+  _multiCurrentPhotoTypeId=null;
   const selV=g('multi-vh');
   selV.innerHTML=S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
   if(forcedVid)selV.value=forcedVid;
@@ -6861,7 +6883,6 @@ function openMultiEnt(forcedVid){
 function renderMultiList(){
   const catOrder=['Moteur','Filtres','Freinage','Pneus','Transmission','Suspension','Électrique','Refroid.','Climatisation','Administratif','Divers','Moto','Carrosserie','Camping-car'];
   const catColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Carrosserie':'#0891B2','Camping-car':'#059669'};
-  // Regrouper les types par catégorie (exclure les types sans interval et les génériques redondants)
   const excluded=['autre','gps_tracker','dashcam','attelage','vignette_crit','vignette_auto'];
   const grouped={};
   TYPES.filter(t=>!excluded.includes(t.id)).forEach(t=>{
@@ -6887,24 +6908,80 @@ function renderMultiList(){
         <svg class="multi-cat-chev" id="mc-${ci}-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
       <div class="multi-cat-body" id="mc-${ci}">
-        ${types.map(t=>{
-          const isSel=_multiSel[t.id]!==undefined;
-          return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}" onclick="toggleMultiItem('${t.id}')">
-            <div class="multi-item-ico">${t.ico}</div>
-            <div class="multi-item-label">${esc(t.label)}</div>
-            <div class="multi-item-cost">
-              <input type="number" inputmode="decimal" placeholder="€" min="0" step="0.01"
-                value="${isSel&&_multiSel[t.id]?_multiSel[t.id]:''}"
-                onclick="event.stopPropagation()"
-                oninput="onMultiCostInput('${t.id}',this.value)"
-                id="micost-${t.id}">
-            </div>
-            <div class="multi-item-chk">${isSel?'✓':''}</div>
-          </div>`;
-        }).join('')}
+        ${types.map(t=>_buildMultiItemHTML(t)).join('')}
       </div>
     </div>`;
   }).join('');
+}
+
+function _buildMultiItemHTML(t){
+  const isSel=_multiSel[t.id]!==undefined;
+  const previewUrl=_multiPhotosPreviews[t.id]||null;
+  const costVal=isSel&&_multiSel[t.id]!=null?_multiSel[t.id]:'';
+  return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}">
+    <div class="multi-item-row" onclick="toggleMultiItem('${t.id}')">
+      <div class="multi-item-ico">${t.ico}</div>
+      <div class="multi-item-label">${esc(t.label)}</div>
+      <div class="multi-item-chk">${isSel?'✓':''}</div>
+    </div>
+    <div class="multi-item-detail">
+      <div class="multi-item-detail-grid">
+        <div>
+          <div class="multi-detail-lbl">💶 Montant (€)</div>
+          <input class="multi-cost-input" type="number" inputmode="decimal"
+            placeholder="Saisir le montant" min="0" step="0.01"
+            value="${costVal}"
+            oninput="onMultiCostInput('${t.id}',this.value)"
+            id="micost-${t.id}">
+        </div>
+        <div>
+          <div class="multi-detail-lbl">📷 Photo / Facture</div>
+          <button class="multi-photo-btn ${previewUrl?'has-photo':''}" id="miphoto-${t.id}"
+            onclick="triggerMultiPhoto('${t.id}')">
+            ${previewUrl
+              ?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Photo ajoutée`
+              :`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Ajouter`}
+          </button>
+          ${previewUrl?`
+            <img class="multi-photo-preview" src="${previewUrl}" onclick="openPhotoFullscreen('${previewUrl}')" alt="">
+            <span class="multi-photo-remove" onclick="removeMultiPhoto('${t.id}')">✕ Supprimer</span>
+          `:''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function triggerMultiPhoto(typeId){
+  _multiCurrentPhotoTypeId=typeId;
+  const inp=g('multi-photo-input');
+  if(inp){inp.value='';inp.click();}
+}
+
+function onMultiPhotoSelected(inp){
+  const typeId=_multiCurrentPhotoTypeId;
+  if(!typeId||!inp.files||!inp.files[0])return;
+  const file=inp.files[0];
+  // Révoquer l'ancien aperçu si existant
+  if(_multiPhotosPreviews[typeId])try{URL.revokeObjectURL(_multiPhotosPreviews[typeId]);}catch(e){}
+  _multiPhotos[typeId]=file;
+  _multiPhotosPreviews[typeId]=URL.createObjectURL(file);
+  // Mettre à jour uniquement cet item sans re-render complet
+  const itemEl=document.getElementById('mi-'+typeId);
+  if(itemEl){
+    const t=TYPES.find(x=>x.id===typeId);
+    if(t)itemEl.outerHTML=_buildMultiItemHTML(t);
+  }
+  renderMultiCatBadges();
+}
+
+function removeMultiPhoto(typeId){
+  if(_multiPhotosPreviews[typeId])try{URL.revokeObjectURL(_multiPhotosPreviews[typeId]);}catch(e){}
+  delete _multiPhotos[typeId];
+  delete _multiPhotosPreviews[typeId];
+  const t=TYPES.find(x=>x.id===typeId);
+  const itemEl=document.getElementById('mi-'+typeId);
+  if(itemEl&&t)itemEl.outerHTML=_buildMultiItemHTML(t);
 }
 
 function toggleMultiCat(id,btn){
@@ -6922,24 +6999,18 @@ function toggleMultiItem(typeId){
   } else {
     _multiSel[typeId]=null;
   }
-  const item=document.getElementById('mi-'+typeId);
-  if(item){
-    const isSel=_multiSel[typeId]!==undefined;
-    item.classList.toggle('sel',isSel);
-    const chk=item.querySelector('.multi-item-chk');
-    if(chk)chk.textContent=isSel?'✓':'';
-    const costInput=item.querySelector('input');
-    if(costInput)costInput.style.display=isSel?'block':'none';
-    if(isSel&&costInput)setTimeout(()=>costInput.focus(),50);
+  const t=TYPES.find(x=>x.id===typeId);
+  const itemEl=document.getElementById('mi-'+typeId);
+  if(itemEl&&t)itemEl.outerHTML=_buildMultiItemHTML(t);
+  // Focus auto sur le champ coût
+  if(_multiSel[typeId]!==undefined){
+    setTimeout(()=>{const inp=document.getElementById('micost-'+typeId);if(inp)inp.focus();},80);
   }
   updateMultiFooter();
-  // Mettre à jour le badge de la catégorie
-  const selCount=Object.keys(_multiSel).length;
   renderMultiCatBadges();
 }
 
 function renderMultiCatBadges(){
-  // Mettre à jour les badges par catégorie sans re-render complet
   document.querySelectorAll('.multi-cat-hdr').forEach(hdr=>{
     const body=hdr.nextElementSibling;
     if(!body)return;
@@ -6948,11 +7019,9 @@ function renderMultiCatBadges(){
     items.forEach(item=>{const id=item.id.replace('mi-','');if(_multiSel[id]!==undefined)sel++;});
     let badge=hdr.querySelector('.multi-cat-count');
     if(sel>0){
-      if(!badge){badge=document.createElement('span');badge.className='multi-cat-count';hdr.querySelector('.multi-cat-chev').before(badge);}
+      if(!badge){badge=document.createElement('span');badge.className='multi-cat-count';const chev=hdr.querySelector('.multi-cat-chev');if(chev)chev.before(badge);else hdr.appendChild(badge);}
       badge.textContent=sel;
-    } else if(badge){
-      badge.remove();
-    }
+    } else if(badge){badge.remove();}
   });
 }
 
@@ -6969,8 +7038,8 @@ function updateMultiFooter(){
   const cntEl=g('multi-count');
   const totEl=g('multi-total');
   const btn=g('multi-save-btn');
-  if(cntEl)cntEl.textContent=count===0?'0 intervention sélectionnée':count===1?'1 intervention sélectionnée':`${count} interventions sélectionnées`;
-  if(totEl)totEl.textContent=total>0?'Total : '+fmtCout(total):'';
+  if(cntEl)cntEl.textContent=count===0?'Aucune intervention sélectionnée':count===1?'1 intervention sélectionnée':`${count} interventions sélectionnées`;
+  if(totEl)totEl.textContent=total>0?fmtCout(total):'';
   if(btn){btn.disabled=count===0;btn.textContent=count===0?'Enregistrer':`Enregistrer ${count} entretien${count>1?'s':''}`;}
 }
 
@@ -6985,29 +7054,53 @@ async function saveMultiEnt(){
   if(!types.length)return toast('Cochez au moins une intervention.','e');
 
   const btn=g('multi-save-btn');
-  btn.disabled=true;btn.textContent='Enregistrement…';
+  btn.disabled=true;
+  btn.textContent='Enregistrement…';
 
   let ok=0,err=0;
   for(const typeId of types){
-    const cout=_multiSel[typeId]?parseFloat(_multiSel[typeId]):null;
+    const cout=_multiSel[typeId]!=null?parseFloat(_multiSel[typeId]):null;
     const ti=getType(typeId);
-    // Calculer la prochaine échéance
     let rappelDate=null,rappelKm=null;
     if(ti.imo){const d=new Date(dt);d.setMonth(d.getMonth()+ti.imo);rappelDate=d.toISOString().split('T')[0];}
     if(ti.ikm&&km)rappelKm=km+ti.ikm;
+    const entId=crypto.randomUUID();
     const p={
-      id:crypto.randomUUID(),
-      vehicle_id:vid,user_id:S.user.id,
+      id:entId,vehicle_id:vid,user_id:S.user.id,
       type:typeId,date:dt,km,garage,cout,
       rappel_date:rappelDate,rappel_km:rappelKm,
-      note:null,pieces:null,technicien:null,duree_minutes:null,garantie_mois:null
+      note:null,pieces:null,technicien:null,duree_minutes:null,garantie_mois:null,
+      photo_url:null
     };
     const{error}=await sb.from('entretiens').insert(p);
-    if(error){err++;console.error('Multi ent error:',error);}
-    else ok++;
+    if(error){err++;console.error('Multi ent error:',error);continue;}
+    ok++;
+
+    // Upload photo si présente pour cet entretien
+    if(_multiPhotos[typeId]){
+      try{
+        const file=_multiPhotos[typeId];
+        const isPdf=file.type==='application/pdf';
+        const isPng=file.type==='image/png';
+        const ext=isPdf?'pdf':isPng?'png':'jpg';
+        const ct=isPdf?'application/pdf':isPng?'image/png':'image/jpeg';
+        const path=`${S.user.id}/${entId}_0.${ext}`;
+        const{error:upErr}=await sb.storage.from('factures').upload(path,file,{upsert:false,contentType:ct});
+        if(!upErr){
+          const{data:urlData}=sb.storage.from('factures').getPublicUrl(path);
+          const photoUrl=urlData?.publicUrl||null;
+          if(photoUrl){
+            // Lier la photo à l'entretien
+            await sb.from('entretien_photos').insert({entretien_id:entId,user_id:S.user.id,url:photoUrl,nom:file.name||null});
+            // Mettre à jour photo_url sur l'entretien
+            await sb.from('entretiens').update({photo_url:photoUrl}).eq('id',entId).eq('user_id',S.user.id);
+          }
+        }
+      }catch(e){console.error('Photo upload error:',e);}
+    }
   }
 
-  // Mettre à jour km véhicule si fourni
+  // Mettre à jour km véhicule si fourni et supérieur à l'actuel
   if(km&&ok>0){
     const v=S.vehicles.find(x=>x.id===vid);
     if(v&&km>(v.km_actuel||0)){
@@ -7016,18 +7109,20 @@ async function saveMultiEnt(){
     }
   }
 
+  // Nettoyer les ObjectURLs
+  Object.values(_multiPhotosPreviews).forEach(u=>{try{URL.revokeObjectURL(u);}catch(e){}});
+  _multiSel={};_multiPhotos={};_multiPhotosPreviews={};
   btn.disabled=false;
   cm('multi');
-  _multiSel={};
   await loadEnts();
   renderView();
   jumeauRefreshSiVehicule(vid);
-  if(err>0)toast(`${ok} entretien${ok>1?'s':''} enregistré${ok>1?'s':''}, ${err} erreur${err>1?'s':''})`,'i');
-  else toast(`✅ ${ok} entretien${ok>1?'s':''} enregistré${ok>1?'s':''}  !`,'s');
+  if(err>0)toast(`${ok} enregistré${ok>1?'s':''}, ${err} erreur${err>1?'s':''}  ⚠️`,'i');
+  else toast(`✅ ${ok} entretien${ok>1?'s':''} enregistré${ok>1?'s':''} !`,'s');
   vib([50,30,50]);
-  // Retour sur la fiche véhicule
   setTimeout(()=>openVehDetail(vid),100);
 }
+
 function toggleSearch(){
   const bar=g('search-bar');
   const input=g('global-search');
