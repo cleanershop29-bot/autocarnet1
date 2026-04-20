@@ -896,6 +896,11 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jcomp-info{flex:1;min-width:0}
 .jcomp-name{font-size:.81rem;font-weight:700;color:var(--txt)}
 .jcomp-sub{font-size:.68rem;color:var(--txm);margin-top:2px}
+.jcomp-sub-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.jcomp-kr{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:8px;white-space:nowrap}
+.jcomp-kr.ok{background:var(--ok-bg);color:var(--ok)}
+.jcomp-kr.warn{background:var(--warn-bg);color:var(--warn)}
+.jcomp-kr.err{background:var(--err-bg);color:var(--err)}
 .jcomp-est{font-size:.6rem;color:var(--warn);font-weight:600}
 .jcomp-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
 .jcomp-pill{padding:3px 8px;border-radius:20px;font-size:.6rem;font-weight:700}
@@ -923,7 +928,8 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jcs-ulbl{display:flex;justify-content:space-between;margin-bottom:5px}
 .jcs-ulbl span{font-size:.68rem;font-weight:600;color:var(--txm)}
 .jcs-ulbl strong{font-size:.68rem;font-weight:800}
-.jcs-ubg{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.jcs-ubg{height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+.jcs-umark{position:absolute;left:70%;top:-2px;width:2px;height:12px;background:var(--warn);border-radius:1px;opacity:.8;pointer-events:none}
 .jcs-ubar{height:100%;border-radius:4px;transition:width .8s ease}
 .jcs-grid{padding:0 17px;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px}
 .jcs-box{background:#F8FAFC;border-radius:9px;padding:9px 11px}
@@ -6833,7 +6839,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
     <div class="jcs-usure">
       <div class="jcs-ulbl"><span>Usure estimée</span><strong id="jcs-uval">—</strong></div>
-      <div class="jcs-ubg"><div class="jcs-ubar" id="jcs-ubar" style="width:0%"></div></div>
+      <div class="jcs-ubg"><div class="jcs-ubar" id="jcs-ubar" style="width:0%"></div><div class="jcs-umark" id="jcs-umark"></div></div>
     </div>
     <div class="jcs-grid">
       <div class="jcs-box"><div class="jcs-blbl">Dernier entretien</div><div class="jcs-bval" id="jcs-last-date">—</div></div>
@@ -6966,16 +6972,19 @@ function juCalcStatus(comp,kmSince,moisSince){
   if(comp.skmo&&kmSince>=comp.skmr)sk=2;else if(comp.skmo&&kmSince>=comp.skmo)sk=1;
   if(comp.smo&&moisSince>=comp.smr)sm=2;else if(comp.smo&&moisSince>=comp.smo)sm=1;
   const s=Math.max(sk,sm);
+  // dominantCrit : indique quel critère est le plus contraignant (km ou mois)
+  // Utilisé par juCalcKmRestants pour choisir le bon affichage
+  juCalcStatus._dom=(sk>=sm)?'km':'mois';
   return s===2?'err':s===1?'warn':'ok';
 }
 function juCalcUsure(comp,kmSince,moisSince){
-  // Calcule le % d'usure sur base du critère le plus avancé (km OU mois)
-  // On utilise skmr (rouge) comme référence 100% pour avoir une progression linéaire réaliste
+  // Courbe non-linéaire (x^1.6) : usure s'accélère en fin de vie
+  // À 50% des km → ~35% affiché | à 80% → ~71% | à 100% → 100%
+  function courbe(ratio){return Math.min(1,Math.pow(Math.max(0,ratio),1.6));}
   let pk=0,pm=0;
-  if(comp.skmr&&kmSince>0)pk=Math.min(100,Math.round(kmSince/comp.skmr*100));
-  if(comp.smr&&moisSince>0)pm=Math.min(100,Math.round(moisSince/comp.smr*100));
-  // Le plus élevé des deux détermine l'usure affichée
-  return Math.max(pk,pm);
+  if(comp.skmr&&kmSince>0)pk=Math.round(courbe(kmSince/comp.skmr)*100);
+  if(comp.smr&&moisSince>0)pm=Math.round(courbe(moisSince/comp.smr)*100);
+  return Math.min(100,Math.max(pk,pm));
 }
 function juEstimer(comp,v,km,now){
   const annee=v.annee?parseInt(v.annee):null;
@@ -7116,43 +7125,59 @@ function juEstimer(comp,v,km,now){
   return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,kmRestants,conseil:juConseil(comp,status,true)};
 }
 function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
-  // On calcule les km/mois restants avant le SEUIL ORANGE (skmo/smo = seuil préventif)
-  // Si déjà dépassé le seuil orange → km restants négatifs = retard
   const kmPerYear={moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000;
   const kmPerMois=kmPerYear/12;
-
-  let restKm=null, restMois=null;
-
-  // Km restants (si composant a un seuil km)
-  if(comp.skmo&&comp.skmo>0){
-    restKm=comp.skmo-kmSince; // positif = km restants, négatif = retard
-  }
-
-  // Mois restants (si composant a un seuil mois) → converti en km équivalent
-  if(comp.smo&&comp.smo>0){
-    const moisRestants=comp.smo-moisSince;
-    const kmEquivMois=Math.round(moisRestants*kmPerMois);
-    // On garde le plus contraignant (le plus petit)
-    if(restKm===null){
-      restKm=kmEquivMois;
-    } else {
-      restKm=Math.min(restKm,kmEquivMois);
-    }
-  }
-
-  if(restKm===null)return null;
-
-  // Arrondir à 500 km près pour ne pas sur-préciser
-  const arrondi=Math.round(restKm/500)*500;
   const prefixe=estimated?'~ ':'';
 
-  if(arrondi<=0){
-    // Dépassé
-    const retard=Math.abs(arrondi);
-    return{val:arrondi,txt:prefixe+(retard>0?retard.toLocaleString('fr')+' km de retard':'Seuil atteint'),depasse:true,estimated};
-  } else {
-    return{val:arrondi,txt:prefixe+arrondi.toLocaleString('fr')+' km',depasse:false,estimated};
+  // Composants purement temporels (pas de seuil km) → afficher mois restants
+  const isPureMois=!comp.skmo&&comp.smo;
+  const faibleRouleur=kmPerYear<9000;
+
+  // Calcul brut mois restants
+  let moisRestants=null;
+  if(comp.smo&&comp.smo>0) moisRestants=comp.smo-moisSince;
+
+  // Calcul brut km restants
+  let kmRestants=null;
+  if(comp.skmo&&comp.skmo>0) kmRestants=comp.skmo-kmSince;
+
+  // ── Cas 1 : composant purement temporel ou faible rouleur avec seuil mois ──
+  if(isPureMois||(faibleRouleur&&comp.smo)){
+    if(moisRestants===null)return null;
+    const mr=Math.round(moisRestants);
+    if(mr<=0){
+      const retard=Math.abs(mr);
+      return{val:mr,txt:prefixe+(retard===0?'Seuil atteint':retard+' mois de retard'),depasse:true,estimated,unit:'mois'};
+    }
+    if(mr<2){
+      const sem=Math.max(1,Math.round(mr*4.3));
+      return{val:mr,txt:prefixe+sem+' semaine'+(sem>1?'s':''),depasse:false,estimated,unit:'mois'};
+    }
+    return{val:mr,txt:prefixe+mr+' mois',depasse:false,estimated,unit:'mois'};
   }
+
+  // ── Cas 2 : composant avec seuil km (et éventuellement mois) ──
+  let valFinale=kmRestants;
+
+  if(moisRestants!==null&&kmRestants!==null){
+    const kmEquivMois=Math.round(moisRestants*kmPerMois);
+    if(kmEquivMois<kmRestants) valFinale=kmEquivMois;
+  } else if(moisRestants!==null&&kmRestants===null){
+    valFinale=Math.round(moisRestants*kmPerMois);
+  }
+
+  if(valFinale===null)return null;
+
+  // Arrondi adaptatif
+  const absVal=Math.abs(valFinale);
+  const step=absVal<2000?100:500;
+  const arrondi=Math.round(valFinale/step)*step;
+
+  if(arrondi<=0){
+    const retard=Math.abs(arrondi);
+    return{val:arrondi,txt:prefixe+(retard===0?'Seuil atteint':retard.toLocaleString('fr')+' km de retard'),depasse:true,estimated,unit:'km'};
+  }
+  return{val:arrondi,txt:prefixe+arrondi.toLocaleString('fr')+' km',depasse:false,estimated,unit:'km'};
 }
 function juConseil(comp,status,est){
   const e=est?' (estimation)':'';
@@ -7301,7 +7326,19 @@ function jumeauCompList(){
   }).map(comp=>{
     const d=JU.data[comp.id];if(!d)return'';
     const pill=d.status==='err'?'Urgent':d.status==='warn'?'Surveiller':d.status==='ok'?'OK':'Inconnu';
-    const sub=d.estimated?`<span class="jcomp-est">~ Estimation</span>`:`<span style="color:var(--txm);font-size:.68rem">${d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
+    const dateInfo=d.estimated?'<span class="jcomp-est">~ Estimation</span>':`<span style="color:var(--txm);font-size:.68rem">${d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
+    let krTag='';
+    if(d.kmRestants&&d.status!=='grey'){
+      const kr=d.kmRestants;
+      if(kr.depasse){
+        krTag=`<span class="jcomp-kr err">${kr.txt}</span>`;
+      } else if(d.status==='warn'||d.status==='err'){
+        krTag=`<span class="jcomp-kr warn">${kr.txt}</span>`;
+      } else {
+        krTag=`<span class="jcomp-kr ok">${kr.txt}</span>`;
+      }
+    }
+    const sub=`<span class="jcomp-sub-row">${dateInfo}${krTag}</span>`;
     return`<div class="jcomp ${d.status}" onclick="openJumeauComp('${comp.id}')"><div class="jcomp-ico ${d.status}">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name">${comp.label}</div><div class="jcomp-sub">${sub}</div></div><div class="jcomp-r"><span class="jcomp-pill ${d.status}">${pill}</span><div class="jcomp-bw"><div class="jcomp-bar ${d.status}" style="width:${d.usure}%"></div></div></div></div>`;
   }).join('');
 }
@@ -7334,24 +7371,31 @@ function openJumeauComp(id){
   document.getElementById('jcs-last-km').textContent=d.lastKm;
   document.getElementById('jcs-since-km').textContent=d.sinceKm;
   document.getElementById('jcs-cost').textContent=d.cout;
+  // Marqueur sur barre d'usure (fixe à 70% = seuil warn)
+  const umark=document.getElementById('jcs-umark');
+  if(umark){umark.style.display=(d.status!=='grey')?'block':'none';}
   // Km restants
   const krWrap=document.getElementById('jcs-kmrest-wrap');
   const krVal=document.getElementById('jcs-kmrest');
+  const krLbl=document.querySelector('.jcs-kmrest-lbl');
   if(d.kmRestants&&d.status!=='grey'){
     krWrap.style.display='flex';
     const kr=d.kmRestants;
+    const unitLabel=kr.unit==='mois'?'⏱ Temps restant avant échéance':'📍 Kilométrage restant avant échéance';
+    if(krLbl)krLbl.textContent=unitLabel;
+    const estSuf=kr.estimated?' · estimation':'';
     if(kr.depasse){
       krWrap.style.background='linear-gradient(135deg,#FFF7ED,#FEF3C7)';
       krWrap.style.borderColor='#FED7AA';
-      document.querySelector('.jcs-kmrest-lbl').style.color='#C2410C';
+      if(krLbl)krLbl.style.color='#C2410C';
       krVal.style.color='#C2410C';
-      krVal.textContent=kr.txt+(kr.estimated?' (estimation)':'');
+      krVal.textContent=kr.txt+estSuf;
     } else {
       krWrap.style.background='linear-gradient(135deg,#F0F9FF,#E0F2FE)';
       krWrap.style.borderColor='#BAE6FD';
-      document.querySelector('.jcs-kmrest-lbl').style.color='#0369A1';
+      if(krLbl)krLbl.style.color='#0369A1';
       krVal.style.color='#0369A1';
-      krVal.textContent=kr.txt+(kr.estimated?' (estimation)':'');
+      krVal.textContent=kr.txt+estSuf;
     }
   } else {
     krWrap.style.display='none';
