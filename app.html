@@ -716,7 +716,72 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ei-inline-date{font-size:.68rem;color:var(--txm);font-weight:500}
 .ei-inline-photo{width:16px;height:16px;color:var(--txm);opacity:.6}
 
-/* ═══ BARRE BIENVENUE ═══ */
+/* ═══ MULTI-ENTRETIEN ═══ */
+#mo-multi{position:fixed;inset:0;z-index:500;background:rgba(10,15,30,.6);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
+#mo-multi.open{opacity:1;pointer-events:all}
+.multi-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,0px)}
+#mo-multi.open .multi-sheet{transform:translateY(0)}
+.multi-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 6px}
+.multi-hdr{padding:0 18px 12px;border-bottom:1px solid var(--border)}
+.multi-hdr-title{font-size:1rem;font-weight:900;color:var(--txt);letter-spacing:-.02em}
+.multi-hdr-sub{font-size:.72rem;color:var(--txm);margin-top:3px}
+.multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--border)}
+.multi-field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.multi-list{flex:1;overflow-y:auto;padding:10px 18px}
+.multi-cat{margin-bottom:2px}
+.multi-cat-hdr{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--bg);border-radius:var(--r-sm);cursor:pointer;border:none;width:100%;font-family:inherit;font-size:.78rem;font-weight:700;color:var(--txt);margin-bottom:4px;transition:.15s}
+.multi-cat-hdr:active{transform:scale(.99)}
+.multi-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.multi-cat-count{font-size:.64rem;font-weight:700;background:var(--primary);color:#fff;padding:1px 6px;border-radius:10px;margin-left:auto}
+.multi-cat-chev{flex-shrink:0;transition:transform .2s;color:var(--txl)}
+.multi-cat-body{display:none;margin-bottom:6px}
+.multi-cat-body.open{display:block}
+.multi-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm);cursor:pointer;border:1.5px solid transparent;margin-bottom:4px;background:#fff;transition:.12s}
+.multi-item:active{transform:scale(.99)}
+.multi-item.sel{border-color:var(--primary);background:var(--primary-lt)}
+.multi-item-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;background:var(--bg)}
+.multi-item.sel .multi-item-ico{background:#DBEAFE}
+.multi-item-label{flex:1;font-size:.82rem;font-weight:600;color:var(--txt)}
+.multi-item-cost{width:72px;flex-shrink:0}
+.multi-item-cost input{width:100%;padding:5px 7px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.78rem;text-align:right;background:#fff;outline:none;display:none}
+.multi-item.sel .multi-item-cost input{display:block}
+.multi-item-chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.12s}
+.multi-item.sel .multi-item-chk{background:var(--primary);border-color:var(--primary);color:#fff}
+.multi-footer{padding:12px 18px;border-top:1px solid var(--border);background:#fff}
+.multi-footer-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.multi-footer-count{font-size:.8rem;font-weight:700;color:var(--txt)}
+.multi-footer-total{font-size:.82rem;font-weight:800;color:var(--ok)}
+.multi-save-btn{width:100%;padding:14px;background:linear-gradient(135deg,#3B82F6,#2563EB);border:none;border-radius:var(--r-sm);font-family:inherit;font-size:.92rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.multi-save-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ═══ CHOIX MODE ENTRETIEN ═══ */
+#mo-ent-choice{position:fixed;inset:0;z-index:500;background:rgba(10,15,30,.6);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
+#mo-ent-choice.open{opacity:1;pointer-events:all}
+.ent-choice-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;padding:0 0 env(safe-area-inset-bottom,20px);transform:translateY(100%);transition:transform .3s cubic-bezier(.33,1,.68,1)}
+#mo-ent-choice.open .ent-choice-sheet{transform:translateY(0)}
+.ent-choice-title{font-size:.88rem;font-weight:800;color:var(--txt);text-align:center;padding:16px 20px 12px;letter-spacing:-.02em}
+.ent-choice-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 16px}
+.ent-choice-opt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 12px;border:1.5px solid var(--border);border-radius:16px;cursor:pointer;background:#fff;font-family:inherit;transition:.15s}
+.ent-choice-opt:active{transform:scale(.97)}
+.ent-choice-opt.primary{background:linear-gradient(135deg,#EFF6FF,#fff);border-color:#BFDBFE}
+.ent-choice-opt.secondary{background:linear-gradient(135deg,#F0FDF4,#fff);border-color:#BBF7D0}
+.ent-choice-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.ent-choice-lbl{font-size:.82rem;font-weight:800;color:var(--txt);text-align:center}
+.ent-choice-sub{font-size:.68rem;color:var(--txm);text-align:center;line-height:1.4}
+
+/* ═══ ACCORDION FICHE VÉHICULE ═══ */
+.vd-ents-acc{border-radius:var(--r-sm);overflow:hidden;border:1.5px solid rgba(184,196,216,.4);margin-bottom:6px}
+.vd-acc-hdr{display:flex;align-items:center;gap:9px;padding:10px 12px;background:#fff;border:none;width:100%;font-family:inherit;cursor:pointer;text-align:left;transition:.15s}
+.vd-acc-hdr:active{background:var(--bg)}
+.vd-acc-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+.vd-acc-info{flex:1;min-width:0}
+.vd-acc-name{font-size:.8rem;font-weight:700;color:var(--txt)}
+.vd-acc-meta{font-size:.65rem;color:var(--txm);margin-top:1px}
+.vd-acc-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.vd-acc-count{font-size:.62rem;font-weight:700;background:var(--primary);color:#fff;padding:1px 6px;border-radius:10px}
+.vd-acc-chev{transition:transform .2s;color:var(--txl)}
+.vd-acc-body{display:none;border-top:1px solid rgba(184,196,216,.25)}
+.vd-acc-body.open{display:block}
 .welcome-bar{border-radius:16px;padding:16px 18px;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 60%,#2563EB 100%);box-shadow:0 8px 24px rgba(37,99,235,.28),0 2px 8px rgba(37,99,235,.15)}
 .welcome-bar::before{content:'';position:absolute;top:-40%;right:-10%;width:55%;height:140%;background:radial-gradient(ellipse,rgba(255,255,255,.08) 0%,transparent 70%);pointer-events:none}
 .welcome-bar-greeting{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
@@ -1358,6 +1423,67 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Enregistrer l'ID abonnement</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CHOIX ENTRETIEN -->
+<div id="mo-ent-choice" onclick="if(event.target===this)cm('ent-choice')">
+  <div class="ent-choice-sheet">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0"></div>
+    <div class="ent-choice-title">Ajouter un entretien</div>
+    <div class="ent-choice-opts">
+      <button id="ent-choice-simple" class="ent-choice-opt primary">
+        <div class="ent-choice-ico" style="background:#EFF6FF">🔧</div>
+        <div class="ent-choice-lbl">Intervention simple</div>
+        <div class="ent-choice-sub">Un seul type<br>d'entretien</div>
+      </button>
+      <button id="ent-choice-multi" class="ent-choice-opt secondary">
+        <div class="ent-choice-ico" style="background:#F0FDF4">🧾</div>
+        <div class="ent-choice-lbl">Saisie par facture</div>
+        <div class="ent-choice-sub">Plusieurs interventions<br>en même temps</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MULTI-ENTRETIEN -->
+<div id="mo-multi" onclick="if(event.target===this)cm('multi')">
+  <div class="multi-sheet">
+    <div class="multi-handle"></div>
+    <div class="multi-hdr">
+      <div class="multi-hdr-title">🧾 Saisie par facture</div>
+      <div class="multi-hdr-sub">Cochez toutes les interventions effectuées</div>
+    </div>
+    <div class="multi-fields">
+      <div>
+        <label class="fl">Véhicule</label>
+        <select class="fc" id="multi-vh" style="font-size:.88rem"></select>
+      </div>
+      <div class="multi-field-row">
+        <div>
+          <label class="fl">Date</label>
+          <input class="fc" id="multi-dt" type="date" style="font-size:.88rem">
+        </div>
+        <div>
+          <label class="fl">Km du véhicule</label>
+          <input class="fc" id="multi-km" type="number" inputmode="numeric" placeholder="Ex: 87500" style="font-size:.88rem">
+        </div>
+      </div>
+      <div>
+        <label class="fl">Garage / Lieu</label>
+        <input class="fc" id="multi-garage" placeholder="Nom du garage" style="font-size:.88rem">
+      </div>
+    </div>
+    <div class="multi-list" id="multi-list"></div>
+    <div class="multi-footer">
+      <div class="multi-footer-info">
+        <div class="multi-footer-count" id="multi-count">0 intervention sélectionnée</div>
+        <div class="multi-footer-total" id="multi-total"></div>
+      </div>
+      <button class="multi-save-btn" id="multi-save-btn" onclick="saveMultiEnt()" disabled>
+        Enregistrer
+      </button>
     </div>
   </div>
 </div>
@@ -3308,7 +3434,7 @@ function renderDash(){
     </div>`;
   }
   // Raccourci rapide + entretien
-  h+=`<div class="sec-hdr"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>Véhicules</span><div style="display:flex;gap:6px"><button class="sec-lnk" onclick="openEnt()">+ Entretien</button><button class="sec-lnk" onclick="nav('vehs')">Tout voir</button></div></div>`;
+  h+=`<div class="sec-hdr"><span class="sec-ttl" style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>Véhicules</span><div style="display:flex;gap:6px"><button class="sec-lnk" onclick="openEntChoice(null)">+ Entretien</button><button class="sec-lnk" onclick="nav('vehs')">Tout voir</button></div></div>`;
   h+=S.vehicles.map(v=>vcDashHTML(v)).join('');
   const recent=[...S.ents].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
   if(recent.length){
@@ -4481,48 +4607,70 @@ function openVehDetail(vid){
     </div>`;
   }
   h+=statsHTML(vid);
-  // Derniers entretiens
+  // Entretiens en accordion par catégorie
   if(es.length){
-    // Catégories présentes dans ce véhicule
-    const cats=[...new Set(es.map(e=>getType(e.type).cat))].filter(Boolean);
-    const catIcos={'Moteur':'🛢️','Filtres':'🔘','Freinage':'🔴','Pneus':'⚫','Transmission':'⚙️','Suspension':'🔩','Électrique':'🔋','Refroid.':'🌡️','Climatisation':'❄️','Administratif':'✅','Divers':'🔧','Moto':'⛓️','Camping-car':'☀️'};
-    const catFilter=`<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:10px">
-      <button class="flt on" id="cat-flt-all-${vid}" onclick="filterEntsCat('${vid}','all',this)">Tous · ${es.length}</button>
-      ${cats.map(c=>`<button class="flt" id="cat-flt-${vid}-${c.replace(/\s/g,'')}" onclick="filterEntsCat('${vid}','${c}',this)">${catIcos[c]||'🔧'} ${c} · ${es.filter(e=>getType(e.type).cat===c).length}</button>`).join('')}
-    </div>`;
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><div style="display:flex;gap:6px">${es.length>5?`<button class="sec-lnk" onclick="showAllEntsInDetail('${vid}')">Tout voir (${es.length})</button>`:''}<button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div></div>`;
-    h+=catFilter;
-    h+=`<div id="ents-list-${vid}">`;
-    const catAccentColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Camping-car':'#0891B2'};
-    h+=es.slice(0,5).map(e=>{
-      const ti=getType(e.type);
-      const accent=catAccentColors[ti.cat]||'#94A3B8';
-      const hasPhoto=!!(e.photo_url);
-      return`<div class="ei-inline" onclick="openEnt('${e.id}')" style="--ei-inline-accent:${accent}">
-        <div class="ei-inline-ico ${catClass(ti.cat)}">${ti.ico}</div>
-        <div class="ei-inline-body">
-          <div class="ei-inline-type">${esc(ti.label)}</div>
-          <div class="ei-inline-meta">
-            <span>${fmtDate(e.date)}</span>
-            ${e.km?`<span>· ${fmtKm(e.km)}</span>`:''}
-            ${e.garage?`<span>· <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">${esc(e.garage)}</a></span>`:''}
+    const catOrder=['Moteur','Filtres','Freinage','Pneus','Transmission','Suspension','Électrique','Refroid.','Climatisation','Administratif','Divers','Moto','Carrosserie','Camping-car'];
+    const catColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Carrosserie':'#0891B2','Camping-car':'#059669'};
+    const catIcos={'Moteur':'🛢️','Filtres':'🔘','Freinage':'🔴','Pneus':'⚫','Transmission':'⚙️','Suspension':'🔩','Électrique':'🔋','Refroid.':'🌡️','Climatisation':'❄️','Administratif':'✅','Divers':'🔧','Moto':'⛓️','Carrosserie':'🎨','Camping-car':'☀️'};
+    const bycat={};
+    es.forEach(e=>{const cat=getType(e.type).cat||'Divers';if(!bycat[cat])bycat[cat]=[];bycat[cat].push(e);});
+    const sortedCats=Object.keys(bycat).sort((a,b)=>{
+      const ia=catOrder.indexOf(a),ib=catOrder.indexOf(b);
+      if(ia===-1&&ib===-1)return a.localeCompare(b);
+      if(ia===-1)return 1;if(ib===-1)return-1;
+      return ia-ib;
+    });
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (${es.length})</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEntChoice('${vid}')">+ Ajouter</button></div>`;
+    sortedCats.forEach((cat,idx)=>{
+      const catEnts=bycat[cat].sort((a,b)=>new Date(b.date)-new Date(a.date));
+      const last=catEnts[0];
+      const dot=catColors[cat]||'#94A3B8';
+      const ico=catIcos[cat]||'🔧';
+      const totalCat=catEnts.reduce((s,e)=>s+(e.cout||0),0);
+      const accId=`vda-${vid.replace(/-/g,'')}-${idx}`;
+      h+=`<div class="vd-ents-acc">
+        <button class="vd-acc-hdr" onclick="toggleVdAcc('${accId}')">
+          <div class="vd-acc-ico" style="background:${dot}18;border:1px solid ${dot}33">${ico}</div>
+          <div class="vd-acc-info">
+            <div class="vd-acc-name">${cat}</div>
+            <div class="vd-acc-meta">Dernier : ${fmtDate(last.date)}${totalCat?' · '+fmtCout(totalCat):''}</div>
           </div>
-        </div>
-        <div class="ei-inline-right">
-          ${e.cout?`<span class="ei-inline-cost">${fmtCout(e.cout)}</span>`:''}
-          ${hasPhoto?`<svg class="ei-inline-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`:''}
-          <svg style="width:14px;height:14px;color:var(--txm);opacity:.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          <div class="vd-acc-right">
+            <span class="vd-acc-count">${catEnts.length}</span>
+            <svg class="vd-acc-chev" id="${accId}-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
+        <div class="vd-acc-body" id="${accId}">
+          ${catEnts.map(e=>{
+            const ti=getType(e.type);
+            const accent=catColors[ti.cat]||'#94A3B8';
+            return`<div class="ei-inline" onclick="openEnt('${e.id}')" style="--ei-inline-accent:${accent}">
+              <div class="ei-inline-ico ${catClass(ti.cat)}">${ti.ico}</div>
+              <div class="ei-inline-body">
+                <div class="ei-inline-type">${esc(ti.label)}</div>
+                <div class="ei-inline-meta">
+                  <span>${fmtDate(e.date)}</span>
+                  ${e.km?`<span>· ${fmtKm(e.km)}</span>`:''}
+                  ${e.garage?`<span>· <a href="https://maps.google.com?q=${encodeURIComponent(e.garage)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">${esc(e.garage)}</a></span>`:''}
+                </div>
+              </div>
+              <div class="ei-inline-right">
+                ${e.cout?`<span class="ei-inline-cost">${fmtCout(e.cout)}</span>`:''}
+                ${e.photo_url?`<svg class="ei-inline-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`:''}
+                <svg style="width:12px;height:12px;color:var(--txl);opacity:.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>`;
+          }).join('')}
         </div>
       </div>`;
-    }).join('');
-    h+=`</div>`;
+    });
   } else {
-    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (0)</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEnt(null,'${vid}')">+ Ajouter</button></div>`;
+    h+=`<div class="sec-hdr"><span class="sec-ttl">🔧 Entretiens (0)</span><button class="btn btn-p btn-sm" style="padding:5px 12px;font-size:.78rem" onclick="openEntChoice('${vid}')">+ Ajouter</button></div>`;
     h+=`<div style="text-align:center;padding:24px 16px;background:#F8FAFF;border-radius:var(--r);border:1.5px dashed var(--border);margin-bottom:12px">
       <div style="font-size:2rem;margin-bottom:8px">🔧</div>
       <div style="font-size:.85rem;font-weight:700;color:var(--txt);margin-bottom:4px">Aucun entretien enregistré</div>
       <div style="font-size:.76rem;color:var(--txm);margin-bottom:12px">Ajoutez le premier entretien de ce véhicule pour commencer le suivi.</div>
-      <button class="btn btn-p btn-sm" onclick="openEnt(null,'${vid}')">+ Ajouter un entretien</button>
+      <button class="btn btn-p btn-sm" onclick="openEntChoice('${vid}')">+ Ajouter un entretien</button>
     </div>`;
   }
   // Infos avancées
@@ -4573,6 +4721,15 @@ function openVehDetail(vid){
   g('vd-content').innerHTML=h;
   document.getElementById('mo-veh-detail').classList.add('open');
   document.body.style.overflow='hidden';
+}
+
+function toggleVdAcc(accId){
+  const body=document.getElementById(accId);
+  const chev=document.getElementById(accId+'-chev');
+  if(!body)return;
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  if(chev)chev.style.transform=isOpen?'':'rotate(90deg)';
 }
 
 function showAllEntsInDetail(vid){
@@ -5023,7 +5180,7 @@ function renderRap(){
   // Boutons actions — uniquement en vue liste
   if(rapView==='list'){
     h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
-      <button class="btn btn-s btn-sm" onclick="openEnt()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> + Entretien</button>
+      <button class="btn btn-s btn-sm" onclick="openEntChoice(null)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> + Entretien</button>
       <button class="btn btn-p btn-sm" onclick="openRappelCustom()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> + Rappel / RDV</button>
     </div>`;
   }
@@ -5482,9 +5639,19 @@ function fabAction(type){
   closeFabMenu();
   setTimeout(()=>{
     if(type==='veh')openVeh();
-    else if(type==='ent')openEnt();
+    else if(type==='ent')openEntChoice(null);
     else if(type==='rap')openRappelCustom();
   },150);
+}
+
+function openEntChoice(forcedVid){
+  window._entChoiceVid=forcedVid||null;
+  // Mettre à jour les boutons du modal
+  const btnSimple=document.getElementById('ent-choice-simple');
+  const btnMulti=document.getElementById('ent-choice-multi');
+  if(btnSimple)btnSimple.onclick=()=>{cm('ent-choice');openEnt(null,window._entChoiceVid);};
+  if(btnMulti)btnMulti.onclick=()=>{cm('ent-choice');openMultiEnt(window._entChoiceVid);};
+  om('ent-choice');
 }
 
 /* MODALS */
@@ -6635,7 +6802,7 @@ function renderFlotte(){
     h+=`</div>`;
     // Actions
     h+=`<div style="display:flex;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border);margin-top:10px">`;
-    h+=`<button class="btn btn-s btn-sm" onclick="openEnt(null,'${v.id}')">+ Entretien</button>`;
+    h+=`<button class="btn btn-s btn-sm" onclick="openEntChoice('${v.id}')">+ Entretien</button>`;
     h+=`<button class="btn btn-s btn-sm" onclick="openRappelCustomVeh('${v.id}')">+ Rappel</button>`;
     h+=`<button class="btn btn-p btn-sm" onclick="openVehDetail('${v.id}')">Détail →</button>`;
     h+=`</div>`;
@@ -6674,7 +6841,193 @@ async function doGoogleLogin(){
   if(error)toast('Erreur Google : '+error.message,'e');
 }
 
-/* ══ RECHERCHE GLOBALE ══ */
+/* ══ MULTI-ENTRETIEN ══ */
+let _multiSel={};// {typeId: coutValue}
+
+function openMultiEnt(forcedVid){
+  if(!S.vehicles.length)return toast("Ajoutez d'abord un véhicule.",'e');
+  _multiSel={};
+  const selV=g('multi-vh');
+  selV.innerHTML=S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  if(forcedVid)selV.value=forcedVid;
+  g('multi-dt').value=new Date().toISOString().split('T')[0];
+  g('multi-km').value='';
+  g('multi-garage').value='';
+  renderMultiList();
+  updateMultiFooter();
+  om('multi');
+}
+
+function renderMultiList(){
+  const catOrder=['Moteur','Filtres','Freinage','Pneus','Transmission','Suspension','Électrique','Refroid.','Climatisation','Administratif','Divers','Moto','Carrosserie','Camping-car'];
+  const catColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Carrosserie':'#0891B2','Camping-car':'#059669'};
+  // Regrouper les types par catégorie (exclure les types sans interval et les génériques redondants)
+  const excluded=['autre','gps_tracker','dashcam','attelage','vignette_crit','vignette_auto'];
+  const grouped={};
+  TYPES.filter(t=>!excluded.includes(t.id)).forEach(t=>{
+    if(!grouped[t.cat])grouped[t.cat]=[];
+    grouped[t.cat].push(t);
+  });
+  const sortedCats=Object.keys(grouped).sort((a,b)=>{
+    const ia=catOrder.indexOf(a),ib=catOrder.indexOf(b);
+    if(ia===-1&&ib===-1)return a.localeCompare(b);
+    if(ia===-1)return 1;if(ib===-1)return-1;
+    return ia-ib;
+  });
+  const el=g('multi-list');
+  el.innerHTML=sortedCats.map((cat,ci)=>{
+    const types=grouped[cat];
+    const dot=catColors[cat]||'#94A3B8';
+    const selInCat=types.filter(t=>_multiSel[t.id]!==undefined).length;
+    return`<div class="multi-cat">
+      <button class="multi-cat-hdr" onclick="toggleMultiCat('mc-${ci}',this)">
+        <span class="multi-cat-dot" style="background:${dot}"></span>
+        <span>${cat}</span>
+        ${selInCat?`<span class="multi-cat-count">${selInCat}</span>`:''}
+        <svg class="multi-cat-chev" id="mc-${ci}-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="multi-cat-body" id="mc-${ci}">
+        ${types.map(t=>{
+          const isSel=_multiSel[t.id]!==undefined;
+          return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}" onclick="toggleMultiItem('${t.id}')">
+            <div class="multi-item-ico">${t.ico}</div>
+            <div class="multi-item-label">${esc(t.label)}</div>
+            <div class="multi-item-cost">
+              <input type="number" inputmode="decimal" placeholder="€" min="0" step="0.01"
+                value="${isSel&&_multiSel[t.id]?_multiSel[t.id]:''}"
+                onclick="event.stopPropagation()"
+                oninput="onMultiCostInput('${t.id}',this.value)"
+                id="micost-${t.id}">
+            </div>
+            <div class="multi-item-chk">${isSel?'✓':''}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleMultiCat(id,btn){
+  const body=document.getElementById(id);
+  const chev=document.getElementById(id+'-chev');
+  if(!body)return;
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  if(chev)chev.style.transform=isOpen?'':'rotate(90deg)';
+}
+
+function toggleMultiItem(typeId){
+  if(_multiSel[typeId]!==undefined){
+    delete _multiSel[typeId];
+  } else {
+    _multiSel[typeId]=null;
+  }
+  const item=document.getElementById('mi-'+typeId);
+  if(item){
+    const isSel=_multiSel[typeId]!==undefined;
+    item.classList.toggle('sel',isSel);
+    const chk=item.querySelector('.multi-item-chk');
+    if(chk)chk.textContent=isSel?'✓':'';
+    const costInput=item.querySelector('input');
+    if(costInput)costInput.style.display=isSel?'block':'none';
+    if(isSel&&costInput)setTimeout(()=>costInput.focus(),50);
+  }
+  updateMultiFooter();
+  // Mettre à jour le badge de la catégorie
+  const selCount=Object.keys(_multiSel).length;
+  renderMultiCatBadges();
+}
+
+function renderMultiCatBadges(){
+  // Mettre à jour les badges par catégorie sans re-render complet
+  document.querySelectorAll('.multi-cat-hdr').forEach(hdr=>{
+    const body=hdr.nextElementSibling;
+    if(!body)return;
+    const items=body.querySelectorAll('.multi-item');
+    let sel=0;
+    items.forEach(item=>{const id=item.id.replace('mi-','');if(_multiSel[id]!==undefined)sel++;});
+    let badge=hdr.querySelector('.multi-cat-count');
+    if(sel>0){
+      if(!badge){badge=document.createElement('span');badge.className='multi-cat-count';hdr.querySelector('.multi-cat-chev').before(badge);}
+      badge.textContent=sel;
+    } else if(badge){
+      badge.remove();
+    }
+  });
+}
+
+function onMultiCostInput(typeId,val){
+  if(_multiSel[typeId]!==undefined){
+    _multiSel[typeId]=val?parseFloat(val):null;
+    updateMultiFooter();
+  }
+}
+
+function updateMultiFooter(){
+  const count=Object.keys(_multiSel).length;
+  const total=Object.values(_multiSel).reduce((s,v)=>s+(parseFloat(v)||0),0);
+  const cntEl=g('multi-count');
+  const totEl=g('multi-total');
+  const btn=g('multi-save-btn');
+  if(cntEl)cntEl.textContent=count===0?'0 intervention sélectionnée':count===1?'1 intervention sélectionnée':`${count} interventions sélectionnées`;
+  if(totEl)totEl.textContent=total>0?'Total : '+fmtCout(total):'';
+  if(btn){btn.disabled=count===0;btn.textContent=count===0?'Enregistrer':`Enregistrer ${count} entretien${count>1?'s':''}`;}
+}
+
+async function saveMultiEnt(){
+  const vid=g('multi-vh').value;
+  const dt=g('multi-dt').value;
+  const km=parseInt(g('multi-km').value)||null;
+  const garage=g('multi-garage').value.trim()||null;
+  const types=Object.keys(_multiSel);
+  if(!vid)return toast('Sélectionnez un véhicule.','e');
+  if(!dt)return toast('Saisissez une date.','e');
+  if(!types.length)return toast('Cochez au moins une intervention.','e');
+
+  const btn=g('multi-save-btn');
+  btn.disabled=true;btn.textContent='Enregistrement…';
+
+  let ok=0,err=0;
+  for(const typeId of types){
+    const cout=_multiSel[typeId]?parseFloat(_multiSel[typeId]):null;
+    const ti=getType(typeId);
+    // Calculer la prochaine échéance
+    let rappelDate=null,rappelKm=null;
+    if(ti.imo){const d=new Date(dt);d.setMonth(d.getMonth()+ti.imo);rappelDate=d.toISOString().split('T')[0];}
+    if(ti.ikm&&km)rappelKm=km+ti.ikm;
+    const p={
+      id:crypto.randomUUID(),
+      vehicle_id:vid,user_id:S.user.id,
+      type:typeId,date:dt,km,garage,cout,
+      rappel_date:rappelDate,rappel_km:rappelKm,
+      note:null,pieces:null,technicien:null,duree_minutes:null,garantie_mois:null
+    };
+    const{error}=await sb.from('entretiens').insert(p);
+    if(error){err++;console.error('Multi ent error:',error);}
+    else ok++;
+  }
+
+  // Mettre à jour km véhicule si fourni
+  if(km&&ok>0){
+    const v=S.vehicles.find(x=>x.id===vid);
+    if(v&&km>(v.km_actuel||0)){
+      await sb.from('vehicles').update({km_actuel:km}).eq('id',vid).eq('user_id',S.user.id);
+      v.km_actuel=km;
+    }
+  }
+
+  btn.disabled=false;
+  cm('multi');
+  _multiSel={};
+  await loadEnts();
+  renderView();
+  jumeauRefreshSiVehicule(vid);
+  if(err>0)toast(`${ok} entretien${ok>1?'s':''} enregistré${ok>1?'s':''}, ${err} erreur${err>1?'s':''})`,'i');
+  else toast(`✅ ${ok} entretien${ok>1?'s':''} enregistré${ok>1?'s':''}  !`,'s');
+  vib([50,30,50]);
+  // Retour sur la fiche véhicule
+  setTimeout(()=>openVehDetail(vid),100);
+}
 function toggleSearch(){
   const bar=g('search-bar');
   const input=g('global-search');
