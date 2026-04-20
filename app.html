@@ -936,6 +936,9 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jcs-bv{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#059669,#047857);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,.3)}
 .jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
 .jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer}
+.jcs-kmrest{margin:0 17px 13px;background:linear-gradient(135deg,#F0F9FF,#E0F2FE);border:1.5px solid #BAE6FD;border-radius:var(--r-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.jcs-kmrest-lbl{font-size:.68rem;font-weight:700;color:#0369A1;line-height:1.3}
+.jcs-kmrest-val{font-size:.9rem;font-weight:900;color:#0369A1;white-space:nowrap;text-align:right;flex-shrink:0}
 .ju-empty{padding:48px 24px;text-align:center}
 .ju-empty-ico{font-size:3rem;margin-bottom:12px}
 .ju-empty-t{font-size:1rem;font-weight:700;color:var(--txt);margin-bottom:6px}
@@ -6838,6 +6841,10 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
       <div class="jcs-box"><div class="jcs-blbl">Parcouru depuis</div><div class="jcs-bval" id="jcs-since-km">—</div></div>
       <div class="jcs-box"><div class="jcs-blbl">Coût estimé</div><div class="jcs-bval" id="jcs-cost">—</div></div>
     </div>
+    <div class="jcs-kmrest" id="jcs-kmrest-wrap">
+      <div class="jcs-kmrest-lbl">📍 Kilométrage restant avant échéance</div>
+      <div class="jcs-kmrest-val" id="jcs-kmrest">—</div>
+    </div>
     <div class="jcs-conseil" id="jcs-conseil">
       <div class="jcs-ctitle" id="jcs-ctitle">—</div>
       <div class="jcs-ctxt" id="jcs-ctxt">—</div>
@@ -6946,7 +6953,8 @@ function jumeauCalculer(v){
       const moisSince=Math.floor((now-lastDate)/(1000*60*60*24*30));
       const status=juCalcStatus(comp,kmSince,moisSince);
       const usure=juCalcUsure(comp,kmSince,moisSince);
-      JU.data[comp.id]={status,usure,lastDate:lastDate.toLocaleDateString('fr-FR',{month:'short',year:'numeric'}),lastKm:lastKm.toLocaleString('fr')+' km',sinceKm:kmSince>0?kmSince.toLocaleString('fr')+' km':'—',estimated:false,cout:comp.cout,conseil:juConseil(comp,status,false)};
+      const kmRestants=juCalcKmRestants(comp,kmSince,moisSince,false,v);
+      JU.data[comp.id]={status,usure,lastDate:lastDate.toLocaleDateString('fr-FR',{month:'short',year:'numeric'}),lastKm:lastKm.toLocaleString('fr')+' km',sinceKm:kmSince>0?kmSince.toLocaleString('fr')+' km':'—',estimated:false,cout:comp.cout,kmRestants,conseil:juConseil(comp,status,false)};
     } else {
       JU.data[comp.id]={...juEstimer(comp,v,km,now),cout:comp.cout};
     }
@@ -7103,8 +7111,48 @@ function juEstimer(comp,v,km,now){
   const status=juCalcStatus(comp,kmEstimeSince,moisEstimeSince);
   const usure=juCalcUsure(comp,kmEstimeSince,moisEstimeSince);
   const sinceKmStr=kmEstimeSince>0?'~'+Math.round(kmEstimeSince).toLocaleString('fr')+' km':'—';
+  const kmRestants=juCalcKmRestants(comp,kmEstimeSince,moisEstimeSince,true,v);
 
-  return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,conseil:juConseil(comp,status,true)};
+  return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,kmRestants,conseil:juConseil(comp,status,true)};
+}
+function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
+  // On calcule les km/mois restants avant le SEUIL ORANGE (skmo/smo = seuil préventif)
+  // Si déjà dépassé le seuil orange → km restants négatifs = retard
+  const kmPerYear={moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000;
+  const kmPerMois=kmPerYear/12;
+
+  let restKm=null, restMois=null;
+
+  // Km restants (si composant a un seuil km)
+  if(comp.skmo&&comp.skmo>0){
+    restKm=comp.skmo-kmSince; // positif = km restants, négatif = retard
+  }
+
+  // Mois restants (si composant a un seuil mois) → converti en km équivalent
+  if(comp.smo&&comp.smo>0){
+    const moisRestants=comp.smo-moisSince;
+    const kmEquivMois=Math.round(moisRestants*kmPerMois);
+    // On garde le plus contraignant (le plus petit)
+    if(restKm===null){
+      restKm=kmEquivMois;
+    } else {
+      restKm=Math.min(restKm,kmEquivMois);
+    }
+  }
+
+  if(restKm===null)return null;
+
+  // Arrondir à 500 km près pour ne pas sur-préciser
+  const arrondi=Math.round(restKm/500)*500;
+  const prefixe=estimated?'~ ':'';
+
+  if(arrondi<=0){
+    // Dépassé
+    const retard=Math.abs(arrondi);
+    return{val:arrondi,txt:prefixe+(retard>0?retard.toLocaleString('fr')+' km de retard':'Seuil atteint'),depasse:true,estimated};
+  } else {
+    return{val:arrondi,txt:prefixe+arrondi.toLocaleString('fr')+' km',depasse:false,estimated};
+  }
 }
 function juConseil(comp,status,est){
   const e=est?' (estimation)':'';
@@ -7286,6 +7334,28 @@ function openJumeauComp(id){
   document.getElementById('jcs-last-km').textContent=d.lastKm;
   document.getElementById('jcs-since-km').textContent=d.sinceKm;
   document.getElementById('jcs-cost').textContent=d.cout;
+  // Km restants
+  const krWrap=document.getElementById('jcs-kmrest-wrap');
+  const krVal=document.getElementById('jcs-kmrest');
+  if(d.kmRestants&&d.status!=='grey'){
+    krWrap.style.display='flex';
+    const kr=d.kmRestants;
+    if(kr.depasse){
+      krWrap.style.background='linear-gradient(135deg,#FFF7ED,#FEF3C7)';
+      krWrap.style.borderColor='#FED7AA';
+      document.querySelector('.jcs-kmrest-lbl').style.color='#C2410C';
+      krVal.style.color='#C2410C';
+      krVal.textContent=kr.txt+(kr.estimated?' (estimation)':'');
+    } else {
+      krWrap.style.background='linear-gradient(135deg,#F0F9FF,#E0F2FE)';
+      krWrap.style.borderColor='#BAE6FD';
+      document.querySelector('.jcs-kmrest-lbl').style.color='#0369A1';
+      krVal.style.color='#0369A1';
+      krVal.textContent=kr.txt+(kr.estimated?' (estimation)':'');
+    }
+  } else {
+    krWrap.style.display='none';
+  }
   const cc={err:{bg:'#FFF7ED',border:'#FED7AA',tc:'#C2410C',xc:'#7C2D12'},warn:{bg:'#FFFBEB',border:'#FDE68A',tc:'#B45309',xc:'#78350F'},ok:{bg:'#F0FDF4',border:'#BBF7D0',tc:'#15803D',xc:'#14532D'},grey:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'}}[d.conseil.type]||{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'};
   const cel=document.getElementById('jcs-conseil');
   cel.style.background=cc.bg;cel.style.borderColor=cc.border;
