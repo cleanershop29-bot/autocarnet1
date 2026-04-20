@@ -7076,11 +7076,11 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
 const JU_COMPOSANTS=[
   {id:'huile',       label:'Huile moteur',           ico:'🛢️',cat:'Moteur · Critique',       poids:3,skmo:8000, skmr:10000,smo:10,smr:12,cout:'70–130€',   types:['vidange','filtre_huile','revision'],         typesGeneriques:[]},
   {id:'courroie',    label:'Courroie distribution',  ico:'⚙️',cat:'Moteur · Critique',       poids:3,skmo:60000,skmr:80000,smo:48,smr:60,cout:'400–1000€',types:['courroie','sangle_dist','chaine_dist'],      typesGeneriques:[]},
-  {id:'freins_av',   label:'Plaquettes avant',        ico:'🔴',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:28000,smo:28,smr:34,cout:'100–220€', types:['freins_av'],                                 typesGeneriques:['freins']},
-  {id:'freins_ar',   label:'Plaquettes arrière',      ico:'⭕',cat:'Freinage · Critique',     poids:3,skmo:30000,skmr:38000,smo:30,smr:38,cout:'80–180€',  types:['freins_ar'],                                 typesGeneriques:['freins']},
+  {id:'freins_av',   label:'Plaquettes avant',        ico:'🔴',cat:'Freinage · Critique',     poids:3,skmo:25000,skmr:32000,smo:28,smr:36,cout:'100–220€', types:['freins_av'],                                 typesGeneriques:['freins']},
+  {id:'freins_ar',   label:'Plaquettes arrière',      ico:'⭕',cat:'Freinage · Critique',     poids:3,skmo:25000,skmr:32000,smo:28,smr:36,cout:'80–180€',  types:['freins_ar'],                                 typesGeneriques:['freins']},
   {id:'liq_frein',   label:'Liquide de frein',        ico:'🧴',cat:'Freinage · Important',   poids:2,skmo:null, skmr:null, smo:20,smr:24,cout:'60–100€',   types:['liq_frein'],                                 typesGeneriques:[]},
-  {id:'pneus_av',    label:'Pneus avant',             ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:38000,smo:36,smr:48,cout:'180–450€', types:['pneus_av'],                                  typesGeneriques:['pneus','pneus_sais']},
-  {id:'pneus_ar',    label:'Pneus arrière',           ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:35000,skmr:44000,smo:36,smr:48,cout:'160–430€', types:['pneus_ar'],                                  typesGeneriques:['pneus','pneus_sais']},
+  {id:'pneus_av',    label:'Pneus avant',             ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:32000,skmr:40000,smo:36,smr:48,cout:'180–450€', types:['pneus_av'],                                  typesGeneriques:['pneus','pneus_sais']},
+  {id:'pneus_ar',    label:'Pneus arrière',           ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:32000,skmr:40000,smo:36,smr:48,cout:'160–430€', types:['pneus_ar'],                                  typesGeneriques:['pneus','pneus_sais']},
   {id:'batterie',    label:'Batterie 12V',            ico:'🔋',cat:'Électrique · Important', poids:2,skmo:null, skmr:null, smo:40,smr:60,cout:'100–250€',  types:['batterie'],                                  typesGeneriques:[]},
   {id:'embrayage',   label:'Embrayage',               ico:'🔄',cat:'Transmission · Important',poids:2,skmo:70000,skmr:100000,smo:null,smr:null,cout:'600–1500€',types:['embrayage'],                          typesGeneriques:[]},
   {id:'courroie_acc',label:'Courroie accessoires',    ico:'🔗',cat:'Moteur · Important',     poids:2,skmo:45000,skmr:60000,smo:36,smr:48,cout:'80–200€',  types:['courroie_acc'],                              typesGeneriques:[]},
@@ -7377,20 +7377,33 @@ function jumeauCalculer(v){
     if(last){
       const lastDate=new Date(last.date);
       const lastKm=last.km||0;
-      const kmSince=lastKm>0?(km-lastKm):0;
       const moisSince=Math.floor((now-lastDate)/(1000*60*60*24*30));
+
+      // Si le km de l'entretien n'est pas renseigné (lastKm=0), on ne peut pas
+      // calculer les km parcourus depuis. On estime depuis la date uniquement.
+      let kmSince=0;
+      let kmSinceStr='—';
+      if(lastKm>0&&km>0){
+        kmSince=Math.max(0,km-lastKm);
+        kmSinceStr=kmSince.toLocaleString('fr')+' km';
+      } else if(lastKm===0&&km>0){
+        // Km manquant dans l'entretien → estimer depuis la date et le km annuel
+        const kmAnnuel=JU._kmAnnuelReel||15000;
+        kmSince=Math.round(moisSince*(kmAnnuel/12));
+        kmSinceStr='~'+kmSince.toLocaleString('fr')+' km (estimé)';
+      }
+
       const kmSinceAdj=juAppliquerUsage(comp,kmSince,v);
       const status=juCalcStatus(comp,kmSinceAdj,moisSince);
       const usure=juCalcUsure(comp,kmSinceAdj,moisSince);
-      const kmRestants=juCalcKmRestants(comp,kmSinceAdj,moisSince,false,v);
-      // Si on utilise un type générique, marquer comme estimation partielle
+      const kmRestants=juCalcKmRestants(comp,kmSinceAdj,moisSince,lastKm===0,v);
       const genericNote=isGeneric?' (type générique)':'';
       JU.data[comp.id]={
         status,usure,
-        lastDate:lastDate.toLocaleDateString('fr-FR',{month:'short',year:'numeric'}),
-        lastKm:lastKm>0?lastKm.toLocaleString('fr')+' km':'—',
-        sinceKm:kmSince>0?kmSince.toLocaleString('fr')+' km':'—',
-        estimated:isGeneric,
+        lastDate:lastDate.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}),
+        lastKm:lastKm>0?lastKm.toLocaleString('fr')+' km':'Non renseigné',
+        sinceKm:kmSinceStr,
+        estimated:isGeneric||(lastKm===0),
         isGeneric,
         genericNote,
         cout:comp.cout,kmRestants,
@@ -7404,10 +7417,33 @@ function jumeauCalculer(v){
 
 function juAppliquerUsage(comp,kmSince,v){
   const usage=v.jumeau_usage||'mixte';
+  // Les freins avant s'usent ~40% plus vite que les arrière en urbain (traction avant)
+  // En route/autoroute, la différence se réduit
   const multUsage={
-    urbain:{freins_av:1.35,freins_ar:1.25,disques_av:1.3,disques_ar:1.2,huile:1.2,embrayage:1.3,bougies:1.15,bougies_prech:1.1,filtre_air:1.1,geometrie:1.2},
-    route:{courroie:0.85,pneus_av:0.88,pneus_ar:0.88,embrayage:0.85,freins_av:0.9,freins_ar:0.9,disques_av:0.88,disques_ar:0.88},
-    intensif:{huile:1.4,freins_av:1.5,freins_ar:1.4,disques_av:1.45,disques_ar:1.35,courroie:1.2,embrayage:1.3,bougies:1.2,bougies_prech:1.15,pneus_av:1.2,pneus_ar:1.2,pompe_eau:1.1,geometrie:1.3}
+    urbain:{
+      freins_av:1.5, freins_ar:1.1,       // av beaucoup plus sollicité en ville
+      disques_av:1.4, disques_ar:1.1,
+      huile:1.2, embrayage:1.35,
+      bougies:1.15, bougies_prech:1.1,
+      filtre_air:1.1, geometrie:1.2,
+      pneus_av:1.15, pneus_ar:1.05        // av légèrement plus en traction
+    },
+    route:{
+      courroie:0.85,
+      pneus_av:0.9, pneus_ar:0.9,
+      embrayage:0.85,
+      freins_av:0.85, freins_ar:0.9,      // moins sollicités en route
+      disques_av:0.85, disques_ar:0.9
+    },
+    intensif:{
+      huile:1.4,
+      freins_av:1.7, freins_ar:1.5,
+      disques_av:1.6, disques_ar:1.4,
+      courroie:1.2, embrayage:1.4,
+      bougies:1.2, bougies_prech:1.15,
+      pneus_av:1.25, pneus_ar:1.2,
+      pompe_eau:1.1, geometrie:1.3
+    }
   }[usage]||{};
   return Math.round(kmSince*(multUsage[comp.id]||1));
 }
