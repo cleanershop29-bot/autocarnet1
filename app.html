@@ -728,28 +728,29 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .multi-hdr-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txm);font-size:1rem;flex-shrink:0}
 .multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid var(--border);background:#FAFBFF}
 .multi-field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.multi-list{flex:1;overflow-y:auto;padding:8px 14px 4px}
-/* ── Multi : catégories ── */
-.multi-cat{margin-bottom:10px}
-.multi-cat-hdr{display:flex;align-items:center;gap:7px;padding:5px 2px;background:none;border:none;width:100%;font-family:inherit;font-size:.7rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;cursor:default;margin-bottom:6px;text-align:left}
+.multi-list{flex:1;overflow-y:auto;padding:0}
+/* ── Multi : en-têtes de catégorie ── */
+.multi-cat{margin-bottom:0}
+.multi-cat-hdr{display:flex;align-items:center;gap:7px;padding:8px 14px 5px;background:var(--bg2);border-top:1px solid var(--border);font-size:.67rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;position:sticky;top:0;z-index:2}
 .multi-cat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .multi-cat-count{font-size:.62rem;font-weight:700;background:var(--primary);color:#fff;padding:2px 7px;border-radius:10px;margin-left:auto;flex-shrink:0}
 .multi-cat-chev{display:none}
-.multi-cat-body{display:block;margin-bottom:2px}
-.multi-cat-body.open{display:block}
-/* ── Multi : grille de chips ── */
-.multi-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
-.multi-item{border-radius:20px;cursor:pointer;border:1.5px solid var(--border);background:#fff;transition:.12s;overflow:hidden;display:inline-flex;align-items:center;gap:6px;padding:7px 12px 7px 9px;flex-shrink:0}
-.multi-item:active{transform:scale(.96)}
-.multi-item.sel{border-color:var(--primary);background:#EFF6FF}
-.multi-item-ico{font-size:.9rem;flex-shrink:0;line-height:1}
-.multi-item-label{font-size:.78rem;font-weight:600;color:var(--txt);white-space:nowrap}
-.multi-item.sel .multi-item-label{color:var(--primary);font-weight:700}
-.multi-item-chk{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.12s;font-size:.55rem;color:#fff}
-.multi-item.sel .multi-item-chk{background:var(--primary);border-color:var(--primary)}
-/* ── Coût inline sur item sélectionné ── */
-.multi-item-detail{display:none}
-.multi-item.sel .multi-item-detail{display:none}
+.multi-cat-body{display:block}
+/* ── Multi : ligne par intervention ── */
+.multi-item{display:flex;align-items:center;gap:0;padding:0;border:none;border-bottom:1px solid var(--border);background:#fff;cursor:pointer;transition:background .1s;width:100%}
+.multi-item:active{background:#F8FAFC}
+.multi-item.sel{background:#EFF6FF}
+.multi-item-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:12px 10px 12px 14px;-webkit-tap-highlight-color:transparent}
+.multi-item-ico{font-size:1rem;flex-shrink:0;width:22px;text-align:center}
+.multi-item-label{font-size:.84rem;font-weight:600;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.multi-item.sel .multi-item-label{color:var(--primary)}
+.multi-item-price{width:84px;flex-shrink:0;padding:8px 10px 8px 6px;display:flex;align-items:center}
+.multi-item-price input{width:100%;border:1.5px solid transparent;border-radius:8px;padding:6px 7px;font-family:inherit;font-size:.84rem;font-weight:700;text-align:right;background:transparent;outline:none;color:var(--txm);display:none}
+.multi-item.sel .multi-item-price input{display:block;border-color:var(--border);background:#fff;color:var(--txt)}
+.multi-item.sel .multi-item-price input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.1)}
+.multi-item-chk{width:44px;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-left:1px solid var(--border)}
+.multi-item-chk-inner{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;transition:all .12s;background:#fff}
+.multi-item.sel .multi-item-chk-inner{background:var(--primary);border-color:var(--primary)}
 .multi-sel-costs{padding:10px 0 4px;display:flex;flex-direction:column;gap:6px}
 .multi-detail-lbl{font-size:.65rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .multi-cost-input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.92rem;font-weight:700;background:#fff;outline:none;color:var(--txt);transition:.15s;box-sizing:border-box;margin-top:8px}
@@ -1496,8 +1497,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     <!-- Input photo global caché -->
     <input type="file" id="multi-photo-input" accept="image/*,application/pdf" style="display:none" onchange="onMultiPhotoSelected(this)">
     <div class="multi-list" id="multi-list"></div>
-    <!-- Zone coûts par intervention -->
-    <div id="multi-costs-zone" style="padding:0 14px;border-top:1px solid var(--border)"></div>
     <!-- Zone photo / document globale -->
     <div class="multi-global-photo">
       <div class="multi-detail-lbl">📷 Photo ou document de la facture</div>
@@ -6929,40 +6928,35 @@ function renderMultiList(){
         <span>${cat}</span>
         ${selInCat?`<span class="multi-cat-count">${selInCat}</span>`:''}
       </div>
-      <div class="multi-chips">
+      <div class="multi-cat-body">
         ${types.map(t=>_buildMultiItemHTML(t)).join('')}
       </div>
     </div>`;
   }).join('');
-  _renderMultiCosts();
 }
 
 function _buildMultiItemHTML(t){
   const isSel=_multiSel[t.id]!==undefined;
-  return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}" onclick="toggleMultiItem('${t.id}')">
-    <div class="multi-item-ico">${t.ico}</div>
-    <div class="multi-item-label">${esc(t.label)}</div>
-    <div class="multi-item-chk">${isSel?'✓':''}</div>
+  const costVal=isSel&&_multiSel[t.id]!=null?_multiSel[t.id]:'';
+  return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}">
+    <div class="multi-item-left" onclick="toggleMultiItem('${t.id}')">
+      <div class="multi-item-ico">${t.ico}</div>
+      <div class="multi-item-label">${esc(t.label)}</div>
+    </div>
+    <div class="multi-item-price">
+      <input type="number" inputmode="decimal" placeholder="0 €" min="0" step="0.01"
+        value="${costVal}"
+        onclick="event.stopPropagation()"
+        oninput="onMultiCostInput('${t.id}',this.value)"
+        id="micost-${t.id}">
+    </div>
+    <div class="multi-item-chk" onclick="toggleMultiItem('${t.id}')">
+      <div class="multi-item-chk-inner">${isSel?'✓':''}</div>
+    </div>
   </div>`;
 }
 
-// Zone de saisie des coûts par intervention sélectionnée
-function _renderMultiCosts(){
-  const sel=Object.keys(_multiSel);
-  let zone=document.getElementById('multi-costs-zone');
-  if(!zone)return;
-  if(!sel.length){zone.innerHTML='';return;}
-  zone.innerHTML='<div class="multi-detail-lbl" style="margin-bottom:6px">💶 Montant par intervention (€) — optionnel</div>'
-    +sel.map(id=>{
-      const t=TYPES.find(x=>x.id===id)||{ico:'🔧',label:id};
-      const v=_multiSel[id]||'';
-      return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">`
-        +`<span style="font-size:.85rem;flex-shrink:0">${t.ico}</span>`
-        +`<span style="font-size:.78rem;font-weight:600;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.label)}</span>`
-        +`<input style="width:100px;flex-shrink:0;padding:7px 10px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.88rem;font-weight:700;text-align:right;outline:none;color:var(--txt)" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01" value="${v}" oninput="onMultiCostInput('${id}',this.value)" id="micost-${id}">`
-        +'</div>';
-    }).join('');
-}
+// Prix inline dans chaque ligne
 
 function onMultiPhotoSelected(inp){
   if(!inp.files||!inp.files[0])return;
@@ -7015,7 +7009,6 @@ function toggleMultiItem(typeId){
   const t=TYPES.find(x=>x.id===typeId);
   const itemEl=document.getElementById('mi-'+typeId);
   if(itemEl&&t)itemEl.outerHTML=_buildMultiItemHTML(t);
-  _renderMultiCosts();
   updateMultiFooter();
   renderMultiCatBadges();
 }
@@ -7023,9 +7016,9 @@ function toggleMultiItem(typeId){
 function renderMultiCatBadges(){
   document.querySelectorAll('.multi-cat').forEach(cat=>{
     const hdr=cat.querySelector('.multi-cat-hdr');
-    const chips=cat.querySelector('.multi-chips');
-    if(!hdr||!chips)return;
-    const items=chips.querySelectorAll('.multi-item');
+    const body=cat.querySelector('.multi-cat-body');
+    if(!hdr||!body)return;
+    const items=body.querySelectorAll('.multi-item');
     let sel=0;
     items.forEach(item=>{const id=item.id.replace('mi-','');if(_multiSel[id]!==undefined)sel++;});
     let badge=hdr.querySelector('.multi-cat-count');
