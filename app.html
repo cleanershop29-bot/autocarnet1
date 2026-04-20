@@ -829,126 +829,193 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .jonb-skip{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.83rem;font-weight:600;cursor:pointer}
 .jonb-next{flex:2;padding:12px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.86rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
 .jonb-next:disabled{opacity:.4;cursor:not-allowed}
-.ju-hdr{background:linear-gradient(135deg,#1E3A8A,#2563EB);padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(37,99,235,.3)}
-.ju-hdr-l .jh-t{font-size:.98rem;font-weight:800;color:#fff;letter-spacing:-.3px}
-.ju-hdr-l .jh-s{font-size:.68rem;color:rgba(255,255,255,.65);margin-top:1px}
-.ju-hdr-ico{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid rgba(255,255,255,.2)}
-.ju-vsel{margin:12px 14px 0;background:#fff;border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);border:1.5px solid var(--border);cursor:pointer}
-.ju-vsel-em{font-size:1.35rem}
+
+/* ── HEADER JUMEAU IMMERSIF ── */
+.ju-hdr{background:linear-gradient(135deg,#0F2460 0%,#1E3A8A 40%,#2563EB 100%);padding:18px 16px 16px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(37,99,235,.4)}
+.ju-hdr::before{content:'';position:absolute;top:-40px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,255,255,.1) 0%,transparent 70%);pointer-events:none}
+.ju-hdr::after{content:'';position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(99,140,255,.15) 0%,transparent 70%);pointer-events:none}
+.ju-hdr-inner{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.ju-hdr-l .jh-t{font-size:1.05rem;font-weight:900;color:#fff;letter-spacing:-.5px;display:flex;align-items:center;gap:7px}
+.ju-hdr-l .jh-s{font-size:.68rem;color:rgba(255,255,255,.6);margin-top:3px}
+.ju-hdr-ico{width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:.2s}
+.ju-hdr-ico:active{transform:scale(.92)}
+
+/* ── SÉLECTEUR VÉHICULE ── */
+.ju-vsel{margin:12px 14px 0;background:#fff;border-radius:var(--r);padding:11px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 12px rgba(37,99,235,.1);border:1.5px solid rgba(37,99,235,.12);cursor:pointer;transition:.15s}
+.ju-vsel:active{transform:scale(.99)}
+.ju-vsel-em{font-size:1.4rem;flex-shrink:0}
 .ju-vsel-info{flex:1}
-.ju-vsel-name{font-size:.88rem;font-weight:700;color:var(--txt)}
-.ju-vsel-sub{font-size:.7rem;color:var(--txm);margin-top:1px}
-.ju-score{margin:11px 14px 0;background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:15px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 4px 20px rgba(37,99,235,.35);position:relative;overflow:hidden}
-.ju-score::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;background:rgba(255,255,255,.06);border-radius:50%}
-.ju-sc-circle{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(255,255,255,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
-.ju-sc-val{font-size:1.35rem;font-weight:900;color:#fff;line-height:1}
-.ju-sc-max{font-size:.56rem;color:rgba(255,255,255,.6)}
-.ju-sc-info{flex:1}
-.ju-sc-lbl{font-size:.66rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
-.ju-sc-title{font-size:.98rem;font-weight:800;color:#fff;margin:2px 0}
-.ju-sc-desc{font-size:.7rem;color:rgba(255,255,255,.75);line-height:1.4}
-.ju-sc-badges{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
-.ju-badge{padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700}
+.ju-vsel-name{font-size:.9rem;font-weight:800;color:var(--txt)}
+.ju-vsel-sub{font-size:.7rem;color:var(--txm);margin-top:2px}
+.ju-vsel-arr{color:var(--primary);font-size:.8rem;font-weight:700}
+
+/* ── SCORE SANTÉ avec anneau SVG ── */
+.ju-score{margin:11px 14px 0;background:linear-gradient(135deg,#0F2460 0%,#1E3A8A 50%,#2563EB 100%);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:16px;box-shadow:0 6px 28px rgba(37,99,235,.38);position:relative;overflow:hidden}
+.ju-score::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,.09) 0%,transparent 70%)}
+.ju-score::after{content:'';position:absolute;bottom:-20px;left:60px;width:80px;height:80px;background:radial-gradient(circle,rgba(99,140,255,.12) 0%,transparent 70%)}
+.ju-sc-ring{position:relative;width:72px;height:72px;flex-shrink:0}
+.ju-sc-ring svg{width:72px;height:72px;transform:rotate(-90deg)}
+.ju-sc-ring-bg{fill:none;stroke:rgba(255,255,255,.12);stroke-width:5}
+.ju-sc-ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1),stroke .4s}
+.ju-sc-ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ju-sc-val{font-size:1.4rem;font-weight:900;color:#fff;line-height:1;letter-spacing:-.02em}
+.ju-sc-max{font-size:.52rem;color:rgba(255,255,255,.55);font-weight:600;margin-top:1px}
+.ju-sc-info{flex:1;position:relative;z-index:1}
+.ju-sc-lbl{font-size:.62rem;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.ju-sc-title{font-size:1rem;font-weight:900;color:#fff;margin:3px 0 4px;letter-spacing:-.02em}
+.ju-sc-desc{font-size:.7rem;color:rgba(255,255,255,.72);line-height:1.4}
+.ju-sc-badges{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.ju-badge{padding:3px 8px;border-radius:20px;font-size:.6rem;font-weight:700}
 .jub-r{background:rgba(220,38,38,.3);color:#FCA5A5}
 .jub-w{background:rgba(217,119,6,.3);color:#FCD34D}
 .jub-ok{background:rgba(5,150,105,.3);color:#6EE7B7}
-.ju-prec{margin:10px 14px 0;background:#fff;border-radius:var(--r-sm);padding:10px 14px;box-shadow:var(--sh);border:1.5px solid var(--border)}
-.ju-prec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+
+/* ── PRÉCISION ── */
+.ju-prec{margin:10px 14px 0;background:#fff;border-radius:var(--r-sm);padding:11px 14px;box-shadow:0 1px 6px rgba(0,0,0,.06);border:1.5px solid rgba(184,196,216,.5)}
+.ju-prec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .ju-prec-lbl{font-size:.7rem;font-weight:700;color:var(--txm)}
 .ju-prec-val{font-size:.7rem;font-weight:800;color:var(--primary)}
-.ju-prec-bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px}
-.ju-prec-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#3B82F6,#2563EB);transition:width .8s ease}
+.ju-prec-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:7px}
+.ju-prec-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#3B82F6,#60A5FA);transition:width 1s cubic-bezier(.22,1,.36,1)}
 .ju-prec-acts{display:flex;gap:5px;flex-wrap:wrap}
-.ju-prec-act{font-size:.63rem;font-weight:600;color:var(--primary);background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:20px;padding:3px 8px;cursor:pointer;white-space:nowrap}
-.ju-sec{margin:13px 14px 7px;font-size:.68rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:6px}
+.ju-prec-act{font-size:.63rem;font-weight:600;color:var(--primary);background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:20px;padding:3px 9px;cursor:pointer;white-space:nowrap;transition:.15s}
+.ju-prec-act:active{transform:scale(.96)}
+
+/* ── BANNIÈRE PROCHAIN ENTRETIEN ── */
+.ju-next-banner{margin:10px 14px 0;border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;border:1.5px solid}
+.ju-next-banner:active{transform:scale(.99)}
+.ju-next-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ju-next-info{flex:1;min-width:0}
+.ju-next-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.ju-next-title{font-size:.86rem;font-weight:800;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ju-next-sub{font-size:.68rem;color:var(--txm);margin-top:1px}
+.ju-next-arr{font-size:.9rem;flex-shrink:0}
+
+/* ── SECTION HEADER ── */
+.ju-sec{margin:14px 14px 8px;font-size:.68rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:8px}
 .ju-sec::after{content:'';flex:1;height:1px;background:var(--border)}
-.ju-sil{margin:0 14px;background:#fff;border-radius:var(--r);padding:13px;box-shadow:var(--sh);border:1.5px solid var(--border)}
+.ju-sec-action{font-size:.65rem;font-weight:700;color:var(--primary);background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:20px;padding:2px 9px;cursor:pointer;white-space:nowrap;letter-spacing:0;text-transform:none}
+
+/* ── VISUALISATION ── */
+.ju-sil{margin:0 14px;background:#fff;border-radius:var(--r);padding:13px;box-shadow:0 2px 12px rgba(37,99,235,.08);border:1.5px solid rgba(37,99,235,.1)}
 .ju-vtabs{display:flex;background:var(--bg);border-radius:var(--r-sm);padding:3px;margin-bottom:13px;gap:2px}
 .ju-vt{flex:1;padding:6px;border:none;background:none;border-radius:8px;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s;font-family:inherit}
 .ju-vt.active{background:#fff;color:var(--primary);box-shadow:var(--sh)}
 .ju-svgwrap{position:relative;width:100%}
 .ju-svgwrap svg{width:100%;height:auto;display:block}
 .jhot{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:10}
-.jhot-d{width:21px;height:21px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:800;color:#fff;transition:transform .15s}
-.jhot:active .jhot-d{transform:scale(.88)}
+.jhot-d{width:22px;height:22px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;font-size:.52rem;font-weight:800;color:#fff;transition:transform .15s}
+.jhot:active .jhot-d{transform:scale(.85)}
 .jhot-d.ok{background:var(--ok)}
 .jhot-d.warn{background:var(--warn)}
 .jhot-d.err{background:var(--err)}
 .jhot-d.grey{background:var(--txl)}
-.jhot-d.est{opacity:.75}
+.jhot-d.est{opacity:.72}
 .jhot-d.err{animation:hotP 1.8s ease infinite}
-@keyframes hotP{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5),0 2px 8px rgba(0,0,0,.25)}70%{box-shadow:0 0 0 7px rgba(220,38,38,0),0 2px 8px rgba(0,0,0,.25)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0),0 2px 8px rgba(0,0,0,.25)}}
-.ju-legend{display:flex;gap:9px;margin-top:11px;padding-top:9px;border-top:1px solid var(--border);flex-wrap:wrap}
+@keyframes hotP{0%{box-shadow:0 0 0 0 rgba(220,38,38,.6),0 2px 10px rgba(0,0,0,.28)}70%{box-shadow:0 0 0 8px rgba(220,38,38,0),0 2px 10px rgba(0,0,0,.28)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0),0 2px 10px rgba(0,0,0,.28)}}
+.ju-legend{display:flex;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
 .ju-leg-i{display:flex;align-items:center;gap:4px;font-size:.63rem;color:var(--txm);font-weight:500}
-.ju-leg-d{width:7px;height:7px;border-radius:50%}
-.ju-complist{margin:0 14px;display:flex;flex-direction:column;gap:7px}
-.jcomp{background:#fff;border-radius:var(--r-sm);padding:11px 13px;display:flex;align-items:center;gap:11px;box-shadow:var(--sh);border:1.5px solid var(--border);cursor:pointer;transition:.15s}
-.jcomp:active{transform:scale(.98)}
-.jcomp.err{border-left:3px solid var(--err)}
-.jcomp.warn{border-left:3px solid var(--warn)}
-.jcomp.ok{border-left:3px solid var(--ok)}
-.jcomp.grey{border-left:3px solid var(--txl)}
-.jcomp-ico{width:35px;height:35px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
-.jcomp-ico.err{background:var(--err-bg)}
-.jcomp-ico.warn{background:var(--warn-bg)}
-.jcomp-ico.ok{background:var(--ok-bg)}
+.ju-leg-d{width:8px;height:8px;border-radius:50%}
+
+/* ── TOGGLE FILTRE COMPOSANTS ── */
+.ju-filter-toggle{display:flex;margin:0 14px 2px;background:var(--bg);border-radius:var(--r-sm);padding:3px;gap:2px}
+.ju-ft{flex:1;padding:7px 6px;border:none;background:none;border-radius:8px;font-size:.74rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px}
+.ju-ft.active{background:#fff;color:var(--txt);box-shadow:var(--sh);font-weight:700}
+.ju-ft-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── LISTE COMPOSANTS ── */
+.ju-complist{margin:0 14px;display:flex;flex-direction:column;gap:0}
+.ju-cat-hdr{padding:10px 4px 5px;font-size:.65rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(184,196,216,.3);margin-bottom:6px}
+.ju-cat-hdr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ju-cat-group{margin-bottom:10px}
+.jcomp{background:#fff;border-radius:var(--r-sm);padding:11px 13px;display:flex;align-items:center;gap:11px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:6px;border:1.5px solid rgba(184,196,216,.4);cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
+.jcomp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px}
+.jcomp.err::before{background:var(--err)}
+.jcomp.warn::before{background:var(--warn)}
+.jcomp.ok::before{background:var(--ok)}
+.jcomp.grey::before{background:var(--txl)}
+.jcomp:active{transform:scale(.985);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.jcomp-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.jcomp-ico.err{background:#FFF0F0}
+.jcomp-ico.warn{background:#FFFBEB}
+.jcomp-ico.ok{background:#F0FDF4}
 .jcomp-ico.grey{background:#F1F5F9}
 .jcomp-info{flex:1;min-width:0}
-.jcomp-name{font-size:.81rem;font-weight:700;color:var(--txt)}
-.jcomp-sub{font-size:.68rem;color:var(--txm);margin-top:2px}
+.jcomp-name{font-size:.82rem;font-weight:700;color:var(--txt)}
+.jcomp-sub{font-size:.68rem;color:var(--txm);margin-top:3px}
 .jcomp-sub-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.jcomp-kr{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:8px;white-space:nowrap}
+.jcomp-kr{font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:8px;white-space:nowrap}
 .jcomp-kr.ok{background:var(--ok-bg);color:var(--ok)}
 .jcomp-kr.warn{background:var(--warn-bg);color:var(--warn)}
 .jcomp-kr.err{background:var(--err-bg);color:var(--err)}
-.jcomp-est{font-size:.6rem;color:var(--warn);font-weight:600}
-.jcomp-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
-.jcomp-pill{padding:3px 8px;border-radius:20px;font-size:.6rem;font-weight:700}
+.jcomp-est{font-size:.6rem;color:#B45309;font-weight:600;background:#FFFBEB;padding:1px 5px;border-radius:6px}
+.jcomp-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.jcomp-pill{padding:3px 9px;border-radius:20px;font-size:.6rem;font-weight:700}
 .jcomp-pill.err{background:var(--err-bg);color:var(--err)}
 .jcomp-pill.warn{background:var(--warn-bg);color:var(--warn)}
 .jcomp-pill.ok{background:var(--ok-bg);color:var(--ok)}
 .jcomp-pill.grey{background:#F1F5F9;color:var(--txl)}
-.jcomp-bw{width:50px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.jcomp-bar{height:100%;border-radius:2px}
-.jcomp-bar.err{background:var(--err)}
-.jcomp-bar.warn{background:var(--warn)}
-.jcomp-bar.ok{background:var(--ok)}
-.jcomp-bar.grey{background:var(--txl)}
-#mo-jcomp{position:fixed;inset:0;z-index:600;background:rgba(10,15,30,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
+
+/* ── BARRE USURE GRADUÉE ── */
+.jcomp-bw{width:52px;height:6px;background:var(--border);border-radius:3px;overflow:visible;position:relative}
+.jcomp-bar-track{position:absolute;inset:0;border-radius:3px;overflow:hidden;display:flex}
+.jcomp-bar-z1{flex:0 0 60%;background:linear-gradient(90deg,#22C55E,#86EFAC)}
+.jcomp-bar-z2{flex:0 0 25%;background:linear-gradient(90deg,#F59E0B,#FCD34D)}
+.jcomp-bar-z3{flex:0 0 15%;background:linear-gradient(90deg,#EF4444,#FCA5A5)}
+.jcomp-bar-cursor{position:absolute;top:50%;transform:translateY(-50%);width:3px;height:10px;background:#1E293B;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.35);transition:left .6s cubic-bezier(.22,1,.36,1);pointer-events:none}
+
+/* ── BOTTOM SHEET COMPOSANT ── */
+#mo-jcomp{position:fixed;inset:0;z-index:600;background:rgba(10,15,30,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
 #mo-jcomp.open{opacity:1;pointer-events:all}
-.jcs-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,16px)}
+.jcs-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,16px)}
 #mo-jcomp.open .jcs-sheet{transform:translateY(0)}
 .jcs-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
-.jcs-head{padding:13px 17px 0}
-.jcs-trow{display:flex;align-items:center;gap:11px;margin-bottom:13px}
-.jcs-ico{width:43px;height:43px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
-.jcs-name{font-size:.98rem;font-weight:800;color:var(--txt)}
-.jcs-cat{font-size:.68rem;color:var(--txm);margin-top:2px}
-.jcs-usure{padding:0 17px;margin-bottom:13px}
-.jcs-ulbl{display:flex;justify-content:space-between;margin-bottom:5px}
-.jcs-ulbl span{font-size:.68rem;font-weight:600;color:var(--txm)}
-.jcs-ulbl strong{font-size:.68rem;font-weight:800}
-.jcs-ubg{height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
-.jcs-umark{position:absolute;left:70%;top:-2px;width:2px;height:12px;background:var(--warn);border-radius:1px;opacity:.8;pointer-events:none}
-.jcs-ubar{height:100%;border-radius:4px;transition:width .8s ease}
-.jcs-grid{padding:0 17px;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px}
-.jcs-box{background:#F8FAFC;border-radius:9px;padding:9px 11px}
+.jcs-head{padding:14px 18px 0}
+.jcs-trow{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.jcs-ico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.jcs-name{font-size:1rem;font-weight:900;color:var(--txt);letter-spacing:-.02em}
+.jcs-cat{font-size:.68rem;color:var(--txm);margin-top:3px;display:flex;align-items:center;gap:4px}
+.jcs-usure{padding:0 18px;margin-bottom:14px}
+.jcs-ulbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.jcs-ulbl span{font-size:.7rem;font-weight:600;color:var(--txm)}
+.jcs-ulbl strong{font-size:.82rem;font-weight:900}
+/* Barre usure graduée dans la fiche */
+.jcs-ubg{height:10px;background:#F1F5F9;border-radius:5px;overflow:visible;position:relative;margin-bottom:7px}
+.jcs-utrack{position:absolute;inset:0;border-radius:5px;overflow:hidden;display:flex}
+.jcs-uz1{flex:0 0 60%;background:linear-gradient(90deg,#22C55E,#86EFAC)}
+.jcs-uz2{flex:0 0 25%;background:linear-gradient(90deg,#F59E0B,#FCD34D)}
+.jcs-uz3{flex:0 0 15%;background:linear-gradient(90deg,#EF4444,#FCA5A5)}
+.jcs-ucursor{position:absolute;top:50%;transform:translate(-50%,-50%);width:4px;height:16px;background:#1E293B;border-radius:2px;box-shadow:0 1px 5px rgba(0,0,0,.3);transition:left 1s cubic-bezier(.22,1,.36,1)}
+.jcs-umark{position:absolute;left:70%;top:-3px;width:2px;height:16px;background:rgba(217,119,6,.5);border-radius:1px;pointer-events:none}
+.jcs-ubar{display:none}/* legacy — remplacé par curseur */
+.jcs-grid{padding:0 18px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.jcs-box{background:#F8FAFC;border-radius:10px;padding:10px 12px;border:1px solid rgba(184,196,216,.3)}
 .jcs-blbl{font-size:.6rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em}
-.jcs-bval{font-size:.83rem;font-weight:700;color:var(--txt);margin-top:3px}
-.jcs-conseil{margin:0 17px 13px;border-radius:10px;padding:10px 12px;border:1.5px solid}
-.jcs-ctitle{font-size:.68rem;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:4px}
-.jcs-ctxt{font-size:.74rem;line-height:1.5}
-.jcs-btns{padding:0 17px 20px;display:flex;flex-direction:column;gap:9px}
-.jcs-bv{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#059669,#047857);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,.3)}
-.jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
-.jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer}
-.jcs-kmrest{margin:0 17px 13px;background:linear-gradient(135deg,#F0F9FF,#E0F2FE);border:1.5px solid #BAE6FD;border-radius:var(--r-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.jcs-kmrest-lbl{font-size:.68rem;font-weight:700;color:#0369A1;line-height:1.3}
-.jcs-kmrest-val{font-size:.9rem;font-weight:900;color:#0369A1;white-space:nowrap;text-align:right;flex-shrink:0}
-.ju-empty{padding:48px 24px;text-align:center}
-.ju-empty-ico{font-size:3rem;margin-bottom:12px}
-.ju-empty-t{font-size:1rem;font-weight:700;color:var(--txt);margin-bottom:6px}
-.ju-empty-s{font-size:.8rem;color:var(--txm);line-height:1.5;margin-bottom:20px}
+.jcs-bval{font-size:.86rem;font-weight:800;color:var(--txt);margin-top:3px}
+.jcs-conseil{margin:0 18px 14px;border-radius:12px;padding:12px 14px;border:1.5px solid}
+.jcs-ctitle{font-size:.72rem;font-weight:800;margin-bottom:4px}
+.jcs-ctxt{font-size:.76rem;line-height:1.55;color:var(--txm)}
+.jcs-hist{margin:0 18px 14px}
+.jcs-hist-ttl{font-size:.65rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.jcs-hist-ttl::after{content:'';flex:1;height:1px;background:var(--border)}
+.jcs-hist-item{display:flex;align-items:center;gap:9px;padding:8px 10px;background:#F8FAFC;border-radius:9px;margin-bottom:5px;cursor:pointer;border:1px solid rgba(184,196,216,.3);transition:.12s}
+.jcs-hist-item:active{transform:scale(.985)}
+.jcs-hist-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex-shrink:0}
+.jcs-hist-info{flex:1;min-width:0}
+.jcs-hist-date{font-size:.75rem;font-weight:700;color:var(--txt)}
+.jcs-hist-meta{font-size:.65rem;color:var(--txm);margin-top:1px}
+.jcs-hist-cost{font-size:.72rem;font-weight:700;color:var(--ok)}
+.jcs-btns{padding:0 18px 20px;display:flex;flex-direction:column;gap:9px}
+.jcs-bv{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#059669,#047857);color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(5,150,105,.3)}
+.jcs-bp{width:100%;padding:14px;border:none;border-radius:var(--r-sm);background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.3)}
+.jcs-bs{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;color:var(--txm);font-family:inherit;font-size:.82rem;font-weight:500;cursor:pointer}
+.jcs-kmrest{margin:0 18px 14px;border-radius:var(--r-sm);padding:11px 15px;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid}
+.jcs-kmrest-lbl{font-size:.68rem;font-weight:700;line-height:1.3}
+.jcs-kmrest-val{font-size:.95rem;font-weight:900;white-space:nowrap;text-align:right;flex-shrink:0}
+.ju-empty{padding:52px 24px;text-align:center}
+.ju-empty-ico{font-size:3.2rem;margin-bottom:14px}
+.ju-empty-t{font-size:1.05rem;font-weight:800;color:var(--txt);margin-bottom:8px}
+.ju-empty-s{font-size:.82rem;color:var(--txm);line-height:1.6;margin-bottom:22px}
 </style>
 </head>
 <body>
@@ -2777,18 +2844,42 @@ async function saveEnt(){
   g('e-id').value='';
   removePhoto();
   cm('ent');await loadVehs();await loadEnts();renderView();updateDot();
-  // Retour sur la fiche véhicule si elle était ouverte, sinon l'ouvrir
+  // Retour sur la fiche véhicule si elle était ouverte
   if(_savedVid){
     setTimeout(()=>openVehDetail(_savedVid), 80);
+  }
+  // Mettre à jour le jumeau immédiatement si le véhicule correspond
+  jumeauRefreshSiVehicule(_savedVid);
+}
+
+function jumeauRefreshSiVehicule(vid){
+  if(!vid||!JU||!JU.vid)return;
+  if(JU.vid!==vid)return;
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(!v)return;
+  // Recalcul silencieux du jumeau
+  jumeauCalculer(v);
+  // Si l'onglet jumeau est ouvert, re-render
+  if(S.view==='jumeau'){
+    setTimeout(()=>{
+      renderJumeau();
+      toast('🧬 Jumeau mis à jour !','s');
+    },200);
+  } else {
+    // Toast discret pour signaler la mise à jour
+    setTimeout(()=>toast('🧬 Jumeau recalculé','i'),300);
   }
 }
 async function delEnt(){
   const id=g('e-id').value;if(!id)return;
+  const e=S.ents.find(x=>x.id===id);
+  const vid=e?.vehicle_id||null;
   cfm('Supprimer cet entretien ?','Action irréversible.',async()=>{
     const{error}=await sb.from('entretiens').delete().eq('id',id).eq('user_id',S.user.id);
     if(error)return toast('Erreur : '+error.message,'e');
     toast('Entretien supprimé.','i');cm('ent');
     await loadEnts();renderView();
+    if(vid)jumeauRefreshSiVehicule(vid);
     // Rafraichir modal detail si ouverte
     if(S.expandedVeh&&document.getElementById('mo-veh-detail')?.classList.contains('open')){
       openVehDetail(S.expandedVeh);
@@ -4641,7 +4732,6 @@ function renderEnt(){
 
   if(!ents.length)h+=`<div class="empty" style="padding:28px"><span class="empty-i" style="font-size:2rem">📋</span><div class="empty-t">Aucun entretien</div><p class="empty-d">Appuyez sur + pour ajouter le premier.</p></div>`;
   else {
-    // Groupement par catégorie (accordion)
     const catOrder=['Moteur','Filtres','Freinage','Pneus','Transmission','Suspension','Électrique','Refroid.','Climatisation','Administratif','Divers','Moto','Carrosserie','Camping-car'];
     const bycat={};
     ents.forEach(e=>{
@@ -4649,36 +4739,40 @@ function renderEnt(){
       if(!bycat[cat])bycat[cat]=[];
       bycat[cat].push(e);
     });
-    // Trier les catégories selon catOrder
-    const cats=Object.keys(bycat).sort((a,b)=>{
+    const sortedCats=Object.keys(bycat).sort((a,b)=>{
       const ia=catOrder.indexOf(a),ib=catOrder.indexOf(b);
       if(ia===-1&&ib===-1)return a.localeCompare(b);
       if(ia===-1)return 1;if(ib===-1)return-1;
       return ia-ib;
     });
-    // Catégorie ouverte par défaut = celle avec l'entretien le plus récent
+    // Catégorie la plus récente ouverte par défaut
     const mostRecentCat=ents.length?getType(ents[0].type).cat||'Divers':'';
     if(!S._entAccordion)S._entAccordion={};
     if(!(mostRecentCat in S._entAccordion))S._entAccordion[mostRecentCat]=true;
     const catAccentColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Carrosserie':'#0891B2','Camping-car':'#059669'};
-    cats.forEach(cat=>{
+    // Générer catId sans accents ni caractères spéciaux → utiliser index pour éviter toute collision
+    sortedCats.forEach((cat,idx)=>{
       const catEnts=bycat[cat];
       const lastEnt=catEnts[0];
       const lastTi=getType(lastEnt.type);
       const accent=catAccentColors[cat]||'#94A3B8';
       const isOpen=!!S._entAccordion[cat];
       const totalCout=catEnts.reduce((s,e)=>s+(e.cout||0),0);
-      const catId='acc-cat-'+S.selVeh+'-'+cat.replace(/[^a-z]/gi,'');
-      h+=`<div style="margin-bottom:8px;border-radius:var(--r);overflow:hidden;border:1px solid rgba(184,196,216,.5);box-shadow:0 1px 4px rgba(0,0,0,.04)">`;
-      h+=`<button onclick="toggleEntAccordion('${catId}','${cat.replace(/'/g,'\\\'')}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:11px 13px;background:#fff;border:none;cursor:pointer;font-family:inherit;text-align:left">`;
-      h+=`<div style="width:32px;height:32px;border-radius:9px;background:${accent}18;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;border:1px solid ${accent}33">${lastTi.ico}</div>`;
+      // catId unique basé sur index — évite tout problème d'accent/caractère spécial
+      const catId=`acc-${S.selVeh}-${idx}`;
+      // Stocker la correspondance catId → cat pour le toggle
+      h+=`<div style="margin-bottom:8px;border-radius:var(--r);overflow:hidden;border:1.5px solid ${isOpen?accent+'44':'rgba(184,196,216,.45)'};box-shadow:0 1px 4px rgba(0,0,0,.04);transition:border-color .2s">`;
+      // Header accordion
+      h+=`<button onclick="toggleEntAccordion('${catId}','${cat.replace(/\\/g,'\\\\').replace(/'/g,'\\\'')}',this)" style="width:100%;display:flex;align-items:center;gap:10px;padding:11px 13px;background:${isOpen?accent+'08':'#fff'};border:none;cursor:pointer;font-family:inherit;text-align:left;transition:background .2s">`;
+      h+=`<div style="width:34px;height:34px;border-radius:9px;background:${accent}18;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;border:1px solid ${accent}33">${lastTi.ico}</div>`;
       h+=`<div style="flex:1;min-width:0">`;
-      h+=`<div style="font-size:.84rem;font-weight:700;color:var(--txt)">${cat} <span style="font-size:.72rem;font-weight:600;color:var(--txm);background:var(--bg);padding:1px 7px;border-radius:10px;margin-left:4px">${catEnts.length}</span></div>`;
-      h+=`<div style="font-size:.68rem;color:var(--txm);margin-top:1px">Dernier : ${fmtDate(lastEnt.date)}${totalCout?` · ${fmtCout(totalCout)}`:''}</div>`;
+      h+=`<div style="font-size:.84rem;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:6px">${cat}<span style="font-size:.7rem;font-weight:700;color:#fff;background:${accent};padding:1px 7px;border-radius:10px">${catEnts.length}</span></div>`;
+      h+=`<div style="font-size:.68rem;color:var(--txm);margin-top:2px">Dernier : ${fmtDate(lastEnt.date)}${totalCout?` · <span style="color:var(--ok);font-weight:700">${fmtCout(totalCout)}</span>`:''}</div>`;
       h+=`</div>`;
-      h+=`<svg style="flex-shrink:0;transition:transform .2s;transform:rotate(${isOpen?'90deg':'0deg'})" id="${catId}-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+      h+=`<svg style="flex-shrink:0;transition:transform .25s;transform:rotate(${isOpen?'90deg':'0deg'})" id="${catId}-chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`;
       h+=`</button>`;
-      h+=`<div id="${catId}" style="display:${isOpen?'block':'none'};border-top:1px solid rgba(184,196,216,.3)">`;
+      // Corps accordion
+      h+=`<div id="${catId}" style="display:${isOpen?'block':'none'};border-top:1px solid ${accent}22;background:#FAFBFF">`;
       h+=catEnts.map(e=>eiHTML(e,v)).join('');
       h+=`</div></div>`;
     });
@@ -4689,13 +4783,23 @@ function renderEnt(){
 
 function setFilter(f){S.filterEnt=f;renderEnt();}
 function selV(vid){S.selVeh=vid===S.selVeh?null:vid;S.filterEnt='all';S._entAccordion={};renderEnt();}
-function toggleEntAccordion(catId,cat){
+function toggleEntAccordion(catId,cat,btn){
   if(!S._entAccordion)S._entAccordion={};
-  S._entAccordion[cat]=!S._entAccordion[cat];
+  const wasOpen=!!S._entAccordion[cat];
+  S._entAccordion[cat]=!wasOpen;
   const body=document.getElementById(catId);
   const chev=document.getElementById(catId+'-chev');
-  if(body){body.style.display=S._entAccordion[cat]?'block':'none';}
-  if(chev){chev.style.transform=S._entAccordion[cat]?'rotate(90deg)':'rotate(0deg)';}
+  if(body)body.style.display=S._entAccordion[cat]?'block':'none';
+  if(chev)chev.style.transform=S._entAccordion[cat]?'rotate(90deg)':'rotate(0deg)';
+  // Mettre à jour le style du header
+  if(btn){
+    const accentMatch=chev?chev.getAttribute('stroke'):'#94A3B8';
+    btn.style.background=S._entAccordion[cat]?(accentMatch+'08'):'#fff';
+    const wrap=btn.closest('div[style*="border-radius"]');
+    if(wrap)wrap.style.borderColor=S._entAccordion[cat]?(accentMatch+'44'):'rgba(184,196,216,.45)';
+  }
+  // Réinitialiser swipe si on ouvre
+  if(S._entAccordion[cat])setTimeout(initSwipe,50);
 }
 
 function getRapItem(r){
@@ -6897,7 +7001,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
     <div class="jcs-usure">
       <div class="jcs-ulbl"><span>Usure estimée</span><strong id="jcs-uval">—</strong></div>
-      <div class="jcs-ubg"><div class="jcs-ubar" id="jcs-ubar" style="width:0%"></div><div class="jcs-umark" id="jcs-umark"></div></div>
+      <div class="jcs-ubg" id="jcs-ubg"><div class="jcs-ubar" id="jcs-ubar"></div><div class="jcs-umark" id="jcs-umark"></div></div>
     </div>
     <div class="jcs-grid">
       <div class="jcs-box"><div class="jcs-blbl">Dernier entretien</div><div class="jcs-bval" id="jcs-last-date">—</div></div>
@@ -6913,6 +7017,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
       <div class="jcs-ctitle" id="jcs-ctitle">—</div>
       <div class="jcs-ctxt" id="jcs-ctxt">—</div>
     </div>
+    <div class="jcs-hist" id="jcs-hist"></div>
     <div class="jcs-btns">
       <button class="jcs-bv" id="jcs-bv" onclick="jumeauMarquerFait()">✅ Remplacement effectué</button>
       <button class="jcs-bp" onclick="jumeauPlanifier()">📅 Planifier le prochain</button>
@@ -6979,7 +7084,7 @@ const JU_SVG_SIDE=`<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg"
 
 const JU_SVG_TOP=`<svg viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg"><path d="M80,30 Q150,10 220,30 L245,60 Q260,100 265,160 L265,340 Q260,400 245,440 L220,470 Q150,490 80,470 L55,440 Q40,400 35,340 L35,160 Q40,100 55,60 Z" fill="#B0C0D5"/><path d="M90,35 Q150,18 210,35 L235,60 Q245,90 248,130 L52,130 Q55,90 65,60 Z" fill="#A0B4C8" opacity=".8"/><rect x="65" y="130" width="170" height="35" rx="4" fill="#DBEAFE" opacity=".6"/><rect x="52" y="165" width="196" height="170" rx="6" fill="#94A3B8" opacity=".5"/><rect x="65" y="335" width="170" height="30" rx="4" fill="#DBEAFE" opacity=".5"/><path d="M90,365 Q150,345 210,365 L235,440 Q245,465 220,470 L80,470 Q55,465 65,440 Z" fill="#A0B4C8" opacity=".7"/><rect x="22" y="90" width="30" height="50" rx="8" fill="#374151"/><rect x="248" y="90" width="30" height="50" rx="8" fill="#374151"/><rect x="22" y="360" width="30" height="50" rx="8" fill="#374151"/><rect x="248" y="360" width="30" height="50" rx="8" fill="#374151"/><line x1="52" y1="250" x2="248" y2="250" stroke="#CBD5E1" stroke-width="1.5"/></svg>`;
 
-let JU={vid:null,vehIdx:0,data:{},onbAnswers:[null,null,null],onbStep:0,compOpen:null,vue:'side'};
+let JU={vid:null,vehIdx:0,data:{},onbAnswers:[null,null,null],onbStep:0,compOpen:null,vue:'side',compFilter:'all'};
 
 function renderJumeau(){
   const ctn=document.getElementById('ju-ctn');
@@ -6994,26 +7099,152 @@ function renderJumeau(){
   }
   const v=S.vehicles.find(x=>x.id===JU.vid);
   if(!v)return;
-  // Déclencher onboarding si pas encore fait
-  if(!v.jumeau_onboarding_done){
-    setTimeout(()=>openJumeauOnb(),300);
-  }
+  if(!v.jumeau_onboarding_done){setTimeout(()=>openJumeauOnb(),300);}
   jumeauCalculer(v);
   const score=jumeauScore();
   const prec=jumeauPrecision();
+
+  // ── Anneau SVG score ──
+  const R=30,C=2*Math.PI*R;
+  const scoreColor=score.val>=80?'#22C55E':score.val>=55?'#F59E0B':score.val>=30?'#EF4444':'#DC2626';
+  const dash=Math.round((score.val/100)*C);
+  const ringHTML=`
+    <div class="ju-sc-ring">
+      <svg viewBox="0 0 72 72"><circle class="ju-sc-ring-bg" cx="36" cy="36" r="${R}"/><circle class="ju-sc-ring-fg" cx="36" cy="36" r="${R}" stroke="${scoreColor}" stroke-dasharray="${dash} ${C}" stroke-dashoffset="0"/></svg>
+      <div class="ju-sc-ring-txt"><div class="ju-sc-val">${score.val}</div><div class="ju-sc-max">/100</div></div>
+    </div>`;
+
+  // ── Bannière prochain entretien urgent ──
+  const nextBanner=juNextBanner(v);
+
+  // ── Filtre composants actif ──
+  const flt=JU.compFilter||'all';
+  const filterHTML=`
+    <div class="ju-filter-toggle">
+      <button class="ju-ft ${flt==='all'?'active':''}" onclick="juSetFilter('all')">
+        <span class="ju-ft-dot" style="background:var(--txl)"></span>Tous
+      </button>
+      <button class="ju-ft ${flt==='urgent'?'active':''}" onclick="juSetFilter('urgent')">
+        <span class="ju-ft-dot" style="background:var(--err)"></span>Urgents
+      </button>
+      <button class="ju-ft ${flt==='watch'?'active':''}" onclick="juSetFilter('watch')">
+        <span class="ju-ft-dot" style="background:var(--warn)"></span>À surveiller
+      </button>
+      <button class="ju-ft ${flt==='ok'?'active':''}" onclick="juSetFilter('ok')">
+        <span class="ju-ft-dot" style="background:var(--ok)"></span>OK
+      </button>
+    </div>`;
+
+  // ── Nb véhicules pour le cycle ──
+  const hasMultiVeh=S.vehicles.length>1;
+  const vehSub=[v.immatriculation,v.km_actuel?v.km_actuel.toLocaleString('fr')+' km':null,v.carburant,v.transmission?v.transmission:null].filter(Boolean).join(' · ');
+
   ctn.innerHTML=`
-    <div class="ju-hdr"><div class="ju-hdr-l"><div class="jh-t">🧬 Jumeau Numérique</div><div class="jh-s">État en temps réel de votre véhicule</div></div><div class="ju-hdr-ico">⚙️</div></div>
-    <div class="ju-vsel" onclick="jumeauCycleVeh()"><div class="ju-vsel-em">${v.emoji||'🚗'}</div><div class="ju-vsel-info"><div class="ju-vsel-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?' · '+v.annee:''}</div><div class="ju-vsel-sub">${[v.immatriculation,v.km_actuel?v.km_actuel.toLocaleString('fr')+' km':null,v.carburant].filter(Boolean).join(' · ')}</div></div><div style="color:var(--txl)">▾</div></div>
-    <div class="ju-score"><div class="ju-sc-circle"><div class="ju-sc-val">${score.val}</div><div class="ju-sc-max">/100</div></div><div class="ju-sc-info"><div class="ju-sc-lbl">Score santé</div><div class="ju-sc-title">${score.title}</div><div class="ju-sc-desc">${score.desc}</div><div class="ju-sc-badges">${score.badges}</div></div></div>
-    <div class="ju-prec"><div class="ju-prec-hdr"><div class="ju-prec-lbl">Précision du jumeau</div><div class="ju-prec-val">${prec}%</div></div><div class="ju-prec-bg"><div class="ju-prec-bar" style="width:${prec}%"></div></div><div class="ju-prec-acts">${prec<90?'<span class="ju-prec-act" onclick="fabAction(\'ent\')">+ Ajouter un entretien</span>':''}<span class="ju-prec-act" onclick="openJumeauOnb()">Affiner le profil</span></div></div>
+    <div class="ju-hdr">
+      <div class="ju-hdr-inner">
+        <div class="ju-hdr-l">
+          <div class="jh-t">🧬 Jumeau Numérique</div>
+          <div class="jh-s">Analyse en temps réel · ${JU_COMPOSANTS.filter(c=>JU.data[c.id]&&!JU.data[c.id].notApplicable).length} composants suivis</div>
+        </div>
+        <div class="ju-hdr-ico" onclick="openJumeauOnb()" title="Affiner le profil">⚙️</div>
+      </div>
+    </div>
+
+    <div class="ju-vsel" onclick="jumeauCycleVeh()">
+      <div class="ju-vsel-em">${v.emoji||'🚗'}</div>
+      <div class="ju-vsel-info">
+        <div class="ju-vsel-name">${esc(v.marque)} ${esc(v.modele)}${v.annee?' · '+v.annee:''}</div>
+        <div class="ju-vsel-sub">${vehSub}</div>
+      </div>
+      ${hasMultiVeh?`<div class="ju-vsel-arr">▾ changer</div>`:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`}
+    </div>
+
+    <div class="ju-score">
+      ${ringHTML}
+      <div class="ju-sc-info">
+        <div class="ju-sc-lbl">Score santé</div>
+        <div class="ju-sc-title">${score.title}</div>
+        <div class="ju-sc-desc">${score.desc||'Aucun composant évalué'}</div>
+        <div class="ju-sc-badges">${score.badges}</div>
+      </div>
+    </div>
+
+    <div class="ju-prec">
+      <div class="ju-prec-hdr">
+        <div class="ju-prec-lbl">Précision du jumeau</div>
+        <div class="ju-prec-val">${prec}%</div>
+      </div>
+      <div class="ju-prec-bg"><div class="ju-prec-bar" style="width:${prec}%"></div></div>
+      <div class="ju-prec-acts">
+        ${prec<90?'<span class="ju-prec-act" onclick="fabAction(\'ent\')">+ Ajouter un entretien</span>':''}
+        <span class="ju-prec-act" onclick="openJumeauOnb()">Affiner le profil</span>
+      </div>
+    </div>
+
+    ${nextBanner}
+
     <div class="ju-sec">Visualisation</div>
     <div class="ju-sil">
       <div class="ju-svgwrap" id="ju-svgwrap-top">${JU_SVG_TOP}<div id="ju-hots-top">${jumeauHots('top')}</div></div>
-      <div class="ju-legend"><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--err)"></div>Urgent</div><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--warn)"></div>À surveiller</div><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--ok)"></div>OK</div><div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--txl)"></div>Inconnu</div><div class="ju-leg-i" style="font-style:italic;font-size:.6rem">~ Estimé</div></div>
+      <div class="ju-legend">
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--err)"></div>Urgent</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--warn)"></div>À surveiller</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--ok)"></div>OK</div>
+        <div class="ju-leg-i"><div class="ju-leg-d" style="background:var(--txl)"></div>Inconnu</div>
+        <div class="ju-leg-i" style="font-style:italic;font-size:.6rem;color:var(--txl)">~ Estimé</div>
+      </div>
     </div>
-    <div class="ju-sec">Composants</div>
-    <div class="ju-complist">${jumeauCompList()}</div>
-    <div style="height:16px"></div>`;
+
+    <div class="ju-sec">Composants <span class="ju-sec-action" onclick="juSetFilter(JU.compFilter==='all'?'urgent':'all')">${flt==='all'?'Filtrer':'Tout voir'}</span></div>
+    ${filterHTML}
+    <div class="ju-complist" id="ju-complist-wrap">${jumeauCompList()}</div>
+    <div style="height:20px"></div>`;
+
+  // Animer l'anneau après rendu
+  requestAnimationFrame(()=>{
+    const fg=ctn.querySelector('.ju-sc-ring-fg');
+    if(fg){fg.style.strokeDasharray=`0 ${C}`;requestAnimationFrame(()=>{fg.style.transition='stroke-dasharray 1.2s cubic-bezier(.22,1,.36,1)';fg.style.strokeDasharray=`${dash} ${C}`;});}
+  });
+}
+
+function juNextBanner(v){
+  // Trouver le composant avec le statut le plus urgent et le plus de poids
+  const urgent=JU_COMPOSANTS.filter(c=>{const d=JU.data[c.id];return d&&!d.notApplicable&&(d.status==='err'||d.status==='warn');})
+    .sort((a,b)=>{
+      const sa=JU.data[a.id].status,sb=JU.data[b.id].status;
+      if(sa!==sb)return sa==='err'?-1:1;
+      return b.poids-a.poids;
+    });
+  if(!urgent.length)return '';
+  const comp=urgent[0];
+  const d=JU.data[comp.id];
+  const isErr=d.status==='err';
+  const bg=isErr?'#FFF5F5':'#FFFBEB';
+  const border=isErr?'#FECACA':'#FDE68A';
+  const icoBg=isErr?'#FEE2E2':'#FEF3C7';
+  const color=isErr?'#DC2626':'#D97706';
+  const label=isErr?'⚠️ Intervention urgente':'⏰ À planifier';
+  const sub=d.kmRestants?d.kmRestants.txt:(d.lastDate&&d.lastDate!=='Estimé'?'Dernier : '+d.lastDate:'Estimation');
+  return`<div class="ju-next-banner" style="background:${bg};border-color:${border}" onclick="openJumeauComp('${comp.id}')">
+    <div class="ju-next-ico" style="background:${icoBg}">${comp.ico}</div>
+    <div class="ju-next-info">
+      <div class="ju-next-label" style="color:${color}">${label}</div>
+      <div class="ju-next-title">${comp.label}</div>
+      <div class="ju-next-sub">${sub}</div>
+    </div>
+    <div class="ju-next-arr" style="color:${color}">›</div>
+  </div>`;
+}
+
+function juSetFilter(f){
+  JU.compFilter=f;
+  const wrap=document.getElementById('ju-complist-wrap');
+  if(wrap)wrap.innerHTML=jumeauCompList();
+  // Mettre à jour les boutons sans re-render complet
+  document.querySelectorAll('.ju-ft').forEach(b=>{
+    const bf=b.onclick?.toString().match(/'(\w+)'/)?.[1];
+    b.classList.toggle('active',bf===f);
+  });
 }
 
 function juGetDateMiseEnCirculation(v){
@@ -7506,32 +7737,93 @@ function jumeauHots(vue){
   }).join('');
 }
 function jumeauCompList(){
+  const flt=JU.compFilter||'all';
   const order=['err','warn','ok','grey'];
-  return [...JU_COMPOSANTS].sort((a,b)=>{
+  const catColors={
+    'Moteur · Critique':'#EA580C','Moteur · Important':'#F97316','Moteur · Confort':'#FB923C',
+    'Freinage · Critique':'#DC2626','Freinage · Important':'#EF4444',
+    'Pneus · Critique':'#475569','Pneus · Confort':'#64748B',
+    'Transmission · Important':'#2563EB','Transmission · Confort':'#3B82F6',
+    'Suspension · Important':'#9333EA',
+    'Électrique · Important':'#CA8A04',
+    'Refroid. · Important':'#0284C7',
+    'Filtres · Confort':'#16A34A',
+    'Confort':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B',
+  };
+
+  // Trier les composants
+  let sorted=[...JU_COMPOSANTS].sort((a,b)=>{
     const da=JU.data[a.id],db=JU.data[b.id];
     if(da?.notApplicable&&!db?.notApplicable)return 1;
-    if(!da?.notApplicable&&db?.notApplicable)return -1;
-    const sa=da?.status||'grey';
-    const sb=db?.status||'grey';
+    if(!da?.notApplicable&&db?.notApplicable)return-1;
+    const sa=da?.status||'grey',sb=db?.status||'grey';
     if(order.indexOf(sa)!==order.indexOf(sb))return order.indexOf(sa)-order.indexOf(sb);
     return b.poids-a.poids;
-  }).map(comp=>{
-    const d=JU.data[comp.id];if(!d)return'';
-    // Composant non applicable : afficher en grisé discret
-    if(d.notApplicable){
-      return`<div class="jcomp grey" style="opacity:.45" onclick="openJumeauComp('${comp.id}')"><div class="jcomp-ico grey">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name" style="text-decoration:line-through">${comp.label}</div><div class="jcomp-sub" style="font-size:.66rem;color:var(--txl)">Non applicable à ce véhicule</div></div><div class="jcomp-r"><span class="jcomp-pill grey">N/A</span></div></div>`;
-    }
-    const pill=d.status==='err'?'Urgent':d.status==='warn'?'Surveiller':d.status==='ok'?'OK':'Inconnu';
-    const dateInfo=d.estimated?'<span class="jcomp-est">~ Estimation</span>':`<span style="color:var(--txm);font-size:.68rem">${d.lastDate&&d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
-    let krTag='';
-    if(d.kmRestants&&d.status!=='grey'){
-      const kr=d.kmRestants;
-      if(kr.depasse){krTag=`<span class="jcomp-kr err">${kr.txt}</span>`;}
-      else if(d.status==='warn'||d.status==='err'){krTag=`<span class="jcomp-kr warn">${kr.txt}</span>`;}
-      else{krTag=`<span class="jcomp-kr ok">${kr.txt}</span>`;}
-    }
-    const sub=`<span class="jcomp-sub-row">${dateInfo}${krTag}</span>`;
-    return`<div class="jcomp ${d.status}" onclick="openJumeauComp('${comp.id}')"><div class="jcomp-ico ${d.status}">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name">${comp.label}</div><div class="jcomp-sub">${sub}</div></div><div class="jcomp-r"><span class="jcomp-pill ${d.status}">${pill}</span><div class="jcomp-bw"><div class="jcomp-bar ${d.status}" style="width:${d.usure}%"></div></div></div></div>`;
+  });
+
+  // Appliquer filtre
+  if(flt==='urgent')sorted=sorted.filter(c=>{const d=JU.data[c.id];return d&&!d.notApplicable&&d.status==='err';});
+  else if(flt==='watch')sorted=sorted.filter(c=>{const d=JU.data[c.id];return d&&!d.notApplicable&&d.status==='warn';});
+  else if(flt==='ok')sorted=sorted.filter(c=>{const d=JU.data[c.id];return d&&!d.notApplicable&&d.status==='ok';});
+
+  if(!sorted.length){
+    const msgs={urgent:'Aucun composant urgent ✅',watch:'Aucun composant à surveiller ✅',ok:'Aucun composant OK renseigné'};
+    return`<div style="text-align:center;padding:24px;color:var(--txm);font-size:.84rem;font-weight:600">${msgs[flt]||'Aucun composant'}</div>`;
+  }
+
+  // Grouper par catégorie
+  const groups={};
+  sorted.forEach(comp=>{
+    const cat=comp.cat||'Divers';
+    if(!groups[cat])groups[cat]=[];
+    groups[cat].push(comp);
+  });
+
+  return Object.entries(groups).map(([cat,comps])=>{
+    const dot=catColors[cat]||'#94A3B8';
+    const items=comps.map(comp=>{
+      const d=JU.data[comp.id];if(!d)return'';
+      if(d.notApplicable&&flt==='all'){
+        return`<div class="jcomp grey" style="opacity:.38"><div class="jcomp-ico grey">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name" style="text-decoration:line-through;color:var(--txl)">${comp.label}</div><div class="jcomp-sub"><span style="font-size:.64rem;color:var(--txl)">Non applicable</span></div></div><div class="jcomp-r"><span class="jcomp-pill grey" style="font-size:.58rem">N/A</span></div></div>`;
+      }
+      if(d.notApplicable)return'';
+      const pill=d.status==='err'?'Urgent':d.status==='warn'?'Surveiller':d.status==='ok'?'OK':'Inconnu';
+      const dateInfo=d.estimated
+        ?`<span class="jcomp-est">~ Estimé</span>`
+        :`<span style="color:var(--txm);font-size:.66rem">${d.lastDate&&d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
+      let krTag='';
+      if(d.kmRestants&&d.status!=='grey'){
+        const kr=d.kmRestants;
+        const krc=kr.depasse?'err':(d.status==='warn'||d.status==='err'?'warn':'ok');
+        krTag=`<span class="jcomp-kr ${krc}">${kr.txt}</span>`;
+      }
+      // Barre usure graduée avec curseur
+      const usurePct=Math.min(100,Math.max(0,d.usure||0));
+      const barHTML=`<div class="jcomp-bw">
+        <div class="jcomp-bar-track">
+          <div class="jcomp-bar-z1"></div>
+          <div class="jcomp-bar-z2"></div>
+          <div class="jcomp-bar-z3"></div>
+        </div>
+        <div class="jcomp-bar-cursor" style="left:${usurePct}%"></div>
+      </div>`;
+      return`<div class="jcomp ${d.status}" onclick="openJumeauComp('${comp.id}')">
+        <div class="jcomp-ico ${d.status}">${comp.ico}</div>
+        <div class="jcomp-info">
+          <div class="jcomp-name">${comp.label}</div>
+          <div class="jcomp-sub"><span class="jcomp-sub-row">${dateInfo}${krTag}</span></div>
+        </div>
+        <div class="jcomp-r">
+          <span class="jcomp-pill ${d.status}">${pill}</span>
+          ${barHTML}
+        </div>
+      </div>`;
+    }).join('');
+    if(!items.trim())return'';
+    return`<div class="ju-cat-group">
+      <div class="ju-cat-hdr"><span class="ju-cat-hdr-dot" style="background:${dot}"></span>${cat}</div>
+      ${items}
+    </div>`;
   }).join('');
 }
 function jumeauVue(vue){
@@ -7550,22 +7842,44 @@ function openJumeauComp(id){
   if(!comp||!d)return;
   JU.compOpen=id;
   const sc=d.status==='err'?'var(--err)':d.status==='warn'?'var(--warn)':d.status==='ok'?'var(--ok)':'var(--txl)';
-  const icoBg=d.status==='err'?'var(--err-bg)':d.status==='warn'?'var(--warn-bg)':d.status==='ok'?'var(--ok-bg)':'#F1F5F9';
+  const icoBg=d.status==='err'?'#FFF0F0':d.status==='warn'?'#FFFBEB':d.status==='ok'?'#F0FDF4':'#F1F5F9';
+
   document.getElementById('jcs-ico').textContent=comp.ico;
   document.getElementById('jcs-ico').style.background=icoBg;
   document.getElementById('jcs-name').textContent=comp.label;
-  document.getElementById('jcs-cat').textContent=comp.cat+(d.estimated?' · Estimation':'');
+  document.getElementById('jcs-cat').innerHTML=`<span style="color:${sc};font-weight:700">${d.status==='err'?'🔴 Urgent':d.status==='warn'?'🟡 À surveiller':d.status==='ok'?'🟢 OK':'⚪ Inconnu'}</span> · ${comp.cat}${d.estimated?' · Estimation':''}`;
   document.getElementById('jcs-uval').textContent=d.status==='grey'?'—':d.usure+'%';
   document.getElementById('jcs-uval').style.color=sc;
-  document.getElementById('jcs-ubar').style.width=d.usure+'%';
-  document.getElementById('jcs-ubar').style.background=sc;
+
+  // Barre usure graduée dans la fiche
+  const usurePct=Math.min(100,Math.max(0,d.usure||0));
+  const ubg=document.getElementById('jcs-ubg');
+  if(ubg){
+    ubg.innerHTML=`
+      <div class="jcs-utrack">
+        <div class="jcs-uz1"></div>
+        <div class="jcs-uz2"></div>
+        <div class="jcs-uz3"></div>
+      </div>
+      <div class="jcs-umark"></div>
+      <div class="jcs-ucursor" id="jcs-ucursor" style="left:0%"></div>`;
+    // Animer le curseur
+    requestAnimationFrame(()=>{
+      const cur=document.getElementById('jcs-ucursor');
+      if(cur){requestAnimationFrame(()=>{cur.style.left=usurePct+'%';});}
+    });
+  }
+  // Masquer l'ancien ubar (remplacé)
+  const ubar=document.getElementById('jcs-ubar');
+  if(ubar)ubar.style.width='0';
+  const umark=document.getElementById('jcs-umark');
+  if(umark)umark.style.display='none';
+
   document.getElementById('jcs-last-date').textContent=d.lastDate;
   document.getElementById('jcs-last-km').textContent=d.lastKm;
   document.getElementById('jcs-since-km').textContent=d.sinceKm;
   document.getElementById('jcs-cost').textContent=d.cout;
-  // Marqueur sur barre d'usure (fixe à 70% = seuil warn)
-  const umark=document.getElementById('jcs-umark');
-  if(umark){umark.style.display=(d.status!=='grey')?'block':'none';}
+
   // Km restants
   const krWrap=document.getElementById('jcs-kmrest-wrap');
   const krVal=document.getElementById('jcs-kmrest');
@@ -7575,32 +7889,57 @@ function openJumeauComp(id){
     const kr=d.kmRestants;
     const unitLabel=kr.unit==='mois'?'⏱ Temps restant avant échéance':'📍 Kilométrage restant avant échéance';
     if(krLbl)krLbl.textContent=unitLabel;
-    const estSuf=kr.estimated?' · estimation':'';
     if(kr.depasse){
-      krWrap.style.background='linear-gradient(135deg,#FFF7ED,#FEF3C7)';
-      krWrap.style.borderColor='#FED7AA';
-      if(krLbl)krLbl.style.color='#C2410C';
-      krVal.style.color='#C2410C';
-      krVal.textContent=kr.txt+estSuf;
+      krWrap.style.background='linear-gradient(135deg,#FFF7ED,#FEF3C7)';krWrap.style.borderColor='#FED7AA';
+      if(krLbl)krLbl.style.color='#C2410C';krVal.style.color='#C2410C';
     } else {
-      krWrap.style.background='linear-gradient(135deg,#F0F9FF,#E0F2FE)';
-      krWrap.style.borderColor='#BAE6FD';
-      if(krLbl)krLbl.style.color='#0369A1';
-      krVal.style.color='#0369A1';
-      krVal.textContent=kr.txt+estSuf;
+      krWrap.style.background='linear-gradient(135deg,#F0F9FF,#E0F2FE)';krWrap.style.borderColor='#BAE6FD';
+      if(krLbl)krLbl.style.color='#0369A1';krVal.style.color='#0369A1';
     }
+    krVal.textContent=kr.txt+(kr.estimated?' · estimation':'');
   } else {
     krWrap.style.display='none';
   }
-  const cc={err:{bg:'#FFF7ED',border:'#FED7AA',tc:'#C2410C',xc:'#7C2D12'},warn:{bg:'#FFFBEB',border:'#FDE68A',tc:'#B45309',xc:'#78350F'},ok:{bg:'#F0FDF4',border:'#BBF7D0',tc:'#15803D',xc:'#14532D'},grey:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'}}[d.conseil.type]||{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'};
+
+  // Conseil
+  const cc={err:{bg:'#FFF5F5',border:'#FECACA',tc:'#DC2626',xc:'#7C2D12'},warn:{bg:'#FFFBEB',border:'#FDE68A',tc:'#B45309',xc:'#78350F'},ok:{bg:'#F0FDF4',border:'#BBF7D0',tc:'#15803D',xc:'#14532D'},grey:{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'}}[d.conseil?.type||'grey']||{bg:'#F8FAFC',border:'var(--border)',tc:'var(--txm)',xc:'var(--txm)'};
   const cel=document.getElementById('jcs-conseil');
   cel.style.background=cc.bg;cel.style.borderColor=cc.border;
-  document.getElementById('jcs-ctitle').textContent=d.conseil.title;
+  document.getElementById('jcs-ctitle').textContent=d.conseil?.title||'';
   document.getElementById('jcs-ctitle').style.color=cc.tc;
-  document.getElementById('jcs-ctxt').textContent=d.conseil.txt;
-  document.getElementById('jcs-ctxt').style.color=cc.xc;
+  document.getElementById('jcs-ctxt').textContent=d.conseil?.txt||'';
+
+  // Historique des entretiens de ce type
+  juRenderCompHist(comp,id);
+
+  // Masquer bouton "marquer fait" si N/A
+  const bv=document.getElementById('jcs-bv');
+  if(bv)bv.style.display=d.notApplicable?'none':'';
 
   document.getElementById('mo-jcomp').classList.add('open');
+}
+
+function juRenderCompHist(comp,id){
+  const histEl=document.getElementById('jcs-hist');
+  if(!histEl)return;
+  const vid=JU.vid;
+  const ents=(S.ents||[]).filter(e=>e.vehicle_id===vid&&comp.types.includes(e.type))
+    .sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .slice(0,3);
+  if(!ents.length){histEl.innerHTML='';return;}
+  histEl.innerHTML=`
+    <div class="jcs-hist-ttl">Historique</div>
+    ${ents.map(e=>`
+      <div class="jcs-hist-item" onclick="closeJumeauComp();openEnt('${e.id}')">
+        <div class="jcs-hist-dot"></div>
+        <div class="jcs-hist-info">
+          <div class="jcs-hist-date">${fmtDate(e.date)}</div>
+          <div class="jcs-hist-meta">${e.km?fmtKm(e.km):'—'}${e.garage?' · '+esc(e.garage):''}</div>
+        </div>
+        ${e.cout?`<div class="jcs-hist-cost">${fmtCout(e.cout)}</div>`:''}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('')}
+  `;
 }
 function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove('open');}
 function jumeauMarquerFait(){
