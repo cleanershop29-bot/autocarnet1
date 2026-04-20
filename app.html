@@ -6856,24 +6856,24 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
 // ============================================================
 
 const JU_COMPOSANTS=[
-  {id:'huile',       label:'Huile moteur',           ico:'🛢️',cat:'Moteur · Critique',       poids:3,skmo:8000, skmr:10000,smo:10,smr:12,cout:'60–100€',   types:['vidange','filtre_huile','revision']},
-  {id:'courroie',    label:'Courroie distribution',  ico:'⚙️',cat:'Moteur · Critique',       poids:3,skmo:60000,skmr:80000,smo:48,smr:60,cout:'350–600€', types:['courroie','sangle_dist','chaine_dist']},
-  {id:'freins_av',   label:'Plaquettes avant',        ico:'🔴',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:30000,smo:28,smr:36,cout:'80–150€',  types:['freins']},
-  {id:'freins_ar',   label:'Plaquettes arrière',      ico:'⭕',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:30000,smo:28,smr:36,cout:'70–130€',  types:['freins']},
-  {id:'liq_frein',   label:'Liquide de frein',        ico:'🧴',cat:'Freinage · Important',   poids:2,skmo:null, skmr:null, smo:20,smr:24,cout:'30–60€',    types:['liq_frein']},
-  {id:'pneus_av',    label:'Pneus avant',             ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:40000,smo:36,smr:48,cout:'200–400€', types:['pneus','pneus_sais']},
-  {id:'pneus_ar',    label:'Pneus arrière',           ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:40000,smo:36,smr:48,cout:'180–380€', types:['pneus','pneus_sais']},
-  {id:'batterie',    label:'Batterie 12V',            ico:'🔋',cat:'Électrique · Important', poids:2,skmo:null, skmr:null, smo:40,smr:60,cout:'80–150€',   types:['batterie']},
-  {id:'embrayage',   label:'Embrayage',               ico:'🔄',cat:'Transmission · Important',poids:2,skmo:70000,skmr:100000,smo:null,smr:null,cout:'400–800€',types:['embrayage']},
-  {id:'courroie_acc',label:'Courroie accessoires',    ico:'🔗',cat:'Moteur · Important',     poids:2,skmo:45000,skmr:60000,smo:36,smr:48,cout:'80–180€',  types:['courroie_acc']},
-  {id:'amortisseurs',label:'Amortisseurs',            ico:'🔩',cat:'Suspension · Important', poids:2,skmo:60000,skmr:80000,smo:72,smr:96,cout:'300–600€',  types:['amortisseurs']},
-  {id:'liq_refroid', label:'Liquide refroidissement', ico:'🌡️',cat:'Refroid. · Important',  poids:2,skmo:null, skmr:null, smo:36,smr:48,cout:'20–60€',    types:['liq_refroid']},
-  {id:'filtre_air',  label:'Filtre à air',            ico:'💨',cat:'Filtres · Confort',      poids:1,skmo:15000,skmr:20000,smo:18,smr:24,cout:'20–50€',    types:['filtre_air']},
-  {id:'filtre_hab',  label:'Filtre habitacle',        ico:'🌬️',cat:'Filtres · Confort',     poids:1,skmo:10000,skmr:15000,smo:10,smr:12,cout:'15–35€',    types:['filtre_hab']},
-  {id:'bougies',     label:'Bougies',                 ico:'⚡',cat:'Moteur · Confort',       poids:1,skmo:22000,skmr:30000,smo:28,smr:36,cout:'40–120€',   types:['bougies']},
-  {id:'clim',        label:'Climatisation',           ico:'❄️',cat:'Confort',               poids:1,skmo:null, skmr:null, smo:18,smr:24,cout:'80–150€',   types:['clim']},
-  {id:'ct',          label:'Contrôle technique',      ico:'✅',cat:'Administratif',          poids:1,skmo:null, skmr:null, smo:20,smr:24,cout:'55–80€',    types:['ct']},
-  {id:'essuie_gl',   label:'Essuie-glaces',           ico:'🌧️',cat:'Divers',               poids:1,skmo:null, skmr:null, smo:10,smr:12,cout:'20–50€',    types:['essuie_gl']},
+  {id:'huile',       label:'Huile moteur',           ico:'🛢️',cat:'Moteur · Critique',       poids:3,skmo:8000, skmr:10000,smo:10,smr:12,cout:'70–130€',   types:['vidange','filtre_huile','revision']},
+  {id:'courroie',    label:'Courroie distribution',  ico:'⚙️',cat:'Moteur · Critique',       poids:3,skmo:60000,skmr:80000,smo:48,smr:60,cout:'400–1000€',types:['courroie','sangle_dist','chaine_dist']},
+  {id:'freins_av',   label:'Plaquettes avant',        ico:'🔴',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:30000,smo:28,smr:36,cout:'100–220€', types:['freins']},
+  {id:'freins_ar',   label:'Plaquettes arrière',      ico:'⭕',cat:'Freinage · Critique',     poids:3,skmo:22000,skmr:30000,smo:28,smr:36,cout:'80–180€',  types:['freins']},
+  {id:'liq_frein',   label:'Liquide de frein',        ico:'🧴',cat:'Freinage · Important',   poids:2,skmo:null, skmr:null, smo:20,smr:24,cout:'60–100€',   types:['liq_frein']},
+  {id:'pneus_av',    label:'Pneus avant',             ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:40000,smo:36,smr:48,cout:'180–450€', types:['pneus','pneus_sais']},
+  {id:'pneus_ar',    label:'Pneus arrière',           ico:'⚫',cat:'Pneus · Critique',        poids:3,skmo:30000,skmr:40000,smo:36,smr:48,cout:'160–430€', types:['pneus','pneus_sais']},
+  {id:'batterie',    label:'Batterie 12V',            ico:'🔋',cat:'Électrique · Important', poids:2,skmo:null, skmr:null, smo:40,smr:60,cout:'100–250€',  types:['batterie']},
+  {id:'embrayage',   label:'Embrayage',               ico:'🔄',cat:'Transmission · Important',poids:2,skmo:70000,skmr:100000,smo:null,smr:null,cout:'600–1500€',types:['embrayage']},
+  {id:'courroie_acc',label:'Courroie accessoires',    ico:'🔗',cat:'Moteur · Important',     poids:2,skmo:45000,skmr:60000,smo:36,smr:48,cout:'80–200€',  types:['courroie_acc']},
+  {id:'amortisseurs',label:'Amortisseurs',            ico:'🔩',cat:'Suspension · Important', poids:2,skmo:60000,skmr:80000,smo:72,smr:96,cout:'300–800€',  types:['amortisseurs']},
+  {id:'liq_refroid', label:'Liquide refroidissement', ico:'🌡️',cat:'Refroid. · Important',  poids:2,skmo:null, skmr:null, smo:36,smr:48,cout:'60–120€',   types:['liq_refroid']},
+  {id:'filtre_air',  label:'Filtre à air',            ico:'💨',cat:'Filtres · Confort',      poids:1,skmo:15000,skmr:20000,smo:18,smr:24,cout:'25–60€',    types:['filtre_air']},
+  {id:'filtre_hab',  label:'Filtre habitacle',        ico:'🌬️',cat:'Filtres · Confort',     poids:1,skmo:10000,skmr:15000,smo:10,smr:12,cout:'20–50€',    types:['filtre_hab']},
+  {id:'bougies',     label:'Bougies',                 ico:'⚡',cat:'Moteur · Confort',       poids:1,skmo:22000,skmr:30000,smo:28,smr:36,cout:'60–200€',   types:['bougies']},
+  {id:'clim',        label:'Climatisation',           ico:'❄️',cat:'Confort',               poids:1,skmo:null, skmr:null, smo:18,smr:24,cout:'100–200€',  types:['clim']},
+  {id:'ct',          label:'Contrôle technique',      ico:'✅',cat:'Administratif',          poids:1,skmo:null, skmr:null, smo:20,smr:24,cout:'70–90€',    types:['ct']},
+  {id:'essuie_gl',   label:'Essuie-glaces',           ico:'🌧️',cat:'Divers',               poids:1,skmo:null, skmr:null, smo:10,smr:12,cout:'25–55€',    types:['essuie_gl']},
 ];
 
 const JU_HOTS_SIDE={
@@ -7107,10 +7107,110 @@ function juEstimer(comp,v,km,now){
   return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,conseil:juConseil(comp,status,true)};
 }
 function juConseil(comp,status,est){
-  const p=est?'(Estimation) ':'';
-  if(status==='err')return{type:'err',title:'⚠️ Intervention urgente',txt:p+comp.label+' dépasse le seuil recommandé. Planifiez une intervention rapidement.'};
-  if(status==='warn')return{type:'warn',title:'📋 À surveiller',txt:p+comp.label+' approche de son échéance. À planifier dans les prochains mois.'};
-  if(status==='ok')return{type:'ok',title:'✅ Bon état',txt:p+comp.label+' est dans les normes. Vérification selon préconisations constructeur.'};
+  const e=est?' (estimation)':'';
+  const C={
+    huile:{
+      err:{title:'⚠️ Vidange urgente',txt:'Le délai constructeur est dépassé. Une huile dégradée accélère l\'usure des organes moteur et peut provoquer un grippage. Planifiez une vidange dès que possible.'},
+      warn:{title:'📋 Vidange à prévoir',txt:'Vous approchez de l\'échéance. Prévoyez une vidange dans les prochaines semaines pour maintenir la protection moteur.'},
+      ok:{title:'✅ Huile en bon état',txt:'Le niveau et la qualité d\'huile sont dans les normes. Pensez à vérifier le niveau tous les 3 000 km.'},
+    },
+    courroie:{
+      err:{title:'🚨 Danger moteur — Intervention immédiate',txt:'La courroie de distribution dépasse largement son seuil. En cas de casse, le moteur peut être irrémédiablement détruit (2 000–7 000€ de réparation). Ne prenez pas le risque, immobilisez le véhicule.'},
+      warn:{title:'⚠️ Remplacement imminent',txt:'La courroie approche de sa limite. Planifiez le remplacement du kit complet (courroie + galets + pompe à eau) avant d\'atteindre le seuil critique.'},
+      ok:{title:'✅ Distribution en bon état',txt:'La courroie est dans les intervalles préconisés. Respectez scrupuleusement l\'échéance constructeur (km et années).'},
+    },
+    freins_av:{
+      err:{title:'🚨 Freinage compromis — Urgence sécurité',txt:'Les plaquettes avant sont épuisées. Les distances de freinage sont dangereusement allongées. Faites vérifier immédiatement : le remplacement tardif peut endommager les disques (+150€).'},
+      warn:{title:'⚠️ Plaquettes avant à surveiller',txt:'Les plaquettes avant arrivent en fin de vie. Prévoyez leur remplacement prochainement. Faites vérifier l\'état des disques en même temps.'},
+      ok:{title:'✅ Freinage avant OK',txt:'Les plaquettes avant sont dans les normes. Évitez les freinages brusques prolongés pour préserver leur durée de vie.'},
+    },
+    freins_ar:{
+      err:{title:'🚨 Freins arrière épuisés — Urgence',txt:'Les plaquettes arrière sont hors limites. Le déséquilibre de freinage peut provoquer une perte de contrôle. Intervention urgente requise.'},
+      warn:{title:'⚠️ Plaquettes arrière à remplacer',txt:'Les plaquettes arrière approchent de leur fin de vie. À planifier rapidement avec vérification des disques.'},
+      ok:{title:'✅ Freinage arrière OK',txt:'Les plaquettes arrière sont en bon état. Vérification recommandée à chaque révision.'},
+    },
+    liq_frein:{
+      err:{title:'⚠️ Liquide de frein dégradé',txt:'Le liquide de frein est hygroscopique : il absorbe l\'humidité avec le temps et voit son point d\'ébullition chuter. Risque de vapeur dans les freins par forte chaleur. Purge à effectuer sans tarder.'},
+      warn:{title:'📋 Purge liquide de frein à planifier',txt:'Le liquide approche de ses 2 ans de vie. Prévoyez une purge lors de votre prochain entretien pour maintenir l\'efficacité du freinage.'},
+      ok:{title:'✅ Liquide de frein OK',txt:'Le liquide est en bon état. Sa durée de vie est principalement temporelle (2 ans) indépendamment du kilométrage.'},
+    },
+    pneus_av:{
+      err:{title:'🚨 Pneus avant dangereux',txt:'La profondeur de sculpture est probablement inférieure à 1,6 mm (limite légale). Adhérence et freinage fortement réduits, surtout par temps de pluie. Remplacement obligatoire.'},
+      warn:{title:'⚠️ Pneus avant à changer bientôt',txt:'Les pneus avant approchent de leur limite d\'usure. Prévoyez leur remplacement avant la prochaine saison pluvieuse ou hivernale.'},
+      ok:{title:'✅ Pneus avant en bon état',txt:'L\'usure est normale. Vérifiez la pression mensuellement (sous-gonflage = +8% de conso + usure prématurée).'},
+    },
+    pneus_ar:{
+      err:{title:'🚨 Pneus arrière dangereux',txt:'Usure probable en dessous du seuil légal (1,6 mm). Sur route mouillée, risque de sur-virage ou d\'aquaplaning important. Remplacement urgent.'},
+      warn:{title:'⚠️ Pneus arrière à changer bientôt',txt:'Les pneus arrière arrivent en fin de vie. À remplacer prochainement pour maintenir la tenue de route.'},
+      ok:{title:'✅ Pneus arrière en bon état',txt:'L\'usure est dans les normes. Permutez pneus av/ar si l\'usure est asymétrique pour maximiser la durée de vie.'},
+    },
+    batterie:{
+      err:{title:'⚠️ Batterie en fin de vie',txt:'Une batterie de plus de 5 ans perd significativement en capacité. Les pannes de démarrage arrivent souvent par temps froid. Faites tester la batterie (test gratuit dans la plupart des centres auto).'},
+      warn:{title:'📋 Batterie à surveiller',txt:'La batterie approche de sa durée de vie moyenne (4–5 ans). Faites-la tester lors de votre prochain passage en garage.'},
+      ok:{title:'✅ Batterie en bon état',txt:'La batterie est dans sa période de fiabilité. Les trajets courts répétés (moins de 5 km) accélèrent son vieillissement.'},
+    },
+    embrayage:{
+      err:{title:'⚠️ Embrayage à bout',txt:'Un embrayage usé se traduit par un patinage, une odeur de brûlé ou une pédale haute. Ne pas ignorer ces signaux : le kit complet (disque + mécanisme + butée + volant bi-masse si nécessaire) doit être remplacé.'},
+      warn:{title:'📋 Embrayage à surveiller',txt:'L\'embrayage approche de sa limite. Adoptez une conduite souple (pas de demi-embrayage prolongé) et planifiez une inspection.'},
+      ok:{title:'✅ Embrayage en bon état',txt:'L\'embrayage est dans les normes. Évitez de garder le pied sur la pédale d\'embrayage au repos pour préserver la butée.'},
+    },
+    courroie_acc:{
+      err:{title:'⚠️ Courroie accessoires à remplacer',txt:'La courroie d\'accessoires entraîne l\'alternateur, la pompe de direction et la climatisation. Sa rupture peut causer une surchauffe moteur ou une perte de direction assistée.'},
+      warn:{title:'📋 Courroie accessoires à planifier',txt:'Approche de l\'échéance. À remplacer idéalement en même temps que la courroie de distribution pour économiser la main-d\'œuvre.'},
+      ok:{title:'✅ Courroie accessoires OK',txt:'En bon état. Vérifiez visuellement l\'absence de craquelures ou d\'effilochement à chaque révision.'},
+    },
+    amortisseurs:{
+      err:{title:'⚠️ Amortisseurs usés',txt:'Des amortisseurs défaillants allongent la distance de freinage jusqu\'à 20%, réduisent la tenue de route et usent les pneus prématurément. Remplacement par paire (avant ou arrière) obligatoire.'},
+      warn:{title:'📋 Amortisseurs à inspecter',txt:'Approche de l\'échéance. Faites vérifier leur état (test rebond, recherche de fuite d\'huile). À remplacer par paire si nécessaire.'},
+      ok:{title:'✅ Amortisseurs en bon état',txt:'Dans les normes. Des vibrations inhabituelles ou une tenue de cap dégradée peuvent signaler une défaillance précoce.'},
+    },
+    liq_refroid:{
+      err:{title:'⚠️ Liquide de refroidissement dégradé',txt:'Un liquide vieilli perd ses propriétés anticorrosion et antigel. Risque de surchauffe moteur ou de corrosion interne du circuit. Purge et remplacement à effectuer rapidement.'},
+      warn:{title:'📋 Liquide refroidissement à renouveler',txt:'Le liquide approche de sa durée de vie recommandée. À planifier lors du prochain entretien.'},
+      ok:{title:'✅ Circuit de refroidissement OK',txt:'Le liquide est en bon état. Vérifiez le niveau à froid régulièrement. Une perte de niveau peut indiquer une fuite.'},
+    },
+    filtre_air:{
+      err:{title:'📋 Filtre à air colmaté',txt:'Un filtre encrassé réduit les performances moteur et augmente la consommation de carburant (jusqu\'à +10%). Remplacement simple et peu coûteux.'},
+      warn:{title:'📋 Filtre à air à remplacer',txt:'Le filtre approche de sa limite d\'efficacité. À remplacer lors de la prochaine vidange pour maintenir les performances.'},
+      ok:{title:'✅ Filtre à air OK',txt:'Le filtre est en bon état. En zone urbaine très polluée ou sur piste, réduisez l\'intervalle de remplacement.'},
+    },
+    filtre_hab:{
+      err:{title:'📋 Filtre habitacle à changer',txt:'Un filtre saturé réduit l\'efficacité du chauffage et de la climatisation, et peut diffuser bactéries et moisissures dans l\'habitacle. Remplacement rapide et peu coûteux.'},
+      warn:{title:'📋 Filtre habitacle bientôt à remplacer',txt:'Le filtre approche de sa limite annuelle. À prévoir lors du prochain entretien.'},
+      ok:{title:'✅ Filtre habitacle OK',txt:'En bon état. Un filtre propre améliore la qualité de l\'air et l\'efficacité du chauffage/clim.'},
+    },
+    bougies:{
+      err:{title:'⚠️ Bougies usées',txt:'Des bougies défaillantes provoquent des ratés d\'allumage, une surconsommation et peuvent endommager le catalyseur. Remplacement complet du jeu recommandé.'},
+      warn:{title:'📋 Bougies à remplacer prochainement',txt:'Les bougies approchent de leur limite. Un remplacement préventif évite les ratés à froid et préserve le catalyseur.'},
+      ok:{title:'✅ Bougies en bon état',txt:'Dans les normes. Les bougies iridium/platine ont une durée de vie 2x plus longue que les bougies standard.'},
+    },
+    clim:{
+      err:{title:'📋 Climatisation à réviser',txt:'Un circuit mal entretenu perd du fluide frigorigène chaque année (-15%). Une révision annuelle maintient l\'efficacité et évite la surchauffe du compresseur.'},
+      warn:{title:'📋 Révision climatisation à planifier',txt:'La recharge et le contrôle d\'étanchéité sont recommandés. Un système efficace consomme moins de carburant.'},
+      ok:{title:'✅ Climatisation OK',txt:'Le circuit est dans les normes. Faites tourner la clim 5 min/semaine même en hiver pour lubrifier le compresseur.'},
+    },
+    ct:{
+      err:{title:'⚠️ Contrôle technique dépassé',txt:'Rouler sans CT valide est une infraction (135€ d\'amende) et peut invalider votre assurance en cas d\'accident. Prenez rendez-vous immédiatement.'},
+      warn:{title:'📋 Contrôle technique à renouveler',txt:'Votre CT approche de son échéance (tous les 2 ans). Prenez rendez-vous à l\'avance, les délais peuvent être longs.'},
+      ok:{title:'✅ Contrôle technique valide',txt:'Le CT est à jour. Préparez votre prochain passage en vérifiant l\'état des éclairages, pneus et freins.'},
+    },
+    essuie_gl:{
+      err:{title:'📋 Essuie-glaces à remplacer',txt:'Des balais usés rayent le pare-brise et réduisent dangereusement la visibilité par temps de pluie. Remplacement rapide et peu coûteux.'},
+      warn:{title:'📋 Essuie-glaces bientôt à changer',txt:'Les balais approchent de leur fin de vie (stries, bruit de frottement). À remplacer avant la saison des pluies.'},
+      ok:{title:'✅ Essuie-glaces OK',txt:'En bon état. Nettoyez régulièrement le pare-brise et les balais pour éviter les stries et prolonger leur durée de vie.'},
+    },
+  };
+  const msgs=C[comp.id];
+  const suf=est?' · Donnée estimée':'';
+  if(!msgs){
+    if(status==='err')return{type:'err',title:'⚠️ Intervention urgente',txt:comp.label+' dépasse le seuil recommandé.'+suf};
+    if(status==='warn')return{type:'warn',title:'📋 À surveiller',txt:comp.label+' approche de son échéance.'+suf};
+    if(status==='ok')return{type:'ok',title:'✅ Bon état',txt:comp.label+' est dans les normes.'+suf};
+    return{type:'grey',title:'ℹ️ Aucune donnée',txt:'Ajoutez la date du dernier '+comp.label.toLowerCase()+' pour un suivi précis.'};
+  }
+  if(status==='err'){const m=msgs.err;return{type:'err',title:m.title,txt:m.txt+suf};}
+  if(status==='warn'){const m=msgs.warn;return{type:'warn',title:m.title,txt:m.txt+suf};}
+  if(status==='ok'){const m=msgs.ok;return{type:'ok',title:m.title,txt:m.txt+suf};}
   return{type:'grey',title:'ℹ️ Aucune donnée',txt:'Ajoutez la date du dernier '+comp.label.toLowerCase()+' pour un suivi précis.'};
 }
 function jumeauScore(){
