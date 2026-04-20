@@ -1502,6 +1502,10 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       </button>
       <div id="multi-global-photo-preview-wrap"></div>
     </div>
+    <div style="padding:10px 14px 4px;border-top:1px solid var(--border)">
+      <div class="multi-detail-lbl" style="margin-bottom:6px">🔧 Main d’œuvre (optionnel)</div>
+      <input class="multi-cost-input" id="multi-mo" type="number" inputmode="decimal" placeholder="Montant main d’œuvre (€)" min="0" step="0.01" oninput="updateMultiFooter()">
+    </div>
     <div class="multi-footer">
       <div class="multi-footer-info">
         <div class="multi-footer-count" id="multi-count">0 intervention sélectionnée</div>
@@ -1693,7 +1697,9 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       </div>
       <div class="fr">
         <div class="fg"><label class="fl">Garage / Lieu</label><input class="fc" id="e-gr" placeholder="Nom du garage"></div>
-        <div class="fg"><label class="fl">Coût (€)</label><input class="fc" id="e-ct" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="fg"><label class="fl">Coût pièces (€)</label><input class="fc" id="e-ct" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01" oninput="updateCoutTotal()"></div>
+        <div class="fg"><label class="fl">Main d'œuvre (€)</label><input class="fc" id="e-mo" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01" oninput="updateCoutTotal()"></div>
+        <div class="fg" id="e-total-wrap" style="display:none"><label class="fl" style="color:var(--primary);font-weight:700">Total (€)</label><input class="fc" id="e-total" type="number" readonly style="background:#F0F6FF;border-color:var(--primary);font-weight:700;color:var(--primary)"></div>
       </div>
 
       <!-- ÉTAPE 2 : PROCHAINE ÉCHÉANCE -->
@@ -2892,6 +2898,15 @@ async function saveKm(){
 }
 
 /* ENTRETIEN CRUD */
+function updateCoutTotal(){
+  const c=parseFloat((g('e-ct')||{}).value)||0;
+  const m=parseFloat((g('e-mo')||{}).value)||0;
+  const w=g('e-total-wrap');
+  const t=g('e-total');
+  if(!w||!t)return;
+  if(c>0||m>0){w.style.display='';t.value=(c+m).toFixed(2);}
+  else{w.style.display='none';t.value='';}
+}
 async function saveEnt(){
   if(!S.user?.id)return toast('Session expirée.','e');
   const id=g('e-id').value,vehicle_id=g('e-vh').value,type=g('e-ty').value,date=g('e-dt').value;
@@ -2913,7 +2928,7 @@ async function saveEnt(){
   const km=parseInt(g('e-km').value)||null;
   const p={user_id:S.user.id,vehicle_id,type,date,km,
     garage:g('e-gr').value.trim()||null,
-    cout:parseFloat(g('e-ct').value)||null,
+    cout:(parseFloat(g('e-ct').value)||0)+(parseFloat(g('e-mo').value)||0)||null,
     note:g('e-nt').value.trim()||null,
     rappel_date:(()=>{
       const ech=g('e-rd').value;
@@ -5774,7 +5789,7 @@ function openEnt(id,forcedVid){
     g('mt-ent').textContent="Modifier l'entretien";
     selV.value=e.vehicle_id;g('e-ty').value=e.type;
     g('e-dt').value=e.date||'';g('e-km').value=e.km||'';
-    g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';
+    g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';if(g('e-mo'))g('e-mo').value='';if(g('e-total-wrap'))g('e-total-wrap').style.display='none';
     g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
     // Charger photos existantes (multi)
     removePhoto();
@@ -5805,7 +5820,7 @@ function openEnt(id,forcedVid){
   }else{
     g('mt-ent').textContent='Ajouter un entretien';
     g('e-dt').value=new Date().toISOString().split('T')[0];
-    ['e-km','e-gr','e-ct','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';_photoFile=null;if(_photoPreviewUrl){URL.revokeObjectURL(_photoPreviewUrl);_photoPreviewUrl=null;}if(g('e-photo-url'))g('e-photo-url').value='';if(g('e-photo-input'))g('e-photo-input').value='';if(g('e-photo-input-cam'))g('e-photo-input-cam').value='';hidePhotoActions();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
+    ['e-km','e-gr','e-ct','e-mo','e-nt','e-rd','e-rk','e-pc','e-tech','e-dur','e-gar','e-avant'].forEach(x=>{if(g(x))g(x).value='';});if(g('e-rappel-preview'))g('e-rappel-preview').textContent='';if(g('e-total-wrap'))g('e-total-wrap').style.display='none';_photoFile=null;if(_photoPreviewUrl){URL.revokeObjectURL(_photoPreviewUrl);_photoPreviewUrl=null;}if(g('e-photo-url'))g('e-photo-url').value='';if(g('e-photo-input'))g('e-photo-input').value='';if(g('e-photo-input-cam'))g('e-photo-input-cam').value='';hidePhotoActions();if(g('e-echeance-hint'))g('e-echeance-hint').textContent='Pré-rempli selon le type · À titre indicatif, vérifiez votre carnet constructeur';;
     const eAdvBtn=g('adv-ent-btn'),eAdvBody=g('adv-ent-body');if(eAdvBtn&&eAdvBody){eAdvBtn.classList.remove('open');eAdvBody.classList.remove('open');};
     g('btn-del-e').classList.add('hidden');
     // km non pré-rempli — l'utilisateur saisit le km exact de l'entretien
@@ -6956,7 +6971,7 @@ function _renderMultiGlobalPhoto(){
     btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> ${isPdf?'PDF joint':'Photo jointe'} — ${_multiGlobalPhoto.name||'Fichier'}`;
     wrap.innerHTML=isPdf
       ?`<div style="background:#FEF9F0;border:1px solid #FDE68A;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#92400E"><span>📄</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(_multiGlobalPhoto.name)}</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕</span></div>`
-      :`<img class="multi-global-photo-preview" src="${_multiGlobalPhotoPreview}" onclick="openPhotoFullscreen('${_multiGlobalPhotoPreview}')" alt=""><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕ Supprimer</span>`;
+      :`<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:9px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#1D4ED8"><span>🖼️</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_multiGlobalPhoto.name||'Photo jointe'}</span><span class="multi-global-photo-remove" onclick="removeMultiGlobalPhoto()">✕</span></div>`;
   } else {
     btn.className='multi-global-photo-btn';
     btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Joindre une photo ou un document PDF`;
@@ -7025,7 +7040,9 @@ function updateMultiFooter(){
   const totEl=g('multi-total');
   const btn=g('multi-save-btn');
   if(cntEl)cntEl.textContent=count===0?'Aucune intervention sélectionnée':count===1?'1 intervention sélectionnée':`${count} interventions sélectionnées`;
-  if(totEl)totEl.textContent=total>0?fmtCout(total):'';
+  const moVal=parseFloat((g('multi-mo')||{}).value)||0;
+  const totalAvecMo=total+moVal;
+  if(totEl)totEl.textContent=totalAvecMo>0?fmtCout(totalAvecMo)+(moVal>0?' (MO incluse)':''):'';
   if(btn){btn.disabled=count===0;btn.textContent=count===0?'Enregistrer':`Enregistrer ${count} entretien${count>1?'s':''}`;}
 }
 
@@ -7046,8 +7063,11 @@ async function saveMultiEnt(){
   let ok=0,err=0;
   const createdIds=[];
 
+  const moTotal=parseFloat((g('multi-mo')||{}).value)||0;
+  const moParItem=types.length>0?moTotal/types.length:0;
   for(const typeId of types){
-    const cout=_multiSel[typeId]!=null?parseFloat(_multiSel[typeId]):null;
+    const coutPieces=_multiSel[typeId]!=null?parseFloat(_multiSel[typeId]):0;
+    const cout=(coutPieces+moParItem)||null;
     const ti=getType(typeId);
     let rappelDate=null,rappelKm=null;
     if(ti.imo){const d=new Date(dt);d.setMonth(d.getMonth()+ti.imo);rappelDate=d.toISOString().split('T')[0];}
@@ -7097,7 +7117,7 @@ async function saveMultiEnt(){
   }
 
   if(_multiGlobalPhotoPreview)try{URL.revokeObjectURL(_multiGlobalPhotoPreview);}catch(e){}
-  _multiSel={};_multiGlobalPhoto=null;_multiGlobalPhotoPreview=null;
+  _multiSel={};_multiGlobalPhoto=null;_multiGlobalPhotoPreview=null;if(g('multi-mo'))g('multi-mo').value='';
   btn.disabled=false;
   cm('multi');
   await loadEnts();
@@ -7385,7 +7405,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
       <div class="jonb-opts">
         <div class="jonb-opt" onclick="jonbSelect(2,'moins_30k',this)"><div class="jonb-opt-ico">🟢</div><div class="jonb-opt-txt"><strong>Moins de 30 000 km</strong><span>Changée récemment, encore bonne durée</span></div><div class="jonb-chk">✓</div></div>
         <div class="jonb-opt" onclick="jonbSelect(2,'30_60k',this)"><div class="jonb-opt-ico">🟡</div><div class="jonb-opt-txt"><strong>30 000 à 60 000 km</strong><span>À mi-vie, à surveiller</span></div><div class="jonb-chk">✓</div></div>
-        <div class="jonb-opt" onclick="jonbSelect(2,'plus_60k',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Plus de 60 000 km</strong><span>Approche ou dépasse le seuil — urgent</span></div><div class="jonb-chk">✓</div></div>
+        <div class="jonb-opt" onclick="jonbSelect(2,'plus_60k',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Plus de 60 000 km</strong><span>Approche ou dépasse le seuil — à prévoir</span></div><div class="jonb-chk">✓</div></div>
         <div class="jonb-opt" onclick="jonbSelect(2,'inconnu',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Je ne sais pas</strong><span>Historique inconnu ou non communiqué</span></div><div class="jonb-chk">✓</div></div>
         <div class="jonb-opt" onclick="jonbSelect(2,'chaine',this)"><div class="jonb-opt-ico">🔗</div><div class="jonb-opt-txt"><strong>Chaîne (pas de courroie)</strong><span>Mon véhicule est équipé d'une chaîne de distribution</span></div><div class="jonb-chk">✓</div></div>
       </div>
@@ -8291,9 +8311,9 @@ function jumeauScore(){
     if(d.status==='err')nbr++;else if(d.status==='warn')nbw++;else nbo++;
   });
   const val=poids>0?Math.round(tot/poids*100):0;
-  const title=val>=80?'Bon état':val>=55?'État moyen':val>=30?'Attention requise':'Intervention urgente';
-  const desc=`${nbr?nbr+' composant(s) urgent(s)':''}${nbw?(nbr?', ':'')+nbw+' à surveiller':''}${nbo?', '+nbo+' OK':''}`;
-  const badges=`${nbr?`<span class="ju-badge jub-r">🔴 ${nbr} urgent${nbr>1?'s':''}</span>`:''}${nbw?`<span class="ju-badge jub-w">🟡 ${nbw} à surveiller</span>`:''}${nbo?`<span class="ju-badge jub-ok">🟢 ${nbo} OK</span>`:''}`;
+  const title=val>=80?'Bon état':val>=55?'État moyen':val>=30?'Attention requise':'État préoccupant';
+  const desc=`${nbr?nbr+' composant(s) à vérifier':''}${nbw?(nbr?', ':'')+nbw+' à surveiller':''}${nbo?', '+nbo+' OK':''}`;
+  const badges=`${nbr?`<span class="ju-badge jub-r">🔴 ${nbr} à vérifier</span>`:''}${nbw?`<span class="ju-badge jub-w">🟡 ${nbw} à surveiller</span>`:''}${nbo?`<span class="ju-badge jub-ok">🟢 ${nbo} OK</span>`:''}`;
   return{val,title,desc,badges};
 }
 function jumeauPrecision(){
