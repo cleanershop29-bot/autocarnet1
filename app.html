@@ -722,47 +722,59 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .multi-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:93vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,0px)}
 #mo-multi.open .multi-sheet{transform:translateY(0)}
 .multi-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 6px}
-.multi-hdr{padding:0 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.multi-hdr{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .multi-hdr-l .multi-hdr-title{font-size:1rem;font-weight:900;color:var(--txt);letter-spacing:-.02em}
 .multi-hdr-l .multi-hdr-sub{font-size:.72rem;color:var(--txm);margin-top:3px}
 .multi-hdr-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txm);font-size:1rem;flex-shrink:0}
-.multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid var(--border);background:#FAFBFF}
+.multi-fields{padding:12px 18px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid var(--border);background:#FAFBFF;flex-shrink:0}
 .multi-field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.multi-list{flex:1;overflow-y:auto;padding:0}
-/* ── Multi : en-têtes de catégorie ── */
-.multi-cat{margin-bottom:0}
-.multi-cat-hdr{display:flex;align-items:center;gap:7px;padding:8px 14px 5px;background:var(--bg2);border-top:1px solid var(--border);font-size:.67rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;position:sticky;top:0;z-index:2}
-.multi-cat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.multi-cat-count{font-size:.62rem;font-weight:700;background:var(--primary);color:#fff;padding:2px 7px;border-radius:10px;margin-left:auto;flex-shrink:0}
-.multi-cat-chev{display:none}
-.multi-cat-body{display:block}
-/* ── Multi : ligne par intervention ── */
-.multi-item{display:flex;align-items:center;gap:0;padding:0;border:none;border-bottom:1px solid var(--border);background:#fff;cursor:pointer;transition:background .1s;width:100%}
-.multi-item:active{background:#F8FAFC}
-.multi-item.sel{background:#EFF6FF}
-.multi-item-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:12px 10px 12px 14px;-webkit-tap-highlight-color:transparent}
-.multi-item-ico{font-size:1rem;flex-shrink:0;width:22px;text-align:center}
-.multi-item-label{font-size:.84rem;font-weight:600;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.multi-item.sel .multi-item-label{color:var(--primary)}
-.multi-item-price{width:84px;flex-shrink:0;padding:8px 10px 8px 6px;display:flex;align-items:center}
-.multi-item-price input{width:100%;border:1.5px solid transparent;border-radius:8px;padding:6px 7px;font-family:inherit;font-size:.84rem;font-weight:700;text-align:right;background:transparent;outline:none;color:var(--txm);display:none}
-.multi-item.sel .multi-item-price input{display:block;border-color:var(--border);background:#fff;color:var(--txt)}
-.multi-item.sel .multi-item-price input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.1)}
-.multi-item-chk{width:44px;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-left:1px solid var(--border)}
-.multi-item-chk-inner{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;transition:all .12s;background:#fff}
-.multi-item.sel .multi-item-chk-inner{background:var(--primary);border-color:var(--primary)}
-.multi-sel-costs{padding:10px 0 4px;display:flex;flex-direction:column;gap:6px}
+/* ── Résumé des interventions dans le modal principal ── */
+.multi-sel-list{padding:10px 18px;flex:1;overflow-y:auto}
+.multi-sel-empty{padding:14px 0;text-align:center;font-size:.84rem;color:var(--txm)}
+.multi-sel-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.multi-sel-row:last-child{border-bottom:none}
+.multi-sel-ico{font-size:1rem;flex-shrink:0;width:22px;text-align:center}
+.multi-sel-label{flex:1;font-size:.84rem;font-weight:600;color:var(--txt);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.multi-sel-price{width:90px;flex-shrink:0}
+.multi-sel-price input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:7px 8px;font-family:inherit;font-size:.84rem;font-weight:700;text-align:right;background:#fff;outline:none;color:var(--txt)}
+.multi-sel-price input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.1)}
+.multi-sel-del{width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--txl);cursor:pointer;font-size:1.1rem;padding:4px}
+.multi-add-btn{width:100%;margin:8px 0 0;padding:12px;border:1.5px dashed var(--primary);border-radius:10px;background:var(--primary-lt);color:var(--primary);font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+.multi-add-btn:active{opacity:.8}
+/* ── Modal sélecteur d'interventions ── */
+#mo-picker{position:fixed;inset:0;z-index:500;background:rgba(10,15,30,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s}
+#mo-picker.open{opacity:1;pointer-events:all}
+.picker-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:88vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .28s cubic-bezier(.33,1,.68,1);padding-bottom:env(safe-area-inset-bottom,12px)}
+#mo-picker.open .picker-sheet{transform:translateY(0)}
+.picker-hdr{padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.picker-hdr-title{font-size:.95rem;font-weight:900;color:var(--txt)}
+.picker-hdr-close{width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txm);font-size:.95rem}
+.picker-search{padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.picker-search input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.88rem;background:var(--bg);outline:none;color:var(--txt);box-sizing:border-box}
+.picker-search input:focus{border-color:var(--primary)}
+.picker-list{flex:1;overflow-y:auto}
+.picker-cat-hdr{padding:7px 16px 4px;font-size:.67rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;background:var(--bg2);display:flex;align-items:center;gap:7px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border)}
+.picker-cat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.picker-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.picker-row:active{background:#F8FAFC}
+.picker-row.sel{background:#EFF6FF}
+.picker-ico{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.picker-label{flex:1;font-size:.88rem;font-weight:600;color:var(--txt)}
+.picker-row.sel .picker-label{color:var(--primary)}
+.picker-chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;flex-shrink:0;background:#fff;transition:all .12s}
+.picker-row.sel .picker-chk{background:var(--primary);border-color:var(--primary)}
+.picker-footer{padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.picker-confirm-btn{width:100%;padding:14px;background:linear-gradient(135deg,#3B82F6,#2563EB);border:none;border-radius:12px;font-family:inherit;font-size:.92rem;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+/* ── Footer modal principal ── */
 .multi-detail-lbl{font-size:.65rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .multi-cost-input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.92rem;font-weight:700;background:#fff;outline:none;color:var(--txt);transition:.15s;box-sizing:border-box;margin-top:8px}
 .multi-cost-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-/* Photo globale facture */
-.multi-global-photo{padding:10px 14px 4px;border-top:1px solid var(--border)}
+.multi-global-photo{padding:10px 14px 4px;border-top:1px solid var(--border);flex-shrink:0}
 .multi-global-photo-btn{width:100%;padding:13px;border:1.5px dashed var(--border);border-radius:10px;background:#FAFBFF;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:.84rem;font-weight:600;color:var(--txm);transition:.15s}
 .multi-global-photo-btn:active{transform:scale(.99)}
 .multi-global-photo-btn.has-photo{border-style:solid;border-color:#10B981;background:#F0FDF4;color:#059669;font-weight:700}
-.multi-global-photo-preview{width:100%;max-height:120px;object-fit:cover;border-radius:9px;margin-top:8px;cursor:pointer;display:block}
 .multi-global-photo-remove{font-size:.72rem;color:var(--err);font-weight:600;cursor:pointer;text-align:center;margin-top:5px;display:block}
-.multi-footer{padding:12px 18px 14px;border-top:1px solid var(--border);background:#fff}
+.multi-footer{padding:12px 18px 14px;border-top:1px solid var(--border);background:#fff;flex-shrink:0}
 .multi-footer-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .multi-footer-count{font-size:.8rem;font-weight:700;color:var(--txt)}
 .multi-footer-total{font-size:.84rem;font-weight:800;color:var(--ok)}
@@ -1496,10 +1508,14 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
     </div>
     <!-- Input photo global caché -->
     <input type="file" id="multi-photo-input" accept="image/*,application/pdf" style="display:none" onchange="onMultiPhotoSelected(this)">
-    <div class="multi-list" id="multi-list"></div>
+    <!-- Résumé des interventions sélectionnées -->
+    <div class="multi-sel-list" id="multi-sel-list">
+      <div class="multi-sel-empty" id="multi-sel-empty">Aucune intervention ajoutée</div>
+    </div>
     <!-- Zone photo / document globale -->
     <div class="multi-global-photo">
-      <div class="multi-detail-lbl">📷 Photo ou document de la facture</div>
+      <button class="multi-add-btn" onclick="openPicker()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter des interventions</button>
+      <div class="multi-detail-lbl" style="margin-top:10px">📷 Photo ou document de la facture</div>
       <button class="multi-global-photo-btn" id="multi-global-photo-btn" onclick="g('multi-photo-input').click()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Joindre une photo ou un document PDF
@@ -1516,6 +1532,21 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         <div class="multi-footer-total" id="multi-total"></div>
       </div>
       <button class="multi-save-btn" id="multi-save-btn" onclick="saveMultiEnt()" disabled>Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Picker interventions -->
+<div id="mo-picker" onclick="if(event.target===this)closePicker()">
+  <div class="picker-sheet">
+    <div class="picker-hdr">
+      <div class="picker-hdr-title">Sélectionner des interventions</div>
+      <button class="picker-hdr-close" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-search"><input id="picker-search" type="search" placeholder="🔍 Rechercher une intervention…" oninput="filterPicker(this.value)" autocomplete="off"></div>
+    <div class="picker-list" id="picker-list"></div>
+    <div class="picker-footer">
+      <button class="picker-confirm-btn" id="picker-confirm-btn" onclick="confirmPicker()">Confirmer la sélection</button>
     </div>
   </div>
 </div>
@@ -6897,66 +6928,145 @@ function openMultiEnt(forcedVid){
   if(forcedVid)selV.value=forcedVid;
   g('multi-dt').value=new Date().toISOString().split('T')[0];
   g('multi-km').value='';g('multi-garage').value='';
-  renderMultiList();updateMultiFooter();
+  if(g('multi-mo'))g('multi-mo').value='';
+  renderMultiSummary();updateMultiFooter();
   _renderMultiGlobalPhoto();
   om('multi');
 }
 
-function renderMultiList(){
+// ── Picker : sélecteur d'interventions ──────────────────────────
+let _pickerTmp = {}; // copie temporaire pendant le picker
+
+function openPicker(){
+  _pickerTmp = Object.assign({}, _multiSel);
+  renderPickerList('');
+  g('picker-search').value='';
+  document.getElementById('mo-picker').classList.add('open');
+}
+
+function closePicker(){
+  document.getElementById('mo-picker').classList.remove('open');
+}
+
+function confirmPicker(){
+  _multiSel = Object.assign({}, _pickerTmp);
+  closePicker();
+  renderMultiSummary();
+  updateMultiFooter();
+}
+
+function renderPickerList(query){
   const catOrder=['Moteur','Filtres','Freinage','Pneus','Transmission','Suspension','Électrique','Refroid.','Climatisation','Administratif','Divers','Moto','Carrosserie','Camping-car'];
   const catColors={'Moteur':'#EA580C','Filtres':'#16A34A','Freinage':'#DC2626','Pneus':'#475569','Transmission':'#2563EB','Suspension':'#9333EA','Électrique':'#CA8A04','Refroid.':'#0284C7','Climatisation':'#0EA5E9','Administratif':'#15803D','Divers':'#64748B','Moto':'#E11D48','Carrosserie':'#0891B2','Camping-car':'#059669'};
   const excluded=['autre','gps_tracker','dashcam','attelage','vignette_crit','vignette_auto'];
+  const q=query.toLowerCase().trim();
+  let types=TYPES.filter(t=>!excluded.includes(t.id));
+  if(q) types=types.filter(t=>t.label.toLowerCase().includes(q));
   const grouped={};
-  TYPES.filter(t=>!excluded.includes(t.id)).forEach(t=>{
-    if(!grouped[t.cat])grouped[t.cat]=[];
-    grouped[t.cat].push(t);
-  });
+  types.forEach(t=>{if(!grouped[t.cat])grouped[t.cat]=[];grouped[t.cat].push(t);});
   const sortedCats=Object.keys(grouped).sort((a,b)=>{
     const ia=catOrder.indexOf(a),ib=catOrder.indexOf(b);
     if(ia===-1&&ib===-1)return a.localeCompare(b);
-    if(ia===-1)return 1;if(ib===-1)return-1;
-    return ia-ib;
+    if(ia===-1)return 1;if(ib===-1)return-1;return ia-ib;
   });
-  const el=g('multi-list');
-  el.innerHTML=sortedCats.map((cat,ci)=>{
-    const types=grouped[cat];
+  const el=g('picker-list');
+  if(!sortedCats.length){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--txm);font-size:.88rem">Aucun résultat</div>';return;}
+  el.innerHTML=sortedCats.map(cat=>{
     const dot=catColors[cat]||'#94A3B8';
-    const selInCat=types.filter(t=>_multiSel[t.id]!==undefined).length;
-    return`<div class="multi-cat">
-      <div class="multi-cat-hdr">
-        <span class="multi-cat-dot" style="background:${dot}"></span>
-        <span>${cat}</span>
-        ${selInCat?`<span class="multi-cat-count">${selInCat}</span>`:''}
-      </div>
-      <div class="multi-cat-body">
-        ${types.map(t=>_buildMultiItemHTML(t)).join('')}
-      </div>
-    </div>`;
+    return`<div class="picker-cat-hdr"><span class="picker-cat-dot" style="background:${dot}"></span>${cat}</div>`
+      +grouped[cat].map(t=>{
+        const sel=_pickerTmp[t.id]!==undefined;
+        return`<div class="picker-row${sel?' sel':''}" id="pr-${t.id}" onclick="togglePickerRow('${t.id}')">
+          <div class="picker-ico">${t.ico}</div>
+          <div class="picker-label">${esc(t.label)}</div>
+          <div class="picker-chk">${sel?'✓':''}</div>
+        </div>`;
+      }).join('');
   }).join('');
+  // update confirm button
+  const nb=Object.keys(_pickerTmp).length;
+  const btn=g('picker-confirm-btn');
+  if(btn)btn.textContent=nb?`Confirmer (${nb} intervention${nb>1?'s':''})`:'Confirmer la sélection';
 }
 
-function _buildMultiItemHTML(t){
-  const isSel=_multiSel[t.id]!==undefined;
-  const costVal=isSel&&_multiSel[t.id]!=null?_multiSel[t.id]:'';
-  return`<div class="multi-item ${isSel?'sel':''}" id="mi-${t.id}">
-    <div class="multi-item-left" onclick="toggleMultiItem('${t.id}')">
-      <div class="multi-item-ico">${t.ico}</div>
-      <div class="multi-item-label">${esc(t.label)}</div>
-    </div>
-    <div class="multi-item-price">
-      <input type="number" inputmode="decimal" placeholder="0 €" min="0" step="0.01"
-        value="${costVal}"
-        onclick="event.stopPropagation()"
-        oninput="onMultiCostInput('${t.id}',this.value)"
-        id="micost-${t.id}">
-    </div>
-    <div class="multi-item-chk" onclick="toggleMultiItem('${t.id}')">
-      <div class="multi-item-chk-inner">${isSel?'✓':''}</div>
-    </div>
-  </div>`;
+function togglePickerRow(typeId){
+  if(_pickerTmp[typeId]!==undefined){
+    delete _pickerTmp[typeId];
+  } else {
+    _pickerTmp[typeId]=null;
+  }
+  const row=document.getElementById('pr-'+typeId);
+  if(row){
+    const sel=_pickerTmp[typeId]!==undefined;
+    row.className='picker-row'+(sel?' sel':'');
+    row.querySelector('.picker-chk').textContent=sel?'✓':'';
+  }
+  const nb=Object.keys(_pickerTmp).length;
+  const btn=g('picker-confirm-btn');
+  if(btn)btn.textContent=nb?`Confirmer (${nb} intervention${nb>1?'s':''})`:'Confirmer la sélection';
 }
 
-// Prix inline dans chaque ligne
+function filterPicker(q){
+  renderPickerList(q);
+}
+
+// ── Résumé dans le modal principal ──────────────────────────────
+function renderMultiSummary(){
+  const el=g('multi-sel-list');
+  const empty=g('multi-sel-empty');
+  if(!el)return;
+  const ids=Object.keys(_multiSel);
+  // Supprimer les anciennes lignes (garder l'empty div)
+  el.querySelectorAll('.multi-sel-row').forEach(r=>r.remove());
+  if(!ids.length){
+    if(empty)empty.style.display='';
+    return;
+  }
+  if(empty)empty.style.display='none';
+  ids.forEach(id=>{
+    const t=TYPES.find(x=>x.id===id)||{ico:'🔧',label:id};
+    const v=_multiSel[id]||'';
+    const row=document.createElement('div');
+    row.className='multi-sel-row';
+    row.id='msr-'+id;
+    row.innerHTML=
+      `<div class="multi-sel-ico">${t.ico}</div>`+
+      `<div class="multi-sel-label">${esc(t.label)}</div>`+
+      `<div class="multi-sel-price"><input type="number" inputmode="decimal" placeholder="0 €" min="0" step="0.01" value="${v}" oninput="onMultiCostInput('${id}',this.value)" id="micost-${id}"></div>`+
+      `<div class="multi-sel-del" onclick="removeMultiSel('${id}')">✕</div>`;
+    el.appendChild(row);
+  });
+}
+
+function removeMultiSel(typeId){
+  delete _multiSel[typeId];
+  const row=document.getElementById('msr-'+typeId);
+  if(row)row.remove();
+  const empty=g('multi-sel-empty');
+  if(empty&&!Object.keys(_multiSel).length)empty.style.display='';
+  updateMultiFooter();
+}
+
+function onMultiCostInput(typeId,val){
+  if(_multiSel[typeId]!==undefined){
+    _multiSel[typeId]=val?parseFloat(val):null;
+    updateMultiFooter();
+  }
+}
+
+function updateMultiFooter(){
+  const ids=Object.keys(_multiSel);
+  const count=ids.length;
+  let total=ids.reduce((s,id)=>s+(parseFloat(_multiSel[id])||0),0);
+  const moVal=parseFloat((g('multi-mo')||{}).value)||0;
+  const totalAvecMo=total+moVal;
+  const cntEl=g('multi-count');
+  const totEl=g('multi-total');
+  const btn=g('multi-save-btn');
+  if(cntEl)cntEl.textContent=count===0?'Aucune intervention':count===1?'1 intervention':`${count} interventions`;
+  if(totEl)totEl.textContent=totalAvecMo>0?fmtCout(totalAvecMo)+(moVal>0?' (MO incluse)':''):'';
+  if(btn){btn.disabled=count===0;btn.textContent=count===0?'Enregistrer':`Enregistrer ${count} entretien${count>1?'s':''}`;}
+}
 
 function onMultiPhotoSelected(inp){
   if(!inp.files||!inp.files[0])return;
