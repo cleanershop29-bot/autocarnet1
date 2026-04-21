@@ -7738,6 +7738,22 @@ const JU_SVG_TOP=`<svg viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg">
 
 let JU={vid:null,vehIdx:0,data:{},onbAnswers:[null,null,null],onbStep:0,compOpen:null,vue:'side',compFilter:'all'};
 
+function juKmUpdateBanner(v){
+  // Affiche un bandeau si le kilométrage n'a pas été mis à jour depuis 90 jours
+  if(!v.km_maj_date) return '';
+  const joursSinceUpdate=Math.floor((new Date()-new Date(v.km_maj_date))/(1000*60*60*24));
+  if(joursSinceUpdate<90) return '';
+  const vid=v.id;
+  // Utiliser &apos; dans onclick pour éviter les conflits de guillemets
+  const onclick='om(&apos;km&apos;);g(&apos;km-vid&apos;).value=&apos;'+vid+'&apos;;g(&apos;km-v&apos;).value=&apos;&apos;';
+  return '<div style="margin:10px 14px 0;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:var(--r-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="'+onclick+'">'
+    +'<div style="font-size:1.1rem;flex-shrink:0">🔄</div>'
+    +'<div style="flex:1">'
+    +'<div style="font-size:.8rem;font-weight:700;color:var(--txm)">Kilométrage non mis à jour depuis '+joursSinceUpdate+' jours</div>'
+    +'<div style="font-size:.7rem;color:var(--txl);margin-top:1px">Mettez à jour le km pour affiner les calculs d\'usure.</div>'
+    +'</div><div style="color:var(--txl);font-size:.9rem">›</div></div>';
+}
+
 function renderJumeau(){
   const ctn=document.getElementById('ju-ctn');
   if(!S.vehicles||!S.vehicles.length){
@@ -7754,7 +7770,8 @@ function renderJumeau(){
   if(!v.jumeau_onboarding_done){setTimeout(()=>openJumeauOnb(),300);}
   jumeauCalculer(v);
   const score=jumeauScore();
-  const prec=jumeauPrecision();
+  const precData=jumeauPrecision();
+  const prec=precData.pct;
 
   // ── Anneau SVG score ──
   const R=30,C=2*Math.PI*R;
@@ -7828,6 +7845,9 @@ function renderJumeau(){
         <div class="ju-prec-val">${prec}%</div>
       </div>
       <div class="ju-prec-bg"><div class="ju-prec-bar" style="width:${prec}%"></div></div>
+      <div style="font-size:.68rem;color:var(--txl);margin-top:4px;margin-bottom:2px">
+        ${precData.reels>0?`${precData.reels} entretien${precData.reels>1?'s':''} réel${precData.reels>1?'s':''}`:''}${precData.reels>0&&precData.estimations>0?' · ':''}${precData.estimations>0?`${precData.estimations} estimation${precData.estimations>1?'s':''}`:''}${(precData.reels>0||precData.estimations>0)&&precData.inconnus>0?' · ':''}${precData.inconnus>0?`${precData.inconnus} inconnu${precData.inconnus>1?'s':''}`:''}
+      </div>
       <div style="font-size:.72rem;color:var(--txm);margin-bottom:6px">
         ${prec<30?'Ajoutez vos entretiens et renseignez le kilométrage pour améliorer la précision.':prec<60?'Ajoutez le kilométrage à vos entretiens pour affiner le calcul.':prec<90?'Bonne précision — continuez à enregistrer vos entretiens.':'Excellente précision — le jumeau est bien calibré.'}
       </div>
@@ -7839,7 +7859,10 @@ function renderJumeau(){
     </div>
 
     ${nextBanner}
-    ${(!v.km_actuel||v.km_actuel===0)?`<div style="margin:10px 14px 0;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="om('km');g('km-vid').value='${v.id}';g('km-v').value=''"><div style="font-size:1.2rem;flex-shrink:0">📍</div><div style="flex:1"><div style="font-size:.82rem;font-weight:700;color:#92400E">Kilométrage non renseigné</div><div style="font-size:.72rem;color:#B45309;margin-top:2px">Renseignez le kilométrage actuel pour améliorer la précision du jumeau.</div></div><div style="color:#D97706;font-size:.9rem">›</div></div>`:''}
+    ${(!v.km_actuel||v.km_actuel===0)
+      ?`<div style="margin:10px 14px 0;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="om('km');g('km-vid').value='${v.id}';g('km-v').value=''"><div style="font-size:1.2rem;flex-shrink:0">📍</div><div style="flex:1"><div style="font-size:.82rem;font-weight:700;color:#92400E">Kilométrage non renseigné</div><div style="font-size:.72rem;color:#B45309;margin-top:2px">Renseignez le kilométrage actuel pour améliorer la précision du jumeau.</div></div><div style="color:#D97706;font-size:.9rem">›</div></div>`
+      :juKmUpdateBanner(v)
+    }
 
     <div class="ju-sec">Visualisation</div>
     <div class="ju-sil">
@@ -8022,9 +8045,10 @@ function jumeauCalculer(v){
       }
 
       const kmSinceAdj=juAppliquerUsage(comp,kmSince,v);
-      const status=juCalcStatus(comp,kmSinceAdj,moisSince);
-      const usure=juCalcUsure(comp,kmSinceAdj,moisSince);
-      const kmRestants=juCalcKmRestants(comp,kmSinceAdj,moisSince,lastKm===0,v);
+      const compS=juGetSeuils(comp,v); // seuils adaptés au carburant
+      const status=juCalcStatus(compS,kmSinceAdj,moisSince);
+      const usure=juCalcUsure(compS,kmSinceAdj,moisSince);
+      const kmRestants=juCalcKmRestants(compS,kmSinceAdj,moisSince,lastKm===0,v);
       const genericNote=isGeneric?' (type générique)':'';
       JU.data[comp.id]={
         status,usure,
@@ -8074,6 +8098,49 @@ function juAppliquerUsage(comp,kmSince,v){
     }
   }[usage]||{};
   return Math.round(kmSince*(multUsage[comp.id]||1));
+}
+
+// ── Seuils adaptés par carburant ──────────────────────────────────
+// Surcharges appliquées sur les valeurs génériques de JU_COMPOSANTS
+// Structure : { id_composant: { carburant: { skmo, skmr, smo, smr } } }
+const JU_SEUILS_CARB = {
+  huile: {
+    // Diesel : huile plus résistante, intervals plus longs
+    diesel:        { skmo:12000, skmr:15000, smo:12, smr:15 },
+    // Hybride : trajets courts et arrêts fréquents dégradent plus l'huile
+    hybride:       { skmo:7000,  skmr:9000,  smo:9,  smr:12 },
+    hybride_r:     { skmo:7000,  skmr:9000,  smo:9,  smr:12 },
+    // Essence : valeurs actuelles déjà correctes (fallback générique)
+  },
+  courroie: {
+    // Diesel : courroie souvent plus longue (ex: 1.5 dCi : 120 000 km)
+    diesel:        { skmo:90000, skmr:120000, smo:60, smr:72 },
+    // Hybride : sollicitation réduite, même logique que diesel
+    hybride:       { skmo:80000, skmr:100000, smo:60, smr:72 },
+    hybride_r:     { skmo:80000, skmr:100000, smo:60, smr:72 },
+    // GPL : identique essence
+  },
+  bougies: {
+    // GPL : bougies s'usent plus vite (combustion plus chaude)
+    gpl:           { skmo:18000, skmr:24000, smo:24, smr:30 },
+    // Essence iridium/platine déjà dans les seuils génériques
+  },
+  filtre_air: {
+    // Diesel : moins sensible, intervalle légèrement plus long
+    diesel:        { skmo:20000, skmr:25000, smo:24, smr:30 },
+  },
+};
+
+/**
+ * Retourne les seuils adaptés au carburant du véhicule.
+ * Fallback sur les valeurs génériques du composant si pas de surcharge.
+ */
+function juGetSeuils(comp, v){
+  const carb = v?.carburant || 'essence';
+  const surcharge = JU_SEUILS_CARB[comp.id]?.[carb];
+  if(!surcharge) return comp; // pas de surcharge → seuils génériques
+  // Retourner un objet fusionné (ne pas modifier comp directement)
+  return Object.assign({}, comp, surcharge);
 }
 
 function juCalcStatus(comp,kmSince,moisSince){
@@ -8151,6 +8218,8 @@ function juCalcUsure(comp,kmSince,moisSince){
   return Math.max(0,usure);
 }
 function juEstimer(comp,v,km,now){
+  // Adapter les seuils au carburant du véhicule
+  comp=juGetSeuils(comp,v);
   // Utiliser la vraie date MEC si disponible (calculée dans jumeauCalculer)
   const dateMEC=JU._dateMEC||null;
   const ageVehiculeMois=dateMEC?Math.max(1,Math.floor((now-dateMEC)/(1000*60*60*24*30))):null;
@@ -8553,13 +8622,12 @@ function jumeauScore(){
 function jumeauPrecision(){
   const applicable=JU_COMPOSANTS.filter(c=>JU.data[c.id]&&!JU.data[c.id].notApplicable);
   const total=applicable.length;
-  if(!total)return 0;
-  // Score pondéré : entretien réel récent = 100%, réel ancien = 70%, estimé = 30%, inconnu = 0%
+  if(!total)return{pct:0,reels:0,estimations:0,inconnus:0};
   const now=new Date();
-  let score=0;
+  let score=0,reels=0,estimations=0,inconnus=0;
   applicable.forEach(c=>{
     const d=JU.data[c.id];
-    if(!d||d.status==='grey'){score+=0;return;}
+    if(!d||d.status==='grey'){inconnus++;return;}
     if(!d.estimated){
       // Entretien réel : précision dépend de l'ancienneté
       // < 18 mois = fiable (1.0), 18-36 mois = acceptable (0.75), > 36 mois = dégradé (0.5)
@@ -8568,12 +8636,13 @@ function jumeauPrecision(){
       if(moisAge<18) score+=1.0;
       else if(moisAge<36) score+=0.75;
       else score+=0.5;
+      reels++;
     } else {
-      // Estimation : précision partielle
       score+=0.3;
+      estimations++;
     }
   });
-  return Math.round(score/total*100);
+  return{pct:Math.round(score/total*100),reels,estimations,inconnus};
 }
 function jumeauHots(vue){
   const map=JU_HOTS_TOP;
