@@ -3361,9 +3361,10 @@ function getRappels(){
   });
   S.vehicles.forEach(v=>{
     if(!v.ct_date)return;
-    // FIX DOUBLON CT : ne pas générer de rappel auto si un rappel custom CT existe déjà pour ce véhicule
+    // FIX DOUBLON CT : ne pas générer de rappel auto si un doc CT ou un rappel custom CT existe déjà
     const hasCustomCT=S.rappels_custom.some(r=>r.vehicle_id===v.id&&r.titre&&(r.titre.toLowerCase().includes('contr')||r.titre.toLowerCase().includes('ct ')||r.titre.toLowerCase()==='ct'));
-    if(!hasCustomCT){
+    const hasDocCT=S.documents.some(d=>d.vehicle_id===v.id&&d.type==='Contrôle technique'&&d.date_expiration);
+    if(!hasCustomCT&&!hasDocCT){
       const days=Math.ceil((new Date(v.ct_date)-today)/86400000);
       const sev=days<0?'danger':days<=60?'warn':'ok';
       if(sev!=='ok')list.push({id:'ct'+v.id,v,e:null,ti:{ico:'✅',label:'Contrôle technique'},kind:'ct',days,sev,label:days<0?`Expiré (${Math.abs(days)}j)`:`Dans ${days}j`,isCT:true});
