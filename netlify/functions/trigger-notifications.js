@@ -20,6 +20,31 @@ exports.handler = async (event) => {
   const title  = params.get('title')   || null;
   const body   = params.get('body')    || null;
 
+  // Mode broadcast : title + body sans user_id → envoyer à tous les abonnés
+  if (!userId && title && body) {
+    const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=*`, { headers: SB_HEADERS });
+    const subs = await subsRes.json();
+    if (!Array.isArray(subs) || !subs.length) {
+      return { statusCode: 200, headers, body: JSON.stringify({ sent: 0, message: 'Aucun abonné' }) };
+    }
+    let sent = 0, errors = 0, expired = 0;
+    for (const sub of subs) {
+      const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
+      try {
+        await webpush.sendNotification(pushSub, JSON.stringify({ title, body, url: 'https://autocarnet.fr/app.html' }), { urgency: 'high' });
+        sent++;
+      } catch(e) {
+        if (e.statusCode === 410 || e.statusCode === 404) {
+          expired++;
+          await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${sub.user_id}`, { method: 'DELETE', headers: SB_HEADERS });
+        } else {
+          errors++;
+        }
+      }
+    }
+    return { statusCode: 200, headers, body: JSON.stringify({ sent, errors, expired }) };
+  }
+
   // Mode instantané : title + body + user_id fournis directement
   if (userId && title && body) {
     const subRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${userId}&select=*`, { headers: SB_HEADERS });
