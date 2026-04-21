@@ -41,7 +41,7 @@ exports.handler = async () => {
         vehMap[v.id] = v.num_parc ? `${v.marque} ${v.modele} (${v.num_parc})` : `${v.marque} ${v.modele}`;
       });
 
-      const entsRes = await fetch(`${SB_URL}/rest/v1/entretiens?user_id=eq.${sub.user_id}&rappel_date=not.is.null&select=id,type,rappel_date,vehicle_id`, { headers: SB_HEADERS });
+      const entsRes = await fetch(`${SB_URL}/rest/v1/entretiens?user_id=eq.${sub.user_id}&rappel_date=not.is.null&select=id,type,rappel_date,rappel_avant,vehicle_id`, { headers: SB_HEADERS });
       const ents = await entsRes.json();
 
       const rcRes = await fetch(`${SB_URL}/rest/v1/rappels_custom?user_id=eq.${sub.user_id}&date_rappel=not.is.null&statut=eq.actif&select=id,titre,date_rappel,vehicle_id`, { headers: SB_HEADERS });
@@ -56,9 +56,21 @@ exports.handler = async () => {
         if (!e.rappel_date) return;
         const d = new Date(e.rappel_date); d.setHours(0,0,0,0);
         const diff = Math.round((d - today) / 86400000);
-        if (![0,1,7].includes(diff)) return;
+        // Respecter le choix de l'utilisateur (rappel_avant en jours : 0, 7, 15, 30)
+        // Si rappel_avant non défini → comportement par défaut (J, J-1, J-7)
+        const avant = e.rappel_avant != null ? parseInt(e.rappel_avant) : null;
+        let shouldSend = false;
+        if (avant !== null) {
+          // Envoyer le jour exact choisi (ex: avant=7 → envoyer quand diff===7)
+          // + toujours envoyer le jour J (diff===0) comme rappel final
+          shouldSend = diff === avant || diff === 0;
+        } else {
+          // Comportement par défaut si rappel_avant non renseigné
+          shouldSend = [0, 1, 7].includes(diff);
+        }
+        if (!shouldSend) return;
         const veh = vehMap[e.vehicle_id] || 'Véhicule';
-        const when = diff === 0 ? "aujourd'hui" : diff === 1 ? 'demain' : 'dans 7 jours';
+        const when = diff === 0 ? "aujourd'hui" : diff === 1 ? 'demain' : `dans ${diff} jours`;
         alerts.push({ title: `🔧 ${veh}`, body: `${e.type || 'Entretien'} — ${when}` });
       });
 

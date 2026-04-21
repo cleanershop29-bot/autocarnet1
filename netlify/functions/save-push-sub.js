@@ -32,6 +32,23 @@ exports.handler = async (event) => {
 
   if (!endpoint) return { statusCode: 400, headers, body: JSON.stringify({ error: 'endpoint requis' }) };
 
+  // Lire l'heure_notif existante pour ne pas l'écraser si déjà définie
+  let heure_notif = 8; // valeur par défaut : 8h00
+  try {
+    const existing = await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${user_id}&select=heure_notif`, {
+      headers: {
+        'apikey': SB_SERVICE_KEY,
+        'Authorization': `Bearer ${SB_SERVICE_KEY}`
+      }
+    });
+    const rows = await existing.json();
+    if (Array.isArray(rows) && rows.length > 0 && rows[0].heure_notif != null) {
+      heure_notif = rows[0].heure_notif; // conserver l'heure choisie par l'utilisateur
+    }
+  } catch (e) {
+    // fallback silencieux sur la valeur par défaut
+  }
+
   const r = await fetch(`${SB_URL}/rest/v1/push_subscriptions`, {
     method: 'POST',
     headers: {
@@ -40,7 +57,7 @@ exports.handler = async (event) => {
       'Content-Type': 'application/json',
       'Prefer': 'resolution=merge-duplicates'
     },
-    body: JSON.stringify({ user_id, endpoint, p256dh, auth, updated_at: new Date().toISOString() })
+    body: JSON.stringify({ user_id, endpoint, p256dh, auth, heure_notif, updated_at: new Date().toISOString() })
   });
 
   const text = await r.text();
