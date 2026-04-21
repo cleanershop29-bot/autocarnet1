@@ -8048,7 +8048,7 @@ function jumeauCalculer(v){
       const compS=juGetSeuils(comp,v); // seuils adaptés au carburant
       const status=juCalcStatus(compS,kmSinceAdj,moisSince);
       const usure=juCalcUsure(compS,kmSinceAdj,moisSince);
-      const kmRestants=juCalcKmRestants(compS,kmSinceAdj,moisSince,lastKm===0,v);
+      const kmRestants=juCalcKmRestants(compS,kmSinceAdj,moisSince,lastKm===0,v,status);
       const genericNote=isGeneric?' (type générique)':'';
       JU.data[comp.id]={
         status,usure,
@@ -8362,15 +8362,15 @@ function juEstimer(comp,v,km,now){
     if(batMois){
       const batStatus=juCalcStatus(comp,0,batMois);
       const batUsure=juCalcUsure(comp,0,batMois);
-      const batKmR=juCalcKmRestants(comp,0,batMois,true,v);
+      const batKmR=juCalcKmRestants(comp,0,batMois,true,v,batStatus);
       return{status:batStatus,usure:batUsure,lastDate:'Connu (onboarding)',lastKm:'—',sinceKm:'~'+batMois+' mois',estimated:true,kmRestants:batKmR,conseil:juConseil(comp,batStatus,true)};
     }
   }
 
-  const kmRestants=juCalcKmRestants(comp,kmEstimeSince,moisEstimeSince,true,v);
+  const kmRestants=juCalcKmRestants(comp,kmEstimeSince,moisEstimeSince,true,v,status);
   return{status,usure,lastDate:'Estimé',lastKm:'—',sinceKm:sinceKmStr,estimated:true,kmRestants,conseil:juConseil(comp,status,true)};
 }
-function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
+function juCalcKmRestants(comp,kmSince,moisSince,estimated,v,status){
   // Utiliser le km annuel réel calculé si disponible
   const kmPerYear=JU._kmAnnuelReel||({moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000);
   const kmPerMois=kmPerYear/12;
@@ -8405,6 +8405,8 @@ function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
     const mr=Math.round(moisRestants);
     if(mr<=0){
       const retard=Math.abs(mr);
+      const estDepasseReel=(!status||status==='err'); // aligné sur le statut réel
+      if(!estDepasseReel) return{val:mr,txt:prefixe+(mr>=-2?'Bientôt':'Proche de l\'échéance'),depasse:false,estimated,unit:'mois'};
       return{val:mr,txt:prefixe+(retard===0?'Seuil atteint':retard+' mois de retard'),depasse:true,estimated,unit:'mois'};
     }
     if(mr<2){
@@ -8433,6 +8435,8 @@ function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
 
   if(arrondi<=0){
     const retard=Math.abs(arrondi);
+    const estDepasseReel=(!status||status==='err'); // aligné sur le statut réel
+    if(!estDepasseReel) return{val:arrondi,txt:prefixe+(arrondi>=-2000?'Bientôt':'Proche de l\'échéance'),depasse:false,estimated,unit:'km'};
     return{val:arrondi,txt:prefixe+(retard===0?'Seuil atteint':retard.toLocaleString('fr')+' km de retard'),depasse:true,estimated,unit:'km'};
   }
   return{val:arrondi,txt:prefixe+arrondi.toLocaleString('fr')+' km',depasse:false,estimated,unit:'km'};
