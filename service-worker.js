@@ -23,7 +23,7 @@ self.addEventListener('push', e => {
       icon: '/icon-192.png',
       badge: '/icon-192.png',
       vibrate: [200, 100, 200],
-      tag: 'autocarnet-rappel',
+      tag: data.tag || ('ac-' + Date.now()), // tag unique → les notifs s'empilent
       requireInteraction: true,
       data: { url: data.url || '/app.html' },
       actions: [

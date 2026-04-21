@@ -6552,11 +6552,29 @@ async function checkPushStatus(){
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=await reg.pushManager.getSubscription();
-    if(sub) return true;
-    // Fallback Android TWA : souscription locale perdue après fermeture
+    if(sub){
+      // Souscription locale présente — vérifier qu'elle correspond à ce qui est en base
+      // (endpoint peut avoir changé après une réinstallation du SW)
+      await savePushSubscription(sub); // resync silencieux
+      return true;
+    }
+    // Pas de souscription locale — vérifier si permission accordée
+    if(Notification.permission!=='granted') return false;
+    // Permission accordée mais souscription perdue → tenter de re-souscrire silencieusement
+    // (cas Android après mise à jour du service worker)
     if(!S.user?.id) return false;
-    const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
-    return !!(data?.endpoint);
+    try{
+      const newSub=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+      await savePushSubscription(newSub);
+      return true;
+    }catch(resubErr){
+      // Impossible de re-souscrire (ex: réseau) — vérifier si endpoint en base
+      const {data}=await sb.from('push_subscriptions').select('endpoint').eq('user_id',S.user.id).maybeSingle();
+      return false; // ne pas mentir — pas de souscription locale valide
+    }
   }catch(e){return false;}
 }
 function getMaxVehs(){return PLANS[getUserPlan()].max_vehs;}
