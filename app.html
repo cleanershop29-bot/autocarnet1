@@ -1452,6 +1452,22 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           </div>
           <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Enregistrer l'ID abonnement</button>
         </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">📢 Notification broadcast</div>
+          <div class="fg" style="margin-bottom:6px">
+            <label class="fl" style="font-size:.72rem">Titre</label>
+            <input class="fc" id="admin-notif-title" placeholder="Ex : Nouvelle fonctionnalité !" style="font-size:.84rem">
+          </div>
+          <div class="fg" style="margin-bottom:10px">
+            <label class="fl" style="font-size:.72rem">Message</label>
+            <input class="fc" id="admin-notif-body" placeholder="Ex : Découvrez le Jumeau numérique…" style="font-size:.84rem">
+          </div>
+          <div id="admin-notif-status" style="font-size:.75rem;min-height:18px;margin-bottom:8px;color:var(--txm)"></div>
+          <button class="btn btn-p btn-sm" style="width:100%" id="admin-notif-btn" onclick="adminBroadcast()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Envoyer à tous les abonnés
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -6691,6 +6707,38 @@ async function adminSetSubId(){
     g('admin-sub-id').value='';
   }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
+async function adminBroadcast(){
+  const titleEl = g('admin-notif-title');
+  const bodyEl  = g('admin-notif-body');
+  const statusEl = g('admin-notif-status');
+  const btn = g('admin-notif-btn');
+  const title = titleEl ? titleEl.value.trim() : '';
+  const body  = bodyEl  ? bodyEl.value.trim()  : '';
+  if(!title || !body){ toast('Titre et message requis.','e'); return; }
+  if(!confirm('Envoyer cette notification à tous les abonnés ?')) return;
+  if(statusEl) statusEl.textContent = 'Envoi en cours…';
+  if(btn){ btn.disabled = true; }
+  try{
+    const r = await fetch(
+      '/.netlify/functions/trigger-notifications?secret=AC2026admin'
+      + '&title=' + encodeURIComponent(title)
+      + '&body='  + encodeURIComponent(body)
+    );
+    const d = await r.json();
+    if(d.sent !== undefined){
+      const msg = d.sent + ' notification' + (d.sent > 1 ? 's' : '') + ' envoyée' + (d.sent > 1 ? 's' : '');
+      const err = d.errors ? ' · ' + d.errors + ' erreur(s)' : '';
+      if(statusEl) statusEl.innerHTML = '<span style="color:var(--ok)">✓ ' + msg + err + '</span>';
+      if(d.sent > 0){ titleEl.value = ''; bodyEl.value = ''; }
+    } else {
+      if(statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Erreur : ' + JSON.stringify(d) + '</span>';
+    }
+  } catch(e){
+    if(statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Erreur réseau : ' + e.message + '</span>';
+  }
+  if(btn){ btn.disabled = false; }
+}
+
 async function adminCheckUser(){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
