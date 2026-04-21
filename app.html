@@ -5076,6 +5076,24 @@ function getRapItem(r){
   </div>`;
 }
 
+async function deleteDocFromRap(id){
+  if(!id)return;
+  cfm('Supprimer ce document ?','Il sera retiré de vos rappels et de la fiche véhicule.',async()=>{
+    const doc=S.documents.find(x=>x.id===id);
+    if(doc?.photo_url){
+      try{
+        const url=new URL(doc.photo_url);
+        const path=url.pathname.split('/documents-vehicule/')[1];
+        if(path) await sb.storage.from('documents-vehicule').remove([decodeURIComponent(path)]);
+      }catch(e){console.warn('Suppression photo:',e);}
+    }
+    const{error}=await sb.from('documents').delete().eq('id',id).eq('user_id',S.user.id);
+    if(error)return toast('Erreur suppression.','e');
+    toast('Document supprimé.','i');
+    await loadDocuments();
+    renderRap();
+  });
+}
 function renderRap(){
   const el=g('rp-ctn');
   if(!el)return;
@@ -5302,7 +5320,8 @@ function renderRap(){
   }
 
   function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="display:inline-flex;align-items:center;margin-left:2px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div>${daysBadge(label,sev)}</div>`;}
-  function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div>${daysBadge(label,sev)}</div>`;}
+  function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px">${daysBadge(label,sev)}<button onclick="event.stopPropagation();deleteDocFromRap('${d.id}')" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--txl);font-size:.7rem;display:flex;align-items:center;gap:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>Supprimer</button></div></div>`;}
+
 
   // Helpers tri par date croissante
   function rapDate(r){return r.e?.rappel_date||r.rappel_date||r.date_expiration||'9999-99-99';}
