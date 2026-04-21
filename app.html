@@ -8144,13 +8144,18 @@ function juGetSeuils(comp, v){
 }
 
 function juCalcStatus(comp,kmSince,moisSince){
+  // Utilise la même pondération que juCalcUsure pour être cohérent
+  // Le statut est dérivé du % d'usure pondéré, pas du max brut km/temps
+  // Seuils : ok < 60%, warn 60-85%, err >= 85%
+  const usure=juCalcUsure(comp,kmSince,moisSince);
+  // Garder aussi le critère dominant pour juCalcKmRestants
   let sk=0,sm=0;
-  if(comp.skmo&&kmSince>=comp.skmr)sk=2;else if(comp.skmo&&kmSince>=comp.skmo)sk=1;
-  if(comp.smo&&moisSince>=comp.smr)sm=2;else if(comp.smo&&moisSince>=comp.smo)sm=1;
-  const s=Math.max(sk,sm);
+  if(comp.skmo&&kmSince>0)sk=kmSince>=comp.skmr?2:kmSince>=comp.skmo?1:0;
+  if(comp.smo&&moisSince>0)sm=moisSince>=comp.smr?2:moisSince>=comp.smo?1:0;
   juCalcStatus._dom=(sk>=sm)?'km':'mois';
-  return s===2?'err':s===1?'warn':'ok';
-  // Note : usure peut dépasser 100 (retard réel) — statut reste err au-delà de skmr/smr
+  if(usure>=85)return'err';
+  if(usure>=60)return'warn';
+  return'ok';
 }
 function juCalcUsure(comp,kmSince,moisSince){
   // Mappe une valeur réelle sur la barre 0-100%
