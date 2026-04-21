@@ -3698,7 +3698,7 @@ function vcCompactHTML(v){
     <div class="vc-compact-acts" style="border-top:1px solid rgba(184,196,216,.4);margin:0 14px;padding:10px 0 13px">
       ${isVehExces(v.id)
         ?'<span style="font-size:.72rem;color:var(--warn);font-weight:600;display:inline-flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Plan limité</span>'
-        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+        :`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();openEntChoice('${v.id}')">+ Entretien</button>
          <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">+ Rappel</button>`
       }
       <button class="btn btn-p btn-sm" onclick="event.stopPropagation();openVehDetail('${v.id}')">Détail →</button>
@@ -3749,7 +3749,7 @@ function vcFullHTML(v){
     h+=`<div class="vc-acts">`;
   }
 
-  h+=`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEnt(null,'${v.id}')">+ Entretien</button>
+  h+=`<button class="btn btn-p btn-sm" onclick="event.stopPropagation();openEntChoice('${v.id}')">+ Entretien</button>
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openRappelCustomVeh('${v.id}')">+ Rappel</button>
       <button class="btn btn-s btn-sm" onclick="event.stopPropagation();openKm('${v.id}')">Km</button>
 
@@ -4816,7 +4816,7 @@ function showAllEntsInDetail(vid){
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   const es=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(b.date)-new Date(a.date));
   let h=`<button class="btn btn-s btn-sm" style="margin-bottom:12px" onclick="openVehDetail('${vid}')">← Retour</button>`;
-  h+=`<button class="btn btn-p btn-sm" style="margin-bottom:12px;margin-left:8px" onclick="openEnt(null,'${vid}')">+ Entretien</button>`;
+  h+=`<button class="btn btn-p btn-sm" style="margin-bottom:12px;margin-left:8px" onclick="openEntChoice('${vid}')">+ Entretien</button>`;
   if(!es.length){h+=`<div class="empty"><span class="empty-i">📋</span><div class="empty-t">Aucun entretien</div></div>`;}
   else{
     h+=es.map(e=>{
