@@ -998,15 +998,16 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .ju-svgwrap{position:relative;width:100%}
 .ju-svgwrap svg{width:100%;height:auto;display:block}
 .jhot{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:10}
-.jhot-d{width:22px;height:22px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;font-size:.52rem;font-weight:800;color:#fff;transition:transform .15s}
-.jhot:active .jhot-d{transform:scale(.85)}
-.jhot-d.ok{background:var(--ok)}
-.jhot-d.warn{background:var(--warn)}
-.jhot-d.err{background:var(--err)}
-.jhot-d.grey{background:var(--txl)}
-.jhot-d.est{opacity:.72}
-.jhot-d.err{animation:hotP 1.8s ease infinite}
-@keyframes hotP{0%{box-shadow:0 0 0 0 rgba(220,38,38,.6),0 2px 10px rgba(0,0,0,.28)}70%{box-shadow:0 0 0 8px rgba(220,38,38,0),0 2px 10px rgba(0,0,0,.28)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0),0 2px 10px rgba(0,0,0,.28)}}
+.jhot-d{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:800;color:#fff;transition:transform .15s,box-shadow .15s}
+.jhot:hover .jhot-d{transform:scale(1.25);box-shadow:0 3px 14px rgba(0,0,0,.35)}
+.jhot:active .jhot-d{transform:scale(.88)}
+.jhot-d.ok{background:#22C55E}
+.jhot-d.warn{background:#F59E0B;animation:hotW 2.4s ease infinite}
+.jhot-d.err{background:#DC2626;animation:hotP 1.6s ease infinite}
+.jhot-d.grey{background:#94A3B8}
+.jhot-d.est{opacity:.65}
+@keyframes hotP{0%{box-shadow:0 0 0 0 rgba(220,38,38,.7),0 2px 8px rgba(0,0,0,.25)}65%{box-shadow:0 0 0 7px rgba(220,38,38,0),0 2px 8px rgba(0,0,0,.25)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0),0 2px 8px rgba(0,0,0,.25)}}@keyframes hotW{0%{box-shadow:0 0 0 0 rgba(245,158,11,.5),0 2px 8px rgba(0,0,0,.2)}65%{box-shadow:0 0 0 6px rgba(245,158,11,0),0 2px 8px rgba(0,0,0,.2)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0),0 2px 8px rgba(0,0,0,.2)}}
+@keyframes jhotIn{from{opacity:0;transform:translate(-50%,-50%) scale(.4)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .ju-legend{display:flex;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
 .ju-leg-i{display:flex;align-items:center;gap:4px;font-size:.63rem;color:var(--txm);font-weight:500}
 .ju-leg-d{width:8px;height:8px;border-radius:50%}
@@ -7724,11 +7725,24 @@ const JU_HOTS_SIDE={
   geometrie:'74,95',catalyseur:'60,50',bougies_prech:'68,42'
 };
 const JU_HOTS_TOP={
-  huile:'50,18',courroie:'65,22',freins_av:'84,20',freins_ar:'84,80',
-  pneus_av:'16,20',pneus_ar:'16,80',batterie:'35,22',embrayage:'50,60',
-  filtre_hab:'50,52',amortisseurs:'50,75',filtre_air:'65,28',bougies:'60,18',liq_refroid:'38,28',
-  disques_av:'82,22',disques_ar:'82,78',pompe_eau:'42,22',
-  alternateur:'30,30',geometrie:'18,25',catalyseur:'55,35',bougies_prech:'62,22'
+  // Moteur avant
+  huile:'50,13',courroie:'64,17',bougies:'36,17',
+  bougies_prech:'64,26',filtre_air:'36,26',
+  liq_refroid:'28,13',pompe_eau:'72,13',
+  alternateur:'22,26',courroie_acc:'82,42',
+  catalyseur:'68,35',batterie:'20,17',
+  // Roues avant
+  pneus_av:'90,17',freins_av:'90,26',disques_av:'10,22',
+  // Axe / direction
+  geometrie:'50,42',essuie_gl:'32,42',liq_frein:'68,45',
+  // Habitacle
+  filtre_hab:'50,50',clim:'28,57',ct:'20,50',
+  // Transmission / milieu
+  embrayage:'50,58',huile_boite_m:'62,65',huile_boite_a:'62,65',
+  // Suspension
+  amortisseurs:'18,65',amortisseurs_ar:'18,75',
+  // Roues arrière
+  pneus_ar:'10,80',freins_ar:'90,73',disques_ar:'90,82',
 };
 
 
@@ -8655,12 +8669,12 @@ function jumeauPrecision(){
 }
 function jumeauHots(vue){
   const map=JU_HOTS_TOP;
-  return Object.entries(map).map(([id,pos])=>{
+  return Object.entries(map).map(([id,pos],idx)=>{
     const d=JU.data[id];if(!d)return'';
     const[l,t]=pos.split(',');
     const icon=d.status==='err'?'!':d.status==='warn'?'~':d.status==='ok'?'✓':'?';
     const estCls=d.estimated?' est':'';
-    return`<div class="jhot" style="left:${l}%;top:${t}%" onclick="openJumeauComp('${id}')"><div class="jhot-d ${d.status}${estCls}">${icon}</div></div>`;
+    return`<div class="jhot" style="left:${l}%;top:${t}%;animation:jhotIn .3s ease both;animation-delay:${idx*.04}s" onclick="openJumeauComp('${id}')"><div class="jhot-d ${d.status}${estCls}">${icon}</div></div>`;
   }).join('');
 }
 function jumeauCompList(){
