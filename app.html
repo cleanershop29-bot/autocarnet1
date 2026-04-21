@@ -7553,7 +7553,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
         <div class="jonb-opt" onclick="jonbSelect(1,'inconnu',this)"><div class="jonb-opt-ico">❓</div><div class="jonb-opt-txt"><strong>Inconnu</strong><span>Acheté d'occasion, historique non disponible</span></div><div class="jonb-chk">✓</div></div>
       </div>
     </div>
-    <!-- Étape 3 : Courroie -->
+    <!-- Étape 3 : Courroie — masquée si véhicule électrique -->
     <div class="jonb-step" id="jonb-step-2">
       <div class="jonb-q"><div class="jonb-qnum">3</div>Votre courroie de distribution a été changée il y a… ?</div>
       <div class="jonb-opts">
@@ -7586,7 +7586,7 @@ document.addEventListener("DOMContentLoaded", ()=>{init();});
     </div>
     <!-- Étape 6 : Signes -->
     <div class="jonb-step" id="jonb-step-5">
-      <div class="jonb-q"><div class="jonb-qnum">6</div>Observez-vous des signes particuliers sur le véhicule ?</div>
+      <div class="jonb-q"><div class="jonb-qnum">6</div>Observez-vous des signes particuliers sur le véhicule ?<span style="display:block;font-size:.68rem;font-weight:400;color:var(--txm);margin-top:3px">À mettre à jour si la situation a changé.</span></div>
       <div class="jonb-opts">
         <div class="jonb-opt" onclick="jonbSelect(5,'rien',this)"><div class="jonb-opt-ico">✅</div><div class="jonb-opt-txt"><strong>Aucun signe particulier</strong><span>Tout semble fonctionner normalement</span></div><div class="jonb-chk">✓</div></div>
         <div class="jonb-opt" onclick="jonbSelect(5,'voyant',this)"><div class="jonb-opt-ico">🔴</div><div class="jonb-opt-txt"><strong>Voyant(s) allumé(s)</strong><span>Un ou plusieurs témoins sur le tableau de bord</span></div><div class="jonb-chk">✓</div></div>
@@ -7828,13 +7828,18 @@ function renderJumeau(){
         <div class="ju-prec-val">${prec}%</div>
       </div>
       <div class="ju-prec-bg"><div class="ju-prec-bar" style="width:${prec}%"></div></div>
+      <div style="font-size:.72rem;color:var(--txm);margin-bottom:6px">
+        ${prec<30?'Ajoutez vos entretiens et renseignez le kilométrage pour améliorer la précision.':prec<60?'Ajoutez le kilométrage à vos entretiens pour affiner le calcul.':prec<90?'Bonne précision — continuez à enregistrer vos entretiens.':'Excellente précision — le jumeau est bien calibré.'}
+      </div>
       <div class="ju-prec-acts">
         ${prec<90?'<span class="ju-prec-act" onclick="fabAction(\'ent\')">+ Ajouter un entretien</span>':''}
+        ${!v.km_actuel?'<span class="ju-prec-act" onclick="om(\'km\');g(\'km-vid\').value=v.id;g(\'km-v\').value=\'\'">+ Renseigner le km</span>':''}
         <span class="ju-prec-act" onclick="openJumeauOnb()">Affiner le profil</span>
       </div>
     </div>
 
     ${nextBanner}
+    ${(!v.km_actuel||v.km_actuel===0)?`<div style="margin:10px 14px 0;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:var(--r-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="om('km');g('km-vid').value='${v.id}';g('km-v').value=''"><div style="font-size:1.2rem;flex-shrink:0">📍</div><div style="flex:1"><div style="font-size:.82rem;font-weight:700;color:#92400E">Kilométrage non renseigné</div><div style="font-size:.72rem;color:#B45309;margin-top:2px">Renseignez le kilométrage actuel pour améliorer la précision du jumeau.</div></div><div style="color:#D97706;font-size:.9rem">›</div></div>`:''}
 
     <div class="ju-sec">Visualisation</div>
     <div class="ju-sil">
@@ -7915,21 +7920,28 @@ function juGetDateMiseEnCirculation(v){
 
 function juGetKmAnnuelReel(v){
   // Calcule le km annuel réel depuis l'historique des entretiens avec km
+  const KM_MAX_ANNUEL=80000; // plafond : évite les valeurs aberrantes (2 entretiens le même mois)
+  const KM_MIN_ANNUEL=3000;  // plancher : évite les divisions par zéro
   const ents=(S.ents||[]).filter(e=>e.vehicle_id===v.id&&e.km&&e.km>0&&e.date)
     .sort((a,b)=>new Date(a.date)-new Date(b.date));
   if(ents.length>=2){
     const first=ents[0], last=ents[ents.length-1];
     const kmDiff=last.km-first.km;
     const daysDiff=(new Date(last.date)-new Date(first.date))/(1000*60*60*24);
-    if(kmDiff>0&&daysDiff>90){ // au moins 3 mois de données
-      return Math.round(kmDiff/(daysDiff/365));
+    if(kmDiff>0&&daysDiff>90){ // au moins 3 mois de données pour être fiable
+      const kmAnnuel=Math.round(kmDiff/(daysDiff/365));
+      // Valider la cohérence : entre plancher et plafond
+      if(kmAnnuel>=KM_MIN_ANNUEL&&kmAnnuel<=KM_MAX_ANNUEL) return kmAnnuel;
     }
   }
   // Sinon depuis le km actuel et la date de mise en circulation
   const dateMEC=juGetDateMiseEnCirculation(v);
   if(dateMEC&&v.km_actuel>0){
     const annees=(new Date()-dateMEC)/(1000*60*60*24*365);
-    if(annees>0.5) return Math.round(v.km_actuel/annees);
+    if(annees>0.5){
+      const kmAnnuel=Math.round(v.km_actuel/annees);
+      if(kmAnnuel>=KM_MIN_ANNUEL&&kmAnnuel<=KM_MAX_ANNUEL) return kmAnnuel;
+    }
   }
   // Fallback sur tranches onboarding
   return {moins_8k:6000,'8_15k':11000,'15_25k':20000,plus_25k:30000}[v.jumeau_km_annuel]||15000;
@@ -8299,15 +8311,24 @@ function juCalcKmRestants(comp,kmSince,moisSince,estimated,v){
   const isPureMois=!comp.skmo&&comp.smo;
   const faibleRouleur=kmPerYear<9000;
 
-  // Calcul brut mois restants — depuis smr (seuil rouge)
+  // Calcul brut mois restants :
+  //   - status ok  → mois avant smo (seuil warn)
+  //   - status warn/err → mois avant smr (seuil rouge)
   let moisRestants=null;
-  if(comp.smr&&comp.smr>0) moisRestants=comp.smr-moisSince;
+  if(comp.smr&&comp.smr>0){
+    const seuilRefM=(moisSince<(comp.smo||comp.smr))?comp.smo||comp.smr:comp.smr;
+    moisRestants=seuilRefM-moisSince;
+  }
 
-  // Calcul brut km restants — depuis skmr (seuil rouge = err)
-  // Si on n'a pas dépassé skmr, afficher km avant skmr (pas skmo)
-  // Cela garantit que "retard" = réellement dépassé le seuil critique
+  // Calcul brut km restants :
+  //   - status ok  → km avant skmo (seuil warn) : l'utilisateur voit venir l'avertissement
+  //   - status warn → km avant skmr (seuil rouge) : l'utilisateur voit venir le critique
+  //   - status err  → retard depuis skmr : affichage du dépassement
   let kmRestants=null;
-  if(comp.skmr&&comp.skmr>0) kmRestants=comp.skmr-kmSince;
+  if(comp.skmr&&comp.skmr>0){
+    const seuilRef=(kmSince<(comp.skmo||comp.skmr))?comp.skmo||comp.skmr:comp.skmr;
+    kmRestants=seuilRef-kmSince;
+  }
 
   // ── Cas 1 : composant purement temporel ou faible rouleur avec seuil mois ──
   if(isPureMois||(faibleRouleur&&comp.smo)){
@@ -8506,13 +8527,13 @@ function jumeauScore(){
     // Exclure les composants non applicables
     if(!d||d.notApplicable)return;
     if(d.status==='grey'){
+      // Grey sur un composant applicable : compté prudemment
+      // Grey sur un composant non-applicable : déjà exclu via notApplicable
       // Composant critique inconnu → compté comme warn (prudence)
       if(c.poids>=2){
         tot+=50*c.poids; poids+=c.poids*100; nbw++;
-      }
-      // Composant normal inconnu → pas comptabilisé dans le score mais dans le dénominateur
-      // (évite d'avoir 100/100 avec plein d'inconnus)
-      else{
+      } else {
+        // Composant confort/normal inconnu → neutre dans le dénominateur
         tot+=60*c.poids; poids+=c.poids*100;
       }
       return;
@@ -8540,11 +8561,15 @@ function jumeauPrecision(){
     const d=JU.data[c.id];
     if(!d||d.status==='grey'){score+=0;return;}
     if(!d.estimated){
-      // Entretien réel — pénalité si très ancien (>3 ans)
-      const lastD=d.lastDate&&d.lastDate!=='—'?new Date(d.lastDate):null;
+      // Entretien réel : précision dépend de l'ancienneté
+      // < 18 mois = fiable (1.0), 18-36 mois = acceptable (0.75), > 36 mois = dégradé (0.5)
+      const lastD=d.lastDate&&d.lastDate!=='—'&&d.lastDate!=='Estimé'?new Date(d.lastDate):null;
       const moisAge=lastD?Math.floor((now-lastD)/(1000*60*60*24*30)):99;
-      score+=(moisAge<36)?1:0.7;
+      if(moisAge<18) score+=1.0;
+      else if(moisAge<36) score+=0.75;
+      else score+=0.5;
     } else {
+      // Estimation : précision partielle
       score+=0.3;
     }
   });
@@ -8785,6 +8810,9 @@ function juRenderCompHist(comp,id){
 function closeJumeauComp(){document.getElementById('mo-jcomp').classList.remove('open');}
 function jumeauMarquerFait(){
   closeJumeauComp();
+  // Masquer la bannière immédiatement (sera recalculée après saveEnt)
+  const banner=document.querySelector('.ju-next-banner');
+  if(banner)banner.style.opacity='0.4';
   const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
   if(!comp)return;
   // Afficher bottom sheet de choix de date
@@ -8836,7 +8864,12 @@ function juDateChoisie(dateStr){
     const dtEl=document.getElementById('e-dt');
     if(dtEl)dtEl.value=dateStr;
     const kmEl=document.getElementById('e-km');
-    if(kmEl&&v.km_actuel)kmEl.value=v.km_actuel;
+    if(kmEl&&v.km_actuel&&v.km_actuel>0){
+      kmEl.value=v.km_actuel;
+    } else if(kmEl){
+      kmEl.value=''; // Ne pas pré-remplir 0 : l'utilisateur doit saisir le km réel
+      kmEl.placeholder='Saisissez le km au moment du remplacement';
+    }
   },350);
 }
 function jumeauPlanifier(){
@@ -8906,6 +8939,15 @@ async function jonbNext(){
 }
 function jonbSkip(){document.getElementById('mo-jumeau-onb').classList.remove('open');}
 function juOnbUI(){
+  // Étape 3 (courroie) : masquée pour les électriques — on saute automatiquement
+  const v=S.vehicles.find(x=>x.id===JU.vid);
+  const carb=v?.carburant||'essence';
+  const isElec=carb==='electrique';
+  // Si on arrive à l'étape 3 (courroie) sur un électrique, forcer la réponse "chaine" et passer
+  if(JU.onbStep===2&&isElec){
+    JU.onbAnswers[2]='chaine';
+    JU.onbStep=3;
+  }
   document.querySelectorAll('.jonb-step').forEach((s,i)=>s.classList.toggle('active',i===JU.onbStep));
   document.querySelectorAll('.jonb-dot').forEach((d,i)=>{d.classList.toggle('done',i<JU.onbStep);d.classList.toggle('active',i===JU.onbStep);});
   document.getElementById('jonb-btn-next').disabled=JU.onbAnswers[JU.onbStep]===null;
@@ -8942,6 +8984,9 @@ async function jonbSave(){
     v.jumeau_age_batterie=JU.onbAnswers[9];
     document.getElementById('mo-jumeau-onb').classList.remove('open');
     toast('Jumeau activé ! 🧬','s');
+    // Recalculer les valeurs dérivées avant le render (fix cache kmAnnuelReel)
+    JU._kmAnnuelReel=juGetKmAnnuelReel(v);
+    JU._dateMEC=juGetDateMiseEnCirculation(v);
     renderJumeau();
   } else {toast('Erreur lors de la sauvegarde','e');}
 }
