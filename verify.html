@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AutoCarnet — Vérification du véhicule</title>
+<meta name="description" content="Vérifiez l'authenticité de l'historique d'entretien de ce véhicule via AutoCarnet.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--primary:#2563EB;--primary-lt:#EFF6FF;--primary-mid:#BFDBFE;--txt:#0F172A;--txm:#475569;--txl:#94A3B8;--border:#E2E8F0;--bg:#F8FAFC;--white:#fff;--ok:#16A34A;--ok-bg:#DCFCE7;--ok-bd:#BBF7D0;--warn:#D97706;--warn-bg:#FEF3C7;--warn-bd:#FDE68A;--err:#DC2626;--err-bg:#FEE2E2;--err-bd:#FECACA;--r:16px;--r-sm:10px}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;-webkit-font-smoothing:antialiased}
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(184,196,216,.5);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 12px rgba(37,99,235,.07)}
+.nav-logo{display:flex;align-items:center;gap:0;font-size:1.05rem;font-weight:900;color:var(--txt);text-decoration:none;letter-spacing:-.5px;white-space:nowrap;flex-shrink:0}
+.nav-logo-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;margin-right:7px;box-shadow:0 2px 8px rgba(37,99,235,.35);flex-shrink:0}
+.nav-logo .blue{color:var(--primary)}
+.nav-links{display:flex;align-items:center;gap:10px;margin-left:auto;padding-left:16px}
+.nav-link{font-size:.78rem;font-weight:700;color:var(--txm);text-decoration:none}
+.nav-link:hover{color:var(--primary)}
+.nav-cta{background:var(--primary);color:#fff;padding:8px 16px;border-radius:10px;font-size:.78rem;font-weight:800;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.wrap{max-width:680px;margin:0 auto;padding:28px 16px 60px}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center;gap:14px}
+.state-ico{font-size:3.5rem}
+.state-t{font-size:1.1rem;font-weight:800;color:var(--txt)}
+.state-d{font-size:.84rem;color:var(--txm);line-height:1.7;max-width:320px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero{background:linear-gradient(135deg,#0A0F1E 0%,#1E3A8A 100%);border-radius:var(--r);padding:28px 24px 24px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(37,99,235,.2)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:20px;padding:4px 12px;font-size:.65rem;font-weight:800;color:#6EE7B7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;position:relative;z-index:1}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#34D399;animation:pulse 2s ease infinite;flex-shrink:0}
+.hero-name{font-size:2rem;font-weight:900;color:#fff;letter-spacing:-.05em;line-height:1.1;margin-bottom:4px;position:relative;z-index:1}
+.hero-sub{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:18px;position:relative;z-index:1;font-weight:600}
+.hero-bottom{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;flex-wrap:wrap;gap:10px}
+.hero-immat{display:inline-flex;align-items:center;border-radius:8px;overflow:hidden;border:2px solid rgba(255,255,255,.15)}
+.hero-immat-fr{background:#003189;padding:6px 9px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.hero-immat-fr span{font-size:.42rem;color:#fff;font-weight:800;letter-spacing:.04em}
+.hero-immat-num{background:#fff;padding:6px 16px;font-size:1rem;font-weight:900;color:#0F172A;letter-spacing:.12em}
+.hero-date{font-size:.65rem;color:rgba(255,255,255,.35);font-weight:600;text-align:right}
+.score-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card-ttl{font-size:.62rem;font-weight:800;color:var(--txl);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.score-top{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.score-ring{position:relative;width:84px;height:84px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-pct{font-size:1.35rem;font-weight:900;line-height:1}
+.score-sym{font-size:.6rem;font-weight:800}
+.score-lbl{font-size:.55rem;font-weight:800;color:var(--txl);text-transform:uppercase;letter-spacing:.05em}
+.score-meta-t{font-size:.95rem;font-weight:900;color:var(--txt);margin-bottom:4px}
+.score-meta-d{font-size:.76rem;color:var(--txm);line-height:1.55;font-weight:500}
+.score-list{display:flex;flex-direction:column;gap:6px}
+.si{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:9px;border:1.5px solid}
+.si.ok{background:var(--ok-bg);border-color:var(--ok-bd)}
+.si.no{background:var(--bg);border-color:var(--border)}
+.si-ico{font-size:.85rem;flex-shrink:0;width:18px;text-align:center}
+.si-txt{font-size:.75rem;font-weight:700;flex:1}
+.si.ok .si-txt{color:#15803D}
+.si.no .si-txt{color:var(--txl)}
+.si-chk{font-size:.72rem;font-weight:900;margin-left:auto;flex-shrink:0}
+.si.ok .si-chk{color:var(--ok)}
+.si.no .si-chk{color:var(--border)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ic{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.ic-lbl{font-size:.6rem;font-weight:800;color:var(--txl);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.ic-val{font-size:.9rem;font-weight:800;color:var(--txt)}
+.ic-sub{font-size:.66rem;color:var(--txl);margin-top:3px;font-weight:500}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.pill-ok{background:var(--ok-bg);color:var(--ok)}
+.pill-warn{background:var(--warn-bg);color:var(--warn)}
+.pill-err{background:var(--err-bg);color:var(--err)}
+.pill-n{background:var(--bg);color:var(--txl);border:1px solid var(--border)}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.sig{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.sig-left{font-size:.68rem;color:var(--txl);line-height:1.6;font-weight:500}
+.sig-left strong{color:var(--txm);font-weight:700}
+.sig-code{font-family:monospace;font-size:.82rem;font-weight:800;color:var(--txt);background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:5px 12px;flex-shrink:0;letter-spacing:.05em}
+.hist{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.hist-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.hist-hdr-t{font-size:.78rem;font-weight:800;color:var(--txt)}
+.hist-count{background:var(--primary-lt);color:var(--primary);font-size:.65rem;font-weight:800;padding:2px 9px;border-radius:20px;border:1px solid var(--primary-mid)}
+.hist-row{display:flex;align-items:flex-start;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)}
+.hist-row:last-child{border-bottom:none}
+.hist-row:hover{background:var(--bg)}
+.hist-ico{width:34px;height:34px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.hist-body{flex:1;min-width:0}
+.hist-type{font-size:.84rem;font-weight:800;color:var(--txt);margin-bottom:3px}
+.hist-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hist-date{font-size:.7rem;color:var(--txm);font-weight:600}
+.hist-km{display:inline-flex;align-items:center;gap:3px;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:1px 7px;font-size:.65rem;font-weight:700;color:var(--txm)}
+.hist-garage{font-size:.68rem;color:var(--txl);font-weight:500}
+.hist-note{font-size:.68rem;color:var(--txl);margin-top:3px;font-style:italic}
+.hist-empty{padding:32px;text-align:center;font-size:.82rem;color:var(--txl)}
+.links-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.link-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;text-decoration:none;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.link-card:hover{border-color:var(--primary-mid);box-shadow:0 4px 12px rgba(37,99,235,.1)}
+.link-card-ico{font-size:1.2rem;flex-shrink:0}
+.link-card-t{font-size:.78rem;font-weight:800;color:var(--txt);margin-bottom:1px}
+.link-card-d{font-size:.65rem;color:var(--txl);font-weight:500}
+.cta{background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:var(--r);padding:24px 20px;text-align:center;margin-bottom:20px}
+.cta h3{color:#fff;font-size:1rem;font-weight:900;margin-bottom:6px}
+.cta p{color:rgba(255,255,255,.6);font-size:.78rem;margin-bottom:16px;line-height:1.6;font-weight:500}
+.cta-feats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.cta-feat{font-size:.68rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:4px;font-weight:600}
+.cta-btn{display:inline-flex;align-items:center;gap:7px;background:#fff;color:var(--primary);padding:11px 22px;border-radius:11px;font-size:.85rem;font-weight:900;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+
+footer{background:#fff;border-top:1px solid var(--border);padding:28px 20px}
+.footer-inner{max-width:680px;margin:0 auto;text-align:center}
+.footer-logo{display:inline-flex;align-items:center;font-size:.95rem;font-weight:900;color:var(--txt);text-decoration:none;letter-spacing:-.5px;margin-bottom:16px}
+.footer-logo-icon{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;margin-right:7px;box-shadow:0 2px 6px rgba(37,99,235,.3);flex-shrink:0}
+.footer-logo .blue{color:var(--primary)}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.footer-links a{font-size:.73rem;color:var(--txl);text-decoration:none;font-weight:600}
+.footer-links a:hover{color:var(--primary)}
+.footer-copy{font-size:.68rem;color:var(--txl);font-weight:500;line-height:1.6}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+    </div>
+    <span>Auto</span><span class="blue">Carnet</span>
+  </a>
+  <div class="nav-links">
+    <a href="/app.html" class="nav-link">Application</a>
+    <a href="/premium.html" class="nav-link">Tarifs</a>
+    <a href="/app.html" class="nav-cta">Essayer gratuitement</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="content">
+    <div class="state">
+      <div class="spinner"></div>
+      <div class="state-t">Chargement du véhicule…</div>
+      <div class="state-d">Vérification de l'authenticité du document</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">
+      <div class="footer-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="8" rx="2"/><path d="M5 10V8a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+      </div>
+      <span>Auto</span><span class="blue">Carnet</span>
+    </a>
+    <div class="footer-links">
+      <a href="/">Accueil</a>
+      <a href="/app.html">Application</a>
+      <a href="/premium.html">Tarifs</a>
+      <a href="/pro.html">Plan Pro</a>
+      <a href="/blog-carnet-entretien-numerique.html">Blog</a>
+      <a href="/cgu.html">CGU</a>
+      <a href="/mentions-legales.html">Mentions légales</a>
+    </div>
+    <div class="footer-copy">© 2026 AutoCarnet · Carnet d'entretien numérique<br>Fait avec ❤️ en Bretagne, France · SIRET 914 511 639 00025</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://qhacwsklhlsfyfxwnjff.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
+const fmtKm=n=>n!=null?Number(n).toLocaleString('fr')+' km':'—';
+const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
+const TYPES={'vidange':'🛢️','huile':'🛢️','frein':'🔴','pneu':'🛞','ct':'✅','contr':'✅','révision':'🔧','revision':'🔧','courroie':'⚙️','batterie':'🔋','filtre':'🔵','climatisation':'❄️','pare-brise':'🪟','carrosserie':'🚗','ampoule':'💡','essuie':'🌧️','échappement':'💨','direction':'🔄','suspension':'📍'};
+function getIco(type){if(!type)return'🔧';const t=type.toLowerCase();for(const[k,v]of Object.entries(TYPES)){if(t.includes(k))return v;}return'🔧';}
+function showError(msg){document.getElementById('content').innerHTML=`<div class="state"><div class="state-ico">🔍</div><div class="state-t">Document introuvable</div><div class="state-d">${msg||'Ce lien est invalide ou a expiré.'}<br><br>Générez un nouveau certificat depuis AutoCarnet.</div></div><div class="cta"><h3>Créez votre carnet d'entretien</h3><p>Gratuit, sans pub, sans carte bancaire.</p><a href="/app.html" class="cta-btn">🚗 Essayer gratuitement</a></div>`;}
+async function load(){
+  const params=new URLSearchParams(window.location.search);
+  const vid=params.get('vid');
+  if(!vid){showError('Aucun identifiant de véhicule fourni.');return;}
+  const{data:vehicles,error:vErr}=await sb.from('vehicles').select('id,marque,modele,annee,immatriculation,km_actuel,carburant,puissance,ct_date,vin,date_achat').eq('id',vid);
+  if(vErr||!vehicles?.length){showError('Véhicule introuvable ou accès non autorisé.');return;}
+  const v=vehicles[0];
+  const{data:ents}=await sb.from('entretiens').select('id,type,date,km,garage,note').eq('vehicle_id',vid).order('date',{ascending:false});
+  const list=ents||[];
+  const today=new Date();today.setHours(0,0,0,0);
+  const ct=v.ct_date?new Date(v.ct_date):null;
+  const ctDays=ct?Math.ceil((ct-today)/86400000):null;
+  const lastVidange=list.find(e=>e.type&&e.type.toLowerCase().includes('vidange'));
+  const nbEnts=list.length;
+  const scoreItems=[
+    {ok:nbEnts>=5,label:nbEnts>=5?nbEnts+' entretiens enregistrés':'Moins de 5 entretiens',ico:'📋'},
+    {ok:!!lastVidange,label:lastVidange?'Vidange le '+fmtDate(lastVidange.date):'Aucune vidange enregistrée',ico:'🛢️'},
+    {ok:ct&&ctDays>0,label:ct&&ctDays>0?'CT valide jusqu\'au '+fmtDate(v.ct_date):'CT expiré ou absent',ico:'✅'},
+    {ok:!!v.immatriculation,label:v.immatriculation?'Immat. '+esc(v.immatriculation):'Immatriculation manquante',ico:'🪪'},
+    {ok:!!v.km_actuel,label:v.km_actuel?fmtKm(v.km_actuel):'Kilométrage non renseigné',ico:'📍'},
+    {ok:!!v.vin,label:v.vin?'VIN renseigné':'VIN non renseigné',ico:'🔑'},
+  ];
+  const score=scoreItems.filter(x=>x.ok).length;
+  const pct=Math.round(score/scoreItems.length*100);
+  const scoreColor=pct>=80?'#16A34A':pct>=50?'#D97706':'#DC2626';
+  const scoreLabel=pct>=80?'Excellent':pct>=50?'Correct':'Incomplet';
+  const scoreDesc=pct>=80?'Historique complet — fort argument de vente':pct>=50?'Historique partiel — quelques données manquantes':'Historique incomplet — complétez votre profil';
+  const ctClass=!ct?'pill-n':ctDays<0?'pill-err':ctDays<=30?'pill-warn':'pill-ok';
+  const ctTxt=!ct?'Non renseigné':ctDays<0?'Expiré':'Valide';
+  const sigData=`${vid}|${v.immatriculation||''}|${v.km_actuel||0}|${nbEnts}`;
+  const sigHash=sigData.split('').reduce((a,c)=>((a<<5)-a+c.charCodeAt(0))|0,0).toString(16).replace('-','').padStart(8,'0').toUpperCase();
+  const sigCode=`AC-${sigHash.slice(0,4)}-${sigHash.slice(4,8)}`;
+  const histRows=list.length?list.map(e=>`<div class="hist-row"><div class="hist-ico">${getIco(e.type)}</div><div class="hist-body"><div class="hist-type">${esc(e.type||'Entretien')}</div><div class="hist-meta"><span class="hist-date">${fmtDate(e.date)}</span>${e.km?'<span class="hist-km">📍 '+fmtKm(e.km)+'</span>':''}${e.garage?'<span class="hist-garage">🏪 '+esc(e.garage)+'</span>':''}</div>${e.note?'<div class="hist-note">'+esc(e.note)+'</div>':''}</div></div>`).join(''):'<div class="hist-empty">Aucun entretien enregistré</div>';
+  document.getElementById('content').innerHTML=`
+    <div class="hero">
+      <div class="hero-badge"><div class="hero-badge-dot"></div>Vérifié via AutoCarnet</div>
+      <div class="hero-name">${esc(v.marque)} ${esc(v.modele)}</div>
+      <div class="hero-sub">${v.annee||''}${v.carburant?' · '+v.carburant.charAt(0).toUpperCase()+v.carburant.slice(1):''}${v.puissance?' · '+v.puissance+' ch':''}</div>
+      <div class="hero-bottom">
+        ${v.immatriculation?`<div class="hero-immat"><div class="hero-immat-fr"><svg width="13" height="14" viewBox="0 0 9 14" fill="none"><circle cx="4.5" cy="7" r="3.5" stroke="#FFD700" stroke-width=".8"/><path d="M4.5 1v12M1 7h7" stroke="#FFD700" stroke-width=".6"/></svg><span>F</span></div><div class="hero-immat-num">${esc(v.immatriculation)}</div></div>`:'<div></div>'}
+        <div class="hero-date">Généré le ${fmtDate(new Date().toISOString())}<br>via AutoCarnet</div>
+      </div>
+    </div>
+    <div class="score-card">
+      <div class="card-ttl">Score de confiance acheteur</div>
+      <div class="score-top">
+        <div class="score-ring">
+          <svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="#F1F5F9" stroke-width="7"/><circle cx="42" cy="42" r="34" fill="none" stroke="${scoreColor}" stroke-width="7" stroke-dasharray="${Math.round(2*Math.PI*34)}" stroke-dashoffset="${Math.round(2*Math.PI*34*(1-pct/100))}" stroke-linecap="round"/></svg>
+          <div class="score-ring-inner"><div class="score-pct" style="color:${scoreColor}">${pct}<span class="score-sym">%</span></div><div class="score-lbl">${scoreLabel}</div></div>
+        </div>
+        <div><div class="score-meta-t">${scoreLabel}</div><div class="score-meta-d">${scoreDesc}</div></div>
+      </div>
+      <div class="score-list">${scoreItems.map(i=>`<div class="si ${i.ok?'ok':'no'}"><span class="si-ico">${i.ico}</span><span class="si-txt">${i.label}</span><span class="si-chk">${i.ok?'✓':'—'}</span></div>`).join('')}</div>
+    </div>
+    <div class="info-grid">
+      <div class="ic"><div class="ic-lbl">Kilométrage</div><div class="ic-val">${fmtKm(v.km_actuel)}</div></div>
+      <div class="ic"><div class="ic-lbl">Contrôle technique</div><div class="ic-val"><span class="pill ${ctClass}"><span class="pill-dot"></span>${ctTxt}</span></div>${ct?'<div class="ic-sub">'+fmtDate(v.ct_date)+'</div>':''}</div>
+      <div class="ic"><div class="ic-lbl">Dernière vidange</div><div class="ic-val">${lastVidange?fmtDate(lastVidange.date):'—'}</div></div>
+      <div class="ic"><div class="ic-lbl">Nb. entretiens</div><div class="ic-val">${nbEnts} intervention${nbEnts>1?'s':''}</div></div>
+      ${v.vin?`<div class="ic" style="grid-column:1/-1"><div class="ic-lbl">VIN</div><div class="ic-val" style="font-family:monospace;font-size:.8rem;letter-spacing:.05em">${esc(v.vin)}</div></div>`:''}
+    </div>
+    <div class="sig">
+      <div class="sig-left"><strong>Document authentique</strong> · Généré via AutoCarnet<br>Les coûts ne sont pas affichés pour préserver la confidentialité du vendeur</div>
+      <div class="sig-code">${sigCode}</div>
+    </div>
+    <div class="hist">
+      <div class="hist-hdr"><div class="hist-hdr-t">🔧 Historique des entretiens</div><div class="hist-count">${nbEnts} intervention${nbEnts>1?'s':''}</div></div>
+      ${histRows}
+    </div>
+    <div class="links-grid">
+      <a href="/app.html" class="link-card"><div class="link-card-ico">📱</div><div><div class="link-card-t">Essayer AutoCarnet</div><div class="link-card-d">Gratuit · Sans carte bancaire</div></div></a>
+      <a href="/premium.html" class="link-card"><div class="link-card-ico">⭐</div><div><div class="link-card-t">Plans Famille & Pro</div><div class="link-card-d">À partir de 1,99€/mois</div></div></a>
+      <a href="/pro.html" class="link-card"><div class="link-card-ico">🚀</div><div><div class="link-card-t">Pour les professionnels</div><div class="link-card-d">Flotte illimitée · Mode équipe</div></div></a>
+      <a href="/blog-carnet-entretien-numerique.html" class="link-card"><div class="link-card-ico">📖</div><div><div class="link-card-t">Pourquoi passer au numérique ?</div><div class="link-card-d">Lire l'article</div></div></a>
+    </div>
+    <div class="cta">
+      <h3>Créez votre carnet d'entretien</h3>
+      <p>Générez vous aussi un certificat de vente professionnel.<br>Gratuit, sans pub, sans carte bancaire.</p>
+      <div class="cta-feats"><span class="cta-feat">✓ Rappels CT & vidange</span><span class="cta-feat">✓ Hors ligne</span><span class="cta-feat">✓ Zéro pub</span></div>
+      <a href="/app.html" class="cta-btn">🚗 Essayer gratuitement</a>
+    </div>`;
+  document.title=`${v.marque} ${v.modele} — Certificat AutoCarnet`;
+}
+load();
+</script>
+</body>
+</html>
