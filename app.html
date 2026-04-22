@@ -2862,7 +2862,7 @@ async function saveVeh(){
   toast(id?'Véhicule mis à jour !':'Véhicule ajouté !','s');
 
   // Sauvegarder automatiquement les documents renseignés
-  if(finalVid) await saveVehDocs(finalVid, S.user.id);
+  if(finalVid){try{await saveVehDocs(finalVid,S.user.id);}catch(e){console.warn("saveVehDocs error:",e.message);}}
 
   cm('veh');await loadVehs();await loadEnts();await loadDocuments();nav('dash');
   // Déclencher onboarding jumeau si nouveau véhicule
@@ -2901,7 +2901,7 @@ async function saveVehDocs(vid, uid){
   const asEcheance=g('v-as')?.value||null;
   const asCompagnie=g('v-ac')?.value.trim()||null;
   const asPhoto=g('vdoc-as-photo')?.files?.[0]||null;
-  if(asNum||asEmission||asEcheance||asCompagnie||asPhoto){
+  if(asNum||asEmission||(asEcheance&&asEcheance.length>0)||asCompagnie||asPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Assurance');
     const photoUrl=asPhoto?await uploadDocPhoto(asPhoto,uid,vid,'assurance'):(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Assurance',nom:asCompagnie,numero:asNum,date_emission:asEmission,date_expiration:asEcheance,note:null,photo_url:photoUrl};
@@ -2913,7 +2913,7 @@ async function saveVehDocs(vid, uid){
   const ctEmission=g('vdoc-ct-emission')?.value||null;
   const ctEcheance=g('v-ct')?.value||null;
   const ctPhoto=g('vdoc-ct-photo')?.files?.[0]||null;
-  if(ctNom||ctEmission||ctEcheance||ctPhoto){
+  if(ctNom||ctEmission||(ctEcheance&&ctEcheance.length>0)||ctPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Contrôle technique');
     const photoUrl=ctPhoto?await uploadDocPhoto(ctPhoto,uid,vid,'ct'):(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Contrôle technique',nom:ctNom,numero:null,date_emission:ctEmission,date_expiration:ctEcheance,note:null,photo_url:photoUrl};
