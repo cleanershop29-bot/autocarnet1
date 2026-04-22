@@ -3428,12 +3428,358 @@ function getCostsByYear(vid){
 function exportPDF(vid){
   if(getUserPlan()==='free')return showUpgradeModal("L'export PDF est disponible avec les plans Famille et Pro.");
   const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  // Modale de choix
+  const mo=document.createElement('div');
+  mo.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center';
+  mo.innerHTML=`<div style="background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px">
+    <div style="font-size:1rem;font-weight:800;color:#0F172A;margin-bottom:6px">📄 Choisir le type de PDF</div>
+    <div style="font-size:.8rem;color:#64748B;margin-bottom:20px">Pour ${esc(v.marque)} ${esc(v.modele)}</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="document.body.removeChild(this.closest('[style*=fixed]'));exportPDFVente('${vid}')" style="padding:14px 16px;border-radius:12px;border:1.5px solid #E2E8F0;background:#fff;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.4rem">🏷️</span>
+        <div><div style="font-size:.88rem;font-weight:700;color:#0F172A">PDF de vente</div><div style="font-size:.72rem;color:#64748B">Historique complet · Score de confiance · Pour LeBonCoin</div></div>
+      </button>
+      <button onclick="document.body.removeChild(this.closest('[style*=fixed]'));exportPDFRecap('${vid}')" style="padding:14px 16px;border-radius:12px;border:1.5px solid #E2E8F0;background:#fff;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.4rem">📊</span>
+        <div><div style="font-size:.88rem;font-weight:700;color:#0F172A">Récap mensuel</div><div style="font-size:.72rem;color:#64748B">Bilan du mois · Coûts · Prochains rappels</div></div>
+      </button>
+    </div>
+    <button onclick="document.body.removeChild(this.closest('[style*=fixed]'))" style="margin-top:14px;width:100%;padding:12px;border-radius:10px;border:none;background:#F1F5F9;color:#64748B;font-size:.85rem;font-weight:600;cursor:pointer">Annuler</button>
+  </div>`;
+  document.body.appendChild(mo);
+  mo.addEventListener('click',e=>{if(e.target===mo)document.body.removeChild(mo);});
+}
+
+function exportPDFVente(vid){
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
   const list=S.ents.filter(e=>e.vehicle_id===vid).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const total=list.reduce((s,e)=>s+(e.cout||0),0);
-  const rows=list.map(e=>{const ti=getType(e.type);const extra=[e.pieces?'Pièces: '+e.pieces:'',e.technicien?'Tech: '+e.technicien:'',e.garantie_mois?'Garantie '+e.garantie_mois+'m':''].filter(Boolean).join(' | ');return`<tr><td>${fmtDate(e.date)}</td><td>${ti.ico} ${esc(ti.label)}</td><td>${e.km?fmtKm(e.km):'—'}</td><td>${esc(e.garage)||'—'}</td><td>${e.cout?fmtCout(e.cout):'—'}</td><td>${esc(e.note)||'—'}${extra?'<br><small style="color:#888">'+esc(extra)+'</small>':''}</td></tr>`;}).join('');
-  const html=`<!DOCTYPE html><html lang="fr" style="color-scheme:light !important"><head><meta charset="UTF-8"><title>AutoCarnet — ${esc(v.marque)} ${esc(v.modele)}</title><style>body{font-family:Arial,sans-serif;color:#111;margin:32px 40px;font-size:13px}table{width:100%;border-collapse:collapse}th{background:#f4f4f4;padding:7px 10px;text-align:left;font-size:.68rem;text-transform:uppercase}td{padding:7px 10px;border-bottom:1px solid #eee;font-size:.79rem}</style></head><body><div style="display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:20px"><div><div style="font-size:1.3rem;font-weight:700">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}${v.annee?' ('+v.annee+')':''}</div><div style="font-family:monospace;font-size:.78rem">${esc(v.immatriculation)||'—'}</div><div style="font-size:.72rem;color:#666">${fmtKm(v.km_actuel)}${v.transmission?' · '+v.transmission:''}${v.carburant?' · '+v.carburant:''}</div>${v.assurance_echeance?'<div style="font-size:.7rem;color:#c00">Assurance : '+fmtDate(v.assurance_echeance)+'</div>':''}</div><div style="text-align:right"><div style="font-size:1.2rem;font-weight:900">AUTOCARNET</div><div style="font-size:.7rem;color:#666">Exporté le ${fmtDate(new Date().toISOString())}</div></div></div><table><thead><tr><th>Date</th><th>Type</th><th>Km</th><th>Garage</th><th>Coût</th><th>Notes</th></tr></thead><tbody>${rows||'<tr><td colspan="6" style="text-align:center;color:#aaa;padding:18px">Aucun entretien</td></tr>'}</tbody></table><div style="margin-top:12px;text-align:right;font-weight:700">Total : ${fmtCout(total)}</div></body></html>`;
+  const today=new Date();
+  const nbEnts=list.length;
+  const lastEnt=list[0];
+  const lastVidange=list.find(e=>e.type&&e.type.toLowerCase().includes('vidange'));
+  const ct=v.ct_date?new Date(v.ct_date):null;
+  const ctDays=ct?Math.ceil((ct-today)/86400000):null;
+  const ctColor=!ct?'#888':ctDays<0?'#dc2626':ctDays<=30?'#d97706':'#16a34a';
+  const ctLabel=!ct?'Non renseigné':ctDays<0?`Expiré (${Math.abs(ctDays)}j)`:`Valide encore ${ctDays}j`;
+
+  const scoreItems=[
+    {ok:nbEnts>=5,label:'Historique complet ('+nbEnts+' entretiens)'},
+    {ok:!!lastVidange,label:'Vidange enregistrée'},
+    {ok:!!v.immatriculation,label:'Immatriculation renseignée'},
+    {ok:ct&&ctDays>0,label:'CT valide'},
+    {ok:!!v.km_actuel,label:'Kilométrage à jour'},
+    {ok:!!v.annee,label:'Année renseignée'},
+  ];
+  const score=scoreItems.filter(x=>x.ok).length;
+  const scoreColor=score>=5?'#16a34a':score>=3?'#d97706':'#dc2626';
+  const scoreLabel=score>=5?'Excellent':score>=3?'Correct':'Incomplet';
+
+  const rows=list.map(e=>{
+    const ti=getType(e.type);
+    return`<tr>
+      <td style="color:#374151;white-space:nowrap">${fmtDate(e.date)}</td>
+      <td><span style="font-weight:600;color:#111">${ti.ico} ${esc(ti.label)}</span>${e.note?'<br><span style="font-size:.72rem;color:#6b7280">'+esc(e.note)+'</span>':''}</td>
+      <td style="color:#374151;white-space:nowrap">${e.km?fmtKm(e.km):'—'}</td>
+      <td style="color:#374151">${esc(e.garage)||'—'}</td>
+      <td style="text-align:right;font-weight:600;color:#111">${e.cout?fmtCout(e.cout):'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html>
+<html lang="fr" style="color-scheme:light !important">
+<head>
+<meta charset="UTF-8">
+<title>Certificat entretien — ${esc(v.marque)} ${esc(v.modele)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',Arial,sans-serif;color:#111;background:#fff;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{max-width:800px;margin:0 auto;padding:40px}
+.header{background:#0A0F1E;color:#fff;padding:28px 32px;border-radius:12px;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.header-logo{font-size:.75rem;font-weight:800;letter-spacing:.08em;color:#60A5FA;text-transform:uppercase;margin-bottom:4px}
+.header-title{font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
+.header-sub{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:3px}
+.header-right{text-align:right}
+.header-date{font-size:.7rem;color:rgba(255,255,255,.4)}
+.header-immat{font-size:1.1rem;font-weight:700;font-family:monospace;color:#fff;background:rgba(255,255,255,.1);padding:4px 12px;border-radius:6px;margin-top:6px;display:inline-block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.card{border:1.5px solid #E5E7EB;border-radius:10px;padding:18px}
+.card-ttl{font-size:.65rem;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #F3F4F6}
+.info-row:last-child{border-bottom:none}
+.info-lbl{font-size:.75rem;color:#6B7280;font-weight:500}
+.info-val{font-size:.8rem;font-weight:600;color:#111}
+.score-bar{display:flex;align-items:center;gap:12px;padding:16px;background:#F9FAFB;border-radius:10px;margin-bottom:20px;border:1.5px solid #E5E7EB}
+.score-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid ${scoreColor};flex-shrink:0}
+.score-num{font-size:1.2rem;font-weight:800;color:${scoreColor}}
+.score-tot{font-size:.6rem;color:#9CA3AF}
+.score-items{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+.score-item{font-size:.7rem;padding:3px 8px;border-radius:20px;font-weight:500}
+.score-ok{background:#DCFCE7;color:#15803D}
+.score-no{background:#F3F4F6;color:#9CA3AF;text-decoration:line-through}
+table{width:100%;border-collapse:collapse;margin-bottom:16px}
+thead th{background:#F9FAFB;padding:9px 12px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;color:#6B7280;letter-spacing:.05em;border-bottom:2px solid #E5E7EB}
+tbody td{padding:9px 12px;border-bottom:1px solid #F3F4F6;vertical-align:top}
+tbody tr:hover{background:#FAFAFA}
+.total-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#F9FAFB;border-radius:8px;margin-bottom:24px}
+.total-lbl{font-size:.8rem;color:#6B7280;font-weight:500}
+.total-val{font-size:1rem;font-weight:800;color:#111}
+.footer{border-top:1.5px solid #E5E7EB;padding-top:16px;display:flex;justify-content:space-between;align-items:center}
+.footer-note{font-size:.65rem;color:#9CA3AF;line-height:1.5}
+.footer-brand{font-size:.8rem;font-weight:800;color:#2563EB}
+.ct-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;background:${ct&&ctDays>0?'#DCFCE7':ct&&ctDays<=0?'#FEE2E2':'#F3F4F6'};color:${ctColor}}
+@media print{body{padding:0}.page{padding:20px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-logo">AutoCarnet · Certificat d'entretien</div>
+      <div class="header-title">🚗 ${esc(v.marque)} ${esc(v.modele)}${v.annee?' <span style="font-weight:400;font-size:1rem;color:rgba(255,255,255,.5)">('+v.annee+')</span>':''}</div>
+      <div class="header-sub">${v.carburant?v.carburant.charAt(0).toUpperCase()+v.carburant.slice(1):''}${v.puissance?' · '+v.puissance+' ch':''}${v.transmission?' · '+v.transmission:''}</div>
+    </div>
+    <div class="header-right">
+      <div class="header-date">Généré le ${fmtDate(new Date().toISOString())}</div>
+      ${v.immatriculation?'<div class="header-immat">'+esc(v.immatriculation)+'</div>':''}
+    </div>
+  </div>
+
+  <!-- Score de confiance -->
+  <div class="score-bar">
+    <div class="score-circle">
+      <div class="score-num">${score}/${scoreItems.length}</div>
+      <div class="score-tot">${scoreLabel}</div>
+    </div>
+    <div>
+      <div style="font-size:.75rem;font-weight:700;color:#111;margin-bottom:8px">Score de confiance acheteur</div>
+      <div class="score-items">
+        ${scoreItems.map(i=>`<span class="score-item ${i.ok?'score-ok':'score-no'}">${i.ok?'✓':'✗'} ${i.label}</span>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- Infos véhicule + CT -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-ttl">Informations véhicule</div>
+      <div class="info-row"><span class="info-lbl">Kilométrage actuel</span><span class="info-val">${fmtKm(v.km_actuel)}</span></div>
+      ${v.vin?'<div class="info-row"><span class="info-lbl">VIN</span><span class="info-val" style="font-family:monospace;font-size:.72rem">'+esc(v.vin)+'</span></div>':''}
+      ${v.date_achat?'<div class="info-row"><span class="info-lbl">Date d\'achat</span><span class="info-val">'+fmtDate(v.date_achat)+'</span></div>':''}
+      <div class="info-row"><span class="info-lbl">Nb. entretiens</span><span class="info-val">${nbEnts}</span></div>
+      <div class="info-row"><span class="info-lbl">Dernier entretien</span><span class="info-val">${lastEnt?fmtDate(lastEnt.date):'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Dernière vidange</span><span class="info-val">${lastVidange?fmtDate(lastVidange.date):'—'}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Documents & conformité</div>
+      <div class="info-row"><span class="info-lbl">Contrôle technique</span><span class="ct-badge">${ctLabel}</span></div>
+      ${v.assurance_echeance?'<div class="info-row"><span class="info-lbl">Assurance</span><span class="info-val">'+fmtDate(v.assurance_echeance)+'</span></div>':''}
+      ${v.assurance_compagnie?'<div class="info-row"><span class="info-lbl">Assureur</span><span class="info-val">'+esc(v.assurance_compagnie)+'</span></div>':''}
+      <div class="info-row"><span class="info-lbl">Coût total entretiens</span><span class="info-val" style="color:#2563EB">${fmtCout(total)}</span></div>
+      ${v.km_actuel&&total?'<div class="info-row"><span class="info-lbl">Coût / km</span><span class="info-val">'+(total/v.km_actuel).toFixed(3)+'€/km</span></div>':''}
+    </div>
+  </div>
+
+  <!-- Historique -->
+  <div style="font-size:.8rem;font-weight:700;color:#111;margin-bottom:10px">Historique complet des entretiens</div>
+  <table>
+    <thead><tr><th>Date</th><th>Intervention</th><th>Km</th><th>Garage</th><th style="text-align:right">Coût</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="5" style="text-align:center;color:#aaa;padding:18px">Aucun entretien enregistré</td></tr>'}</tbody>
+  </table>
+
+  <div class="total-row">
+    <span class="total-lbl">Coût total des entretiens enregistrés</span>
+    <span class="total-val">${fmtCout(total)}</span>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-note">
+      Document généré via AutoCarnet · autocarnet.fr<br>
+      Historique basé sur les données saisies par le propriétaire. Non contractuel.
+    </div>
+    <div class="footer-brand">AutoCarnet</div>
+  </div>
+</div>
+</body>
+</html>`;
   const win=window.open('','_blank');if(!win)return toast('Autorisez les popups.','e');
-  win.document.write(html);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(html);win.document.close();setTimeout(()=>win.print(),600);
+}
+
+function exportPDFRecap(vid){
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  const now=new Date();
+  const moisNom=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const moisCourant=now.getMonth();
+  const anneeCourante=now.getFullYear();
+  // Entretiens du mois en cours
+  const list=S.ents.filter(e=>{
+    if(e.vehicle_id!==vid)return false;
+    const d=new Date(e.date);
+    return d.getMonth()===moisCourant&&d.getFullYear()===anneeCourante;
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  // Entretiens de l'année
+  const listAnnee=S.ents.filter(e=>{
+    if(e.vehicle_id!==vid)return false;
+    return new Date(e.date).getFullYear()===anneeCourante;
+  });
+  const totalMois=list.reduce((s,e)=>s+(e.cout||0),0);
+  const totalAnnee=listAnnee.reduce((s,e)=>s+(e.cout||0),0);
+  const totalGlobal=S.ents.filter(e=>e.vehicle_id===vid).reduce((s,e)=>s+(e.cout||0),0);
+  // Prochains rappels
+  const today=new Date();today.setHours(0,0,0,0);
+  const prochains=getRappels().filter(r=>r.v?.id===vid&&r.sev!=='danger').slice(0,4);
+  const urgents=getRappels().filter(r=>r.v?.id===vid&&r.sev==='danger');
+  // Stats par type sur l'année
+  const byType={};
+  listAnnee.forEach(e=>{if(e.cout){const ti=getType(e.type);byType[ti.label]=(byType[ti.label]||0)+e.cout;}});
+  const topTypes=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxType=topTypes[0]?topTypes[0][1]:1;
+
+  const rowsMois=list.map(e=>{
+    const ti=getType(e.type);
+    return`<tr>
+      <td style="white-space:nowrap;color:#374151">${fmtDate(e.date)}</td>
+      <td><span style="font-weight:600">${ti.ico} ${esc(ti.label)}</span>${e.garage?'<br><span style="font-size:.7rem;color:#9CA3AF">'+esc(e.garage)+'</span>':''}</td>
+      <td style="white-space:nowrap;color:#6B7280">${e.km?fmtKm(e.km):'—'}</td>
+      <td style="text-align:right;font-weight:700;color:#111">${e.cout?fmtCout(e.cout):'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html>
+<html lang="fr" style="color-scheme:light !important">
+<head>
+<meta charset="UTF-8">
+<title>Récap ${moisNom[moisCourant]} ${anneeCourante} — ${esc(v.marque)} ${esc(v.modele)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',Arial,sans-serif;color:#111;background:#fff;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{max-width:800px;margin:0 auto;padding:40px}
+.header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #111}
+.header-left{}
+.header-badge{font-size:.65rem;font-weight:700;color:#2563EB;text-transform:uppercase;letter-spacing:.1em;background:#EFF6FF;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.header-title{font-size:1.6rem;font-weight:800;letter-spacing:-.04em;color:#111}
+.header-sub{font-size:.8rem;color:#6B7280;margin-top:3px}
+.header-right{text-align:right}
+.header-veh{font-size:.9rem;font-weight:700;color:#111}
+.header-km{font-size:.75rem;color:#6B7280}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.kpi{border:1.5px solid #E5E7EB;border-radius:10px;padding:16px;text-align:center}
+.kpi-val{font-size:1.4rem;font-weight:800;color:#111;letter-spacing:-.03em}
+.kpi-lbl{font-size:.65rem;color:#9CA3AF;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.kpi-sub{font-size:.68rem;color:#6B7280;margin-top:2px}
+.kpi.accent{background:#0A0F1E;border-color:#0A0F1E}
+.kpi.accent .kpi-val{color:#60A5FA}
+.kpi.accent .kpi-lbl,.kpi.accent .kpi-sub{color:rgba(255,255,255,.4)}
+.section-ttl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6B7280;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.section-ttl::after{content:'';flex:1;height:1px;background:#E5E7EB}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+thead th{background:#F9FAFB;padding:9px 12px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;color:#6B7280;letter-spacing:.05em;border-bottom:2px solid #E5E7EB}
+tbody td{padding:9px 12px;border-bottom:1px solid #F3F4F6;vertical-align:top}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-lbl{font-size:.72rem;color:#374151;width:140px;flex-shrink:0;font-weight:500}
+.bar-track{flex:1;height:8px;background:#F3F4F6;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;background:#2563EB;border-radius:4px}
+.bar-val{font-size:.72rem;font-weight:600;color:#111;width:60px;text-align:right;flex-shrink:0}
+.rappels{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.rappel-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;border:1.5px solid #E5E7EB}
+.rappel-row.urgent{border-color:#FECACA;background:#FEF2F2}
+.rappel-row.warn{border-color:#FDE68A;background:#FFFBEB}
+.rappel-row.ok{border-color:#BBF7D0;background:#F0FDF4}
+.rappel-lbl{font-size:.78rem;font-weight:600;color:#111}
+.rappel-date{font-size:.7rem;color:#6B7280}
+.rappel-badge{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.footer{border-top:1.5px solid #E5E7EB;padding-top:16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.footer-note{font-size:.65rem;color:#9CA3AF;line-height:1.5}
+.footer-brand{font-size:.8rem;font-weight:800;color:#2563EB}
+@media print{body{padding:0}.page{padding:20px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-badge">📊 Récap mensuel</div>
+      <div class="header-title">${moisNom[moisCourant]} ${anneeCourante}</div>
+      <div class="header-sub">Bilan d'entretien AutoCarnet</div>
+    </div>
+    <div class="header-right">
+      <div class="header-veh">🚗 ${esc(v.marque)} ${esc(v.modele)}${v.annee?' ('+v.annee+')':''}</div>
+      <div class="header-km">${fmtKm(v.km_actuel)}${v.immatriculation?' · '+esc(v.immatriculation):''}</div>
+      <div style="font-size:.65rem;color:#9CA3AF;margin-top:2px">Généré le ${fmtDate(new Date().toISOString())}</div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi accent">
+      <div class="kpi-val">${fmtCout(totalMois)||'0 €'}</div>
+      <div class="kpi-lbl">Ce mois</div>
+      <div class="kpi-sub">${list.length} intervention${list.length>1?'s':''}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">${fmtCout(totalAnnee)||'0 €'}</div>
+      <div class="kpi-lbl">Cette année</div>
+      <div class="kpi-sub">${listAnnee.length} intervention${listAnnee.length>1?'s':''}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">${fmtCout(totalGlobal)||'0 €'}</div>
+      <div class="kpi-lbl">Total cumulé</div>
+      <div class="kpi-sub">${v.km_actuel&&totalGlobal?(totalGlobal/v.km_actuel).toFixed(3)+'€/km':''}</div>
+    </div>
+  </div>
+
+  <!-- Entretiens du mois -->
+  <div class="section-ttl">Interventions de ${moisNom[moisCourant]}</div>
+  ${list.length?`<table>
+    <thead><tr><th>Date</th><th>Intervention</th><th>Km</th><th style="text-align:right">Coût</th></tr></thead>
+    <tbody>${rowsMois}</tbody>
+  </table>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+    <div style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:8px;padding:10px 16px;display:flex;gap:24px">
+      <div style="font-size:.75rem;color:#6B7280">Total du mois</div>
+      <div style="font-size:.9rem;font-weight:800;color:#111">${fmtCout(totalMois)}</div>
+    </div>
+  </div>`:'<div style="text-align:center;color:#9CA3AF;padding:20px;font-size:.82rem;border:1.5px solid #E5E7EB;border-radius:10px;margin-bottom:20px">Aucune intervention ce mois-ci</div>'}
+
+  <!-- Répartition par type (année) -->
+  ${topTypes.length?`<div class="section-ttl">Répartition des coûts ${anneeCourante}</div>
+  <div style="margin-bottom:20px">
+    ${topTypes.map(([lbl,val])=>`<div class="bar-row">
+      <div class="bar-lbl">${lbl}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/maxType*100)}%"></div></div>
+      <div class="bar-val">${fmtCout(val)}</div>
+    </div>`).join('')}
+  </div>`:''}
+
+  <!-- Prochains rappels -->
+  ${(urgents.length||prochains.length)?`<div class="section-ttl">Rappels & échéances</div>
+  <div class="rappels">
+    ${urgents.map(r=>`<div class="rappel-row urgent">
+      <div><div class="rappel-lbl">${r.ti?.ico||''} ${r.ti?.label||'Entretien'}</div><div class="rappel-date">${r.e?.rappel_date?fmtDate(r.e.rappel_date):''}</div></div>
+      <span class="rappel-badge" style="background:#FEE2E2;color:#DC2626">En retard</span>
+    </div>`).join('')}
+    ${prochains.map(r=>`<div class="rappel-row ${r.sev}">
+      <div><div class="rappel-lbl">${r.ti?.ico||''} ${r.ti?.label||'Entretien'}</div><div class="rappel-date">${r.label}</div></div>
+      <span class="rappel-badge" style="background:${r.sev==='warn'?'#FEF3C7':'#DCFCE7'};color:${r.sev==='warn'?'#D97706':'#16A34A'}">${r.label}</span>
+    </div>`).join('')}
+  </div>`:''}
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-note">Document généré via AutoCarnet · autocarnet.fr · Données saisies par le propriétaire</div>
+    <div class="footer-brand">AutoCarnet</div>
+  </div>
+</div>
+</body>
+</html>`;
+  const win=window.open('','_blank');if(!win)return toast('Autorisez les popups.','e');
+  win.document.write(html);win.document.close();setTimeout(()=>win.print(),600);
 }
 
 /* RENDER */
