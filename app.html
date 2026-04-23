@@ -1517,6 +1517,20 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
             Envoyer à tous les abonnés
           </button>
         </div>
+        <!-- BETA FEATURES -->
+        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🧪 Beta features</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);border:1.5px solid var(--border)">
+            <div>
+              <div style="font-size:.82rem;font-weight:700;color:var(--txt)">🔌 Connecteur OBD2</div>
+              <div style="font-size:.7rem;color:var(--txm);margin-top:2px">Lecture dongle Bluetooth dans le Jumeau</div>
+            </div>
+            <div onclick="adminToggleBeta('obd')" id="beta-toggle-obd" style="width:42px;height:24px;border-radius:12px;background:var(--border);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
+              <div id="beta-knob-obd" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s"></div>
+            </div>
+          </div>
+          <div id="beta-obd-status" style="font-size:.7rem;color:var(--txm);margin-top:6px;text-align:center;min-height:16px"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -5700,7 +5714,7 @@ function renderRap(){
         <div class="rap-banner-title">${bannerTitle}</div>
         <div class="rap-banner-sub">${bannerSub}</div>
       </div>
-      <div class="rap-banner-count">${totalDanger||''}</div>
+      <div class="rap-banner-count">${totalDanger||'✓'}</div>
     </div>
     <div class="rap-pills">
       <div class="rap-pill ${total30?'warn':'empty'}" onclick="scrollToRapSection('rap-section-30')">
@@ -6316,26 +6330,6 @@ function updateFabMenu(view){
   if(view==='rap'){
     var b1=document.createElement('button');b1.className='fab-item';b1.innerHTML=icoEnt+'Ajouter un entretien';b1.onclick=function(){fabAction('ent');};menu.appendChild(b1);
     var b2=document.createElement('button');b2.className='fab-item';b2.innerHTML=icoRap+'Ajouter un rappel / RDV';b2.onclick=function(){openRappelCustom();closeFabMenu();};menu.appendChild(b2);
-  } else if(view==='fam'){
-    var icoShare='<div class="fab-item-ico" style="background:#EFF6FF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>';
-    var bShare=document.createElement('button');bShare.className='fab-item';bShare.innerHTML=icoShare+'Partager un véhicule';bShare.onclick=function(){closeFabMenu();openInv();};menu.appendChild(bShare);
-    var sharedVehs=(S.vehicles||[]).filter(function(v){return v.user_id!==S.user.id;});
-    if(sharedVehs.length){
-      var icoSig='<div class="fab-item-ico" style="background:#FEF2F2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>';
-      if(sharedVehs.length===1){
-        var bSig=document.createElement('button');bSig.className='fab-item';bSig.innerHTML=icoSig+'Signaler un problème';
-        var _vid=sharedVehs[0].id;bSig.onclick=function(){closeFabMenu();openSig(_vid);};menu.appendChild(bSig);
-      } else {
-        var bSig=document.createElement('button');bSig.className='fab-item';bSig.innerHTML=icoSig+'Signaler un problème';
-        bSig.onclick=function(){closeFabMenu();
-          var opts=sharedVehs.map(function(v){return'<button class="fab-item" style="width:100%;justify-content:flex-start" onclick="document.getElementById(\'mo-sig-pick\').remove();openSig(\''+v.id+'\')">'+v.emoji+' '+esc(v.marque)+' '+esc(v.modele)+'</button>';}).join('');
-          var d=document.createElement('div');d.id='mo-sig-pick';d.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center';
-          d.innerHTML='<div style="background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:480px"><div style="font-size:.9rem;font-weight:800;margin-bottom:14px">Quel véhicule ?</div>'+opts+'<button onclick="document.getElementById(\'mo-sig-pick\').remove()" style="margin-top:8px;width:100%;padding:12px;border:none;border-radius:10px;background:#F1F5F9;font-family:inherit;font-size:.86rem;font-weight:600;color:var(--txm);cursor:pointer">Annuler</button></div>';
-          d.onclick=function(e){if(e.target===d)d.remove();};
-          document.body.appendChild(d);
-        };menu.appendChild(bSig);
-      }
-    }
   } else {
     var b1=document.createElement('button');b1.className='fab-item';b1.innerHTML=icoVeh+'Ajouter un véhicule';b1.onclick=function(){fabAction('veh');};menu.appendChild(b1);
     var b2=document.createElement('button');b2.id='fab-ent';b2.className='fab-item';b2.innerHTML=icoEnt+'Ajouter un entretien';b2.onclick=function(){fabAction('ent');};menu.appendChild(b2);
@@ -7450,6 +7444,48 @@ if (isIOS && !isStandalone) {
 }
 
 /* PANNEAU ADMIN */
+/* ══ BETA FEATURES ══ */
+const BETA = (function(){
+  try { return JSON.parse(localStorage.getItem('ac_beta') || '{}'); }
+  catch(e){ return {}; }
+})();
+function _saveBeta(){ try{ localStorage.setItem('ac_beta', JSON.stringify(BETA)); }catch(e){} }
+function adminToggleBeta(key){
+  BETA[key] = !BETA[key];
+  _saveBeta();
+  _renderBetaToggle(key);
+  const st = g('beta-obd-status');
+  if(st) st.textContent = BETA[key] ? '✅ Activé — visible dans le Jumeau' : '⭕ Désactivé';
+  setTimeout(()=>{ if(st) st.textContent=''; }, 2500);
+  // Re-render Jumeau si on est dessus
+  if(S.view==='jumeau') renderJumeau();
+}
+function _renderBetaToggle(key){
+  const tog = g('beta-toggle-'+key);
+  const knob = g('beta-knob-'+key);
+  if(!tog||!knob) return;
+  const on = !!BETA[key];
+  tog.style.background = on ? 'var(--ok)' : 'var(--border)';
+  knob.style.transform = on ? 'translateX(18px)' : 'translateX(0)';
+}
+function _initBetaToggles(){
+  _renderBetaToggle('obd');
+}
+function getBetaOBD(v){
+  if(!BETA.obd) return '';
+  return `
+    <div style="margin:14px 14px 0">
+      <div style="background:linear-gradient(135deg,#0F2460,#1E3A8A);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;border:1px solid rgba(255,255,255,.2)">🔌</div>
+        <div style="flex:1">
+          <div style="font-size:.86rem;font-weight:800;color:#fff">Connecteur OBD2</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.6);margin-top:2px">Bêta — fonctionnalité en cours de développement</div>
+        </div>
+        <div style="font-size:.65rem;font-weight:700;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.2);white-space:nowrap">Bientôt</div>
+      </div>
+    </div>`;
+}
+
 const ADMIN_CODE_CHECK='AC2026admin';
 /* Compteur taps avatar pour admin secret */
 let _adminTaps=0,_adminTimer=null;
@@ -7485,6 +7521,7 @@ function checkAdminCode(){
   if(g('admin-code').value===ADMIN_CODE_CHECK){
     g('admin-auth').classList.add('hidden');
     g('admin-panel').classList.remove('hidden');
+    _initBetaToggles();
   } else {
     toast('Code incorrect.','e');
     g('admin-code').value='';
@@ -8572,6 +8609,7 @@ function renderJumeau(){
     <div class="ju-sec">Composants <span class="ju-sec-action" onclick="juSetFilter(JU.compFilter==='all'?'urgent':'all')">${flt==='all'?'Filtrer':'Tout voir'}</span></div>
     ${filterHTML}
     <div class="ju-complist" id="ju-complist-wrap">${jumeauCompList()}</div>
+    ${getBetaOBD(v)}
     <div style="height:20px"></div>`;
 
   // Animer l'anneau après rendu
