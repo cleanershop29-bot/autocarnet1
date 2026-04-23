@@ -8391,7 +8391,7 @@ function renderJumeau(){
         ${precData.reels>0?`${precData.reels} entretien${precData.reels>1?'s':''} réel${precData.reels>1?'s':''}`:''}${precData.reels>0&&precData.estimations>0?' · ':''}${precData.estimations>0?`${precData.estimations} estimation${precData.estimations>1?'s':''}`:''}${(precData.reels>0||precData.estimations>0)&&precData.inconnus>0?' · ':''}${precData.inconnus>0?`${precData.inconnus} inconnu${precData.inconnus>1?'s':''}`:''}
       </div>
       <div style="font-size:.72rem;color:var(--txm);margin-bottom:6px">
-        ${prec<30?'Ajoutez vos entretiens et renseignez le kilométrage pour améliorer la précision.':prec<60?'Ajoutez le kilométrage à vos entretiens pour affiner le calcul.':prec<90?'Bonne précision — continuez à enregistrer vos entretiens.':'Excellente précision — le jumeau est bien calibré.'}
+        ${prec<30?'Ajoutez vos entretiens passés pour améliorer la précision. Plus vous renseignez, plus le jumeau est fiable.':prec<60?'Ajoutez le kilométrage à chaque entretien pour affiner les calculs d\'usure.':prec<90?'Bonne précision — continuez à enregistrer vos entretiens régulièrement.':'Excellente précision — le jumeau est parfaitement calibré.'}
       </div>
       <div class="ju-prec-acts">
         ${prec<90?'<span class="ju-prec-act" onclick="fabAction(\'ent\')">+ Ajouter un entretien</span>':''}
@@ -8522,7 +8522,7 @@ function juIsCompApplicable(comp, v){
   // Électrique : pas de moteur thermique
   if(isElec&&['huile','courroie','courroie_acc','bougies','bougies_prech','embrayage','huile_boite_m','catalyseur','filtre_air'].includes(comp.id)) return false;
   // Bougies d'allumage : essence/hybride uniquement (pas sur diesel)
-  if(comp.id==='bougies'&&(carb==='diesel'||carb==='gpl'&&false)) return false;
+  if(comp.id==='bougies'&&(carb==='diesel'||carb==='gpl')) return false;
   // Bougies préchauffage : diesel uniquement (pas sur essence)
   if(comp.id==='bougies_prech'&&carb!=='diesel') return false;
   // Embrayage : pas sur boîte auto pure
@@ -9226,8 +9226,11 @@ function jumeauCompList(){
     if(da?.notApplicable&&!db?.notApplicable)return 1;
     if(!da?.notApplicable&&db?.notApplicable)return-1;
     const sa=da?.status||'grey',sb=db?.status||'grey';
+    // Trier par statut d'abord, puis par poids pour prioriser les composants critiques
     if(order.indexOf(sa)!==order.indexOf(sb))return order.indexOf(sa)-order.indexOf(sb);
-    return b.poids-a.poids;
+    // A meme statut, trier par poids décroissant (critique avant confort)
+    if(b.poids!==a.poids)return b.poids-a.poids;
+    return a.label.localeCompare(b.label);
   });
 
   // Appliquer filtre
@@ -9256,7 +9259,7 @@ function jumeauCompList(){
         return`<div class="jcomp grey" style="opacity:.38"><div class="jcomp-ico grey">${comp.ico}</div><div class="jcomp-info"><div class="jcomp-name" style="text-decoration:line-through;color:var(--txl)">${comp.label}</div><div class="jcomp-sub"><span style="font-size:.64rem;color:var(--txl)">Non applicable</span></div></div><div class="jcomp-r"><span class="jcomp-pill grey" style="font-size:.58rem">N/A</span></div></div>`;
       }
       if(d.notApplicable)return'';
-      const pill=d.status==='err'?'Prioritaire':d.status==='warn'?'À surveiller':d.status==='ok'?'OK':'Inconnu';
+      const pill=d.status==='err'?'Prioritaire':d.status==='warn'?'À surveiller':d.status==='ok'?'OK':'À renseigner';
       const dateInfo=d.estimated
         ?`<span class="jcomp-est">~ Estimé</span>`
         :`<span style="color:var(--txm);font-size:.66rem">${d.lastDate&&d.lastDate!=='—'?'Dernier : '+d.lastDate:'Aucune donnée'}</span>`;
@@ -9325,7 +9328,20 @@ function openJumeauComp(id){
   document.getElementById('jcs-name').textContent=comp.label;
   document.getElementById('jcs-cat').innerHTML=`<span style="color:${sc};font-weight:700">${d.status==='err'?'🔴 Prioritaire':d.status==='warn'?'🟡 À surveiller':d.status==='ok'?'🟢 OK':'⚪ Inconnu'}</span> · ${comp.cat}${d.estimated&&!d.isGeneric?' · Estimation':''}${d.isGeneric?' · <span style="color:#B45309;background:#FFFBEB;padding:1px 5px;border-radius:5px;font-size:.62rem">⚠️ Type générique utilisé</span>':''}`;
   const _uv=d.usure;
-  document.getElementById('jcs-uval').textContent=d.status==='grey'?'—':(_uv>100?_uv+'% · En retard':_uv+'%');
+  const uvalEl=document.getElementById('jcs-uval');
+  if(uvalEl)uvalEl.textContent=d.notApplicable?'—':d.status==='grey'?'—':(_uv>100?_uv+'% · En retard':_uv+'%');
+  // Masquer la zone usure si notApplicable
+  const ubgWrap=document.getElementById('jcs-ubg');
+  const uvalLbl=document.querySelector('.jcs-u-lbl');
+  if(d.notApplicable){
+    if(ubgWrap)ubgWrap.style.display='none';
+    if(uvalLbl)uvalLbl.style.display='none';
+    if(uvalEl)uvalEl.style.display='none';
+  } else {
+    if(ubgWrap)ubgWrap.style.display='';
+    if(uvalLbl)uvalLbl.style.display='';
+    if(uvalEl)uvalEl.style.display='';
+  }
   document.getElementById('jcs-uval').style.color=_uv>100?'var(--err)':sc;
 
   // Barre usure graduée dans la fiche
@@ -9352,7 +9368,7 @@ function openJumeauComp(id){
   const umark=document.getElementById('jcs-umark');
   if(umark)umark.style.display='none';
 
-  document.getElementById('jcs-last-date').textContent=d.lastDate;
+  document.getElementById('jcs-last-date').textContent=(d.lastDate==='N/A'||!d.lastDate)?'Jamais enregistré':d.lastDate;
   document.getElementById('jcs-last-km').textContent=d.lastKm;
   document.getElementById('jcs-since-km').textContent=d.sinceKm;
   document.getElementById('jcs-cost').textContent=d.cout;
@@ -9401,6 +9417,8 @@ function openJumeauComp(id){
   // Masquer bouton "marquer fait" si N/A
   const bv=document.getElementById('jcs-bv');
   if(bv)bv.style.display=d.notApplicable?'none':'';
+  const bp=document.getElementById('jcs-bp');
+  if(bp)bp.style.display=d.notApplicable?'none':'';
 
   document.getElementById('mo-jcomp').classList.add('open');
 }
