@@ -141,7 +141,11 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 #fab.vis{animation:fabpop .35s cubic-bezier(.34,1.56,.64,1) both,fab-pulse 2.8s ease-in-out .35s infinite}
 #fab-menu{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(10px);z-index:98;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;opacity:0;transition:opacity .22s,transform .22s}
 #fab-menu.open{pointer-events:all;opacity:1;transform:translateX(-50%) translateY(0)}
-.fab-item{display:flex;align-items:center;gap:9px;background:#fff;border-radius:24px;padding:9px 16px 9px 11px;box-shadow:0 4px 20px rgba(0,0,0,.14);cursor:pointer;font-size:.84rem;font-weight:700;color:var(--txt);border:none;font-family:inherit;white-space:nowrap}
+#fab-menu.open .fab-item{opacity:1;transform:translateY(0) scale(1)}
+#fab-menu.open .fab-item:nth-child(1){transition-delay:.05s}
+#fab-menu.open .fab-item:nth-child(2){transition-delay:.1s}
+#fab-menu.open .fab-item:nth-child(3){transition-delay:.15s}
+.fab-item{display:flex;align-items:center;gap:9px;background:#fff;border-radius:24px;padding:9px 16px 9px 11px;box-shadow:0 4px 20px rgba(0,0,0,.14);cursor:pointer;font-size:.84rem;font-weight:700;color:var(--txt);border:none;font-family:inherit;white-space:nowrap;transform:translateY(8px) scale(.94);opacity:0;transition:transform .22s cubic-bezier(.34,1.56,.64,1),opacity .18s ease,box-shadow .15s}
 .fab-item:active{transform:scale(.96)}
 .fab-item-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 
@@ -5798,13 +5802,6 @@ function renderRap(){
   }
 
   // Boutons actions — uniquement en vue liste
-  if(rapView==='list'){
-    h+=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
-      <button class="btn btn-s btn-sm" onclick="openEntChoice(null)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> + Entretien</button>
-      <button class="btn btn-p btn-sm" onclick="openRappelCustom()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> + Rappel / RDV</button>
-    </div>`;
-  }
-
   function filterV(r){return S.rapFilterVeh==='all'||r.v?.id===S.rapFilterVeh;}
   function filterVid(vid){return S.rapFilterVeh==='all'||vid===S.rapFilterVeh;}
   const urgentF=urgent.filter(filterV);
@@ -6226,24 +6223,42 @@ function nav(view){
   const tabEl=g('t-'+view);
   if(tabEl){tabEl.classList.add('on');if(prevIdx!==-1&&nextIdx!==-1&&prevIdx!==nextIdx)tabEl.classList.add(dir);}
   const nbEl=g('nb-'+view); if(nbEl) nbEl.classList.add('on');
-  g('fab').classList.toggle('vis',['dash','flotte'].includes(view));
+  g('fab').classList.toggle('vis',['dash','flotte','rap'].includes(view));
   // Pulse FAB si aucun entretien pour guider l'utilisateur
   setTimeout(()=>{
     const fab=g('fab');
     if(fab&&fab.classList.contains('vis')){
-      fab.classList.toggle('pulse', S.ents.length===0);
+      const hasContent=S.ents.length>0||S.rappels_custom?.length>0;
+      fab.classList.toggle('pulse', !hasContent);
     }
   },400);
   renderView();
 }
 
 let _fabOpen=false;
+function updateFabMenu(view){
+  var menu=document.getElementById('fab-menu');
+  if(!menu)return;
+  var icoEnt='<div class="fab-item-ico" style="background:#ECFDF5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>';
+  var icoRap='<div class="fab-item-ico" style="background:#FFFBEB"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>';
+  var icoVeh='<div class="fab-item-ico" style="background:var(--primary-lt)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="8.5" cy="13.5" r="1.5"/><circle cx="15.5" cy="13.5" r="1.5"/></svg></div>';
+  menu.innerHTML='';
+  if(view==='rap'){
+    var b1=document.createElement('button');b1.className='fab-item';b1.innerHTML=icoEnt+'Ajouter un entretien';b1.onclick=function(){fabAction('ent');};menu.appendChild(b1);
+    var b2=document.createElement('button');b2.className='fab-item';b2.innerHTML=icoRap+'Ajouter un rappel / RDV';b2.onclick=function(){openRappelCustom();closeFabMenu();};menu.appendChild(b2);
+  } else {
+    var b1=document.createElement('button');b1.className='fab-item';b1.innerHTML=icoVeh+'Ajouter un véhicule';b1.onclick=function(){fabAction('veh');};menu.appendChild(b1);
+    var b2=document.createElement('button');b2.id='fab-ent';b2.className='fab-item';b2.innerHTML=icoEnt+'Ajouter un entretien';b2.onclick=function(){fabAction('ent');};menu.appendChild(b2);
+    var b3=document.createElement('button');b3.className='fab-item';b3.innerHTML=icoRap+'Ajouter un rappel';b3.onclick=function(){fabAction('rap');};menu.appendChild(b3);
+  }
+}
 function handleFab(){
   _fabOpen=!_fabOpen;
   const fab=g('fab');
   fab.classList.remove('pulse');
   const menu=document.getElementById('fab-menu');
   const overlay=document.getElementById('fab-overlay');
+  updateFabMenu(S.view);
   fab.classList.toggle('open',_fabOpen);
   menu.classList.toggle('open',_fabOpen);
   overlay.style.display=_fabOpen?'block':'none';
