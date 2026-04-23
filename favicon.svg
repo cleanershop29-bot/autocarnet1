@@ -8,8 +8,6 @@
   </defs>
   <g clip-path="url(#clip)">
     <rect x="0" y="0" width="1024" height="1024" fill="url(#bg)"></rect>
-    <text x="512" y="650" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-weight="800" font-size="560" fill="#F4F1EA" letter-spacing="-28">ac</text>
-    <circle cx="780" cy="270" r="92" fill="#2B6BFF"></circle>
-  <path d="M 741.36 274.6 L 772.64 304.96 L 824.16 244.24" stroke="#FFFFFF" stroke-width="18.400000000000002" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+    <text x="512" y="720" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-weight="800" font-size="780" fill="#F4F1EA" letter-spacing="-30">ac</text>
   </g>
 </svg>
