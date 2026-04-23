@@ -5700,7 +5700,7 @@ function renderRap(){
         <div class="rap-banner-title">${bannerTitle}</div>
         <div class="rap-banner-sub">${bannerSub}</div>
       </div>
-      <div class="rap-banner-count">${totalDanger||'✓'}</div>
+      <div class="rap-banner-count">${totalDanger||''}</div>
     </div>
     <div class="rap-pills">
       <div class="rap-pill ${total30?'warn':'empty'}" onclick="scrollToRapSection('rap-section-30')">
@@ -6316,6 +6316,26 @@ function updateFabMenu(view){
   if(view==='rap'){
     var b1=document.createElement('button');b1.className='fab-item';b1.innerHTML=icoEnt+'Ajouter un entretien';b1.onclick=function(){fabAction('ent');};menu.appendChild(b1);
     var b2=document.createElement('button');b2.className='fab-item';b2.innerHTML=icoRap+'Ajouter un rappel / RDV';b2.onclick=function(){openRappelCustom();closeFabMenu();};menu.appendChild(b2);
+  } else if(view==='fam'){
+    var icoShare='<div class="fab-item-ico" style="background:#EFF6FF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>';
+    var bShare=document.createElement('button');bShare.className='fab-item';bShare.innerHTML=icoShare+'Partager un véhicule';bShare.onclick=function(){closeFabMenu();openInv();};menu.appendChild(bShare);
+    var sharedVehs=(S.vehicles||[]).filter(function(v){return v.user_id!==S.user.id;});
+    if(sharedVehs.length){
+      var icoSig='<div class="fab-item-ico" style="background:#FEF2F2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>';
+      if(sharedVehs.length===1){
+        var bSig=document.createElement('button');bSig.className='fab-item';bSig.innerHTML=icoSig+'Signaler un problème';
+        var _vid=sharedVehs[0].id;bSig.onclick=function(){closeFabMenu();openSig(_vid);};menu.appendChild(bSig);
+      } else {
+        var bSig=document.createElement('button');bSig.className='fab-item';bSig.innerHTML=icoSig+'Signaler un problème';
+        bSig.onclick=function(){closeFabMenu();
+          var opts=sharedVehs.map(function(v){return'<button class="fab-item" style="width:100%;justify-content:flex-start" onclick="document.getElementById(\'mo-sig-pick\').remove();openSig(\''+v.id+'\')">'+v.emoji+' '+esc(v.marque)+' '+esc(v.modele)+'</button>';}).join('');
+          var d=document.createElement('div');d.id='mo-sig-pick';d.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center';
+          d.innerHTML='<div style="background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:480px"><div style="font-size:.9rem;font-weight:800;margin-bottom:14px">Quel véhicule ?</div>'+opts+'<button onclick="document.getElementById(\'mo-sig-pick\').remove()" style="margin-top:8px;width:100%;padding:12px;border:none;border-radius:10px;background:#F1F5F9;font-family:inherit;font-size:.86rem;font-weight:600;color:var(--txm);cursor:pointer">Annuler</button></div>';
+          d.onclick=function(e){if(e.target===d)d.remove();};
+          document.body.appendChild(d);
+        };menu.appendChild(bSig);
+      }
+    }
   } else {
     var b1=document.createElement('button');b1.className='fab-item';b1.innerHTML=icoVeh+'Ajouter un véhicule';b1.onclick=function(){fabAction('veh');};menu.appendChild(b1);
     var b2=document.createElement('button');b2.id='fab-ent';b2.className='fab-item';b2.innerHTML=icoEnt+'Ajouter un entretien';b2.onclick=function(){fabAction('ent');};menu.appendChild(b2);
