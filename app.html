@@ -2713,6 +2713,64 @@ async function saveProfil(){
   if(btn){btn.disabled=false;btn.textContent='Enregistrer';}
 }
 
+async function deleteAccount(){
+  if(!S.user)return;
+  cfm(
+    'Supprimer votre compte ?',
+    'Toutes vos données seront effacées (véhicules, entretiens, rappels). Cette action est irréversible.',
+    async function(){
+      const uid=S.user.id;
+      const btn=document.querySelector('[onclick="deleteAccount()"]');
+      if(btn){btn.disabled=true;btn.textContent='Suppression...';}
+      try{
+        // Supprimer toutes les données utilisateur
+        await sb.from('entretiens').delete().eq('user_id',uid);
+        await sb.from('rappels_custom').delete().eq('user_id',uid);
+        await sb.from('documents').delete().eq('user_id',uid);
+        await sb.from('partages').delete().eq('owner_id',uid);
+        await sb.from('push_subscriptions').delete().eq('user_id',uid);
+        await sb.from('vehicles').delete().eq('user_id',uid);
+        // Demander la suppression du compte auth via email
+        // (Supabase ne permet pas la suppression auth côté client)
+        // On déconnecte et on informe
+        await sb.auth.signOut();
+        resetState();
+        showAuth();
+        toast('Données supprimées. Votre compte sera désactivé sous 24h.','s');
+      } catch(e){
+        toast('Erreur lors de la suppression : '+e.message,'e');
+        if(btn){btn.disabled=false;btn.textContent='Supprimer le compte';}
+      }
+    }
+  );
+}
+async function deleteAccount(){
+  if(!S.user)return;
+  cfm(
+    'Supprimer votre compte ?',
+    'Toutes vos données seront effacées. Cette action est irréversible.',
+    async function(){
+      var uid=S.user.id;
+      var btn=document.querySelector('[onclick="deleteAccount()"]');
+      if(btn){btn.disabled=true;btn.textContent='Suppression...';}
+      try{
+        await sb.from('entretiens').delete().eq('user_id',uid);
+        await sb.from('rappels_custom').delete().eq('user_id',uid);
+        await sb.from('documents').delete().eq('user_id',uid);
+        await sb.from('partages').delete().eq('owner_id',uid);
+        await sb.from('push_subscriptions').delete().eq('user_id',uid);
+        await sb.from('vehicles').delete().eq('user_id',uid);
+        await sb.auth.signOut();
+        resetState();
+        showAuth();
+        toast('Données supprimées. Votre compte sera désactivé sous 24h.','s');
+      }catch(e){
+        toast('Erreur : '+e.message,'e');
+        if(btn){btn.disabled=false;btn.textContent='Supprimer le compte';}
+      }
+    }
+  );
+}
 async function doOut(){const hadUser=!!S.user;resetState();showAuth();if(hadUser){try{await sb.auth.signOut();}catch(e){}}}
 
 function showReset(){
@@ -5978,9 +6036,21 @@ function renderFam(){
   h+=`<div class="sec-hdr${S.pending.length?'':' mt12'}"><span class="sec-ttl">🤝 Partages envoyés</span><button class="sec-lnk" onclick="openInv()">+ Partager</button></div>`;
   const sent=S.partages.filter(p=>p.owner_id===S.user.id);
   if(!sent.length){
-    h+=`<div style="background:#F8FAFC;border-radius:14px;padding:16px;text-align:center;border:1.5px dashed rgba(184,196,216,.7);margin-bottom:8px">
-      <div style="font-size:.84rem;color:var(--txm);line-height:1.6">Partagez vos véhicules avec votre équipe.<br>Ils pourront consulter et ajouter des entretiens.</div>
-      <button class="btn btn-p btn-sm" style="margin-top:12px" onclick="openInv()">+ Partager un véhicule</button>
+    h+=`<div style="background:#F0FDF4;border-radius:14px;padding:16px;border:1.5px solid #BBF7D0;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#22C55E,#16A34A);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(34,197,94,.3)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div style="font-size:.86rem;font-weight:800;color:#15803D">Invitez votre équipe</div>
+          <div style="font-size:.72rem;color:#16A34A;margin-top:2px">Ils pourront consulter et ajouter des entretiens</div>
+        </div>
+      </div>
+      <div style="background:rgba(34,197,94,.08);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(180deg,#1E3A8A,#1A3278);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem;font-weight:300;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2)">+</div>
+        <div style="font-size:.76rem;color:#15803D;font-weight:600;line-height:1.4">Аppuyez sur le <strong>+</strong> en bas au centre pour partager un véhicule</div>
+      </div>
+      <button class="btn btn-p btn-sm" style="width:100%;justify-content:center" onclick="openInv()">+ Partager un véhicule</button>
     </div>`;
   } else {
     h+=sent.map(p=>{
@@ -6223,7 +6293,7 @@ function nav(view){
   const tabEl=g('t-'+view);
   if(tabEl){tabEl.classList.add('on');if(prevIdx!==-1&&nextIdx!==-1&&prevIdx!==nextIdx)tabEl.classList.add(dir);}
   const nbEl=g('nb-'+view); if(nbEl) nbEl.classList.add('on');
-  g('fab').classList.toggle('vis',['dash','flotte','rap'].includes(view));
+  g('fab').classList.toggle('vis',['dash','flotte','rap','fam'].includes(view));
   // Pulse FAB si aucun entretien pour guider l'utilisateur
   setTimeout(()=>{
     const fab=g('fab');
