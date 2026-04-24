@@ -21,7 +21,7 @@ self.addEventListener('push', e => {
     const options = {
       body: data.body || '',
       icon: '/icon-192.png',
-      badge: '/icon-192.png',
+      badge: '/badge-72.png',
       vibrate: [200, 100, 200],
       tag: data.tag || ('ac-' + Date.now()), // tag unique → les notifs s'empilent
       requireInteraction: true,
@@ -31,24 +31,19 @@ self.addEventListener('push', e => {
         { action: 'close', title: 'Fermer' }
       ]
     };
-    e.waitUntil(
-    self.registration.showNotification(title, options).then(() => {
-      if('setAppBadge' in navigator) navigator.setAppBadge(1).catch(()=>{});
-    })
-  );
+    e.waitUntil(self.registration.showNotification(title, options));
   } catch(err) {
     // Fallback si le payload n'est pas JSON
     e.waitUntil(self.registration.showNotification('AutoCarnet', {
       body: e.data.text(),
       icon: '/icon-192.png',
-      badge: '/icon-192.png'
+      badge: '/badge-72.png'
     }));
   }
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  if('clearAppBadge' in navigator) navigator.clearAppBadge().catch(()=>{});
   const url = e.notification.data?.url || '/app.html';
   if (e.action === 'close') return;
   e.waitUntil(
