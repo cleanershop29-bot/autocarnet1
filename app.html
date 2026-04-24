@@ -5210,6 +5210,7 @@ async function searchCarburantPage(fuelName){
     const records=await fetchGovApi({where:'distance(geom,geom\'POINT('+S.carbLon+' '+S.carbLat+')\',15km)'});
     await renderCarburantPage(el,records,fuelName);
   }catch(err){
+    alert('DEBUG erreur: code=' + err.code + ' | msg=' + err.message + ' | name=' + err.name);
     el.innerHTML='<div style="padding:16px">'
       +'<div style="font-size:.85rem;color:var(--txm);margin-bottom:12px">Géolocalisation indisponible. Entrez votre code postal :</div>'
       +'<div style="display:flex;gap:8px">'
