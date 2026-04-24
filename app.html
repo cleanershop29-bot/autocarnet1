@@ -1120,9 +1120,10 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .rap-banner{border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s}
 .rap-banner:active{transform:scale(.98)}
 .rap-banner.danger{background:linear-gradient(135deg,#7F1D1D,#DC2626);box-shadow:0 6px 24px rgba(220,38,38,.28)}
-.rap-banner.safe{background:linear-gradient(135deg,#0F2460,#1E3A8A);box-shadow:0 4px 16px rgba(37,99,235,.2)}
+.rap-banner.safe{background:linear-gradient(135deg,#064E3B,#059669);box-shadow:0 4px 16px rgba(5,150,105,.25)}
 .rap-banner::before{content:'';position:absolute;top:-24px;right:-24px;width:90px;height:90px;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);pointer-events:none}
 .rap-banner-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.9);flex-shrink:0;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.rap-banner-dot.hidden{display:none}
 .rap-banner-dot.pulse{animation:rap-dot-pulse 1.5s ease infinite}
 @keyframes rap-dot-pulse{0%,100%{box-shadow:0 0 0 3px rgba(255,255,255,.25)}50%{box-shadow:0 0 0 7px rgba(255,255,255,.06)}}
 .rap-banner-body{flex:1;min-width:0}
@@ -1747,7 +1748,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">Titulaire</label><input class="fc" id="vdoc-cg-nom" placeholder="Nom du propriétaire"></div>
           <div class="fg"><label class="fl">Mise en circulation</label><input class="fc" id="vdoc-cg-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo carte grise</label><input type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-cg-photo','vdoc-cg-lbl','vdoc-cg-preview')"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-cg-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-cg-lbl">Ajouter une photo</span></button><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
+        <div class="fg"><label class="fl">Photo carte grise</label><input class="fc" type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Assurance</div>
         <div class="fr">
           <div class="fg"><label class="fl">Compagnie</label><input class="fc" id="v-ac" placeholder="Maif, AXA…"></div>
@@ -1757,17 +1758,17 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">N° contrat</label><input class="fc" id="vdoc-as-num" placeholder="Numéro de contrat"></div>
           <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo assurance</label><input type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-as-photo','vdoc-as-lbl','vdoc-as-preview')"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-as-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-as-lbl">Ajouter une photo</span></button><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
+        <div class="fg"><label class="fl">Photo assurance</label><input class="fc" type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Contrôle technique</div>
         <div class="fr">
           <div class="fg"><label class="fl">Centre CT</label><input class="fc" id="vdoc-ct-nom" placeholder="Nom du centre"></div>
           <div class="fg"><label class="fl">Date du CT</label><input class="fc" id="vdoc-ct-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo CT</label><input type="file" id="vdoc-ct-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-ct-photo','vdoc-ct-lbl','vdoc-ct-preview')"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-ct-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-ct-lbl">Ajouter une photo</span></button><div id="vdoc-ct-preview" style="margin-top:4px"></div></div>
+        <div class="fg"><label class="fl">Photo CT</label><input class="fc" type="file" id="vdoc-ct-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-ct-preview" style="margin-top:4px"></div></div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">📎 Autre document</div>
         <div class="fr">
           <div class="fg"><label class="fl">Nom</label><input class="fc" id="vdoc-autre-nom" placeholder="Ex: Malus, Leasing…"></div>
-          <div class="fg"><label class="fl">Photo</label><input type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-autre-photo','vdoc-autre-lbl',null)"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-autre-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-autre-lbl">Ajouter une photo</span></button></div>
+          <div class="fg"><label class="fl">Photo</label><input class="fc" type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"></div>
         </div>
         </div><!-- /veh-doc-section -->
       </div>
@@ -4159,23 +4160,12 @@ function getNextRevision(v,es){
   if(!vidanges.length) return '?';
   const last=vidanges[0];
   const ti=getType(last.type);
-  if(last.rappel_date){const d=daysFromNow(last.rappel_date);if(d!==null)return d<0?'En retard':formatDaysLabel(d);}
+  if(last.rappel_date){const d=daysFromNow(last.rappel_date);if(d!==null)return d<0?'En retard':'Dans '+d+'j';}
   if(ti.ikm&&last.km&&v.km_actuel){const left=last.km+ti.ikm-v.km_actuel;if(left>0)return'~'+Math.round(left/1000)+'k km';else return'Bientôt';}
-  if(ti.imo&&last.date){const d=new Date(last.date);d.setMonth(d.getMonth()+ti.imo);const days=Math.ceil((d-new Date())/86400000);return days>0?formatDaysLabel(days):'Bientôt';}
+  if(ti.imo&&last.date){const d=new Date(last.date);d.setMonth(d.getMonth()+ti.imo);const days=Math.ceil((d-new Date())/86400000);return days>0?'Dans '+days+'j':'Bientôt';}
   return '?';
 }
 function daysFromNow(dateStr){if(!dateStr)return null;return Math.ceil((new Date(dateStr)-new Date())/86400000);}
-function formatDaysLabel(days){
-  if(days<=0)return'Bientôt';
-  if(days<=60)return'Dans '+days+'j';
-  if(days<=45)return'Dans '+days+'j';
-  const months=Math.round(days/30);
-  if(months<12)return'Dans '+months+' mois';
-  const years=Math.floor(days/365);
-  const remMonths=Math.round((days-years*365)/30);
-  if(remMonths===0)return'Dans '+years+' an'+(years>1?'s':'');
-  return'Dans '+years+' an'+(years>1?'s':'')+' et '+remMonths+' mois';
-}
 
 function renderVehs(){
   // Fonctionne pour t-dash et t-vehs
@@ -5700,18 +5690,18 @@ function renderRap(){
 
   // ── BANNER URGENTE + PILLS ──
   const bannerCls=totalDanger?'danger':'safe';
-  const bannerTitle=totalDanger?'⚠️ Action requise':'✓ Tout est à jour';
+  const bannerTitle=totalDanger?'⚠️ Action requise':'Tout est à jour';
   const bannerSub=totalDanger
     ?`${totalDanger} rappel${totalDanger>1?'s':''} en retard — à traiter maintenant`
     :'Aucun rappel en retard — continuez comme ça !';
   h+=`<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
     <div class="rap-banner ${bannerCls}" onclick="scrollToRapSection('rap-section-danger')">
-      <div class="rap-banner-dot ${totalDanger?'pulse':''}"></div>
+      <div class="rap-banner-dot ${totalDanger?'pulse':'hidden'}"></div>
       <div class="rap-banner-body">
         <div class="rap-banner-title">${bannerTitle}</div>
         <div class="rap-banner-sub">${bannerSub}</div>
       </div>
-      <div class="rap-banner-count">${totalDanger||'✓'}</div>
+      <div class="rap-banner-count">${totalDanger||'✅'}</div>
     </div>
     <div class="rap-pills">
       <div class="rap-pill ${total30?'warn':'empty'}" onclick="scrollToRapSection('rap-section-30')">
@@ -6222,26 +6212,7 @@ function renderFam(){
   }
 
   if(!sent.length&&!shared.length&&!S.pending.length){
-    h=`<div class="empty" style="padding:48px 20px 40px">
-      <span class="empty-i">👥</span>
-      <div class="empty-t">Mode équipe</div>
-      <p class="empty-d">Partagez un véhicule avec un proche ou un collègue. Il peut consulter l'historique, ajouter des entretiens et signaler des problèmes — vous gardez le contrôle.</p>
-      <div style="display:flex;flex-direction:column;gap:10px;margin:18px 0 22px;text-align:left">
-        <div style="display:flex;align-items:center;gap:12px;background:#F0F4FF;border-radius:10px;padding:12px 14px">
-          <div style="font-size:1.3rem;flex-shrink:0">🔗</div>
-          <div><div style="font-size:.82rem;font-weight:700;color:var(--txt)">Invitation par lien</div><div style="font-size:.72rem;color:var(--txm);margin-top:2px">Partagez un lien — pas besoin de compte au préalable</div></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;background:#F0F4FF;border-radius:10px;padding:12px 14px">
-          <div style="font-size:1.3rem;flex-shrink:0">🔔</div>
-          <div><div style="font-size:.82rem;font-weight:700;color:var(--txt)">Signalements en temps réel</div><div style="font-size:.72rem;color:var(--txm);margin-top:2px">Soyez alerté si un problème est détecté sur le véhicule</div></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;background:#F0F4FF;border-radius:10px;padding:12px 14px">
-          <div style="font-size:1.3rem;flex-shrink:0">🛡️</div>
-          <div><div style="font-size:.82rem;font-weight:700;color:var(--txt)">Vous gardez le contrôle</div><div style="font-size:.72rem;color:var(--txm);margin-top:2px">Révoquez l'accès à tout moment en un tap</div></div>
-        </div>
-      </div>
-      <button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button>
-    </div>`;
+    h=`<div class="empty"><span class="empty-i">👥</span><div class="empty-t">Mode équipe</div><p class="empty-d">Partagez vos véhicules avec votre équipe pour collaborer.</p><button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button></div>`;
   }
   el.innerHTML=h;
 }
@@ -7460,20 +7431,6 @@ if (isIOS && !isStandalone) {
 }
 
 /* PANNEAU ADMIN */
-/* ══ FILE INPUT LABEL ══ */
-function updateFileLabel(inputId, lblId, previewId){
-  const input=document.getElementById(inputId);
-  const lbl=document.getElementById(lblId);
-  if(!input||!lbl)return;
-  const file=input.files[0];
-  if(!file)return;
-  lbl.textContent=file.name.length>22?file.name.substring(0,20)+'…':file.name;
-  if(previewId&&file.type.startsWith('image/')){
-    const preview=document.getElementById(previewId);
-    if(preview){const r=new FileReader();r.onload=e=>{preview.innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:80px;border-radius:6px;margin-top:4px;object-fit:cover">`;};r.readAsDataURL(file);}
-  }
-}
-
 const ADMIN_CODE_CHECK='AC2026admin';
 /* Compteur taps avatar pour admin secret */
 let _adminTaps=0,_adminTimer=null;
@@ -7542,7 +7499,7 @@ function renderFlotte(){
   h+=`<div class="filters">
     <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Alerte</button>
     <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Km</button>
-    <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderFlotte()">A→Z</button>
+    <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderFlotte()">abc Nom</button>
   </div>`;
   // Tri véhicules
   const sortedVehs=[...vehs].sort((a,b)=>{
