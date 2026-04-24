@@ -5197,7 +5197,6 @@ async function searchCarburantPage(fuelName){
   if(S.carbCp){await searchCarburantPageWithCp(S.carbCp,fuelName);return;}
   el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">📍 Localisation en cours...</div>';
   try{
-    alert('DEBUG geo: ' + (!!navigator.geolocation) + ' | protocol: ' + location.protocol + ' | origin: ' + location.origin);
     if(!navigator.geolocation){toast('GPS non disponible sur cet appareil.','e');return;}
     const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{
       timeout:15000,
@@ -5210,7 +5209,6 @@ async function searchCarburantPage(fuelName){
     const records=await fetchGovApi({where:'distance(geom,geom\'POINT('+S.carbLon+' '+S.carbLat+')\',15km)'});
     await renderCarburantPage(el,records,fuelName);
   }catch(err){
-    alert('DEBUG erreur: code=' + err.code + ' | msg=' + err.message + ' | name=' + err.name);
     el.innerHTML='<div style="padding:16px">'
       +'<div style="font-size:.85rem;color:var(--txm);margin-bottom:12px">Géolocalisation indisponible. Entrez votre code postal :</div>'
       +'<div style="display:flex;gap:8px">'
