@@ -31,7 +31,11 @@ self.addEventListener('push', e => {
         { action: 'close', title: 'Fermer' }
       ]
     };
-    e.waitUntil(self.registration.showNotification(title, options));
+    e.waitUntil(
+    self.registration.showNotification(title, options).then(() => {
+      if('setAppBadge' in navigator) navigator.setAppBadge(1).catch(()=>{});
+    })
+  );
   } catch(err) {
     // Fallback si le payload n'est pas JSON
     e.waitUntil(self.registration.showNotification('AutoCarnet', {
@@ -44,6 +48,7 @@ self.addEventListener('push', e => {
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
+  if('clearAppBadge' in navigator) navigator.clearAppBadge().catch(()=>{});
   const url = e.notification.data?.url || '/app.html';
   if (e.action === 'close') return;
   e.waitUntil(
