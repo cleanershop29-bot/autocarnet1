@@ -1517,20 +1517,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
             Envoyer à tous les abonnés
           </button>
         </div>
-        <!-- BETA FEATURES -->
-        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
-          <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🧪 Beta features</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);border:1.5px solid var(--border)">
-            <div>
-              <div style="font-size:.82rem;font-weight:700;color:var(--txt)">🔌 Connecteur OBD2</div>
-              <div style="font-size:.7rem;color:var(--txm);margin-top:2px">Lecture dongle Bluetooth dans le Jumeau</div>
-            </div>
-            <div onclick="adminToggleBeta('obd')" id="beta-toggle-obd" style="width:42px;height:24px;border-radius:12px;background:var(--border);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
-              <div id="beta-knob-obd" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s"></div>
-            </div>
-          </div>
-          <div id="beta-obd-status" style="font-size:.7rem;color:var(--txm);margin-top:6px;text-align:center;min-height:16px"></div>
-        </div>
       </div>
     </div>
   </div>
@@ -1761,7 +1747,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">Titulaire</label><input class="fc" id="vdoc-cg-nom" placeholder="Nom du propriétaire"></div>
           <div class="fg"><label class="fl">Mise en circulation</label><input class="fc" id="vdoc-cg-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo carte grise</label><input class="fc" type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
+        <div class="fg"><label class="fl">Photo carte grise</label><input type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-cg-photo','vdoc-cg-lbl','vdoc-cg-preview')"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-cg-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-cg-lbl">Ajouter une photo</span></button><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Assurance</div>
         <div class="fr">
           <div class="fg"><label class="fl">Compagnie</label><input class="fc" id="v-ac" placeholder="Maif, AXA…"></div>
@@ -1771,17 +1757,17 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">N° contrat</label><input class="fc" id="vdoc-as-num" placeholder="Numéro de contrat"></div>
           <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo assurance</label><input class="fc" type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
+        <div class="fg"><label class="fl">Photo assurance</label><input type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-as-photo','vdoc-as-lbl','vdoc-as-preview')"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-as-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-as-lbl">Ajouter une photo</span></button><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Contrôle technique</div>
         <div class="fr">
           <div class="fg"><label class="fl">Centre CT</label><input class="fc" id="vdoc-ct-nom" placeholder="Nom du centre"></div>
           <div class="fg"><label class="fl">Date du CT</label><input class="fc" id="vdoc-ct-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo CT</label><input class="fc" type="file" id="vdoc-ct-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-ct-preview" style="margin-top:4px"></div></div>
+        <div class="fg"><label class="fl">Photo CT</label><input type="file" id="vdoc-ct-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-ct-photo','vdoc-ct-lbl','vdoc-ct-preview')"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-ct-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-ct-lbl">Ajouter une photo</span></button><div id="vdoc-ct-preview" style="margin-top:4px"></div></div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">📎 Autre document</div>
         <div class="fr">
           <div class="fg"><label class="fl">Nom</label><input class="fc" id="vdoc-autre-nom" placeholder="Ex: Malus, Leasing…"></div>
-          <div class="fg"><label class="fl">Photo</label><input class="fc" type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"></div>
+          <div class="fg"><label class="fl">Photo</label><input type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="display:none" onchange="updateFileLabel('vdoc-autre-photo','vdoc-autre-lbl',null)"><button type="button" class="btn btn-s btn-sm" style="width:100%;justify-content:center" onclick="document.getElementById('vdoc-autre-photo').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="vdoc-autre-lbl">Ajouter une photo</span></button></div>
         </div>
         </div><!-- /veh-doc-section -->
       </div>
@@ -4173,12 +4159,23 @@ function getNextRevision(v,es){
   if(!vidanges.length) return '?';
   const last=vidanges[0];
   const ti=getType(last.type);
-  if(last.rappel_date){const d=daysFromNow(last.rappel_date);if(d!==null)return d<0?'En retard':'Dans '+d+'j';}
+  if(last.rappel_date){const d=daysFromNow(last.rappel_date);if(d!==null)return d<0?'En retard':formatDaysLabel(d);}
   if(ti.ikm&&last.km&&v.km_actuel){const left=last.km+ti.ikm-v.km_actuel;if(left>0)return'~'+Math.round(left/1000)+'k km';else return'Bientôt';}
-  if(ti.imo&&last.date){const d=new Date(last.date);d.setMonth(d.getMonth()+ti.imo);const days=Math.ceil((d-new Date())/86400000);return days>0?'Dans '+days+'j':'Bientôt';}
+  if(ti.imo&&last.date){const d=new Date(last.date);d.setMonth(d.getMonth()+ti.imo);const days=Math.ceil((d-new Date())/86400000);return days>0?formatDaysLabel(days):'Bientôt';}
   return '?';
 }
 function daysFromNow(dateStr){if(!dateStr)return null;return Math.ceil((new Date(dateStr)-new Date())/86400000);}
+function formatDaysLabel(days){
+  if(days<=0)return'Bientôt';
+  if(days<=60)return'Dans '+days+'j';
+  if(days<=45)return'Dans '+days+'j';
+  const months=Math.round(days/30);
+  if(months<12)return'Dans '+months+' mois';
+  const years=Math.floor(days/365);
+  const remMonths=Math.round((days-years*365)/30);
+  if(remMonths===0)return'Dans '+years+' an'+(years>1?'s':'');
+  return'Dans '+years+' an'+(years>1?'s':'')+' et '+remMonths+' mois';
+}
 
 function renderVehs(){
   // Fonctionne pour t-dash et t-vehs
@@ -6225,7 +6222,26 @@ function renderFam(){
   }
 
   if(!sent.length&&!shared.length&&!S.pending.length){
-    h=`<div class="empty"><span class="empty-i">👥</span><div class="empty-t">Mode équipe</div><p class="empty-d">Partagez vos véhicules avec votre équipe pour collaborer.</p><button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button></div>`;
+    h=`<div class="empty" style="padding:48px 20px 40px">
+      <span class="empty-i">👥</span>
+      <div class="empty-t">Mode équipe</div>
+      <p class="empty-d">Partagez un véhicule avec un proche ou un collègue. Il peut consulter l'historique, ajouter des entretiens et signaler des problèmes — vous gardez le contrôle.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin:18px 0 22px;text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;background:#F0F4FF;border-radius:10px;padding:12px 14px">
+          <div style="font-size:1.3rem;flex-shrink:0">🔗</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--txt)">Invitation par lien</div><div style="font-size:.72rem;color:var(--txm);margin-top:2px">Partagez un lien — pas besoin de compte au préalable</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;background:#F0F4FF;border-radius:10px;padding:12px 14px">
+          <div style="font-size:1.3rem;flex-shrink:0">🔔</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--txt)">Signalements en temps réel</div><div style="font-size:.72rem;color:var(--txm);margin-top:2px">Soyez alerté si un problème est détecté sur le véhicule</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;background:#F0F4FF;border-radius:10px;padding:12px 14px">
+          <div style="font-size:1.3rem;flex-shrink:0">🛡️</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:var(--txt)">Vous gardez le contrôle</div><div style="font-size:.72rem;color:var(--txm);margin-top:2px">Révoquez l'accès à tout moment en un tap</div></div>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="openInv()">+ Partager un véhicule</button>
+    </div>`;
   }
   el.innerHTML=h;
 }
@@ -7444,46 +7460,18 @@ if (isIOS && !isStandalone) {
 }
 
 /* PANNEAU ADMIN */
-/* ══ BETA FEATURES ══ */
-const BETA = (function(){
-  try { return JSON.parse(localStorage.getItem('ac_beta') || '{}'); }
-  catch(e){ return {}; }
-})();
-function _saveBeta(){ try{ localStorage.setItem('ac_beta', JSON.stringify(BETA)); }catch(e){} }
-function adminToggleBeta(key){
-  BETA[key] = !BETA[key];
-  _saveBeta();
-  _renderBetaToggle(key);
-  const st = g('beta-obd-status');
-  if(st) st.textContent = BETA[key] ? '✅ Activé — visible dans le Jumeau' : '⭕ Désactivé';
-  setTimeout(()=>{ if(st) st.textContent=''; }, 2500);
-  // Re-render Jumeau si on est dessus
-  if(S.view==='jumeau') renderJumeau();
-}
-function _renderBetaToggle(key){
-  const tog = g('beta-toggle-'+key);
-  const knob = g('beta-knob-'+key);
-  if(!tog||!knob) return;
-  const on = !!BETA[key];
-  tog.style.background = on ? 'var(--ok)' : 'var(--border)';
-  knob.style.transform = on ? 'translateX(18px)' : 'translateX(0)';
-}
-function _initBetaToggles(){
-  _renderBetaToggle('obd');
-}
-function getBetaOBD(v){
-  if(!BETA.obd) return '';
-  return `
-    <div style="margin:14px 14px 0">
-      <div style="background:linear-gradient(135deg,#0F2460,#1E3A8A);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px">
-        <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;border:1px solid rgba(255,255,255,.2)">🔌</div>
-        <div style="flex:1">
-          <div style="font-size:.86rem;font-weight:800;color:#fff">Connecteur OBD2</div>
-          <div style="font-size:.7rem;color:rgba(255,255,255,.6);margin-top:2px">Bêta — fonctionnalité en cours de développement</div>
-        </div>
-        <div style="font-size:.65rem;font-weight:700;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.2);white-space:nowrap">Bientôt</div>
-      </div>
-    </div>`;
+/* ══ FILE INPUT LABEL ══ */
+function updateFileLabel(inputId, lblId, previewId){
+  const input=document.getElementById(inputId);
+  const lbl=document.getElementById(lblId);
+  if(!input||!lbl)return;
+  const file=input.files[0];
+  if(!file)return;
+  lbl.textContent=file.name.length>22?file.name.substring(0,20)+'…':file.name;
+  if(previewId&&file.type.startsWith('image/')){
+    const preview=document.getElementById(previewId);
+    if(preview){const r=new FileReader();r.onload=e=>{preview.innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:80px;border-radius:6px;margin-top:4px;object-fit:cover">`;};r.readAsDataURL(file);}
+  }
 }
 
 const ADMIN_CODE_CHECK='AC2026admin';
@@ -7521,7 +7509,6 @@ function checkAdminCode(){
   if(g('admin-code').value===ADMIN_CODE_CHECK){
     g('admin-auth').classList.add('hidden');
     g('admin-panel').classList.remove('hidden');
-    _initBetaToggles();
   } else {
     toast('Code incorrect.','e');
     g('admin-code').value='';
@@ -7555,7 +7542,7 @@ function renderFlotte(){
   h+=`<div class="filters">
     <button class="flt ${(!S.vehSort||S.vehSort==='alerte')?'on':''}" onclick="S.vehSort='alerte';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Alerte</button>
     <button class="flt ${S.vehSort==='km'?'on':''}" onclick="S.vehSort='km';renderFlotte()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Km</button>
-    <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderFlotte()">abc Nom</button>
+    <button class="flt ${S.vehSort==='nom'?'on':''}" onclick="S.vehSort='nom';renderFlotte()">A→Z</button>
   </div>`;
   // Tri véhicules
   const sortedVehs=[...vehs].sort((a,b)=>{
@@ -8609,7 +8596,6 @@ function renderJumeau(){
     <div class="ju-sec">Composants <span class="ju-sec-action" onclick="juSetFilter(JU.compFilter==='all'?'urgent':'all')">${flt==='all'?'Filtrer':'Tout voir'}</span></div>
     ${filterHTML}
     <div class="ju-complist" id="ju-complist-wrap">${jumeauCompList()}</div>
-    ${getBetaOBD(v)}
     <div style="height:20px"></div>`;
 
   // Animer l'anneau après rendu
