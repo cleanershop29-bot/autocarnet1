@@ -1,5 +1,5 @@
-// AutoCarnet Service Worker v12 — avec support notifications push
-const CACHE = 'autocarnet-v12';
+// AutoCarnet Service Worker v11 — avec support notifications push
+const CACHE = 'autocarnet-v11';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -20,8 +20,8 @@ self.addEventListener('push', e => {
     const title = data.title || 'AutoCarnet';
     const options = {
       body: data.body || '',
-      icon: '/icon192.png',
-      badge: '/badge72.png',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
       vibrate: [200, 100, 200],
       tag: data.tag || ('ac-' + Date.now()), // tag unique → les notifs s'empilent
       requireInteraction: true,
@@ -36,8 +36,8 @@ self.addEventListener('push', e => {
     // Fallback si le payload n'est pas JSON
     e.waitUntil(self.registration.showNotification('AutoCarnet', {
       body: e.data.text(),
-      icon: '/icon192.png',
-      badge: '/badge72.png'
+      icon: '/icon-192.png',
+      badge: '/icon-192.png'
     }));
   }
 });
