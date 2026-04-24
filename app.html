@@ -4499,16 +4499,18 @@ async function showCarburant(vid, carburant){
 
   try{
     if(!navigator.geolocation){throw new Error('geolocation_unavailable');}
-    const permState = navigator.permissions ? (await navigator.permissions.query({name:'geolocation'})).state : 'unknown';
-    if(permState === 'denied'){throw new Error('geolocation_denied');}
-    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:15000,maximumAge:300000,enableHighAccuracy:false}));
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{
+      timeout:15000,
+      maximumAge:60000,
+      enableHighAccuracy:false
+    }));
     const lat=pos.coords.latitude.toFixed(6);
     const lon=pos.coords.longitude.toFixed(6);
     el.innerHTML='<div class="carb-list"><div style="font-size:.8rem;color:var(--txm)">&#x1F50D; Recherche...</div></div>';
     await fetchStationsAndPrices(el,'https://api.prix-carburants.2aaz.fr/stations/around/'+lat+','+lon+'/?m=15000',fuelName);
   }catch(err){
-    const geoMsg = err.message==='geolocation_denied' 
-        ? '🔒 Géolocalisation refusée. Autorisez-la dans les paramètres de votre navigateur ou entrez votre code postal :' 
+    const geoMsg = err.code===1
+        ? '🔒 Géolocalisation refusée. Autorisez-la dans les paramètres ou entrez votre code postal :'
         : err.message==='geolocation_unavailable'
         ? '📍 GPS non disponible sur cet appareil. Entrez votre code postal :'
         : '📍 Localisation impossible. Entrez votre code postal :';
@@ -5196,9 +5198,11 @@ async function searchCarburantPage(fuelName){
   el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">📍 Localisation en cours...</div>';
   try{
     if(!navigator.geolocation){toast('GPS non disponible sur cet appareil.','e');return;}
-    const permState2 = navigator.permissions ? (await navigator.permissions.query({name:'geolocation'})).state : 'unknown';
-    if(permState2==='denied'){toast('Géolocalisation refusée. Autorisez-la dans les paramètres de votre navigateur.','e');return;}
-    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:15000,maximumAge:300000,enableHighAccuracy:false}));
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{
+      timeout:15000,
+      maximumAge:60000,
+      enableHighAccuracy:false
+    }));
     S.carbLat=pos.coords.latitude.toFixed(6);
     S.carbLon=pos.coords.longitude.toFixed(6);
     el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txm)">🔍 Recherche '+fuelName+'...</div>';
