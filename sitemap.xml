@@ -2,19 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://autocarnet.fr/</loc>
-    <lastmod>2026-04-08</lastmod>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://autocarnet.fr/premium.html</loc>
-    <lastmod>2026-04-08</lastmod>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://autocarnet.fr/pro.html</loc>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://autocarnet.fr/blog.html</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -33,6 +39,24 @@
   <url>
     <loc>https://autocarnet.fr/blog-carnet-entretien-numerique.html</loc>
     <lastmod>2026-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://autocarnet.fr/blog-quand-faire-vidange.html</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://autocarnet.fr/blog-preparer-controle-technique.html</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://autocarnet.fr/blog-carnet-entretien-perdu.html</loc>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -72,7 +96,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Nouveaux articles avril 2026 -->
   <url>
     <loc>https://autocarnet.fr/meilleure-application-carnet-entretien-voiture.html</loc>
     <lastmod>2026-04-08</lastmod>
@@ -130,6 +153,12 @@
   <url>
     <loc>https://autocarnet.fr/entretien-voiture-kilometrage-eleve.html</loc>
     <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://autocarnet.fr/autocarnet-vs-carnet-papier.html</loc>
+    <lastmod>2026-04-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
