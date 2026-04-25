@@ -1,5 +1,5 @@
-// AutoCarnet Service Worker v11 — avec support notifications push
-const CACHE = 'autocarnet-v11';
+// AutoCarnet Service Worker v13 — avec support notifications push + badge natif
+const CACHE = 'autocarnet-v13';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -21,9 +21,9 @@ self.addEventListener('push', e => {
     const options = {
       body: data.body || '',
       icon: '/icon-192.png',
-      badge: '/badge-72.png',
+      badge: '/badge72.png',
       vibrate: [200, 100, 200],
-      tag: data.tag || ('ac-' + Date.now()), // tag unique → les notifs s'empilent
+      tag: data.tag || ('ac-' + Date.now()),
       requireInteraction: true,
       data: { url: data.url || '/app.html' },
       actions: [
@@ -31,19 +31,32 @@ self.addEventListener('push', e => {
         { action: 'close', title: 'Fermer' }
       ]
     };
-    e.waitUntil(self.registration.showNotification(title, options));
+
+    e.waitUntil(
+      self.registration.showNotification(title, options).then(() => {
+        // Pastille native sur l'icône de l'app
+        if (navigator.setAppBadge) {
+          return navigator.setAppBadge(1);
+        }
+      })
+    );
   } catch(err) {
-    // Fallback si le payload n'est pas JSON
     e.waitUntil(self.registration.showNotification('AutoCarnet', {
       body: e.data.text(),
       icon: '/icon-192.png',
-      badge: '/badge-72.png'
+      badge: '/badge72.png'
     }));
   }
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
+
+  // Effacer la pastille quand l'utilisateur clique
+  if (navigator.clearAppBadge) {
+    navigator.clearAppBadge();
+  }
+
   const url = e.notification.data?.url || '/app.html';
   if (e.action === 'close') return;
   e.waitUntil(
@@ -57,4 +70,11 @@ self.addEventListener('notificationclick', e => {
       if (clients.openWindow) return clients.openWindow(url);
     })
   );
+});
+
+self.addEventListener('notificationclose', e => {
+  // Effacer la pastille si l'utilisateur ferme la notif sans cliquer
+  if (navigator.clearAppBadge) {
+    navigator.clearAppBadge();
+  }
 });
