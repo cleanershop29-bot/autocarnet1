@@ -3240,7 +3240,7 @@ async function saveEnt(){
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
   btnLoad('btn-sv-ent',false);
   vib([50,30,50]);
-  if(p.rappel_date){const vv=S.vehicles.find(x=>x.id===vehicle_id);const vehName=vv?(vv.num_parc?`${vv.marque} ${vv.modele} (${vv.num_parc})`:`${vv.marque} ${vv.modele}`):'Véhicule';const t=encodeURIComponent('🔔 Rappel enregistré');const b=encodeURIComponent(`${p.type||'Entretien'} — ${vehName} le ${p.rappel_date}`);fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${t}&body=${b}`).catch(()=>{});}
+  if(p.rappel_date){const vv=S.vehicles.find(x=>x.id===vehicle_id);const vehName=vv?(vv.num_parc?`${vv.marque} ${vv.modele} (${vv.num_parc})`:`${vv.marque} ${vv.modele}`):'Véhicule';const t=encodeURIComponent('🔔 Rappel enregistré');const b=encodeURIComponent(`${p.type||'Entretien'} — ${vehName} le ${p.rappel_date}`);_triggerNotif(`user_id=${S.user.id}&title=${t}&body=${b}`);}
   const _savedVid = vehicle_id;
   g('e-id').value='';
   removePhoto();
@@ -3427,7 +3427,7 @@ async function saveSig(){
     const vName=v?(v.marque+' '+v.modele):'Véhicule';
     const title=encodeURIComponent(_sigUrgent?'🚨 Problème urgent signalé':'⚠️ Nouveau signalement');
     const body=encodeURIComponent(`${_sigCat} — ${vName}${desc?' : '+desc.slice(0,50):''}`);
-    fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${owner_id}&title=${title}&body=${body}`).catch(()=>{});
+    _triggerNotif(`user_id=${owner_id}&title=${title}&body=${body}`);
   }
   toast('Signalement envoyé !','s');
   cm('sig');_sigPhotos=[];
@@ -4956,7 +4956,7 @@ async function saveRappelCustom(){
   toast(id?'Rappel mis à jour !':'Rappel créé !','s');
   btnLoad('btn-sv-rap',false);
   vib([50,30,50]);
-  if(p.date_rappel){const t=encodeURIComponent('📌 Rappel enregistré');const b=encodeURIComponent(`${p.titre}${p.date_rappel?' — le '+p.date_rappel:''}`);fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${t}&body=${b}`).catch(()=>{});}
+  if(p.date_rappel){const t=encodeURIComponent('📌 Rappel enregistré');const b=encodeURIComponent(`${p.titre}${p.date_rappel?' — le '+p.date_rappel:''}`);_triggerNotif(`user_id=${S.user.id}&title=${t}&body=${b}`);}
   cm('rcus');await loadRappelsCustom();renderView();
 }
 async function delRappelCustom(){
@@ -7060,8 +7060,17 @@ function closeTuto(){
 
 
 
+/* ══ PUSH NOTIF HELPER ══ */
+async function _triggerNotif(params){
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    const token=session?.access_token||'';
+    const url='/.netlify/functions/trigger-notifications?'+params;
+    await fetch(url,{headers:{'Authorization':'Bearer '+token}});
+  }catch(e){}
+}
+
 /* ══ PANNEAU ADMIN ══ */
-const ADMIN_CODE = "AC2026admin";
 
 /* ══ FREEMIUM ══ */
 const STRIPE_PUBLIC_KEY=typeof process!=='undefined'?process.env.STRIPE_PUBLIC_KEY:'pk_live_51THVbnPILh21QVYHWIlwpTLZxOmk3ET3R6VV6sR2UUVPY3kdRwZaJDnug5CIpeZ81UtnDkldUj9klSY2BsCcVWKU00W8EAHjq6';
@@ -7241,7 +7250,8 @@ async function testPushNotif(){
   const btn=document.getElementById('btn-push-test');
   if(btn){btn.textContent='Envoi…';btn.style.pointerEvents='none';}
   try{
-    const r=await fetch(`/.netlify/functions/trigger-notifications?secret=AC2026admin&user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`);
+    const{data:{session:_ts}}=await sb.auth.getSession();
+    const r=await fetch(`/.netlify/functions/trigger-notifications?user_id=${S.user.id}&title=${encodeURIComponent('🔔 Test AutoCarnet')}&body=${encodeURIComponent('Vos notifications fonctionnent ✓')}`,{headers:{'Authorization':'Bearer '+(_ts?.access_token||'')}});
     const d=await r.json();
     if(d.sent) toast('Notification envoyée ✓','s');
     else toast('Erreur : '+JSON.stringify(d),'e');
@@ -7377,7 +7387,7 @@ async function adminCallFunction(email, is_premium){
     const r = await fetch('/.netlify/functions/set-premium', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, is_premium, code: ADMIN_CODE})
+      body: JSON.stringify({email, is_premium, code: g('admin-code').value})
     });
     const d = await r.json();
     if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
@@ -7398,7 +7408,7 @@ async function adminSetSubId(){
     const r=await fetch('/.netlify/functions/set-premium',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email,subscription_id:subId,code:ADMIN_CODE})
+      body:JSON.stringify({email,subscription_id:subId,code:g('admin-code').value})
     });
     const d=await r.json();
     if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
@@ -7420,7 +7430,7 @@ async function adminBroadcast(){
   if(btn){ btn.disabled = true; }
   try{
     const r = await fetch(
-      '/.netlify/functions/trigger-notifications?secret=AC2026admin'
+      '/.netlify/functions/trigger-notifications'
       + '&title=' + encodeURIComponent(title)
       + '&body='  + encodeURIComponent(body)
     );
@@ -7448,7 +7458,7 @@ async function adminCheckUser(){
     const r = await fetch('/.netlify/functions/set-premium', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, is_premium: null, code: ADMIN_CODE})
+      body: JSON.stringify({email, is_premium: null, code: g('admin-code').value})
     });
     const d = await r.json();
     if(r.status === 404){st.innerHTML='<span style=color:var(--err)>❌ Utilisateur introuvable.</span>';return;}
@@ -7476,7 +7486,7 @@ async function adminSetPlan(plan){
     const r = await fetch('/.netlify/functions/set-premium', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, plan, code: ADMIN_CODE})
+      body: JSON.stringify({email, plan, code: g('admin-code').value})
     });
     const d = await r.json();
     if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
@@ -7519,7 +7529,6 @@ if (isIOS && !isStandalone) {
 }
 
 /* PANNEAU ADMIN */
-const ADMIN_CODE_CHECK='AC2026admin';
 /* Compteur taps avatar pour admin secret */
 let _adminTaps=0,_adminTimer=null;
 function handleAvatarTap(){
@@ -7550,14 +7559,26 @@ function closeAdmin(){
   g('mo-admin').classList.remove('open');
   document.body.style.overflow='';
 }
-function checkAdminCode(){
-  if(g('admin-code').value===ADMIN_CODE_CHECK){
-    g('admin-auth').classList.add('hidden');
-    g('admin-panel').classList.remove('hidden');
-  } else {
-    toast('Code incorrect.','e');
-    g('admin-code').value='';
-  }
+async function checkAdminCode(){
+  const code=g('admin-code').value.trim();
+  if(!code)return toast('Entrez le code.','e');
+  const btn=document.querySelector('[onclick="checkAdminCode()"]');
+  if(btn){btn.disabled=true;btn.textContent='Vérification...';}
+  try{
+    const r=await fetch('/.netlify/functions/set-premium',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:'check@autocarnet.fr',is_premium:null,code})
+    });
+    if(r.status===200){
+      g('admin-auth').classList.add('hidden');
+      g('admin-panel').classList.remove('hidden');
+    } else {
+      toast('Code incorrect.','e');
+      g('admin-code').value='';
+    }
+  }catch(e){toast('Erreur réseau.','e');}
+  if(btn){btn.disabled=false;btn.textContent='Accéder';}
 }
 function renderFlotte(){
   const el=g('fl-ctn');
