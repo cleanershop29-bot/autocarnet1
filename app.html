@@ -2696,6 +2696,13 @@ async function saveVeh(){
   // Recuperer l'id final du vehicule
   const finalVid = id || payload_id_temp;
   toast(id?'Véhicule mis à jour !':'Véhicule ajouté !','s');
+  // Hook onboarding tuto
+  if(!id && window._tutoWaitingVeh){
+    window._tutoWaitingVeh = false;
+    _tutoState.vehicleAdded = true;
+    launchConfetti();
+    setTimeout(()=>{ showTuto(); tutoGoTo(3); }, 600);
+  }
 
   // Sauvegarder automatiquement les documents renseignés
   if(finalVid){try{await saveVehDocs(finalVid,S.user.id);}catch(e){console.warn('saveVehDocs error:',e.message);}}
@@ -2893,6 +2900,12 @@ async function saveEnt(){
     await sb.from('entretiens').update({photo_url:firstUrl}).eq('id',finalId).eq('user_id',S.user.id);
   }
   toast(id?'Entretien mis à jour !':'Entretien enregistré !','s');
+  if(!id && window._tutoWaitingEnt){
+    window._tutoWaitingEnt = false;
+    _tutoState.entretienAdded = true;
+    launchConfetti();
+    setTimeout(()=>{ showTuto(); tutoGoTo(4); }, 600);
+  };
   btnLoad('btn-sv-ent',false);
   vib([50,30,50]);
   if(p.rappel_date){const vv=S.vehicles.find(x=>x.id===vehicle_id);const vehName=vv?(vv.num_parc?`${vv.marque} ${vv.modele} (${vv.num_parc})`:`${vv.marque} ${vv.modele}`):'Véhicule';const t=encodeURIComponent('🔔 Rappel enregistré');const b=encodeURIComponent(`${p.type||'Entretien'} — ${vehName} le ${p.rappel_date}`);_triggerNotif(`user_id=${S.user.id}&title=${t}&body=${b}`);}
@@ -6634,31 +6647,16 @@ function tutoSkip(){ closeTuto(); }
 function tutoAddVehicle(){
   document.getElementById('mo-tuto')?.classList.remove('open');
   document.body.style.overflow = '';
+  // Marquer qu'on est en mode tuto — saveVeh le détectera
+  window._tutoWaitingVeh = true;
   openVeh();
-  const _origSaveVeh = saveVeh;
-  window._tutoSaveVehWrap = async function(){
-    await _origSaveVeh.apply(this, arguments);
-    if(S.vehicles.length > 0){
-      _tutoState.vehicleAdded = true;
-      launchConfetti();
-      setTimeout(()=>{ showTuto(); tutoGoTo(3); }, 400);
-    }
-  };
-  window.saveVeh = window._tutoSaveVehWrap;
 }
 function tutoAddEntretien(){
   document.getElementById('mo-tuto')?.classList.remove('open');
   document.body.style.overflow = '';
+  window._tutoWaitingEnt = true;
   if(S.vehicles.length > 0) openEnt(null, S.vehicles[0].id);
   else openEnt();
-  const _origSaveEnt = saveEnt;
-  window._tutoSaveEntWrap = async function(){
-    await _origSaveEnt.apply(this, arguments);
-    _tutoState.entretienAdded = true;
-    launchConfetti();
-    setTimeout(()=>{ showTuto(); tutoGoTo(4); }, 400);
-  };
-  window.saveEnt = window._tutoSaveEntWrap;
 }
 function tutoActivatePush(){
   _tutoState.pushEnabled = true;
@@ -6697,8 +6695,8 @@ function closeTuto(){
   localStorage.setItem('ac_tuto_'+(S.user?.id||'x'),'1');
   document.getElementById('mo-tuto')?.classList.remove('open');
   document.body.style.overflow = '';
-  if(window._tutoSaveVehWrap){ window.saveVeh = undefined; delete window._tutoSaveVehWrap; }
-  if(window._tutoSaveEntWrap){ window.saveEnt = undefined; delete window._tutoSaveEntWrap; }
+  window._tutoWaitingVeh = false;
+  window._tutoWaitingEnt = false;
   if(!S.vehicles.length) setTimeout(()=>openVeh(), 300);
 }
 
