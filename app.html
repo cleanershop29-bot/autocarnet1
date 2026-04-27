@@ -6678,8 +6678,6 @@ function tutoActivatePush(){
 }
 
 function tutoFinish(){
-  if(window._tutoSaveVehWrap) delete window.saveVeh;
-  if(window._tutoSaveEntWrap) delete window.saveEnt;
   const feats = [];
   if(_tutoState.vehicleAdded || S.vehicles.length > 0){
     const v = S.vehicles[0];
