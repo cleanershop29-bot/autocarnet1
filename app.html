@@ -3183,7 +3183,7 @@ async function saveVehDocs(vid, uid){
   if(cgNom||cgEmission||cgPhoto){
     const v=S.vehicles.find(x=>x.id===vid)||{immatriculation:null};
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Carte grise');
-    const photoUrl=cgPhoto?await uploadDocPhoto(cgPhoto,uid,vid,'carte-grise'):(existing?.photo_url||null);
+    const photoUrl=cgPhoto?await uploadDocPhoto(cgPhoto,uid,vid,'carte-grise'):cgPhotoDeleted?null:(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Carte grise',nom:cgNom,numero:v.immatriculation||null,date_emission:cgEmission,date_expiration:null,note:null,photo_url:photoUrl};
     if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
     else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
@@ -3198,7 +3198,7 @@ async function saveVehDocs(vid, uid){
   const asPhotoDeleted=asPhotoInput?.dataset?.deleted==='1';
   if(asNum||asEmission||(asEcheance&&asEcheance.length>0)||asCompagnie||asPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Assurance');
-    const photoUrl=asPhoto?await uploadDocPhoto(asPhoto,uid,vid,'assurance'):(existing?.photo_url||null);
+    const photoUrl=asPhoto?await uploadDocPhoto(asPhoto,uid,vid,'assurance'):asPhotoDeleted?null:(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Assurance',nom:asCompagnie,numero:asNum,date_emission:asEmission,date_expiration:asEcheance,note:null,photo_url:photoUrl};
     if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
     else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
@@ -3212,7 +3212,7 @@ async function saveVehDocs(vid, uid){
   const ctPhotoDeleted=ctPhotoInput?.dataset?.deleted==='1';
   if(ctNom||ctEmission||(ctEcheance&&ctEcheance.length>0)||ctPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Contrôle technique');
-    const photoUrl=ctPhoto?await uploadDocPhoto(ctPhoto,uid,vid,'ct'):(existing?.photo_url||null);
+    const photoUrl=ctPhoto?await uploadDocPhoto(ctPhoto,uid,vid,'ct'):ctPhotoDeleted?null:(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Contrôle technique',nom:ctNom,numero:null,date_emission:ctEmission,date_expiration:ctEcheance,note:null,photo_url:photoUrl};
     if(existing){await sb.from('documents').update(p).eq('id',existing.id);}
     else{await sb.from('documents').insert({...p,id:crypto.randomUUID()});}
