@@ -25,6 +25,10 @@ exports.handler = async (event) => {
   const { email, is_premium, plan, subscription_id, code } = body;
 
   if (code !== ADMIN_CODE) return { statusCode: 403, headers, body: JSON.stringify({ error: 'Code incorrect' }) };
+
+  // Vérification du code seul (panel admin)
+  if (body.check_code_only) return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
+
   if (!email) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email requis' }) };
 
   // Trouver l'utilisateur
