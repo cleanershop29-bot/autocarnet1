@@ -2546,7 +2546,7 @@ function updateNavAvatar(){
   }
   el.textContent=initials;
 }
-function authTab(t){document.querySelectorAll('.atab').forEach((x,i)=>x.classList.toggle('on',(t==='l'&&i===0)||(t==='r'&&i===1)));g('pl').classList.toggle('hidden',t!=='l');g('pr').classList.toggle('hidden',t!=='r');}
+
 function buildEpicker(){
   const colors=['#DC2626','#EF4444','#F97316','#F59E0B','#EAB308','#84CC16','#16A34A','#059669','#0891B2','#0284C7','#2563EB','#4F46E5','#7C3AED','#9333EA','#DB2777','#EC4899','#374151','#6B7280','#92400E','#1E3A5F','#0F172A','#FFFFFF'];
   g('ep').innerHTML=`<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:8px;padding:4px 0">${colors.map(c=>`<button type="button" class="epb" data-em="${c}" onclick="pickColor('${c}')" style="width:100%;aspect-ratio:1;border-radius:10px;background:${c};border:2px solid ${c==='#FFFFFF'?'#E2E8F0':c==='#0F172A'?'#374151':c};box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:pointer;transition:.15s;position:relative"></button>`).join('')}</div>`;
@@ -2817,33 +2817,7 @@ async function deleteAccount(){
     }
   );
 }
-async function deleteAccount(){
-  if(!S.user)return;
-  cfm(
-    'Supprimer votre compte ?',
-    'Toutes vos données seront effacées. Cette action est irréversible.',
-    async function(){
-      var uid=S.user.id;
-      var btn=document.querySelector('[onclick="deleteAccount()"]');
-      if(btn){btn.disabled=true;btn.textContent='Suppression...';}
-      try{
-        await sb.from('entretiens').delete().eq('user_id',uid);
-        await sb.from('rappels_custom').delete().eq('user_id',uid);
-        await sb.from('documents').delete().eq('user_id',uid);
-        await sb.from('partages').delete().eq('owner_id',uid);
-        await sb.from('push_subscriptions').delete().eq('user_id',uid);
-        await sb.from('vehicles').delete().eq('user_id',uid);
-        await sb.auth.signOut();
-        resetState();
-        showAuth();
-        toast('Données supprimées. Votre compte sera désactivé sous 24h.','s');
-      }catch(e){
-        toast('Erreur : '+e.message,'e');
-        if(btn){btn.disabled=false;btn.textContent='Supprimer le compte';}
-      }
-    }
-  );
-}
+
 async function doOut(){const hadUser=!!S.user;resetState();showAuth();if(hadUser){try{await sb.auth.signOut();}catch(e){}}}
 
 function showReset(){
@@ -7860,26 +7834,9 @@ function removeMultiSel(typeId){
   updateMultiFooter();
 }
 
-function onMultiCostInput(typeId,val){
-  if(_multiSel[typeId]!==undefined){
-    _multiSel[typeId]=val?parseFloat(val):null;
-    updateMultiFooter();
-  }
-}
 
-function updateMultiFooter(){
-  const ids=Object.keys(_multiSel);
-  const count=ids.length;
-  let total=ids.reduce((s,id)=>s+(parseFloat(_multiSel[id])||0),0);
-  const moVal=parseFloat((g('multi-mo')||{}).value)||0;
-  const totalAvecMo=total+moVal;
-  const cntEl=g('multi-count');
-  const totEl=g('multi-total');
-  const btn=g('multi-save-btn');
-  if(cntEl)cntEl.textContent=count===0?'Aucune intervention':count===1?'1 intervention':`${count} interventions`;
-  if(totEl)totEl.textContent=totalAvecMo>0?fmtCout(totalAvecMo)+(moVal>0?' (MO incluse)':''):'';
-  if(btn){btn.disabled=count===0;btn.textContent=count===0?'Enregistrer':`Enregistrer ${count} entretien${count>1?'s':''}`;}
-}
+
+
 
 function onMultiPhotoSelected(inp){
   if(!inp.files||!inp.files[0])return;
