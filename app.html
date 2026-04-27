@@ -6916,8 +6916,8 @@ const _tutoState = {vehicleAdded: false, entretienAdded: false, pushEnabled: fal
 
 function checkTuto(){
   // Afficher uniquement si premier lancement ET pas de véhicule
-  if(localStorage.getItem('ac_tuto_done')) return;
-  if(S.vehicles.length > 0){ localStorage.setItem('ac_tuto_done','1'); return; }
+  if(localStorage.getItem('ac_tuto_'+(S.user?.id||'x'))) return;
+  if(S.vehicles.length > 0){ localStorage.setItem('ac_tuto_'+(S.user?.id||'x'),'1'); return; }
   setTimeout(showTuto, 800);
 }
 
@@ -7021,7 +7021,7 @@ function tutoFinish(){
 }
 
 function closeTuto(){
-  localStorage.setItem('ac_tuto_done','1');
+  localStorage.setItem('ac_tuto_'+(S.user?.id||'x'),'1');
   document.getElementById('mo-tuto')?.classList.remove('open');
   document.body.style.overflow = '';
   // Restaurer les fonctions si patchées
