@@ -2790,28 +2790,27 @@ async function deleteAccount(){
   if(!S.user)return;
   cfm(
     'Supprimer votre compte ?',
-    'Toutes vos données seront effacées (véhicules, entretiens, rappels). Cette action est irréversible.',
+    'Toutes vos données seront effacées définitivement. Cette action est irréversible.',
     async function(){
-      const uid=S.user.id;
       const btn=document.querySelector('[onclick="deleteAccount()"]');
       if(btn){btn.disabled=true;btn.textContent='Suppression...';}
       try{
-        // Supprimer toutes les données utilisateur
-        await sb.from('entretiens').delete().eq('user_id',uid);
-        await sb.from('rappels_custom').delete().eq('user_id',uid);
-        await sb.from('documents').delete().eq('user_id',uid);
-        await sb.from('partages').delete().eq('owner_id',uid);
-        await sb.from('push_subscriptions').delete().eq('user_id',uid);
-        await sb.from('vehicles').delete().eq('user_id',uid);
-        // Demander la suppression du compte auth via email
-        // (Supabase ne permet pas la suppression auth côté client)
-        // On déconnecte et on informe
+        const{data:{session}}=await sb.auth.getSession();
+        const token=session?.access_token||'';
+        const r=await fetch('/.netlify/functions/delete-account',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}
+        });
+        const d=await r.json();
+        if(!r.ok)throw new Error(d.error||'Erreur serveur');
+        // Déconnexion locale puis afficher confirmation sur l'écran auth
         await sb.auth.signOut();
         resetState();
         showAuth();
-        toast('Données supprimées. Votre compte sera désactivé sous 24h.','s');
-      } catch(e){
-        toast('Erreur lors de la suppression : '+e.message,'e');
+        // Toast affiché après showAuth — visible sur l'écran de connexion
+        setTimeout(()=>toast('Compte supprimé définitivement.','s'),100);
+      }catch(e){
+        toast('Erreur : '+e.message,'e');
         if(btn){btn.disabled=false;btn.textContent='Supprimer le compte';}
       }
     }
