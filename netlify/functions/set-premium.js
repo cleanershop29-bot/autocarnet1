@@ -1,6 +1,6 @@
-const SB_URL = 'https://qhacwsklhlsfyfxwnjff.supabase.co';
-const SB_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI5NzEyNiwiZXhwIjoyMDg5ODczMTI2fQ._glWcFJIdUUECVRiOiOUQCz5DN6A4Vz1fOiB1OdHpdw';
-const ADMIN_CODE = 'AC2026admin';
+const SB_URL = process.env.SUPABASE_URL;
+const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const ADMIN_CODE = process.env.ADMIN_CODE;
 
 exports.handler = async (event) => {
   const headers = {
@@ -9,6 +9,11 @@ exports.handler = async (event) => {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
   };
+
+  // Vérification config serveur
+  if (!SB_URL || !SB_SERVICE_KEY || !ADMIN_CODE) {
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Configuration serveur manquante' }) };
+  }
 
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };

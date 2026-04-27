@@ -1,8 +1,8 @@
-const SB_URL = 'https://qhacwsklhlsfyfxwnjff.supabase.co';
-const SB_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI5NzEyNiwiZXhwIjoyMDg5ODczMTI2fQ._glWcFJIdUUECVRiOiOUQCz5DN6A4Vz1fOiB1OdHpdw';
-const VAPID_PUBLIC  = 'BE7KvvdlYZM6Ph2Eipldx1_wDUCrhSRn6FYP3CN9oQq6oRzR1T0UYecZ3xQMjruj0tTvWjwy54P7ZFJXyKNjW6Y';
-const VAPID_PRIVATE = 'y5GC26Lqyv-PEL85oUvfKSpPcwbSykYbHG_w1Ci-o3k';
-const ADMIN_SECRET  = 'AC2026admin';
+const SB_URL = process.env.SUPABASE_URL;
+const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const VAPID_PUBLIC  = process.env.VAPID_PUBLIC_KEY;
+const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
+const ADMIN_SECRET  = process.env.ADMIN_CODE;
 
 const webpush = require('web-push');
 const SB_HEADERS = { 'apikey': SB_SERVICE_KEY, 'Authorization': `Bearer ${SB_SERVICE_KEY}`, 'Content-Type': 'application/json' };
@@ -12,7 +12,25 @@ webpush.setVapidDetails('mailto:contact@autocarnet.fr', VAPID_PUBLIC, VAPID_PRIV
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
   const params = new URLSearchParams(event.rawQuery || '');
-  if (params.get('secret') !== ADMIN_SECRET) {
+
+  // Auth : soit token JWT Supabase (appels client), soit secret admin (broadcast cron)
+  const authHeader = event.headers?.authorization || event.headers?.Authorization || '';
+  const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const secretParam = params.get('secret');
+
+  let authed = false;
+  if (secretParam && secretParam === ADMIN_SECRET) {
+    // Appel admin/cron avec secret
+    authed = true;
+  } else if (bearerToken) {
+    // Appel client avec JWT Supabase — vérifier que le token est valide
+    const verifyRes = await fetch(`${SB_URL}/auth/v1/user`, {
+      headers: { 'apikey': SB_SERVICE_KEY, 'Authorization': `Bearer ${bearerToken}` }
+    });
+    authed = verifyRes.ok;
+  }
+
+  if (!authed) {
     return { statusCode: 403, headers, body: JSON.stringify({ error: 'Forbidden' }) };
   }
 
