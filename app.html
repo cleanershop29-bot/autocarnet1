@@ -568,29 +568,31 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 #mo-tuto{position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
 #mo-tuto.open{opacity:1;pointer-events:all}
 #mo-tuto .tuto-backdrop{position:absolute;inset:0;background:rgba(10,15,30,.72)}
-.tuto-sheet{position:relative;z-index:1;background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:520px;padding:0 0 env(safe-area-inset-bottom,20px);box-shadow:0 -8px 40px rgba(0,0,0,.22);transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);overflow:hidden}
+.tuto-sheet{position:relative;z-index:1;background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:520px;box-shadow:0 -8px 40px rgba(0,0,0,.22);transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1)}
 #mo-tuto.open .tuto-sheet{transform:translateY(0)}
-.tuto-handle{width:40px;height:4px;border-radius:2px;background:#E2E8F0;margin:14px auto 0}
-.tuto-progress{display:flex;gap:5px;justify-content:center;padding:14px 0 0;align-items:center}
+.tuto-header{padding:14px 24px 0;flex-shrink:0}
+.tuto-handle{width:40px;height:4px;border-radius:2px;background:#E2E8F0;margin:0 auto 14px}
+.tuto-progress{display:flex;gap:5px;justify-content:center;align-items:center;margin-bottom:0}
 .tuto-dot{width:6px;height:6px;border-radius:50%;background:#E2E8F0;transition:.25s}
 .tuto-dot.done{background:#BBD3FB}
 .tuto-dot.on{width:22px;border-radius:3px;background:var(--primary)}
-.tuto-slides{display:flex;width:100%;overflow:hidden;transition:transform .35s cubic-bezier(.32,.72,0,1)}
-.tuto-slide{min-width:100%;width:100%;flex-shrink:0;padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.tuto-ico{width:72px;height:72px;border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:2.2rem;flex-shrink:0}
-.tuto-ttl{font-size:1.25rem;font-weight:900;color:var(--txt);letter-spacing:-.02em;margin-bottom:10px;line-height:1.2}
-.tuto-txt{font-size:.88rem;color:var(--txm);line-height:1.7;margin-bottom:20px;max-width:320px}
-.tuto-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;width:100%}
+.tuto-viewport{overflow:hidden;width:100%}
+.tuto-slides{display:flex;width:100%;transition:transform .35s cubic-bezier(.32,.72,0,1)}
+.tuto-slide{min-width:100%;flex-shrink:0;padding:20px 24px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;text-align:center;box-sizing:border-box}
+.tuto-ico{width:72px;height:72px;border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2.2rem;flex-shrink:0}
+.tuto-ttl{font-size:1.2rem;font-weight:900;color:var(--txt);letter-spacing:-.02em;margin-bottom:8px;line-height:1.25;width:100%}
+.tuto-txt{font-size:.86rem;color:var(--txm);line-height:1.65;margin-bottom:18px;width:100%}
+.tuto-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;width:100%}
 .tuto-feat{display:flex;align-items:center;gap:12px;background:#F8FAFC;border-radius:12px;padding:11px 14px;border:1px solid #E2E8F0;text-align:left}
 .tuto-feat-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
-.tuto-feat-ttl{font-size:.83rem;font-weight:700;color:var(--txt)}
-.tuto-feat-sub{font-size:.72rem;color:var(--txm);margin-top:1px}
+.tuto-feat-ttl{font-size:.82rem;font-weight:700;color:var(--txt)}
+.tuto-feat-sub{font-size:.71rem;color:var(--txm);margin-top:1px}
 .tuto-actions{display:flex;flex-direction:column;gap:8px;width:100%}
 .tuto-btn-main{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:.92rem;font-weight:700;cursor:pointer;width:100%;transition:.15s;box-shadow:0 4px 14px rgba(37,99,235,.35)}
 .tuto-btn-main:active{transform:scale(.97)}
 .tuto-btn-skip{background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--txm);cursor:pointer;padding:8px;width:100%}
 #tuto-confetti{position:fixed;inset:0;pointer-events:none;z-index:950;overflow:hidden}
-.tuto-confetto{position:absolute;width:8px;height:8px;border-radius:2px;animation:confetto-fall linear forwards}
+.tuto-confetto{position:absolute;border-radius:2px;animation:confetto-fall linear forwards}
 @keyframes confetto-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
 
 /* ═══ PERSONNALISATION COULEUR ═══ */
@@ -1055,8 +1057,11 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 <div id="mo-tuto">
   <div class="tuto-backdrop" onclick="tutoSkip()"></div>
   <div class="tuto-sheet">
-    <div class="tuto-handle"></div>
-    <div class="tuto-progress" id="tuto-progress"></div>
+    <div class="tuto-header">
+      <div class="tuto-handle"></div>
+      <div class="tuto-progress" id="tuto-progress"></div>
+    </div>
+    <div class="tuto-viewport">
     <div class="tuto-slides" id="tuto-slides">
 
       <!-- Étape 1 : Bienvenue -->
@@ -1161,6 +1166,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         </div>
       </div>
 
+    </div>
     </div>
   </div>
 </div>
@@ -6598,9 +6604,12 @@ function checkTuto(){
 function showTuto(){
   _tutoStep = 1;
   tutoRenderProgress();
-  tutoGoTo(1);
-  document.getElementById('mo-tuto')?.classList.add('open');
+  const mo = document.getElementById('mo-tuto');
+  if(!mo) return;
+  mo.classList.add('open');
   document.body.style.overflow = 'hidden';
+  // Attendre que le DOM soit rendu avant d'appliquer le transform
+  requestAnimationFrame(()=> requestAnimationFrame(()=> tutoGoTo(1)));
 }
 function tutoRenderProgress(){
   const el = document.getElementById('tuto-progress');
