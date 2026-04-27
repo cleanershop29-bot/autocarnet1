@@ -1826,6 +1826,21 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 
 <script>
 'use strict';
+/* vars tuto — déclarées tôt pour être accessibles dans saveVeh/saveEnt */
+let _tutoStep=1,_TUTO_STEPS=7;
+let _tutoState={vehicleAdded:false,entretienAdded:false,pushEnabled:false};
+function launchConfetti(){
+  const container = document.getElementById('tuto-confetti');
+  if(!container) return;
+  const colors = ['#2563EB','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4'];
+  for(let i = 0; i < 60; i++){
+    const el = document.createElement('div');
+    el.className = 'tuto-confetto';
+    el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation-duration:${1.2+Math.random()*1.2}s;animation-delay:${Math.random()*0.4}s`;
+    container.appendChild(el);
+    setTimeout(()=>el.remove(), 2600);
+  }
+}
 
 /* ══ OFFLINE DETECTION ══ */
 function updateOnlineStatus(){
@@ -6605,9 +6620,7 @@ function copyLink(url){
 // ═══════════════════════════════════
 // TUTORIEL GUIDÉ — 5 ÉTAPES
 // ═══════════════════════════════════
-let _tutoStep = 1;
-const TUTO_STEPS = 7;
-const _tutoState = {vehicleAdded: false, entretienAdded: false, pushEnabled: false};
+/* _tutoStep, TUTO_STEPS, _tutoState déclarés en haut du script */
 
 function checkTuto(){
   if(localStorage.getItem('ac_tuto_'+(S.user?.id||'x'))) return;
@@ -6663,18 +6676,7 @@ function tutoActivatePush(){
   registerPush();
   tutoNext();
 }
-function launchConfetti(){
-  const container = document.getElementById('tuto-confetti');
-  if(!container) return;
-  const colors = ['#2563EB','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#06B6D4'];
-  for(let i = 0; i < 60; i++){
-    const el = document.createElement('div');
-    el.className = 'tuto-confetto';
-    el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation-duration:${1.2+Math.random()*1.2}s;animation-delay:${Math.random()*0.4}s`;
-    container.appendChild(el);
-    setTimeout(()=>el.remove(), 2600);
-  }
-}
+
 function tutoFinish(){
   if(window._tutoSaveVehWrap) delete window.saveVeh;
   if(window._tutoSaveEntWrap) delete window.saveEnt;
