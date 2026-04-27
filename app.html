@@ -3180,7 +3180,7 @@ async function saveVehDocs(vid, uid){
   const cgPhotoInput=g('vdoc-cg-photo');
   const cgPhoto=cgPhotoInput?.files?.[0]||null;
   const cgPhotoDeleted=cgPhotoInput?.dataset?.deleted==='1';
-  if(cgNom||cgEmission||cgPhoto){
+  if(cgNom||cgEmission||cgPhoto||cgPhotoDeleted){
     const v=S.vehicles.find(x=>x.id===vid)||{immatriculation:null};
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Carte grise');
     const photoUrl=cgPhoto?await uploadDocPhoto(cgPhoto,uid,vid,'carte-grise'):cgPhotoDeleted?null:(existing?.photo_url||null);
@@ -3196,7 +3196,7 @@ async function saveVehDocs(vid, uid){
   const asPhotoInput=g('vdoc-as-photo');
   const asPhoto=asPhotoInput?.files?.[0]||null;
   const asPhotoDeleted=asPhotoInput?.dataset?.deleted==='1';
-  if(asNum||asEmission||(asEcheance&&asEcheance.length>0)||asCompagnie||asPhoto){
+  if(asNum||asEmission||(asEcheance&&asEcheance.length>0)||asCompagnie||asPhoto||asPhotoDeleted){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Assurance');
     const photoUrl=asPhoto?await uploadDocPhoto(asPhoto,uid,vid,'assurance'):asPhotoDeleted?null:(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Assurance',nom:asCompagnie,numero:asNum,date_emission:asEmission,date_expiration:asEcheance,note:null,photo_url:photoUrl};
@@ -3210,7 +3210,7 @@ async function saveVehDocs(vid, uid){
   const ctPhotoInput=g('vdoc-ct-photo');
   const ctPhoto=ctPhotoInput?.files?.[0]||null;
   const ctPhotoDeleted=ctPhotoInput?.dataset?.deleted==='1';
-  if(ctNom||ctEmission||(ctEcheance&&ctEcheance.length>0)||ctPhoto){
+  if(ctNom||ctEmission||(ctEcheance&&ctEcheance.length>0)||ctPhoto||ctPhotoDeleted){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Contrôle technique');
     const photoUrl=ctPhoto?await uploadDocPhoto(ctPhoto,uid,vid,'ct'):ctPhotoDeleted?null:(existing?.photo_url||null);
     const p={user_id:uid,vehicle_id:vid,type:'Contrôle technique',nom:ctNom,numero:null,date_emission:ctEmission,date_expiration:ctEcheance,note:null,photo_url:photoUrl};
