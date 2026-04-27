@@ -1211,6 +1211,23 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .rap-view-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--txm);cursor:pointer;transition:.15s}
 .rap-view-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
 .rap-view-btn:active{transform:scale(.96)}
+/* PARRAINAGE */
+.referral-card{background:linear-gradient(135deg,#F0FDF4,#ECFDF5);border:1.5px solid #A7F3D0;border-radius:16px;padding:16px;margin-bottom:12px}
+.referral-card-title{font-size:.82rem;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.referral-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.referral-stat{background:#fff;border-radius:10px;padding:10px;text-align:center;border:1px solid #D1FAE5}
+.referral-stat-num{font-size:1.4rem;font-weight:900;color:#059669;line-height:1}
+.referral-stat-label{font-size:.65rem;font-weight:700;color:#6EE7B7;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.referral-code-box{background:#fff;border:1.5px solid #A7F3D0;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.referral-code{font-size:1.1rem;font-weight:900;letter-spacing:.15em;color:#065F46;font-family:monospace}
+.referral-copy-btn{background:#10B981;border:none;border-radius:8px;padding:7px 12px;font-family:inherit;font-size:.75rem;font-weight:700;color:#fff;cursor:pointer;transition:.15s}
+.referral-copy-btn:active{transform:scale(.95)}
+.referral-share-btn{width:100%;background:linear-gradient(135deg,#10B981,#059669);border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+.referral-share-btn:active{transform:scale(.97)}
+.referral-use-box{margin-top:10px;border-top:1px solid #D1FAE5;padding-top:12px}
+.referral-use-input{width:100%;border:1.5px solid #D1FAE5;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;outline:none;margin-bottom:8px}
+.referral-use-btn{width:100%;background:#fff;border:1.5px solid #10B981;border-radius:10px;padding:10px;font-family:inherit;font-size:.82rem;font-weight:700;color:#059669;cursor:pointer;transition:.15s}
+.referral-use-btn:active{transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -1504,6 +1521,11 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
             <input class="fc" id="admin-sub-id" placeholder="Ex: sub_1ABC..." style="font-size:.78rem">
           </div>
           <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Enregistrer l'ID abonnement</button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🤝 Parrainage</div>
+          <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:6px" onclick="adminLoadReferralStats()">📊 Voir les stats parrainage</button>
+          <div id="admin-referral-stats" style="font-size:.75rem;color:var(--txm);min-height:0"></div>
         </div>
         <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
           <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">📢 Notification broadcast</div>
@@ -2527,7 +2549,7 @@ function showApp(){
   g('ls').classList.add('hidden');g('auth-screen').classList.add('hidden');g('app-screen').classList.remove('hidden');
   buildEpicker();initAutoComplete();updateOnlineStatus();nav('dash');updateDot();
   updateNavAvatar();
-  setTimeout(checkTuto,600);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);
+  setTimeout(checkTuto,600);setTimeout(initAdmin,300);setTimeout(initPullToRefresh,500);setTimeout(applyPendingReferral,2500);
   if('serviceWorker' in navigator&&'PushManager' in window&&Notification.permission==='granted'){
     navigator.serviceWorker.ready.then(reg=>reg.pushManager.getSubscription().then(sub=>{if(sub)savePushSubscription(sub);})).catch(()=>{});
   }
@@ -2599,6 +2621,7 @@ function initAutoComplete(){
 
 /* INIT */
 async function init(){
+  checkReferralUrl();
   sb=window.supabase.createClient(SB_URL,SB_KEY);
   (function(){
     const h=new Date().getHours();
@@ -6801,6 +6824,7 @@ function renderProfil(){
       <span class="profil-card-ttl">Mon compte</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
+      <div id="referral-block"><!-- chargé par loadReferral() --></div>
       <button class="btn btn-s btn-sm" onclick="doOut()" style="justify-content:flex-start;gap:8px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Déconnexion
@@ -6811,6 +6835,7 @@ function renderProfil(){
       </button>
     </div>
   </div>`;
+  setTimeout(loadReferral, 100);
 }
 
 function exportCSV(vid){
@@ -7012,6 +7037,160 @@ function closeTuto(){
 
 
 /* ══ PUSH NOTIF HELPER ══ */
+/* ══ PARRAINAGE ══ */
+let _referralData = null;
+
+async function loadReferral() {
+  const el = document.getElementById('referral-block');
+  if (!el || !S.user) return;
+
+  // Afficher un loader
+  el.innerHTML = `<div style="background:var(--bg);border-radius:14px;height:120px;margin-bottom:12px;display:flex;align-items:center;justify-content:center"><svg style="animation:spin .7s linear infinite" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div>`;
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const token = session?.access_token || '';
+    const r = await fetch('/.netlify/functions/referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ action: 'get_or_create_code' })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Erreur');
+    _referralData = d;
+    renderReferralBlock(el, d);
+  } catch(e) {
+    el.innerHTML = '';
+  }
+}
+
+function renderReferralBlock(el, d) {
+  const moisRestants = d.max_mois - d.mois_gagnes;
+  const barW = Math.round((d.filleuls_confirmes / d.max_filleuls) * 100);
+  el.innerHTML = `
+  <div class="referral-card">
+    <div class="referral-card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Parrainez vos amis
+    </div>
+    <div class="referral-stats">
+      <div class="referral-stat">
+        <div class="referral-stat-num">${d.filleuls_confirmes}</div>
+        <div class="referral-stat-label">Filleuls</div>
+      </div>
+      <div class="referral-stat">
+        <div class="referral-stat-num">${d.mois_gagnes}</div>
+        <div class="referral-stat-label">Mois gagnés</div>
+      </div>
+      <div class="referral-stat">
+        <div class="referral-stat-num">${moisRestants > 0 ? moisRestants : '✓'}</div>
+        <div class="referral-stat-label">${moisRestants > 0 ? 'Mois max' : 'Complet'}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:.72rem;font-weight:600;color:#6EE7B7;margin-bottom:5px">
+        <span>${d.filleuls_confirmes} / ${d.max_filleuls} filleuls</span>
+        <span>${d.mois_gagnes} / ${d.max_mois} mois max</span>
+      </div>
+      <div style="height:6px;background:#D1FAE5;border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${barW}%;background:linear-gradient(90deg,#10B981,#059669);border-radius:3px;transition:.4s"></div>
+      </div>
+    </div>
+    <div class="referral-code-box">
+      <div>
+        <div style="font-size:.68rem;font-weight:700;color:#6EE7B7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Votre code</div>
+        <div class="referral-code">${d.code}</div>
+      </div>
+      <button class="referral-copy-btn" onclick="copyReferralCode('${d.code}')">Copier</button>
+    </div>
+    <button class="referral-share-btn" onclick="shareReferral('${d.code}')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Partager mon lien de parrainage
+    </button>
+    ${d.filleuls_confirmes === 0 ? `
+    <div class="referral-use-box">
+      <div style="font-size:.75rem;font-weight:600;color:#059669;margin-bottom:8px">Vous avez un code de parrainage ?</div>
+      <input class="referral-use-input" id="referral-input" placeholder="Ex: AC-X2K9MZ" maxlength="9">
+      <button class="referral-use-btn" onclick="useReferralCode()">Utiliser ce code</button>
+    </div>` : ''}
+  </div>`;
+}
+
+async function copyReferralCode(code) {
+  const link = `https://autocarnet.fr/app.html?ref=${code}`;
+  try {
+    await navigator.clipboard.writeText(link);
+    toast('Lien copié !', 's');
+    vib([30]);
+  } catch { toast('Code : ' + code, 's'); }
+}
+
+async function shareReferral(code) {
+  const link = `https://autocarnet.fr/app.html?ref=${code}`;
+  const text = `J'utilise AutoCarnet pour gérer l'entretien de mes véhicules. Rejoins-moi avec mon code ${code} et profite de 7 jours Premium offerts !`;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'AutoCarnet', text, url: link }); return; } catch {}
+  }
+  await copyReferralCode(code);
+}
+
+async function useReferralCode() {
+  const input = document.getElementById('referral-input');
+  if (!input) return;
+  const code = input.value.trim().toUpperCase();
+  if (!code || code.length < 6) return toast('Code invalide', 'e');
+  const btn = document.querySelector('.referral-use-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Validation...'; }
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const token = session?.access_token || '';
+    const r = await fetch('/.netlify/functions/referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ action: 'use_code', code })
+    });
+    const d = await r.json();
+    if (!r.ok) { toast(d.error || 'Erreur', 'e'); if (btn) { btn.disabled = false; btn.textContent = 'Utiliser ce code'; } return; }
+    toast('🎉 ' + d.message, 's');
+    vib([50, 30, 50]);
+    await sb.auth.refreshSession();
+    await loadAll();
+    loadReferral();
+  } catch(e) {
+    toast('Erreur réseau', 'e');
+    if (btn) { btn.disabled = false; btn.textContent = 'Utiliser ce code'; }
+  }
+}
+
+// Vérifier le code ref dans l'URL au chargement
+function checkReferralUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) sessionStorage.setItem('pending_referral', ref.toUpperCase());
+}
+
+// Appliquer le code ref après inscription/connexion
+async function applyPendingReferral() {
+  const code = sessionStorage.getItem('pending_referral');
+  if (!code || !S.user) return;
+  sessionStorage.removeItem('pending_referral');
+  // Attendre 2s pour que le compte soit bien créé
+  setTimeout(async () => {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      const token = session?.access_token || '';
+      const r = await fetch('/.netlify/functions/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ action: 'use_code', code })
+      });
+      const d = await r.json();
+      if (r.ok) toast('🎉 Code de parrainage appliqué ! 7 jours Premium offerts.', 's');
+    } catch {}
+  }, 2000);
+}
+
+
 async function _triggerNotif(params){
   try{
     const{data:{session}}=await sb.auth.getSession();
@@ -7368,6 +7547,29 @@ async function adminSetSubId(){
     g('admin-sub-id').value='';
   }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
+async function adminLoadReferralStats(){
+  const el=document.getElementById('admin-referral-stats');
+  if(!el)return;
+  el.textContent='Chargement...';
+  try{
+    const r=await fetch('/.netlify/functions/referral',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'admin_stats',code:document.getElementById('admin-code')?.value||''})
+    });
+    const d=await r.json();
+    if(!r.ok){el.textContent='Erreur : '+(d.error||'?');return;}
+    el.innerHTML=`<div style="background:var(--bg);border-radius:10px;padding:10px;margin-top:6px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+        <div style="text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--txt)">${d.total_codes}</div><div style="font-size:.65rem;color:var(--txm);text-transform:uppercase">Codes créés</div></div>
+        <div style="text-align:center"><div style="font-size:1.2rem;font-weight:900;color:#10B981">${d.parrainages_confirmes}</div><div style="font-size:.65rem;color:var(--txm);text-transform:uppercase">Confirmés</div></div>
+        <div style="text-align:center"><div style="font-size:1.2rem;font-weight:900;color:#3B82F6">${d.mois_offerts_total}</div><div style="font-size:.65rem;color:var(--txm);text-transform:uppercase">Mois offerts</div></div>
+        <div style="text-align:center"><div style="font-size:1.2rem;font-weight:900;color:#F59E0B">${d.top_parrains?.length||0}</div><div style="font-size:.65rem;color:var(--txm);text-transform:uppercase">Top parrains</div></div>
+      </div>
+    </div>`;
+  }catch(e){el.textContent='Erreur réseau';}
+}
+
 async function adminBroadcast(){
   const titleEl = g('admin-notif-title');
   const bodyEl  = g('admin-notif-body');
