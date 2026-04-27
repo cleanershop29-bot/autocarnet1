@@ -179,7 +179,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200, headers,
-      body: JSON.stringify({ success: true, message: `Code validé ! Votre parrain a reçu ${moisTotal} mois Premium Famille.`, filleul_trial: !filleulMeta.plan })
+      body: JSON.stringify({ success: true, message: `Code validé ! Votre parrain reçoit ${moisTotal} mois Premium Famille. Vous bénéficiez de 7 jours Premium Famille offerts.`, filleul_trial: !filleulMeta.plan })
     };
   }
 
