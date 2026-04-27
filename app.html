@@ -1263,6 +1263,12 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   padding:4px 8px;font-size:.7rem;font-weight:700;color:#fff;
   cursor:pointer;font-family:inherit;
 }
+.doc-photo-delete{
+  position:absolute;top:8px;left:8px;
+  background:rgba(239,68,68,.8);border:none;border-radius:6px;
+  padding:4px 8px;font-size:.7rem;font-weight:700;color:#fff;
+  cursor:pointer;font-family:inherit;
+}
 </style>
 </head>
 <body>
@@ -1820,6 +1826,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
               <img id="vdoc-cg-photo-img" src="">
               <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
               <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-cg-photo').click()">Changer</button>
+              <button class="doc-photo-delete" onclick="event.stopPropagation();vdocDeletePhoto('vdoc-cg-photo')">✕ Suppr.</button>
             </div>
           </div>
         </div>
@@ -1844,6 +1851,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
               <img id="vdoc-as-photo-img" src="">
               <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
               <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-as-photo').click()">Changer</button>
+              <button class="doc-photo-delete" onclick="event.stopPropagation();vdocDeletePhoto('vdoc-as-photo')">✕ Suppr.</button>
             </div>
           </div>
         </div>
@@ -1864,6 +1872,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
               <img id="vdoc-ct-photo-img" src="">
               <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
               <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-ct-photo').click()">Changer</button>
+              <button class="doc-photo-delete" onclick="event.stopPropagation();vdocDeletePhoto('vdoc-ct-photo')">✕ Suppr.</button>
             </div>
           </div>
         </div>
@@ -1882,6 +1891,7 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
               <img id="vdoc-autre-photo-img" src="">
               <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
               <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-autre-photo').click()">Changer</button>
+              <button class="doc-photo-delete" onclick="event.stopPropagation();vdocDeletePhoto('vdoc-autre-photo')">✕ Suppr.</button>
             </div>
           </div>
         </div>
@@ -3167,7 +3177,9 @@ async function saveVehDocs(vid, uid){
   // Carte grise
   const cgNom=g('vdoc-cg-nom')?.value.trim()||null;
   const cgEmission=g('vdoc-cg-emission')?.value||null;
-  const cgPhoto=g('vdoc-cg-photo')?.files?.[0]||null;
+  const cgPhotoInput=g('vdoc-cg-photo');
+  const cgPhoto=cgPhotoInput?.files?.[0]||null;
+  const cgPhotoDeleted=cgPhotoInput?.dataset?.deleted==='1';
   if(cgNom||cgEmission||cgPhoto){
     const v=S.vehicles.find(x=>x.id===vid)||{immatriculation:null};
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Carte grise');
@@ -3181,7 +3193,9 @@ async function saveVehDocs(vid, uid){
   const asEmission=g('vdoc-as-emission')?.value||null;
   const asEcheance=g('v-as')?.value||null;
   const asCompagnie=g('v-ac')?.value.trim()||null;
-  const asPhoto=g('vdoc-as-photo')?.files?.[0]||null;
+  const asPhotoInput=g('vdoc-as-photo');
+  const asPhoto=asPhotoInput?.files?.[0]||null;
+  const asPhotoDeleted=asPhotoInput?.dataset?.deleted==='1';
   if(asNum||asEmission||(asEcheance&&asEcheance.length>0)||asCompagnie||asPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Assurance');
     const photoUrl=asPhoto?await uploadDocPhoto(asPhoto,uid,vid,'assurance'):(existing?.photo_url||null);
@@ -3193,7 +3207,9 @@ async function saveVehDocs(vid, uid){
   const ctNom=g('vdoc-ct-nom')?.value.trim()||null;
   const ctEmission=g('vdoc-ct-emission')?.value||null;
   const ctEcheance=g('v-ct')?.value||null;
-  const ctPhoto=g('vdoc-ct-photo')?.files?.[0]||null;
+  const ctPhotoInput=g('vdoc-ct-photo');
+  const ctPhoto=ctPhotoInput?.files?.[0]||null;
+  const ctPhotoDeleted=ctPhotoInput?.dataset?.deleted==='1';
   if(ctNom||ctEmission||(ctEcheance&&ctEcheance.length>0)||ctPhoto){
     const existing=S.documents.find(d=>d.vehicle_id===vid&&d.type==='Contrôle technique');
     const photoUrl=ctPhoto?await uploadDocPhoto(ctPhoto,uid,vid,'ct'):(existing?.photo_url||null);
@@ -3203,7 +3219,9 @@ async function saveVehDocs(vid, uid){
   }
   // Autre document
   const autreNom=g('vdoc-autre-nom')?.value.trim()||null;
-  const autrePhoto=g('vdoc-autre-photo')?.files?.[0]||null;
+  const autrePhotoInput=g('vdoc-autre-photo');
+  const autrePhoto=autrePhotoInput?.files?.[0]||null;
+  const autrePhotoDeleted=autrePhotoInput?.dataset?.deleted==='1';
   if(autreNom||autrePhoto){
     const slug='autre-'+(autreNom||'doc').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').slice(0,20);
     const photoUrl=autrePhoto?await uploadDocPhoto(autrePhoto,uid,vid,slug):null;
@@ -7156,6 +7174,20 @@ function vdocFileChange(fieldId) {
     preview.style.display = 'none';
     if (lbl) lbl.style.color = 'var(--primary)';
   }
+}
+
+function vdocDeletePhoto(fieldId) {
+  const input = document.getElementById(fieldId);
+  const preview = document.getElementById(fieldId + '-preview');
+  const img = document.getElementById(fieldId + '-img');
+  const lbl = document.getElementById(fieldId + '-lbl');
+  if (input) input.value = '';
+  if (img) img.src = '';
+  if (preview) preview.style.display = 'none';
+  if (lbl) { lbl.textContent = 'Choisir une photo ou un fichier'; lbl.style.color = ''; }
+  // Marquer pour suppression côté serveur
+  if (input) input.dataset.deleted = '1';
+  vib([30]);
 }
 
 function vdocPreviewClick(fieldId) {
