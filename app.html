@@ -6745,7 +6745,7 @@ function renderProfil(){
       </div>
       <div style="flex:1">
         <div style="font-size:.86rem;font-weight:800;color:var(--txt)">Abonnement ${planLabel}</div>
-        <div style="font-size:.72rem;color:var(--txm);margin-top:1px">Actif · Renouvellement automatique</div>
+        <div style="font-size:.72rem;color:var(--txm);margin-top:1px">${S.user?.user_metadata?.referral_premium_expiry ? '🎁 Offert par parrainage' : 'Actif · Renouvellement automatique'}</div>
       </div>
       <div style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0;box-shadow:0 0 0 3px rgba(16,185,129,.2)"></div>
     </div>
@@ -7109,7 +7109,8 @@ function renderReferralBlock(el, d) {
     </button>
     ${d.filleuls_confirmes === 0 ? `
     <div class="referral-use-box">
-      <div style="font-size:.75rem;font-weight:600;color:#059669;margin-bottom:8px">Vous avez un code de parrainage ?</div>
+      <div style="font-size:.75rem;font-weight:600;color:#059669;margin-bottom:4px">Vous avez un code de parrainage ?</div>
+      <div style="font-size:.72rem;color:#6EE7B7;margin-bottom:8px">🎁 Entrez le code d'un ami et recevez <strong style="color:#059669">7 jours Premium Famille</strong> offerts.</div>
       <input class="referral-use-input" id="referral-input" placeholder="Ex: AC-X2K9MZ" maxlength="9">
       <button class="referral-use-btn" onclick="useReferralCode()">Utiliser ce code</button>
     </div>` : ''}
@@ -7117,10 +7118,9 @@ function renderReferralBlock(el, d) {
 }
 
 async function copyReferralCode(code) {
-  const link = `https://autocarnet.fr/app.html?ref=${code}`;
   try {
-    await navigator.clipboard.writeText(link);
-    toast('Lien copié !', 's');
+    await navigator.clipboard.writeText(code);
+    toast('Code copié : ' + code, 's');
     vib([30]);
   } catch { toast('Code : ' + code, 's'); }
 }
@@ -7151,7 +7151,7 @@ async function useReferralCode() {
     });
     const d = await r.json();
     if (!r.ok) { toast(d.error || 'Erreur', 'e'); if (btn) { btn.disabled = false; btn.textContent = 'Utiliser ce code'; } return; }
-    toast('🎉 ' + d.message, 's');
+    toast('🎉 ' + (d.message||'Code validé !'), 's');
     vib([50, 30, 50]);
     await sb.auth.refreshSession();
     await loadAll();
@@ -7185,7 +7185,7 @@ async function applyPendingReferral() {
         body: JSON.stringify({ action: 'use_code', code })
       });
       const d = await r.json();
-      if (r.ok) toast('🎉 Code de parrainage appliqué ! 7 jours Premium offerts.', 's');
+      if (r.ok) toast('🎉 Code validé ! Vous bénéficiez de 7 jours Premium Famille offerts.', 's');
     } catch {}
   }, 2000);
 }
