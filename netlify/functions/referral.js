@@ -8,7 +8,7 @@ const SB_HEADERS = {
 };
 
 // Limites
-const MAX_FILLEULS = 5;
+const MAX_FILLEULS = 3;
 const MOIS_PAR_FILLEUL = 1;
 const MAX_MOIS_CUMULES = 3;
 
