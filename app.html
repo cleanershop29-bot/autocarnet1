@@ -1228,6 +1228,41 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .referral-use-input{width:100%;border:1.5px solid #D1FAE5;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;outline:none;margin-bottom:8px}
 .referral-use-btn{width:100%;background:#fff;border:1.5px solid #10B981;border-radius:10px;padding:10px;font-family:inherit;font-size:.82rem;font-weight:700;color:#059669;cursor:pointer;transition:.15s}
 .referral-use-btn:active{transform:scale(.97)}
+/* UPLOAD DOC BUTTON */
+.doc-upload-wrap{display:flex;flex-direction:column;gap:6px;width:100%}
+.doc-upload-btn{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg);border:1.5px dashed var(--border);
+  border-radius:var(--r);padding:12px 14px;
+  cursor:pointer;transition:.15s;width:100%;
+  font-family:inherit;
+}
+.doc-upload-btn:hover{border-color:var(--primary);background:var(--primary-lt)}
+.doc-upload-btn:active{transform:scale(.98)}
+.doc-upload-btn svg{flex-shrink:0;color:var(--txm)}
+.doc-upload-label{font-size:.82rem;font-weight:600;color:var(--txm);flex:1;text-align:left}
+.doc-upload-filename{font-size:.75rem;color:var(--txm);font-weight:500}
+.doc-photo-preview{
+  width:100%;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--border);
+  background:var(--bg);
+  display:none;position:relative;cursor:pointer;
+}
+.doc-photo-preview img{width:100%;height:auto;display:block;max-height:160px;object-fit:cover}
+.doc-photo-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:.2s;
+}
+.doc-photo-preview:hover .doc-photo-overlay{opacity:1}
+.doc-photo-overlay svg{color:#fff}
+.doc-photo-change{
+  position:absolute;top:8px;right:8px;
+  background:rgba(0,0,0,.5);border:none;border-radius:6px;
+  padding:4px 8px;font-size:.7rem;font-weight:700;color:#fff;
+  cursor:pointer;font-family:inherit;
+}
 </style>
 </head>
 <body>
@@ -1773,7 +1808,21 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">Titulaire</label><input class="fc" id="vdoc-cg-nom" placeholder="Nom du propriétaire"></div>
           <div class="fg"><label class="fl">Mise en circulation</label><input class="fc" id="vdoc-cg-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo carte grise</label><input class="fc" type="file" id="vdoc-cg-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-cg-preview" style="margin-top:4px"></div></div>
+        <div class="fg">
+          <label class="fl">Photo carte grise</label>
+          <div class="doc-upload-wrap">
+            <input type="file" id="vdoc-cg-photo" accept="image/*,application/pdf" style="display:none" onchange="vdocFileChange('vdoc-cg-photo')">
+            <button type="button" class="doc-upload-btn" onclick="document.getElementById('vdoc-cg-photo').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span class="doc-upload-label" id="vdoc-cg-photo-lbl">Choisir une photo ou un fichier</span>
+            </button>
+            <div class="doc-photo-preview" id="vdoc-cg-photo-preview" onclick="vdocPreviewClick('vdoc-cg-photo')">
+              <img id="vdoc-cg-photo-img" src="">
+              <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-cg-photo').click()">Changer</button>
+            </div>
+          </div>
+        </div>
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Assurance</div>
         <div class="fr">
           <div class="fg"><label class="fl">Compagnie</label><input class="fc" id="v-ac" placeholder="Maif, AXA…"></div>
@@ -1783,17 +1832,59 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div class="fg"><label class="fl">N° contrat</label><input class="fc" id="vdoc-as-num" placeholder="Numéro de contrat"></div>
           <div class="fg"><label class="fl">Date début</label><input class="fc" id="vdoc-as-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo assurance</label><input class="fc" type="file" id="vdoc-as-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-as-preview" style="margin-top:4px"></div></div>
+        <div class="fg">
+          <label class="fl">Photo assurance</label>
+          <div class="doc-upload-wrap">
+            <input type="file" id="vdoc-as-photo" accept="image/*,application/pdf" style="display:none" onchange="vdocFileChange('vdoc-as-photo')">
+            <button type="button" class="doc-upload-btn" onclick="document.getElementById('vdoc-as-photo').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span class="doc-upload-label" id="vdoc-as-photo-lbl">Choisir une photo ou un fichier</span>
+            </button>
+            <div class="doc-photo-preview" id="vdoc-as-photo-preview" onclick="vdocPreviewClick('vdoc-as-photo')">
+              <img id="vdoc-as-photo-img" src="">
+              <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-as-photo').click()">Changer</button>
+            </div>
+          </div>
+        </div>
         <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Contrôle technique</div>
         <div class="fr">
           <div class="fg"><label class="fl">Centre CT</label><input class="fc" id="vdoc-ct-nom" placeholder="Nom du centre"></div>
           <div class="fg"><label class="fl">Date du CT</label><input class="fc" id="vdoc-ct-emission" type="date"></div>
         </div>
-        <div class="fg"><label class="fl">Photo CT</label><input class="fc" type="file" id="vdoc-ct-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"><div id="vdoc-ct-preview" style="margin-top:4px"></div></div>
+        <div class="fg">
+          <label class="fl">Photo CT</label>
+          <div class="doc-upload-wrap">
+            <input type="file" id="vdoc-ct-photo" accept="image/*,application/pdf" style="display:none" onchange="vdocFileChange('vdoc-ct-photo')">
+            <button type="button" class="doc-upload-btn" onclick="document.getElementById('vdoc-ct-photo').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span class="doc-upload-label" id="vdoc-ct-photo-lbl">Choisir une photo ou un fichier</span>
+            </button>
+            <div class="doc-photo-preview" id="vdoc-ct-photo-preview" onclick="vdocPreviewClick('vdoc-ct-photo')">
+              <img id="vdoc-ct-photo-img" src="">
+              <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-ct-photo').click()">Changer</button>
+            </div>
+          </div>
+        </div>
         <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txm);margin:10px 0 6px">📎 Autre document</div>
         <div class="fr">
           <div class="fg"><label class="fl">Nom</label><input class="fc" id="vdoc-autre-nom" placeholder="Ex: Malus, Leasing…"></div>
-          <div class="fg"><label class="fl">Photo</label><input class="fc" type="file" id="vdoc-autre-photo" accept="image/*" capture="environment" style="font-size:.8rem;padding:6px 8px"></div>
+          <div class="fg">
+          <label class="fl">Photo / fichier</label>
+          <div class="doc-upload-wrap">
+            <input type="file" id="vdoc-autre-photo" accept="image/*,application/pdf" style="display:none" onchange="vdocFileChange('vdoc-autre-photo')">
+            <button type="button" class="doc-upload-btn" onclick="document.getElementById('vdoc-autre-photo').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span class="doc-upload-label" id="vdoc-autre-photo-lbl">Choisir une photo ou un fichier</span>
+            </button>
+            <div class="doc-photo-preview" id="vdoc-autre-photo-preview" onclick="vdocPreviewClick('vdoc-autre-photo')">
+              <img id="vdoc-autre-photo-img" src="">
+              <div class="doc-photo-overlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <button class="doc-photo-change" onclick="event.stopPropagation();document.getElementById('vdoc-autre-photo').click()">Changer</button>
+            </div>
+          </div>
+        </div>
         </div>
         </div><!-- /veh-doc-section -->
       </div>
@@ -6504,9 +6595,9 @@ async function openVeh(id){
     const cg=vdocs.find(d=>d.type==='Carte grise');
     const as2=vdocs.find(d=>d.type==='Assurance');
     const ct2=vdocs.find(d=>d.type==='Contrôle technique');
-    if(cg){if(g('vdoc-cg-nom'))g('vdoc-cg-nom').value=cg.nom||'';if(g('vdoc-cg-emission'))g('vdoc-cg-emission').value=cg.date_emission||'';}
-    if(as2){if(g('vdoc-as-num'))g('vdoc-as-num').value=as2.numero||'';if(g('vdoc-as-emission'))g('vdoc-as-emission').value=as2.date_emission||'';}
-    if(ct2){if(g('vdoc-ct-nom'))g('vdoc-ct-nom').value=ct2.nom||'';if(g('vdoc-ct-emission'))g('vdoc-ct-emission').value=ct2.date_emission||'';}
+    if(cg){if(g('vdoc-cg-nom'))g('vdoc-cg-nom').value=cg.nom||'';if(g('vdoc-cg-emission'))g('vdoc-cg-emission').value=cg.date_emission||'';if(cg.photo_url)vdocSetPreview('vdoc-cg-photo',cg.photo_url);}
+    if(as2){if(g('vdoc-as-num'))g('vdoc-as-num').value=as2.numero||'';if(g('vdoc-as-emission'))g('vdoc-as-emission').value=as2.date_emission||'';if(as2.photo_url)vdocSetPreview('vdoc-as-photo',as2.photo_url);}
+    if(ct2){if(g('vdoc-ct-nom'))g('vdoc-ct-nom').value=ct2.nom||'';if(g('vdoc-ct-emission'))g('vdoc-ct-emission').value=ct2.date_emission||'';if(ct2.photo_url)vdocSetPreview('vdoc-ct-photo',ct2.photo_url);}
     g('v-va').value=v.valeur_achat||'';g('v-vact').value=v.valeur_actuelle||'';
     g('v-as').value=v.assurance_echeance||'';g('v-ac').value=v.assurance_compagnie||'';
     g('v-cond').value=v.conducteur||'';g('v-stat').value=v.statut_vehicule||'disponible';
@@ -7035,6 +7126,54 @@ function closeTuto(){
 }
 
 
+
+
+/* ══ VDOC UPLOAD HELPERS ══ */
+function vdocFileChange(fieldId) {
+  const input = document.getElementById(fieldId);
+  const lbl = document.getElementById(fieldId + '-lbl');
+  const preview = document.getElementById(fieldId + '-preview');
+  const img = document.getElementById(fieldId + '-img');
+  
+  if (!input?.files?.length) return;
+  const file = input.files[0];
+  
+  // Afficher le nom du fichier
+  const name = file.name.length > 28 ? file.name.substring(0, 25) + '...' : file.name;
+  if (lbl) lbl.textContent = '✓ ' + name;
+  
+  // Preview si image
+  if (file.type.startsWith('image/') && preview && img) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  } else if (preview) {
+    // PDF — afficher icône
+    if (img) img.src = '';
+    preview.style.display = 'none';
+    if (lbl) lbl.style.color = 'var(--primary)';
+  }
+}
+
+function vdocPreviewClick(fieldId) {
+  const img = document.getElementById(fieldId + '-img');
+  if (img?.src) openLightbox(img.src);
+}
+
+function vdocSetPreview(fieldId, url) {
+  if (!url) return;
+  const preview = document.getElementById(fieldId + '-preview');
+  const img = document.getElementById(fieldId + '-img');
+  const lbl = document.getElementById(fieldId + '-lbl');
+  if (preview && img) {
+    img.src = url;
+    preview.style.display = 'block';
+    if (lbl) lbl.textContent = '✓ Photo enregistrée';
+  }
+}
 
 /* ══ PUSH NOTIF HELPER ══ */
 /* ══ PARRAINAGE ══ */
