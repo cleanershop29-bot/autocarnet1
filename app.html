@@ -7568,7 +7568,7 @@ async function checkAdminCode(){
     const r=await fetch('/.netlify/functions/set-premium',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:'check@autocarnet.fr',is_premium:null,code})
+      body:JSON.stringify({check_code_only:true,code})
     });
     if(r.status===200){
       g('admin-auth').classList.add('hidden');
