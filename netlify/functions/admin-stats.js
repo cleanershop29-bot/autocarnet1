@@ -72,6 +72,22 @@ exports.handler = async (event) => {
         created_at: u.created_at
       }));
 
+    // Action : liste des comptes premium
+    if (body.action === 'premium_users') {
+      const premiumUsers = users
+        .filter(u => u.user_metadata?.plan === 'famille' || u.user_metadata?.plan === 'pro')
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .map(u => ({
+          email: u.email,
+          plan: u.user_metadata?.plan || 'free',
+          created_at: u.created_at
+        }));
+      return {
+        statusCode: 200, headers,
+        body: JSON.stringify({ premium_users: premiumUsers })
+      };
+    }
+
     return {
       statusCode: 200, headers,
       body: JSON.stringify({
