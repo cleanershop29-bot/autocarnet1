@@ -7967,25 +7967,24 @@ async function adminBroadcastTargetSend(){
   const btn=g('admin-notif-target-btn');
   if(!title||!body){toast('Titre et message requis.','e');return;}
   if(!confirm(`Envoyer à tous les utilisateurs ${_adminBroadcastTarget==='free'?'gratuits':'premium'} ?`))return;
-  if(st)st.textContent='Envoi…';
+  if(st)st.textContent='Envoi en cours…';
   if(btn)btn.disabled=true;
   try{
-    const r=await fetch('/.netlify/functions/trigger-notifications',{
-      headers:{'Authorization':'Bearer '+g('admin-code').value}
-    });
-    // Fallback — utiliser broadcast classique avec filtre
-    const r2=await fetch(
-      '/.netlify/functions/trigger-notifications'
-      +'?target='+_adminBroadcastTarget
+    const url='/.netlify/functions/trigger-notifications'
+      +'?secret='+encodeURIComponent(g('admin-code').value)
+      +'&target='+_adminBroadcastTarget
       +'&title='+encodeURIComponent(title)
-      +'&body='+encodeURIComponent(body),
-      {headers:{'Authorization':'Bearer '+g('admin-code').value}}
-    );
-    const d=await r2.json();
-    if(st)st.innerHTML=d.sent!==undefined
-      ?'<span style="color:var(--ok)">✓ '+d.sent+' envoyées</span>'
-      :'<span style="color:var(--err)">Erreur</span>';
-  }catch(e){if(st)st.innerHTML='<span style="color:var(--err)">Erreur réseau.</span>';}
+      +'&body='+encodeURIComponent(body);
+    const r=await fetch(url);
+    const d=await r.json();
+    if(d.sent!==undefined){
+      if(st)st.innerHTML='<span style="color:var(--ok)">✓ '+d.sent+' notification'+(d.sent>1?'s':'')+' envoyée'+(d.sent>1?'s':''+(d.errors?' · '+d.errors+' erreur(s)':''))+'</span>';
+    } else {
+      if(st)st.innerHTML='<span style="color:var(--err)">Erreur : '+(d.error||JSON.stringify(d))+'</span>';
+    }
+  }catch(e){
+    if(st)st.innerHTML='<span style="color:var(--err)">Erreur réseau : '+e.message+'</span>';
+  }
   if(btn)btn.disabled=false;
 }
 
