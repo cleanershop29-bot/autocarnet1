@@ -154,10 +154,17 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 
 /* TOAST */
 #tc{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;width:92%;max-width:380px;align-items:center}
-.toast{padding:12px 18px;border-radius:50px;font-size:.86rem;font-weight:700;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,.22);animation:toast-pop .3s cubic-bezier(.34,1.56,.64,1);width:auto;max-width:340px;white-space:nowrap}
+.toast{padding:13px 16px 0;border-radius:16px;font-size:.86rem;font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);animation:toast-pop .3s cubic-bezier(.34,1.56,.64,1);width:auto;max-width:360px;white-space:nowrap;flex-direction:column;overflow:hidden;padding-bottom:0}
+.toast-body{display:flex;align-items:center;gap:10px;width:100%;padding-bottom:13px}
+.toast-action{background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:5px 10px;font-family:inherit;font-size:.75rem;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.toast-action:active{transform:scale(.95)}
+.toast-bar{width:100%;height:3px;background:rgba(255,255,255,.2);border-radius:0 0 3px 3px;overflow:hidden;margin-top:auto;flex-shrink:0}
+.toast-bar-fill{height:100%;background:rgba(255,255,255,.5);border-radius:3px;animation:toast-drain linear forwards}
+@keyframes toast-drain{from{width:100%}to{width:0%}}
 .toast.s{background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none}
 .toast.e{background:linear-gradient(135deg,#DC2626,#B91C1C);color:#fff;border:none}
 .toast.i{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none}
+.toast.w{background:linear-gradient(135deg,#D97706,#B45309);color:#fff;border:none}
 /* ══ SKELETON LOADER ══ */
 .skel{background:linear-gradient(90deg,#E8EFF9 25%,#D8E4F2 50%,#E8EFF9 75%);background-size:200% 100%;animation:skel-shimmer 1.4s ease infinite;border-radius:10px}
 @keyframes skel-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -1269,6 +1276,34 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   padding:4px 8px;font-size:.7rem;font-weight:700;color:#fff;
   cursor:pointer;font-family:inherit;
 }
+/* MICRO-ANIMATIONS RAPPELS */
+@keyframes rappel-done{
+  0%{transform:translateX(0);opacity:1}
+  20%{transform:translateX(-8px) scale(1.02)}
+  60%{transform:translateX(110%) scale(.95);opacity:.5}
+  100%{transform:translateX(110%);opacity:0;height:0;margin:0;padding:0}
+}
+.rappel-completing{
+  animation:rappel-done .5s cubic-bezier(.4,0,.2,1) forwards;
+  pointer-events:none;overflow:hidden;
+}
+@keyframes check-pop{
+  0%{transform:scale(0) rotate(-45deg);opacity:0}
+  60%{transform:scale(1.3) rotate(5deg);opacity:1}
+  100%{transform:scale(1) rotate(0deg);opacity:1}
+}
+.ri .ri-ico svg,.ri .ri-ico{transition:transform .2s}
+.ri:active .ri-ico{transform:scale(.88)}
+
+/* AMÉLIORATION PTR CONTAINER */
+#ptr-indicator{
+  display:none;text-align:center;padding:16px 0 12px;
+  background:linear-gradient(180deg,var(--bg) 60%,transparent);
+  transition:opacity .2s;
+}
+
+/* FAB PULSE sur toutes les vues */
+#fab.vis{animation:fabpop .35s cubic-bezier(.34,1.56,.64,1) both,fab-pulse 3s ease-in-out .35s infinite !important}
 </style>
 </head>
 <body>
@@ -1354,7 +1389,8 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   </div>
   <div class="content" id="main-content">
     <div id="ptr-indicator" style="display:none;text-align:center;padding:12px 0;font-size:.8rem;color:var(--txm);font-weight:600;transition:opacity .2s">
-      <svg id="ptr-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;transition:transform .3s"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Relâchez pour actualiser
+      <div id="ptr-logo" style="width:36px;height:36px;border-radius:10px;overflow:hidden;margin:0 auto 8px;box-shadow:0 4px 12px rgba(37,99,235,.25);transition:transform .3s"><img src="/icon192.png" style="width:100%;height:100%;object-fit:cover"></div>
+      <div id="ptr-text" style="font-size:.78rem;font-weight:700;color:var(--txm)">Tirez pour actualiser</div>
     </div>
     <div class="tab on" id="t-dash"><div id="d-ctn"></div></div>
     <div class="tab" id="t-vehs"><div id="vh-ctn"></div></div>
@@ -2634,21 +2670,26 @@ function catClass(cat){
   return map[cat]||'';
 }
 
-function toast(msg,type='i'){
-  const el=document.createElement('div');
-  el.className='toast '+type;
-  const icons={
-    s:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
-    e:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-    i:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+function toast(msg, type='i', action=null){
+  const dur = type==='e' ? 5000 : 3200;
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icons = {
+    s: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    e: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    i: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    w: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
   };
-  el.innerHTML=`<span style="flex-shrink:0">${icons[type]||icons.i}</span><span style="flex:1;line-height:1.4">${esc(msg)}</span>`;
+  const actionBtn = action ? `<button class="toast-action" onclick="(${action.fn})();this.closest('.toast').remove()">${action.label}</button>` : '';
+  el.innerHTML = `<div class="toast-body"><span style="flex-shrink:0">${icons[type]||icons.i}</span><span style="flex:1;line-height:1.4">${esc(msg)}</span>${actionBtn}</div><div class="toast-bar"><div class="toast-bar-fill" style="animation-duration:${dur}ms"></div></div>`;
   g('tc').appendChild(el);
-  // Haptique selon type
-  if(type==='s')vib([30,20,30]);
-  else if(type==='e')vib([80,40,80]);
+  if(type==='s') vib([30,20,30]);
+  else if(type==='e') vib([80,40,80]);
   else vib(20);
-  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(10px) scale(.95)';el.style.transition='opacity .3s, transform .3s';setTimeout(()=>el.remove(),300);},type==='e'?5000:3000);
+  const timer = setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(10px) scale(.95)'; el.style.transition='opacity .3s, transform .3s'; setTimeout(()=>el.remove(), 300); }, dur);
+  // Fermer au tap
+  el.addEventListener('click', ()=>{ clearTimeout(timer); el.style.opacity='0'; el.style.transition='opacity .2s'; setTimeout(()=>el.remove(),200); });
+  return el;
 }
 
 function showAuth(){g('ls').classList.add('hidden');g('auth-screen').classList.remove('hidden');g('app-screen').classList.add('hidden');}
@@ -6491,11 +6532,19 @@ function initSwipe(){
 }
 
 function riHTML(r){
-  return`<div class="ri ${r.sev}" onclick="${r.isCT?`openVeh('${r.v.id}')`:`openEnt('${r.e.id}')`}">
+  const action = r.isCT ? `openVeh('${r.v.id}')` : `openEnt('${r.e.id}')`;
+  return`<div class="ri ${r.sev}" onclick="riTap(this,'${r.v.id}',()=>${action})">
     <div class="ri-ico">${r.ti.ico}</div>
     <div class="ri-inf"><div class="ri-ti">${esc(r.ti.label)}</div><div class="ri-mt">${r.v.emoji||'🚗'} ${esc(r.v.marque)} ${esc(r.v.modele)}</div></div>
     <div class="rbadge ${r.sev}">${r.label}</div>
   </div>`;
+}
+
+function riTap(el, vid, fn){
+  el.style.transition='transform .12s cubic-bezier(.34,1.56,.64,1)';
+  el.style.transform='scale(.97)';
+  vib(20);
+  setTimeout(()=>{el.style.transform='scale(1)';fn();},120);
 }
 
 /* NAV - 5 onglets fixes, jamais de vue cachée */
@@ -6512,7 +6561,7 @@ function nav(view){
   const tabEl=g('t-'+view);
   if(tabEl){tabEl.classList.add('on');if(prevIdx!==-1&&nextIdx!==-1&&prevIdx!==nextIdx)tabEl.classList.add(dir);}
   const nbEl=g('nb-'+view); if(nbEl) nbEl.classList.add('on');
-  g('fab').classList.toggle('vis',['dash','flotte','rap','fam'].includes(view));
+  g('fab').classList.toggle('vis',['dash','flotte','rap','fam','vehs'].includes(view));
   // Pulse FAB si aucun entretien pour guider l'utilisateur
   setTimeout(()=>{
     const fab=g('fab');
@@ -8606,23 +8655,36 @@ function openKmChart(vid){
 }
 
 /* ══ BTN LOADING STATE ══ */
-function btnLoad(id,loading,label='Enregistrer'){
-  const b=g(id);if(!b)return;
+function btnLoad(id, loading, label='Enregistrer', success=false){
+  const b = g(id); if(!b) return;
   if(loading){
-    b.disabled=true;
-    b.dataset.orig=b.innerHTML;
-    b.dataset.wasLoading='1';
-    b.innerHTML=`<svg style="animation:spin .7s linear infinite" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Enregistrement…`;
+    b.disabled = true;
+    b.dataset.orig = b.innerHTML;
+    b.dataset.origBg = b.style.background||'';
+    b.dataset.wasLoading = '1';
+    b.innerHTML = `<svg style="animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Enregistrement…`;
   } else {
-    b.disabled=false;
-    b.innerHTML=b.dataset.orig||label;
-    // Animation de confirmation visuelle après chargement
-    if(b.dataset.wasLoading==='1'){
-      b.dataset.wasLoading='';
-      const origStyle=b.getAttribute('style')||'';
-      b.style.transition='transform .15s cubic-bezier(.34,1.56,.64,1)';
-      b.style.transform='scale(1.06)';
-      setTimeout(()=>{b.style.transform='scale(1)';setTimeout(()=>{b.style.transition='';},200);},120);
+    if(b.dataset.wasLoading === '1'){
+      b.dataset.wasLoading = '';
+      // Flash vert de succès
+      const origHTML = b.dataset.orig || label;
+      const origBg = b.dataset.origBg || '';
+      b.innerHTML = `<svg style="vertical-align:middle;margin-right:6px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Enregistré !`;
+      b.style.background = 'linear-gradient(135deg,#059669,#047857)';
+      b.style.transition = 'transform .2s cubic-bezier(.34,1.56,.64,1), background .3s';
+      b.style.transform = 'scale(1.04)';
+      setTimeout(()=>{
+        b.style.transform = 'scale(1)';
+        setTimeout(()=>{
+          b.innerHTML = origHTML;
+          b.style.background = origBg;
+          b.style.transition = '';
+          b.disabled = false;
+        }, 800);
+      }, 150);
+    } else {
+      b.disabled = false;
+      b.innerHTML = b.dataset.orig || label;
     }
   }
 }
@@ -8676,18 +8738,17 @@ function isModalOpen(){
 function initPullToRefresh(){
   const content=g('main-content');
   const indicator=g('ptr-indicator');
-  const icon=g('ptr-icon');
+  const logo=g('ptr-logo');
+  const text=g('ptr-text');
   if(!content||!indicator)return;
   let startY=0,pulling=false,triggered=false,hasScrolled=false;
-  const THRESHOLD=100;
+  const THRESHOLD=90;
 
   content.addEventListener('scroll',()=>{
-    if(content.scrollTop>5)hasScrolled=true;
-    else hasScrolled=false;
+    hasScrolled=content.scrollTop>5;
   },{passive:true});
 
   content.addEventListener('touchstart',e=>{
-    // Ne pas déclencher si un modal est ouvert
     if(isModalOpen())return;
     if(content.scrollTop===0&&!hasScrolled){
       startY=e.touches[0].clientY;
@@ -8699,12 +8760,19 @@ function initPullToRefresh(){
   content.addEventListener('touchmove',e=>{
     if(!pulling||isModalOpen())return;
     const dy=e.touches[0].clientY-startY;
-    if(dy<20){pulling=false;indicator.style.display='none';return;}
+    if(dy<10){return;}
     indicator.style.display='block';
     const pct=Math.min(dy/THRESHOLD,1);
-    indicator.style.opacity=pct;
-    icon.style.transform=`rotate(${pct*360}deg)`;
-    if(dy>=THRESHOLD&&!triggered){triggered=true;vib(30);}
+    indicator.style.opacity=String(pct);
+    // Logo qui tourne et grossit
+    if(logo){
+      logo.style.transform=`rotate(${pct*360}deg) scale(${0.7+pct*0.3})`;
+    }
+    if(text){
+      text.textContent=pct>=1?'✓ Relâchez pour actualiser':'Tirez pour actualiser';
+      text.style.color=pct>=1?'var(--primary)':'var(--txm)';
+    }
+    if(dy>=THRESHOLD&&!triggered){triggered=true;vib([20,10,20]);}
   },{passive:true});
 
   content.addEventListener('touchend',async()=>{
@@ -8712,12 +8780,19 @@ function initPullToRefresh(){
     pulling=false;
     if(triggered&&!isModalOpen()){
       indicator.style.opacity='1';
+      if(logo) logo.style.animation='spin .6s linear infinite';
+      if(text) text.textContent='Actualisation…';
       await loadAll();
       renderView();
+      if(logo) logo.style.animation='';
       toast('Données actualisées','s');
     }
     indicator.style.opacity='0';
-    setTimeout(()=>{indicator.style.display='none';},300);
+    setTimeout(()=>{
+      indicator.style.display='none';
+      if(logo){logo.style.transform='';logo.style.animation='';}
+      if(text) text.textContent='Tirez pour actualiser';
+    },300);
   });
 }
 
