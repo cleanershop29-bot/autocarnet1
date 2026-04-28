@@ -83,7 +83,20 @@ exports.handler = async (event) => {
   // Mode complet : scan de tous les rappels du jour
   const subsFilter = userId ? `user_id=eq.${userId}&select=*` : `select=*`;
   const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?${subsFilter}`, { headers: SB_HEADERS });
-  const subs = await subsRes.json();
+  let subs = await subsRes.json();
+
+  // Filtre target (free / premium) pour les broadcasts admin
+  const target = params.get('target');
+  if ((target === 'free' || target === 'premium') && !userId) {
+    const usersRes = await fetch(`${SB_URL}/auth/v1/admin/users?per_page=1000`, { headers: SB_HEADERS });
+    const usersData = await usersRes.json();
+    const premiumIds = new Set(
+      (usersData.users || [])
+        .filter(u => u.user_metadata?.plan === 'famille' || u.user_metadata?.plan === 'pro')
+        .map(u => u.id)
+    );
+    subs = subs.filter(s => target === 'premium' ? premiumIds.has(s.user_id) : !premiumIds.has(s.user_id));
+  }
   if (!Array.isArray(subs) || !subs.length) {
     return { statusCode: 200, headers, body: JSON.stringify({ message: 'Aucun abonné', subs: 0 }) };
   }
