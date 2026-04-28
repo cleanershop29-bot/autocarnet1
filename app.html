@@ -1269,6 +1269,31 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   padding:4px 8px;font-size:.7rem;font-weight:700;color:#fff;
   cursor:pointer;font-family:inherit;
 }
+/* ══ PANEL ADMIN REDESIGN ══ */
+.adm-tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--bg);border-radius:10px;padding:4px}
+.adm-tab{flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:inherit;font-size:.72rem;font-weight:700;color:var(--txm);background:none;cursor:pointer;transition:.15s;text-align:center}
+.adm-tab.on{background:#fff;color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.adm-pane{display:none}
+.adm-pane.on{display:block}
+.adm-section{border-top:1px solid var(--border);padding-top:12px;margin-top:10px}
+.adm-section-ttl{font-size:.7rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.adm-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.adm-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.adm-stat{background:#fff;border-radius:8px;padding:9px 10px;border:1px solid var(--border);text-align:center}
+.adm-stat-n{font-size:1.3rem;font-weight:900;color:var(--txt);line-height:1}
+.adm-stat-l{color:var(--txm);font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.adm-user-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.adm-user-row:last-child{border-bottom:none}
+.adm-user-email{flex:1;font-size:.76rem;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.adm-user-sub{font-size:.65rem;color:var(--txm);margin-top:1px}
+.adm-plan-badge{border-radius:20px;padding:2px 9px;font-size:.65rem;font-weight:800;flex-shrink:0;text-transform:uppercase}
+.adm-action-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:600;color:var(--txm);cursor:pointer;flex-shrink:0;font-family:inherit}
+.adm-action-btn:hover{border-color:var(--primary);color:var(--primary)}
+.adm-progress{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:6px 0}
+.adm-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#10B981,#059669)}
+.adm-search{display:flex;gap:6px;margin-bottom:8px}
+.adm-search input{flex:1}
+.adm-result{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:.78rem;margin-bottom:8px;min-height:0}
 </style>
 </head>
 <body>
@@ -1547,49 +1572,108 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         <button class="btn btn-p" style="width:100%" onclick="checkAdminCode()">Accéder</button>
       </div>
       <div id="admin-panel" class="hidden">
-        <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;font-size:.78rem;color:#92400E;margin-bottom:14px">⚠️ Panneau réservé à ladministrateur</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
-          <button class="btn btn-s btn-sm" onclick="adminLoadGlobalStats()">📊 Stats globales</button>
-          <button class="btn btn-s btn-sm" onclick="adminLoadPremiumUsers()">👑 Comptes Premium</button>
+        <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:8px 12px;font-size:.75rem;color:#92400E;margin-bottom:12px">⚠️ Panneau administrateur</div>
+
+        <!-- Onglets -->
+        <div class="adm-tabs">
+          <button class="adm-tab on" onclick="admTab('stats')">📊 Stats</button>
+          <button class="adm-tab" onclick="admTab('users')">👥 Utilisateurs</button>
+          <button class="adm-tab" onclick="admTab('notifs')">📢 Notifs</button>
+          <button class="adm-tab" onclick="admTab('parrain')">🤝 Parrain</button>
         </div>
-        <div id="admin-global-stats" style="margin-bottom:12px"></div>
-        <div id="admin-premium-users" style="margin-bottom:12px"></div>
-        <div class="fg"><label class="fl">Email utilisateur</label><input class="fc" id="admin-email" type="email" placeholder="utilisateur@email.com"></div>
-        <div id="admin-status" style="font-size:.78rem;margin-bottom:10px;min-height:20px;color:var(--txm)"></div>
-        <div style="display:flex;gap:6px;margin-bottom:6px">
-          <button class="btn btn-p btn-sm" style="flex:1;background:#10B981;border-color:#10B981" onclick="adminSetPlan('famille')">👨‍👩‍👧 Famille</button>
-          <button class="btn btn-p btn-sm" style="flex:1" onclick="adminSetPlan('pro')">🚀 Pro</button>
-          <button class="btn btn-d btn-sm" style="flex:1" onclick="adminSetPlan(null)">❌ Révoquer</button>
+
+        <!-- ONGLET STATS -->
+        <div class="adm-pane on" id="adm-pane-stats">
+          <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:8px" onclick="adminLoadGlobalStats()">🔄 Actualiser les stats</button>
+          <div id="admin-global-stats"></div>
         </div>
-        <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:8px" onclick="adminCheckUser()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Vérifier statut</button>
-        <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">
-          <div class="fg" style="margin-bottom:6px">
-            <label class="fl" style="font-size:.72rem">ID abonnement Stripe</label>
-            <input class="fc" id="admin-sub-id" placeholder="Ex: sub_1ABC..." style="font-size:.78rem">
+
+        <!-- ONGLET UTILISATEURS -->
+        <div class="adm-pane" id="adm-pane-users">
+          <!-- Recherche -->
+          <div class="adm-search">
+            <input class="fc" id="admin-email" type="email" placeholder="Email utilisateur" style="font-size:.82rem">
+            <button class="btn btn-s btn-sm" onclick="adminCheckUser()">🔍</button>
           </div>
-          <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Enregistrer l'ID abonnement</button>
+          <div id="admin-status" class="adm-result" style="display:none"></div>
+
+          <!-- Actions plan -->
+          <div style="display:flex;gap:5px;margin-bottom:8px">
+            <button class="btn btn-p btn-sm" style="flex:1;background:#10B981;border-color:#10B981;font-size:.72rem" onclick="adminSetPlan('famille')">👨‍👩‍👧 Famille</button>
+            <button class="btn btn-p btn-sm" style="flex:1;font-size:.72rem" onclick="adminSetPlan('pro')">🚀 Pro</button>
+            <button class="btn btn-d btn-sm" style="flex:1;font-size:.72rem" onclick="adminSetPlan(null)">❌ Révoquer</button>
+          </div>
+
+          <!-- Réinitialiser mot de passe -->
+          <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:6px" onclick="adminResetPassword()">
+            🔑 Réinitialiser le mot de passe
+          </button>
+
+          <!-- Supprimer compte -->
+          <button class="btn btn-d btn-sm" style="width:100%;margin-bottom:10px" onclick="adminDeleteUser()">
+            🗑️ Supprimer ce compte
+          </button>
+
+          <!-- ID abonnement -->
+          <div class="adm-section">
+            <div class="adm-section-ttl">ID abonnement Stripe</div>
+            <div class="fg" style="margin-bottom:6px">
+              <input class="fc" id="admin-sub-id" placeholder="sub_1ABC..." style="font-size:.78rem">
+            </div>
+            <button class="btn btn-s btn-sm" style="width:100%" onclick="adminSetSubId()">💾 Enregistrer</button>
+          </div>
+
+          <!-- Comptes premium -->
+          <div class="adm-section">
+            <div class="adm-section-ttl">Comptes Premium</div>
+            <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:6px" onclick="adminLoadPremiumUsers()">👑 Charger les comptes premium</button>
+            <div id="admin-premium-users"></div>
+          </div>
         </div>
-        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
-          <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🤝 Parrainage</div>
-          <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:6px" onclick="adminLoadReferralStats()">📊 Voir les stats parrainage</button>
-          <div id="admin-referral-stats" style="font-size:.75rem;color:var(--txm);min-height:0"></div>
-        </div>
-        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
-          <div style="font-size:.72rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">📢 Notification broadcast</div>
+
+        <!-- ONGLET NOTIFS -->
+        <div class="adm-pane" id="adm-pane-notifs">
+          <!-- Broadcast tous -->
+          <div class="adm-section-ttl">Envoyer à tous les abonnés</div>
           <div class="fg" style="margin-bottom:6px">
             <label class="fl" style="font-size:.72rem">Titre</label>
-            <input class="fc" id="admin-notif-title" placeholder="Ex : Nouvelle fonctionnalité !" style="font-size:.84rem">
+            <input class="fc" id="admin-notif-title" placeholder="Ex : Nouvelle fonctionnalité !" style="font-size:.82rem">
           </div>
-          <div class="fg" style="margin-bottom:10px">
+          <div class="fg" style="margin-bottom:8px">
             <label class="fl" style="font-size:.72rem">Message</label>
-            <input class="fc" id="admin-notif-body" placeholder="Ex : Découvrez le Jumeau numérique…" style="font-size:.84rem">
+            <input class="fc" id="admin-notif-body" placeholder="Ex : Découvrez le Jumeau…" style="font-size:.82rem">
           </div>
-          <div id="admin-notif-status" style="font-size:.75rem;min-height:18px;margin-bottom:8px;color:var(--txm)"></div>
-          <button class="btn btn-p btn-sm" style="width:100%" id="admin-notif-btn" onclick="adminBroadcast()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-            Envoyer à tous les abonnés
+          <div id="admin-notif-status" style="font-size:.74rem;min-height:16px;margin-bottom:6px;color:var(--txm)"></div>
+          <button class="btn btn-p btn-sm" style="width:100%;margin-bottom:12px" id="admin-notif-btn" onclick="adminBroadcast()">
+            📢 Envoyer à tous les abonnés
           </button>
+
+          <!-- Broadcast ciblé -->
+          <div class="adm-section">
+            <div class="adm-section-ttl">Notification ciblée</div>
+            <div style="display:flex;gap:5px;margin-bottom:6px">
+              <button class="btn btn-s btn-sm" style="flex:1;font-size:.7rem" onclick="adminBroadcastTarget('free')">🆓 Free uniquement</button>
+              <button class="btn btn-s btn-sm" style="flex:1;font-size:.7rem" onclick="adminBroadcastTarget('premium')">👑 Premium uniquement</button>
+            </div>
+            <div class="fg" style="margin-bottom:6px">
+              <input class="fc" id="admin-notif-title-target" placeholder="Titre" style="font-size:.82rem">
+            </div>
+            <div class="fg" style="margin-bottom:8px">
+              <input class="fc" id="admin-notif-body-target" placeholder="Message" style="font-size:.82rem">
+            </div>
+            <div id="admin-notif-target-status" style="font-size:.74rem;min-height:16px;margin-bottom:6px;color:var(--txm)"></div>
+            <button class="btn btn-s btn-sm" style="width:100%" id="admin-notif-target-btn" onclick="adminBroadcastTargetSend()">
+              🎯 Envoyer au groupe sélectionné
+            </button>
+          </div>
         </div>
+
+        <!-- ONGLET PARRAINAGE -->
+        <div class="adm-pane" id="adm-pane-parrain">
+          <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:8px" onclick="adminLoadReferralStats()">🔄 Charger les stats</button>
+          <div id="admin-referral-stats"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -7820,9 +7904,94 @@ async function adminLoadGlobalStats(){
   }
 }
 
+
+/* ══ PANEL ADMIN v2 ══ */
+
+function admTab(tab){
+  document.querySelectorAll('.adm-tab').forEach((t,i)=>{
+    const tabs=['stats','users','notifs','parrain'];
+    t.classList.toggle('on', tabs[i]===tab);
+  });
+  document.querySelectorAll('.adm-pane').forEach(p=>p.classList.remove('on'));
+  const pane=document.getElementById('adm-pane-'+tab);
+  if(pane) pane.classList.add('on');
+}
+
+async function adminResetPassword(){
+  const email=g('admin-email').value.trim().toLowerCase();
+  if(!email)return toast('Entrez un email.','e');
+  const st=g('admin-status');
+  st.style.display='block';st.textContent='Envoi du lien…';
+  try{
+    const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://autocarnet.fr/app.html'});
+    if(error){st.innerHTML='<span style="color:var(--err)">❌ '+error.message+'</span>';return;}
+    st.innerHTML='<span style="color:var(--ok)">✅ Email de réinitialisation envoyé.</span>';
+    toast('Email envoyé à '+email,'s');
+  }catch(e){st.innerHTML='<span style="color:var(--err)">❌ Erreur réseau.</span>';}
+}
+
+async function adminDeleteUser(){
+  const email=g('admin-email').value.trim().toLowerCase();
+  if(!email)return toast('Entrez un email.','e');
+  if(!confirm('⚠️ Supprimer définitivement le compte '+email+' et toutes ses données ?'))return;
+  const st=g('admin-status');
+  st.style.display='block';st.textContent='Suppression…';
+  try{
+    const r=await fetch('/.netlify/functions/delete-account',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+g('admin-code').value},
+      body:JSON.stringify({admin_email:email,admin_code:g('admin-code').value})
+    });
+    const d=await r.json();
+    if(!r.ok){st.innerHTML='<span style="color:var(--err)">❌ '+(d.error||'Erreur')+'</span>';return;}
+    st.innerHTML='<span style="color:var(--ok)">✅ Compte supprimé.</span>';
+    toast('Compte supprimé.','s');
+    g('admin-email').value='';
+  }catch(e){st.innerHTML='<span style="color:var(--err)">❌ Erreur réseau.</span>';}
+}
+
+let _adminBroadcastTarget='free';
+function adminBroadcastTarget(target){
+  _adminBroadcastTarget=target;
+  document.querySelectorAll('[onclick^="adminBroadcastTarget"]').forEach(b=>{
+    b.style.background=b.onclick.toString().includes(target)?'var(--primary)':'';
+    b.style.color=b.onclick.toString().includes(target)?'#fff':'';
+    b.style.borderColor=b.onclick.toString().includes(target)?'var(--primary)':'';
+  });
+}
+
+async function adminBroadcastTargetSend(){
+  const title=g('admin-notif-title-target')?.value.trim();
+  const body=g('admin-notif-body-target')?.value.trim();
+  const st=g('admin-notif-target-status');
+  const btn=g('admin-notif-target-btn');
+  if(!title||!body){toast('Titre et message requis.','e');return;}
+  if(!confirm(`Envoyer à tous les utilisateurs ${_adminBroadcastTarget==='free'?'gratuits':'premium'} ?`))return;
+  if(st)st.textContent='Envoi…';
+  if(btn)btn.disabled=true;
+  try{
+    const r=await fetch('/.netlify/functions/trigger-notifications',{
+      headers:{'Authorization':'Bearer '+g('admin-code').value}
+    });
+    // Fallback — utiliser broadcast classique avec filtre
+    const r2=await fetch(
+      '/.netlify/functions/trigger-notifications'
+      +'?target='+_adminBroadcastTarget
+      +'&title='+encodeURIComponent(title)
+      +'&body='+encodeURIComponent(body),
+      {headers:{'Authorization':'Bearer '+g('admin-code').value}}
+    );
+    const d=await r2.json();
+    if(st)st.innerHTML=d.sent!==undefined
+      ?'<span style="color:var(--ok)">✓ '+d.sent+' envoyées</span>'
+      :'<span style="color:var(--err)">Erreur</span>';
+  }catch(e){if(st)st.innerHTML='<span style="color:var(--err)">Erreur réseau.</span>';}
+  if(btn)btn.disabled=false;
+}
+
 async function adminCallFunction(email, is_premium){
   const st = g("admin-status");
-  st.textContent = "En cours...";
+  st.style.display="block";st.textContent = "En cours...";
   try{
     const r = await fetch('/.netlify/functions/set-premium', {
       method: 'POST',
@@ -7916,7 +8085,7 @@ async function adminCheckUser(){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
   const st = g("admin-status");
-  st.textContent = "Recherche...";
+  st.style.display="block";st.textContent = "Recherche...";
   try{
     const r = await fetch('/.netlify/functions/set-premium', {
       method: 'POST',
@@ -7924,12 +8093,13 @@ async function adminCheckUser(){
       body: JSON.stringify({email, is_premium: null, code: g('admin-code').value})
     });
     const d = await r.json();
-    if(r.status === 404){st.innerHTML='<span style=color:var(--err)>❌ Utilisateur introuvable.</span>';return;}
-    if(!r.ok){st.innerHTML='<span style=color:var(--err)>❌ '+d.error+'</span>';return;}
-    const planInfo = d.plan==='pro'?'🚀 Pro':d.plan==='famille'?'👨‍👩‍👧 Famille':d.is_premium?'⭐ Premium (ancien)':'';
+    if(r.status === 404){st.style.display='block';st.innerHTML='<span style="color:var(--err)">❌ Utilisateur introuvable.</span>';return;}
+    if(!r.ok){st.style.display='block';st.innerHTML='<span style="color:var(--err)">❌ '+d.error+'</span>';return;}
+    const planInfo = d.plan==='pro'?'🚀 Pro':d.plan==='famille'?'👨‍👩‍👧 Famille':d.is_premium?'⭐ Premium':'';
+    st.style.display='block';
     st.innerHTML = planInfo
-      ? '<span style=color:var(--ok)>✅ '+planInfo+'</span>'
-      : '<span style=color:var(--txm)>⭕ Compte gratuit</span>';
+      ? '<span style="color:var(--ok)">✅ '+planInfo+'</span>'
+      : '<span style="color:var(--txm)">⭕ Compte gratuit</span>';
   }catch(e){st.innerHTML='<span style=color:var(--err)>❌ Erreur réseau.</span>';}
 }
 async function adminSetPremium(val){
@@ -7944,7 +8114,7 @@ async function adminSetPlan(plan){
   const email = g("admin-email").value.trim().toLowerCase();
   if(!email) return toast("Entrez un email.","e");
   const st = g("admin-status");
-  st.textContent = "En cours...";
+  st.style.display="block";st.textContent = "En cours...";
   try{
     const r = await fetch('/.netlify/functions/set-premium', {
       method: 'POST',
