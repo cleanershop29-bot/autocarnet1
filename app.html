@@ -1288,6 +1288,16 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 .notif-banner-title{font-size:.85rem;font-weight:800;color:#1E40AF;margin-bottom:2px}
 .notif-banner-sub{font-size:.75rem;color:#3B82F6;line-height:1.4}
 .notif-banner-arrow{color:#93C5FD;font-size:1.1rem;flex-shrink:0}
+/* ══ PANEL ADMIN TABS ══ */
+.adm-tabs{display:flex;gap:0;margin-bottom:16px;background:var(--bg);border-radius:10px;padding:3px;border:1px solid var(--border)}
+.adm-tab{flex:1;padding:9px 4px;border:none;border-radius:8px;font-family:inherit;font-size:.72rem;font-weight:700;color:var(--txm);background:none;cursor:pointer;transition:.15s;text-align:center;line-height:1.2}
+.adm-tab.on{background:#fff;color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.adm-tab:hover:not(.on){background:rgba(0,0,0,.04)}
+.adm-pane{display:none}
+.adm-pane.on{display:block}
+.adm-section{border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
+.adm-section-ttl{font-size:.7rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.adm-search{display:flex;gap:6px;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -1569,10 +1579,10 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
         <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:8px 12px;font-size:.75rem;color:#92400E;margin-bottom:12px">⚠️ Panneau administrateur</div>
 
         <div class="adm-tabs">
-          <button class="adm-tab on" onclick="admTab('stats')">📊 Stats</button>
-          <button class="adm-tab" onclick="admTab('users')">👥 Utilisateurs</button>
-          <button class="adm-tab" onclick="admTab('notifs')">📢 Notifs</button>
-          <button class="adm-tab" onclick="admTab('parrain')">🤝 Parrain</button>
+          <button class="adm-tab  on" data-tab="stats" onclick="admTab('stats')">📊 Stats</button>
+          <button class="adm-tab" data-tab="users" onclick="admTab('users')">👥 Utilisateurs</button>
+          <button class="adm-tab" data-tab="notifs" onclick="admTab('notifs')">📢 Notifs</button>
+          <button class="adm-tab" data-tab="parrain" onclick="admTab('parrain')">🤝 Parrain</button>
         </div>
 
         <!-- STATS -->
@@ -7889,11 +7899,11 @@ async function adminLoadGlobalStats(){
 
 /* ══ ADMIN PANEL v2 — FONCTIONS ══ */
 function admTab(tab){
-  document.querySelectorAll('.adm-tab').forEach((t,i)=>{
-    const tabs=['stats','users','notifs','parrain'];
-    t.classList.toggle('on',tabs[i]===tab);
+  // Utiliser data-tab pour éviter les conflits avec d'autres .adm-tab
+  document.querySelectorAll('#admin-panel .adm-tab').forEach(t=>{
+    t.classList.toggle('on', t.dataset.tab===tab);
   });
-  document.querySelectorAll('.adm-pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#admin-panel .adm-pane').forEach(p=>p.classList.remove('on'));
   const pane=document.getElementById('adm-pane-'+tab);
   if(pane)pane.classList.add('on');
 }
