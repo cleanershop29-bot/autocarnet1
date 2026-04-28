@@ -1269,6 +1269,19 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
   padding:4px 8px;font-size:.7rem;font-weight:700;color:#fff;
   cursor:pointer;font-family:inherit;
 }
+/* SCORE SANTÉ VÉHICULE */
+.vc-health{position:relative;width:52px;height:52px;flex-shrink:0}
+.vc-health svg{transform:rotate(-90deg)}
+.vc-health-track{fill:none;stroke:var(--border);stroke-width:4}
+.vc-health-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+.vc-health-score{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-size:.6rem;font-weight:900;
+  line-height:1;color:var(--txt);
+}
+.vc-health-score span{font-size:.45rem;font-weight:600;color:var(--txm);margin-top:1px}
 </style>
 </head>
 <body>
@@ -4338,9 +4351,10 @@ function vcDashHTML(v){
   const stColors={ok:'var(--ok)',warn:'var(--warn)',danger:'var(--err)'};
   const lastVidange=es.find(e=>['vidange','filtre_huile','revision'].includes(e.type));
   const totalCost=es.reduce((s,e)=>s+(e.cout||0),0);
+  const healthScore = getHealthScore(v, es);
   return`<div class="vc ${st}" style="cursor:pointer" onclick="openVehDetail('${v.id}')">
     <div class="vc-main">
-      <div style="width:36px;height:36px;border-radius:8px;background:${vehCardColor(v)};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></div>
+      ${healthRingHTML(healthScore)}
       <div class="vc-info">
         <div class="vc-name">${esc(v.marque)} ${esc(v.modele)}</div>
         <div class="vc-sub"><span class="vc-km">${fmtKm(v.km_actuel)}</span>
@@ -4354,6 +4368,61 @@ function vcDashHTML(v){
       </div>
       <span style="color:var(--txl);font-size:.9rem">›</span>
     </div>
+  </div>`;
+}
+
+
+/* ══ SCORE SANTÉ VÉHICULE ══ */
+function getHealthScore(v, es) {
+  // Si le Jumeau est chargé pour ce véhicule, utiliser son score (cohérence)
+  if (JU && JU.vid === v.id && JU.data && Object.keys(JU.data).length > 0) {
+    const s = jumeauScore();
+    if (s && s.val > 0) return s.val;
+  }
+
+  // Fallback : calcul simplifié basé sur les rappels
+  let score = 100;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const rappels = getRappels().filter(r => r.vid === v.id);
+  const danger = rappels.filter(r => r.sev === 'danger').length;
+  const warn   = rappels.filter(r => r.sev === 'warn').length;
+  score -= danger * 20;
+  score -= warn   * 8;
+  if (!es.length) score -= 15;
+  const lastEnt = es[0];
+  if (lastEnt) {
+    const monthsAgo = (today - new Date(lastEnt.date)) / (1000 * 60 * 60 * 24 * 30);
+    if (monthsAgo > 24) score -= 20;
+    else if (monthsAgo > 12) score -= 10;
+  }
+  if (v.ct_date) {
+    const ctDiff = Math.ceil((new Date(v.ct_date) - today) / 86400000);
+    if (ctDiff < 0) score -= 20;
+    else if (ctDiff < 60) score -= 8;
+  }
+  const rcLate = S.rappels_custom.filter(r =>
+    r.vehicle_id === v.id && r.statut === 'actif' && r.date_rappel &&
+    Math.ceil((new Date(r.date_rappel) - today) / 86400000) < 0
+  ).length;
+  score -= rcLate * 10;
+  return Math.max(0, Math.min(100, score));
+}
+
+function healthRingHTML(score) {
+  const r = 22;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (score / 100) * circ;
+  const color = score >= 75 ? '#10B981' : score >= 45 ? '#F59E0B' : '#EF4444';
+  const label = score >= 75 ? 'Bon état' : score >= 45 ? 'À surveiller' : 'Attention';
+  return `<div class="vc-health" title="${label} — Score Jumeau Numérique">
+    <svg width="52" height="52" viewBox="0 0 52 52">
+      <circle class="vc-health-track" cx="26" cy="26" r="${r}"/>
+      <circle class="vc-health-fill" cx="26" cy="26" r="${r}"
+        stroke="${color}"
+        stroke-dasharray="${circ.toFixed(1)}"
+        stroke-dashoffset="${offset.toFixed(1)}"/>
+    </svg>
+    <div class="vc-health-score" style="color:${color}">${score}<span>/ 100</span></div>
   </div>`;
 }
 
