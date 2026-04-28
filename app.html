@@ -1548,8 +1548,12 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       </div>
       <div id="admin-panel" class="hidden">
         <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;font-size:.78rem;color:#92400E;margin-bottom:14px">⚠️ Panneau réservé à ladministrateur</div>
-        <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:12px" onclick="adminLoadGlobalStats()">📊 Stats globales</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+          <button class="btn btn-s btn-sm" onclick="adminLoadGlobalStats()">📊 Stats globales</button>
+          <button class="btn btn-s btn-sm" onclick="adminLoadPremiumUsers()">👑 Comptes Premium</button>
+        </div>
         <div id="admin-global-stats" style="margin-bottom:12px"></div>
+        <div id="admin-premium-users" style="margin-bottom:12px"></div>
         <div class="fg"><label class="fl">Email utilisateur</label><input class="fc" id="admin-email" type="email" placeholder="utilisateur@email.com"></div>
         <div id="admin-status" style="font-size:.78rem;margin-bottom:10px;min-height:20px;color:var(--txm)"></div>
         <div style="display:flex;gap:6px;margin-bottom:6px">
@@ -7682,6 +7686,49 @@ function showUpgradeModal(msg){
   mo.appendChild(box);
   mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
   document.body.appendChild(mo);
+}
+
+
+async function adminLoadPremiumUsers(){
+  const el = document.getElementById('admin-premium-users');
+  if(!el) return;
+  const code = document.getElementById('admin-code')?.value || '';
+  el.innerHTML = '<div style="text-align:center;padding:12px;color:var(--txm);font-size:.8rem">Chargement...</div>';
+  try {
+    const r = await fetch('/.netlify/functions/admin-stats', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ code, action: 'premium_users' })
+    });
+    const d = await r.json();
+    if (!r.ok) { el.innerHTML = `<div style="color:#E24B4A;font-size:.78rem">${d.error||'Erreur'}</div>`; return; }
+
+    const users = d.premium_users || [];
+    if (!users.length) { el.innerHTML = '<div style="font-size:.78rem;color:var(--txm);padding:8px">Aucun compte premium.</div>'; return; }
+
+    const date = (s) => s ? new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '?';
+    const planColor = (p) => p==='pro'?'#3B82F6':p==='famille'?'#10B981':'#94A3B8';
+    const planBg = (p) => p==='pro'?'#EFF6FF':p==='famille'?'#F0FDF4':'var(--bg)';
+
+    el.innerHTML = `
+    <div style="background:var(--bg);border-radius:12px;padding:12px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-weight:800;color:var(--txt);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em">👑 ${users.length} comptes Premium</div>
+        <div style="font-size:.7rem;color:var(--txm)">${users.filter(u=>u.plan==='famille').length} Famille · ${users.filter(u=>u.plan==='pro').length} Pro</div>
+      </div>
+      ${users.map(u => `
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.78rem;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.email}</div>
+            <div style="font-size:.68rem;color:var(--txm);margin-top:1px">Inscrit le ${date(u.created_at)}</div>
+          </div>
+          <div style="background:${planBg(u.plan)};color:${planColor(u.plan)};border-radius:20px;padding:3px 10px;font-size:.68rem;font-weight:800;flex-shrink:0;text-transform:uppercase">${u.plan}</div>
+          <button onclick="g('admin-email').value='${u.email}';adminCheckUser()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:600;color:var(--txm);cursor:pointer;flex-shrink:0">Gérer</button>
+        </div>`).join('')}
+    </div>`;
+  } catch(e) {
+    el.innerHTML = `<div style="color:#E24B4A;font-size:.78rem">Erreur réseau</div>`;
+  }
 }
 
 async function adminLoadGlobalStats(){
