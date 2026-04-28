@@ -38,12 +38,24 @@ exports.handler = async (event) => {
   const title  = params.get('title')   || null;
   const body   = params.get('body')    || null;
 
-  // Mode broadcast : title + body sans user_id → envoyer à tous les abonnés
+  // Mode broadcast : title + body sans user_id → envoyer à tous ou à un groupe ciblé
   if (!userId && title && body) {
-    const subsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=*`, { headers: SB_HEADERS });
-    const subs = await subsRes.json();
+    const target = params.get('target'); // 'free' | 'premium' | null = tous
+    const allSubsRes = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=*`, { headers: SB_HEADERS });
+    let subs = await allSubsRes.json();
     if (!Array.isArray(subs) || !subs.length) {
       return { statusCode: 200, headers, body: JSON.stringify({ sent: 0, message: 'Aucun abonné' }) };
+    }
+    // Filtrer par plan si target spécifié
+    if (target === 'free' || target === 'premium') {
+      const usersRes = await fetch(`${SB_URL}/auth/v1/admin/users?per_page=1000`, { headers: SB_HEADERS });
+      const usersData = await usersRes.json();
+      const premiumIds = new Set(
+        (usersData.users || [])
+          .filter(u => u.user_metadata?.plan === 'famille' || u.user_metadata?.plan === 'pro')
+          .map(u => u.id)
+      );
+      subs = subs.filter(s => target === 'premium' ? premiumIds.has(s.user_id) : !premiumIds.has(s.user_id));
     }
     let sent = 0, errors = 0, expired = 0;
     for (const sub of subs) {
@@ -60,7 +72,7 @@ exports.handler = async (event) => {
         }
       }
     }
-    return { statusCode: 200, headers, body: JSON.stringify({ sent, errors, expired }) };
+    return { statusCode: 200, headers, body: JSON.stringify({ sent, errors, expired, target: target||'all' }) };
   }
 
   // Mode instantané : title + body + user_id fournis directement
