@@ -1548,6 +1548,8 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
       </div>
       <div id="admin-panel" class="hidden">
         <div style="background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;font-size:.78rem;color:#92400E;margin-bottom:14px">⚠️ Panneau réservé à ladministrateur</div>
+        <button class="btn btn-s btn-sm" style="width:100%;margin-bottom:12px" onclick="adminLoadGlobalStats()">📊 Stats globales</button>
+        <div id="admin-global-stats" style="margin-bottom:12px"></div>
         <div class="fg"><label class="fl">Email utilisateur</label><input class="fc" id="admin-email" type="email" placeholder="utilisateur@email.com"></div>
         <div id="admin-status" style="font-size:.78rem;margin-bottom:10px;min-height:20px;color:var(--txm)"></div>
         <div style="display:flex;gap:6px;margin-bottom:6px">
@@ -7681,6 +7683,96 @@ function showUpgradeModal(msg){
   mo.addEventListener('click',e=>{if(e.target===mo)mo.remove();});
   document.body.appendChild(mo);
 }
+
+async function adminLoadGlobalStats(){
+  const el = document.getElementById('admin-global-stats');
+  if(!el) return;
+  const code = document.getElementById('admin-code')?.value || '';
+  el.innerHTML = '<div style="text-align:center;padding:12px;color:var(--txm);font-size:.8rem">Chargement...</div>';
+  try {
+    const r = await fetch('/.netlify/functions/admin-stats', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ code })
+    });
+    const d = await r.json();
+    if (!r.ok) { el.innerHTML = `<div style="color:#E24B4A;font-size:.78rem">${d.error||'Erreur'}</div>`; return; }
+    
+    const fmt = (n) => n?.toLocaleString('fr-FR') || '0';
+    const date = (s) => s ? new Date(s).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'}) : '?';
+    
+    el.innerHTML = `
+    <div style="background:var(--bg);border-radius:12px;padding:12px;border:1px solid var(--border);font-size:.78rem">
+      <div style="font-weight:800;color:var(--txt);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📊 Stats globales</div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+        <div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--border)">
+          <div style="font-size:1.3rem;font-weight:900;color:var(--txt)">${fmt(d.users.total)}</div>
+          <div style="color:var(--txm);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em">Utilisateurs</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--border)">
+          <div style="font-size:1.3rem;font-weight:900;color:#10B981">${fmt(d.premium.total)}</div>
+          <div style="color:var(--txm);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em">Premium</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--border)">
+          <div style="font-size:1.3rem;font-weight:900;color:#3B82F6">+${fmt(d.users.new_month)}</div>
+          <div style="color:var(--txm);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em">Ce mois</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--border)">
+          <div style="font-size:1.3rem;font-weight:900;color:#F59E0B">${d.premium.mrr}€</div>
+          <div style="color:var(--txm);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em">MRR estimé</div>
+        </div>
+      </div>
+      
+      <div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--border);margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="color:var(--txm)">Conversion free→premium</span>
+          <span style="font-weight:700;color:var(--txt)">${d.premium.conversion}%</span>
+        </div>
+        <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${d.premium.conversion}%;background:linear-gradient(90deg,#10B981,#059669);border-radius:3px;max-width:100%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.7rem;color:var(--txm)">
+          <span>👨‍👩‍👧 Famille: ${d.premium.famille}</span>
+          <span>🚀 Pro: ${d.premium.pro}</span>
+          <span>+${d.users.new_week} cette semaine</span>
+        </div>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px">
+        <div style="text-align:center;background:#fff;border-radius:8px;padding:8px 4px;border:1px solid var(--border)">
+          <div style="font-weight:800;color:var(--txt)">${fmt(d.data.vehicles)}</div>
+          <div style="font-size:.65rem;color:var(--txm)">Véhicules</div>
+        </div>
+        <div style="text-align:center;background:#fff;border-radius:8px;padding:8px 4px;border:1px solid var(--border)">
+          <div style="font-weight:800;color:var(--txt)">${fmt(d.data.entretiens)}</div>
+          <div style="font-size:.65rem;color:var(--txm)">Entretiens</div>
+        </div>
+        <div style="text-align:center;background:#fff;border-radius:8px;padding:8px 4px;border:1px solid var(--border)">
+          <div style="font-weight:800;color:var(--txt)">${fmt(d.data.documents)}</div>
+          <div style="font-size:.65rem;color:var(--txm)">Documents</div>
+        </div>
+        <div style="text-align:center;background:#fff;border-radius:8px;padding:8px 4px;border:1px solid var(--border)">
+          <div style="font-weight:800;color:var(--txt)">${fmt(d.data.rappels)}</div>
+          <div style="font-size:.65rem;color:var(--txm)">Rappels</div>
+        </div>
+      </div>
+      
+      <div style="font-weight:700;color:var(--txm);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Derniers inscrits</div>
+      ${(d.last_users||[]).map(u => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="color:var(--txt);font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%">${u.email}</span>
+          <span style="background:${u.plan==='pro'?'#EFF6FF':u.plan==='famille'?'#F0FDF4':'var(--bg)'};color:${u.plan==='pro'?'#3B82F6':u.plan==='famille'?'#10B981':'var(--txm)'};border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:700;flex-shrink:0">${u.plan==='free'?'Gratuit':u.plan}</span>
+          <span style="color:var(--txm);font-size:.7rem;flex-shrink:0">${date(u.created_at)}</span>
+        </div>`).join('')}
+      
+      <div style="color:var(--txm);font-size:.65rem;text-align:right;margin-top:6px">Mis à jour ${new Date(d.generated_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`;
+  } catch(e) {
+    el.innerHTML = `<div style="color:#E24B4A;font-size:.78rem">Erreur réseau</div>`;
+  }
+}
+
 async function adminCallFunction(email, is_premium){
   const st = g("admin-status");
   st.textContent = "En cours...";
