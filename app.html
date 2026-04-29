@@ -7016,7 +7016,7 @@ function renderProfil(){
       <div style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0;box-shadow:0 0 0 3px rgba(16,185,129,.2)"></div>
     </div>
     ${S.user?.user_metadata?.stripe_subscription_id?`
-    <a href="https://billing.stripe.com/p/login/5kQfZjc6Ma1F3dI3sz8Zq00" target="_blank" onclick="${isTWA?`event.preventDefault();if(confirm('Vous allez être redirigé vers autocarnet.fr pour gérer votre abonnement.'))window.open('https://billing.stripe.com/p/login/5kQfZjc6Ma1F3dI3sz8Zq00','_blank');`:''}" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:${planBg};border:1px solid ${planBorder};border-radius:10px;text-decoration:none;font-size:.78rem;font-weight:700;color:${planColor}">
+    <a href="https://billing.stripe.com/p/login/5kQfZjc6Ma1F3dI3sz8Zq00" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:${planBg};border:1px solid ${planBorder};border-radius:10px;text-decoration:none;font-size:.78rem;font-weight:700;color:${planColor}">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Gérer mon abonnement
     </a>`:''}
@@ -8764,6 +8764,11 @@ async function saveMultiEnt(){
   if(!vid)return toast('Sélectionnez un véhicule.','e');
   if(!dt)return toast('Saisissez une date.','e');
   if(!types.length)return toast('Cochez au moins une intervention.','e');
+
+  // Vérification plan pour la photo
+  if(_multiGlobalPhoto&&getUserPlan()==='free'){
+    return showUpgradeModal('Les photos de factures sont disponibles avec les plans Famille et Pro.');
+  }
 
   const btn=g('multi-save-btn');
   btn.disabled=true;
