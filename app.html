@@ -2190,6 +2190,47 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 
 
 
+<!-- MODAL IMPORT CSV -->
+<div class="mo" id="mo-import-csv" onclick="if(event.target===this)cm('import-csv')">
+  <div class="modal">
+    <div class="mhdr">
+      <div class="mtit" style="display:flex;align-items:center;gap:7px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Importer des entretiens
+      </div>
+      <button class="mcls" onclick="cm('import-csv')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbdy">
+      <div style="background:var(--primary-lt);border:1px solid #BFDBFE;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.8rem;color:#1E40AF;line-height:1.6">
+        <strong>Format CSV attendu :</strong><br>
+        <code style="font-size:.72rem;background:rgba(37,99,235,.08);padding:2px 5px;border-radius:4px">date,type,km,garage,cout,note</code><br>
+        <span style="color:#3B82F6">Ex : 2024-03-15,Vidange,45000,Garage Dupont,89.50,Huile 5W30</span>
+      </div>
+      <div class="fg">
+        <label class="fl">Véhicule de destination *</label>
+        <select class="fc" id="import-vid"></select>
+      </div>
+      <div class="fg">
+        <label class="fl">Fichier CSV</label>
+        <input type="file" id="import-file" accept=".csv,text/csv" style="width:100%;padding:10px;border:2px dashed rgba(184,196,216,.8);border-radius:10px;font-family:inherit;font-size:.85rem;cursor:pointer;background:#F8FAFC" onchange="previewImportCSV(this)">
+      </div>
+      <div id="import-preview" style="display:none">
+        <div style="font-size:.75rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px" id="import-preview-count"></div>
+        <div style="max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:10px" id="import-preview-list"></div>
+        <div id="import-errors" style="display:none;background:var(--err-bg);border:1px solid #FECACA;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:.78rem;color:var(--err)"></div>
+      </div>
+      <div id="import-progress" style="display:none;text-align:center;padding:12px;font-size:.85rem;color:var(--txm)">
+        <div style="width:100%;height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:8px"><div id="import-progress-bar" style="height:100%;background:var(--primary);border-radius:2px;width:0%;transition:width .3s"></div></div>
+        <span id="import-progress-txt">Import en cours…</span>
+      </div>
+    </div>
+    <div class="mft">
+      <button class="btn btn-s btn-sm" onclick="cm('import-csv')">Annuler</button>
+      <button class="btn btn-p btn-sm" id="btn-import-csv" onclick="doImportCSV()" style="display:none">Importer</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL RAPPEL CUSTOM -->
 <div class="mo" id="mo-rcus" onclick="if(event.target===this)cm('rcus')">
   <div class="modal">
@@ -2220,6 +2261,11 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <div style="font-size:.78rem;color:var(--txm)">jours avant</div>
         </div>
         <div id="rcus-date-preview" style="font-size:.72rem;color:var(--primary);margin-top:4px;font-weight:600"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Kilométrage de l'échéance <span style="font-weight:400;color:var(--txl)">(optionnel)</span></label>
+        <input class="fc" type="number" id="rcus-km" inputmode="numeric" placeholder="Ex: 80000" min="0" oninput="updateRappelKmPreview()">
+        <div id="rcus-km-preview" style="font-size:.72rem;color:var(--primary);margin-top:4px;font-weight:600"></div>
       </div>
       <div class="fg"><label class="fl">Description</label><textarea class="fc" id="rcus-desc" rows="2" placeholder="Détails optionnels…"></textarea></div>
       <div class="fg" style="display:flex;align-items:center;gap:10px">
@@ -4810,6 +4856,21 @@ function updateRappelDatePreview(){
     prev.textContent='Rappel le : '+fmtDate(d.toISOString().split('T')[0])+' ('+avant+'j avant)';
   }
 }
+function updateRappelKmPreview(){
+  const km=parseInt(g('rcus-km')?.value)||0;
+  const el=g('rcus-km-preview');
+  if(!el)return;
+  if(!km){el.textContent='';return;}
+  const vid=g('rcus-vid')?.value;
+  const v=S.vehicles.find(x=>x.id===vid);
+  if(v&&v.km_actuel&&v.km_actuel>0){
+    const left=km-v.km_actuel;
+    if(left<=0)el.textContent='⚠️ Kilométrage déjà dépassé de '+Math.abs(left).toLocaleString('fr')+' km';
+    else el.textContent='Dans environ '+left.toLocaleString('fr')+' km (actuel : '+v.km_actuel.toLocaleString('fr')+' km)';
+  } else {
+    el.textContent='Alerte à '+km.toLocaleString('fr')+' km';
+  }
+}
 /* ══ PHOTOS FACTURES ══ */
 // ═══════════════════════════════════════
 // MULTI-PHOTOS FACTURES
@@ -5085,9 +5146,10 @@ function openRappelCustom(id,preVid){
   const sel=g('rcus-vid');
   sel.innerHTML='<option value="">— Tous les véhicules —</option>'+S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${esc(v.marque)} ${esc(v.modele)}</option>`).join('');if(preVid)sel.value=preVid;
   g('rcus-id').value='';
-  g('rcus-titre').value='';g('rcus-date').value='';g('rcus-desc').value='';
+  g('rcus-titre').value='';g('rcus-date').value='';g('rcus-desc').value='';g('rcus-km').value='';
   g('rcus-rec').checked=false;g('rcus-int').value='';g('rcus-avant').value='';
   if(g('rcus-date-preview'))g('rcus-date-preview').textContent='';
+  if(g('rcus-km-preview'))g('rcus-km-preview').textContent='';
   g('rcus-int-wrap').style.display='none';
   g('btn-del-rcus').classList.add('hidden');
   g('mt-rcus').textContent='Nouveau rappel';
@@ -5098,8 +5160,10 @@ function openRappelCustom(id,preVid){
     g('rcus-titre').value=r.titre||'';
     g('rcus-vid').value=r.vehicle_id||'';
     g('rcus-date').value=r.echeance_date||r.date_rappel||'';
+    g('rcus-km').value=r.echeance_km||'';
     if(r.avant_jours!==undefined&&r.avant_jours!==null){g('rcus-avant').value=r.avant_jours;}
     updateRappelDatePreview();
+    updateRappelKmPreview();
     g('rcus-desc').value=r.description||'';
     g('rcus-rec').checked=!!r.recurrent;
     g('rcus-int').value=r.intervalle_mois||'';
@@ -5128,6 +5192,7 @@ async function saveRappelCustom(){
     titre,
     description:g('rcus-desc').value.trim()||null,
     date_rappel:dateRappel,
+    echeance_km:parseInt(g('rcus-km').value)||null,
     recurrent:g('rcus-rec').checked,
     intervalle_mois:parseInt(g('rcus-int').value)||null,
     statut:'actif'
@@ -5963,17 +6028,21 @@ function renderRap(){
   const soon90=allRaps.filter(r=>r.sev==='ok'&&r.days!==undefined&&r.days>30&&r.days<=90);
 
   const rcAll=S.rappels_custom;
+  // Rappels par date
   const rcUrgent=rcAll.filter(r=>r.date_rappel&&Math.ceil((new Date(r.date_rappel)-today)/86400000)<=0);
   const rcSoon30=rcAll.filter(r=>{if(!r.date_rappel)return false;const d=Math.ceil((new Date(r.date_rappel)-today)/86400000);return d>0&&d<=30;});
   const rcSoon90=rcAll.filter(r=>{if(!r.date_rappel)return false;const d=Math.ceil((new Date(r.date_rappel)-today)/86400000);return d>30&&d<=90;});
+  // Rappels par km (sans date, basés sur km actuel du véhicule)
+  const rcKmUrgent=rcAll.filter(r=>{if(!r.echeance_km||r.date_rappel)return false;const v=S.vehicles.find(x=>x.id===r.vehicle_id);return v&&v.km_actuel&&(r.echeance_km-v.km_actuel)<=0;});
+  const rcKmSoon=rcAll.filter(r=>{if(!r.echeance_km||r.date_rappel)return false;const v=S.vehicles.find(x=>x.id===r.vehicle_id);if(!v||!v.km_actuel)return false;const left=r.echeance_km-v.km_actuel;return left>0&&left<=2000;});
 
   const now2=new Date();
   const docsUrgent=S.documents.filter(d=>d.date_expiration&&Math.ceil((new Date(d.date_expiration)-today)/86400000)<=0);
   const docsSoon30=S.documents.filter(d=>{if(!d.date_expiration)return false;const d2=Math.ceil((new Date(d.date_expiration)-today)/86400000);return d2>0&&d2<=30;});
   const docsSoon90=S.documents.filter(d=>{if(!d.date_expiration)return false;const d2=Math.ceil((new Date(d.date_expiration)-today)/86400000);return d2>30&&d2<=90;});
 
-  const totalDanger=urgent.length+rcUrgent.length+docsUrgent.length;
-  const total30=soon30.length+rcSoon30.length+docsSoon30.length;
+  const totalDanger=urgent.length+rcUrgent.length+rcKmUrgent.length+docsUrgent.length;
+  const total30=soon30.length+rcSoon30.length+rcKmSoon.length+docsSoon30.length;
   const total90=soon90.length+rcSoon90.length+docsSoon90.length;
 
   let h='';
@@ -6162,17 +6231,20 @@ function renderRap(){
   const rcUrgentF=rcUrgent.filter(r=>filterVid(r.vehicle_id));
   const rcSoon30F=rcSoon30.filter(r=>filterVid(r.vehicle_id));
   const rcSoon90F=rcSoon90.filter(r=>filterVid(r.vehicle_id));
+  const rcKmUrgentF=rcKmUrgent.filter(r=>filterVid(r.vehicle_id));
+  const rcKmSoonF=rcKmSoon.filter(r=>filterVid(r.vehicle_id));
   const docsUrgentF=docsUrgent.filter(d=>filterVid(d.vehicle_id));
   const docsSoon30F=docsSoon30.filter(d=>filterVid(d.vehicle_id));
   const docsSoon90F=docsSoon90.filter(d=>filterVid(d.vehicle_id));
 
   if(rapView==='list'){
-  if(!urgentF.length&&!rcUrgentF.length&&!docsUrgentF.length&&!soon30F.length&&!rcSoon30F.length&&!docsSoon30F.length&&!soon90F.length&&!rcSoon90F.length&&!docsSoon90F.length){
+  if(!urgentF.length&&!rcUrgentF.length&&!rcKmUrgentF.length&&!docsUrgentF.length&&!soon30F.length&&!rcSoon30F.length&&!rcKmSoonF.length&&!docsSoon30F.length&&!soon90F.length&&!rcSoon90F.length&&!docsSoon90F.length){
     h+=`<div class="empty"><span class="empty-i"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><div class="empty-t">Tout est à jour !</div><p class="empty-d">Aucun rappel dans les 90 prochains jours.</p></div>`;
   }
 
-  function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';const days=r.date_rappel?Math.ceil((new Date(r.date_rappel)-today)/86400000):null;return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="display:inline-flex;align-items:center;margin-left:2px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):''}</div></div>${daysBadge(label,sev)}</div>`;}
+  function rcCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'Tous'}</span><span style="display:inline-flex;align-items:center;margin-left:2px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--txl)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${r.date_rappel?fmtDate(r.date_rappel):r.echeance_km?'📍 À '+r.echeance_km.toLocaleString('fr')+' km':''}</div></div>${daysBadge(label,sev)}</div>`;}
   function docCard(d,sev,label){const v=S.vehicles.find(x=>x.id===d.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):''}</span><span style="font-size:.62rem;color:var(--txl)">📄</span></div><div style="font-size:.87rem;font-weight:700">${esc(d.type)}${d.nom?' — '+esc(d.nom):''}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px">${daysBadge(label,sev)}<button onclick="event.stopPropagation();deleteDocFromRap('${d.id}')" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--txl);font-size:.7rem;display:flex;align-items:center;gap:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>Supprimer</button></div></div>`;}
+  function rcKmCard(r,sev,label){const v=S.vehicles.find(x=>x.id===r.vehicle_id);const col=v?vehCardColor(v):'#2563EB';return`<div class="ri2 ${sev}" onclick="openRappelCustom('${r.id}')"><div style="flex:1;min-width:0"><div class="ri2-veh"><div class="ri2-veh-color" style="background:${col}"></div><span class="ri2-veh-name">${v?esc(v.marque)+' '+esc(v.modele):'—'}</span><span style="font-size:.62rem;color:var(--txl);margin-left:4px">📍 km</span></div><div style="font-size:.87rem;font-weight:700">${esc(r.titre)}</div><div style="font-size:.72rem;color:var(--txm)">${label}</div></div>${daysBadge(label,sev)}</div>`;}
 
 
   // Helpers tri par date croissante
@@ -6180,31 +6252,35 @@ function renderRap(){
   function sortByDate(arr){return [...arr].sort((a,b)=>rapDate(a).localeCompare(rapDate(b)));}
 
   // ── EN RETARD ── trié par date croissante (le plus en retard d'abord)
-  if(urgentF.length||rcUrgentF.length||docsUrgentF.length){
-    h+=`<div class="sec-hdr" id="rap-section-danger"><span class="sec-ttl" style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#EF4444;display:inline-block;flex-shrink:0"></span><span style="color:#DC2626;font-weight:800">En retard (${urgentF.length+rcUrgentF.length+docsUrgentF.length})</span></span></div>`;
+  if(urgentF.length||rcUrgentF.length||rcKmUrgentF.length||docsUrgentF.length){
+    h+=`<div class="sec-hdr" id="rap-section-danger"><span class="sec-ttl" style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#EF4444;display:inline-block;flex-shrink:0"></span><span style="color:#DC2626;font-weight:800">En retard (${urgentF.length+rcUrgentF.length+rcKmUrgentF.length+docsUrgentF.length})</span></span></div>`;
     const dangerAll=[
       ...urgentF.map(r=>({_type:'rap',_date:rapDate(r),r})),
       ...rcUrgentF.map(r=>({_type:'rc',_date:r.date_rappel||'',r})),
+      ...rcKmUrgentF.map(r=>({_type:'rckm',_date:'',r})),
       ...docsUrgentF.map(d=>({_type:'doc',_date:d.date_expiration||'',d}))
     ].sort((a,b)=>a._date.localeCompare(b._date));
     dangerAll.forEach(item=>{
       if(item._type==='rap')h+=getRapItem(item.r);
       else if(item._type==='rc')h+=rcCard(item.r,'danger','En retard');
+      else if(item._type==='rckm'){const v=S.vehicles.find(x=>x.id===item.r.vehicle_id);const left=item.r.echeance_km-(v?.km_actuel||0);h+=rcKmCard(item.r,'danger',Math.abs(left).toLocaleString('fr')+' km dépassé');}
       else h+=docCard(item.d,'danger','Expiré le '+fmtDate(item.d.date_expiration));
     });
   }
 
   // ── DANS 30 JOURS ── trié par date croissante
-  if(soon30F.length||rcSoon30F.length||docsSoon30F.length){
-    h+=`<div class="sec-hdr mt12" id="rap-section-30"><span class="sec-ttl" style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#F59E0B;display:inline-block;flex-shrink:0"></span><span style="color:#B45309;font-weight:800">Dans 30 jours (${soon30F.length+rcSoon30F.length+docsSoon30F.length})</span></span></div>`;
+  if(soon30F.length||rcSoon30F.length||rcKmSoonF.length||docsSoon30F.length){
+    h+=`<div class="sec-hdr mt12" id="rap-section-30"><span class="sec-ttl" style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#F59E0B;display:inline-block;flex-shrink:0"></span><span style="color:#B45309;font-weight:800">Dans 30 jours (${soon30F.length+rcSoon30F.length+rcKmSoonF.length+docsSoon30F.length})</span></span></div>`;
     const soon30All=[
       ...soon30F.map(r=>({_type:'rap',_date:rapDate(r),r})),
       ...rcSoon30F.map(r=>({_type:'rc',_date:r.date_rappel||'',r})),
+      ...rcKmSoonF.map(r=>({_type:'rckm',_date:'',r})),
       ...docsSoon30F.map(d=>({_type:'doc',_date:d.date_expiration||'',d}))
     ].sort((a,b)=>a._date.localeCompare(b._date));
     soon30All.forEach(item=>{
       if(item._type==='rap')h+=getRapItem(item.r);
       else if(item._type==='rc'){const days=Math.ceil((new Date(item.r.date_rappel)-today)/86400000);h+=rcCard(item.r,'warn','Dans '+days+'j');}
+      else if(item._type==='rckm'){const v=S.vehicles.find(x=>x.id===item.r.vehicle_id);const left=item.r.echeance_km-(v?.km_actuel||0);h+=rcKmCard(item.r,'warn','Dans ~'+left.toLocaleString('fr')+' km');}
       else{const days=Math.ceil((new Date(item.d.date_expiration)-today)/86400000);h+=docCard(item.d,'warn','Dans '+days+'j');}
     });
   }
@@ -7005,6 +7081,7 @@ function renderProfil(){
     <div class="g6">
       <button class="btn btn-s btn-sm" onclick="exportAllCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Exporter CSV</button>
       <button class="btn btn-s btn-sm" onclick="exportAllPDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Exporter PDF</button>
+      <button class="btn btn-s btn-sm" onclick="openImportCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importer CSV</button>
     </div>
   </div>
 
@@ -7044,6 +7121,108 @@ function exportCSV(vid){
   a.href=url; a.download=`autocarnet_${v.marque}_${v.modele}.csv`;
   a.click(); URL.revokeObjectURL(url);
   toast('CSV exporté !','s');
+}
+
+/* ══ IMPORT CSV ══ */
+let _importRows=[];
+
+function openImportCSV(){
+  const sel=g('import-vid');
+  sel.innerHTML=S.vehicles.filter(v=>v.user_id===S.user.id).map(v=>`<option value="${v.id}">${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
+  if(!sel.options.length)return toast('Ajoutez d\'abord un véhicule.','e');
+  g('import-file').value='';
+  g('import-preview').style.display='none';
+  g('import-progress').style.display='none';
+  g('btn-import-csv').style.display='none';
+  _importRows=[];
+  om('import-csv');
+}
+
+function parseImportCSV(text){
+  const lines=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim());
+  if(!lines.length)return{rows:[],errors:['Fichier vide.']};
+  // Détecter et ignorer la ligne d'en-tête
+  const first=lines[0].toLowerCase();
+  const startIdx=(first.includes('date')||first.includes('type')||first.includes('km'))?1:0;
+  const rows=[];const errors=[];
+  for(let i=startIdx;i<lines.length;i++){
+    const line=lines[i].trim();if(!line)continue;
+    // Parser CSV simple (gère les guillemets)
+    const cols=[];let cur='';let inQ=false;
+    for(let c=0;c<line.length;c++){
+      const ch=line[c];
+      if(ch==='"'){if(inQ&&line[c+1]==='"'){cur+='"';c++;}else inQ=!inQ;}
+      else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}
+      else cur+=ch;
+    }
+    cols.push(cur.trim());
+    const [date,type,km,garage,cout,note]=cols;
+    if(!date||!date.match(/^\d{4}-\d{2}-\d{2}$/)){errors.push(`Ligne ${i+1} : date invalide "${date||''}"`);continue;}
+    rows.push({
+      date:date.trim(),
+      type:(type||'Entretien').trim(),
+      km:parseInt(km)||null,
+      garage:(garage||'').trim()||null,
+      cout:parseFloat((cout||'').replace(',','.'))||null,
+      note:(note||'').trim()||null
+    });
+  }
+  return{rows,errors};
+}
+
+function previewImportCSV(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const{rows,errors}=parseImportCSV(e.target.result);
+    _importRows=rows;
+    const prev=g('import-preview');prev.style.display='block';
+    g('import-preview-count').textContent=rows.length+' entretien'+(rows.length>1?'s':'')+(errors.length?' · '+errors.length+' ligne'+(errors.length>1?'s ignorées':' ignorée'):'');
+    const list=g('import-preview-list');
+    list.innerHTML=rows.slice(0,10).map(r=>`<div style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:.78rem;display:flex;align-items:center;gap:10px"><span style="color:var(--txl);min-width:80px">${r.date}</span><span style="font-weight:600;flex:1">${esc(r.type)}</span>${r.km?`<span style="color:var(--txm)">${r.km.toLocaleString('fr')} km</span>`:''}</div>`).join('')+(rows.length>10?`<div style="padding:8px 12px;font-size:.75rem;color:var(--txm)">… et ${rows.length-10} autres</div>`:'');
+    const errEl=g('import-errors');
+    if(errors.length){errEl.style.display='block';errEl.textContent=errors.slice(0,3).join('\n')+(errors.length>3?`\n… +${errors.length-3} erreurs`:'');}
+    else errEl.style.display='none';
+    g('btn-import-csv').style.display=rows.length?'inline-flex':'none';
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+async function doImportCSV(){
+  if(!_importRows.length)return;
+  const vid=g('import-vid').value;if(!vid)return toast('Sélectionnez un véhicule.','e');
+  const v=S.vehicles.find(x=>x.id===vid);if(!v)return;
+  // Vérifier limite plan
+  if(isVehOverLimit(v))return showUpgradeModal('Ce véhicule dépasse la limite de votre plan.');
+  g('import-preview').style.display='none';
+  g('import-progress').style.display='block';
+  g('btn-import-csv').style.display='none';
+  let ok=0;let err=0;
+  for(let i=0;i<_importRows.length;i++){
+    const r=_importRows[i];
+    g('import-progress-bar').style.width=Math.round((i+1)/_importRows.length*100)+'%';
+    g('import-progress-txt').textContent=`Import ${i+1} / ${_importRows.length}…`;
+    const row={
+      id:crypto.randomUUID(),
+      user_id:S.user.id,
+      vehicle_id:vid,
+      date:r.date,
+      type:r.type,
+      km:r.km,
+      garage:r.garage,
+      cout:r.cout,
+      note:r.note,
+      rappel_date:null,
+      rappel_km:null
+    };
+    const{error}=await sb.from('entretiens').insert(row);
+    if(error)err++;else ok++;
+  }
+  g('import-progress').style.display='none';
+  cm('import-csv');
+  await loadEnts();renderView();
+  toast(`✅ ${ok} entretien${ok>1?'s':''} importé${ok>1?'s':''}${err?` (${err} erreur${err>1?'s':''})`:''}`,ok?'s':'e');
+  _importRows=[];
 }
 
 function exportAllCSV(){

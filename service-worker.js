@@ -1,16 +1,62 @@
-// AutoCarnet Service Worker v13 — avec support notifications push + badge natif
-const CACHE = 'autocarnet-v13';
+// AutoCarnet Service Worker v14 — cache statique + notifications push
+const CACHE = 'autocarnet-v14';
+const STATIC_ASSETS = [
+  '/app.html',
+  '/manifest.json',
+  '/icon192.png',
+  '/icon512.png',
+  '/badge72.png',
+  '/favicon32.png'
+];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(STATIC_ASSETS).catch(() => {}))
+  );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Ne pas intercepter les appels Supabase, Netlify functions, CDN externes
+  if (
+    url.hostname !== location.hostname ||
+    url.pathname.startsWith('/.netlify/') ||
+    url.pathname.startsWith('/rest/') ||
+    url.pathname.startsWith('/auth/') ||
+    url.pathname.startsWith('/storage/')
+  ) return;
+
+  // Stratégie network-first pour app.html (toujours à jour)
+  if (url.pathname === '/app.html' || url.pathname === '/app') {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => { const clone = res.clone(); caches.open(CACHE).then(c => c.put(event.request, clone)); return res; })
+        .catch(() => caches.match('/app.html'))
+    );
+    return;
+  }
+
+  // Stratégie cache-first pour les assets statiques (icons, manifest)
+  if (
+    url.pathname.endsWith('.png') ||
+    url.pathname.endsWith('.svg') ||
+    url.pathname === '/manifest.json'
+  ) {
+    event.respondWith(
+      caches.match(event.request).then(cached => cached || fetch(event.request))
+    );
+    return;
+  }
 });
 
 self.addEventListener('push', e => {
