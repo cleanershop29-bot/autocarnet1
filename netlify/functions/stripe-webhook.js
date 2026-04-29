@@ -1,8 +1,8 @@
 // Netlify function — reçoit les webhooks Stripe
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY||'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');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const SB_URL = 'https://qhacwsklhlsfyfxwnjff.supabase.co';
-const SB_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI5NzEyNiwiZXhwIjoyMDg5ODczMTI2fQ._glWcFJIdUUECVRiOiOUQCz5DN6A4Vz1fOiB1OdHpdw';
+const SB_URL = process.env.SUPABASE_URL || 'https://qhacwsklhlsfyfxwnjff.supabase.co';
+const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 const PRICES = {
   'price_1THcvhPILh21QVYHvmYdmLbf': 'famille',
@@ -47,7 +47,7 @@ exports.handler = async (event) => {
   }
 
   const sig = event.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET||'whsec_ZNXoDbuSqxrOte0IKvTECvte5J4CMUlR';
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   let stripeEvent;
   try {

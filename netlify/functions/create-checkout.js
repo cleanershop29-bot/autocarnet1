@@ -1,5 +1,5 @@
 // Netlify function — crée une session Stripe Checkout
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY||'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');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const PRICES = {
   famille: 'price_1THcvhPILh21QVYHvmYdmLbf',
