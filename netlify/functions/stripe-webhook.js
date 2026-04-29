@@ -79,7 +79,9 @@ exports.handler = async (event) => {
       }
       case 'customer.subscription.updated': {
         const sub = data.object;
-        const email = sub.customer_email;
+        // sub.customer_email est toujours null sur cet événement — récupérer via l'API
+        const custRes = await stripe.customers.retrieve(sub.customer);
+        const email = custRes.email;
         const priceId = sub.items?.data?.[0]?.price?.id;
         const plan = PRICES[priceId] || null;
         const status = sub.status;
