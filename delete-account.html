@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Supprimer mon compte — AutoCarnet</title>
+<meta name="description" content="Supprimez définitivement votre compte AutoCarnet et toutes vos données.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --primary: #2563EB;
+  --primary-dk: #1D4ED8;
+  --err: #DC2626;
+  --err-bg: #FEF2F2;
+  --err-border: #FECACA;
+  --ok: #059669;
+  --ok-bg: #ECFDF5;
+  --txt: #0A0F1E;
+  --txm: #64748B;
+  --border: #B8C4D8;
+  --bg-field: #fff;
+}
+
+html { background: #070C1A; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: #070C1A;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(37,99,235,.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(29,78,216,.12) 0%, transparent 60%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  gap: 20px;
+}
+
+/* ── Logo ── */
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(37,99,235,.45);
+  font-size: 20px;
+}
+.logo-text {
+  font-size: 1.4rem; font-weight: 900; color: #fff; letter-spacing: -1px;
+}
+.logo-text span { color: rgba(255,255,255,.4); }
+
+/* ── Card ── */
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06);
+}
+
+.card-icon {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: #FEF2F2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
+}
+
+.card-title {
+  font-size: 1.2rem; font-weight: 800; color: var(--txt);
+  text-align: center; margin-bottom: 6px;
+}
+
+.card-sub {
+  font-size: .83rem; color: var(--txm); text-align: center;
+  line-height: 1.5; margin-bottom: 22px;
+}
+
+/* ── Warning banner ── */
+.warn-banner {
+  background: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.warn-ico { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.warn-txt { font-size: .8rem; color: #92400E; line-height: 1.5; font-weight: 500; }
+
+/* ── Form fields ── */
+.fg { margin-bottom: 14px; }
+.fl {
+  display: block;
+  font-size: .75rem; font-weight: 700; color: var(--txm);
+  margin-bottom: 5px; letter-spacing: .01em;
+}
+.fc {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid rgba(184,196,216,.7);
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: .93rem; color: var(--txt);
+  background: var(--bg-field);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.fc:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+.fc::placeholder { color: #B8C4D8; }
+
+/* ── Confirm checkbox ── */
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  background: var(--err-bg);
+  border: 1px solid var(--err-border);
+  border-radius: 11px;
+  cursor: pointer;
+}
+.check-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  accent-color: var(--err);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.check-lbl {
+  font-size: .8rem; color: var(--err); font-weight: 600; line-height: 1.4;
+  cursor: pointer;
+}
+
+/* ── Delete button ── */
+.btn-delete {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--err);
+  color: #fff;
+  font-family: inherit;
+  font-size: .95rem; font-weight: 800;
+  cursor: pointer;
+  transition: opacity .18s, transform .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-delete:hover:not(:disabled) { opacity: .9; }
+.btn-delete:active:not(:disabled) { transform: scale(.98); }
+.btn-delete:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ── Messages ── */
+.msg {
+  border-radius: 11px;
+  padding: 12px 14px;
+  font-size: .84rem; font-weight: 600;
+  line-height: 1.4;
+  display: none;
+  margin-bottom: 14px;
+}
+.msg.show { display: block; }
+.msg.err { background: var(--err-bg); color: var(--err); border: 1px solid var(--err-border); }
+.msg.ok { background: var(--ok-bg); color: var(--ok); border: 1px solid #A7F3D0; }
+
+/* ── Divider ── */
+.divider {
+  border: none; border-top: 1px solid #F1F5F9;
+  margin: 20px 0;
+}
+
+/* ── Back link ── */
+.back-link {
+  text-align: center;
+  font-size: .8rem; color: var(--txm); font-weight: 500;
+}
+.back-link a { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+/* ── Success screen ── */
+#success-screen {
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 28px;
+  width: 100%; max-width: 400px;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0,0,0,.5);
+  display: none;
+}
+#success-screen .success-ico {
+  font-size: 48px; margin-bottom: 16px;
+}
+#success-screen h2 {
+  font-size: 1.15rem; font-weight: 800; color: var(--txt); margin-bottom: 8px;
+}
+#success-screen p {
+  font-size: .85rem; color: var(--txm); line-height: 1.5;
+}
+
+/* Footer */
+.footer {
+  font-size: .72rem;
+  color: rgba(255,255,255,.2);
+  text-align: center;
+  line-height: 1.6;
+}
+.footer a { color: rgba(255,255,255,.3); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- Logo -->
+<a href="https://autocarnet.fr" class="logo-row">
+  <div class="logo-icon">🚗</div>
+  <div class="logo-text">Auto<span>Carnet</span></div>
+</a>
+
+<!-- Formulaire principal -->
+<div class="card" id="main-card">
+  <div class="card-icon">🗑️</div>
+  <div class="card-title">Supprimer mon compte</div>
+  <div class="card-sub">
+    Entrez vos identifiants pour confirmer la suppression définitive de votre compte et de toutes vos données.
+  </div>
+
+  <!-- Warning -->
+  <div class="warn-banner">
+    <div class="warn-ico">⚠️</div>
+    <div class="warn-txt">
+      Cette action est <strong>irréversible</strong>. Tous vos véhicules, entretiens, rappels et documents seront supprimés définitivement.
+    </div>
+  </div>
+
+  <!-- Message d'erreur / succès -->
+  <div class="msg err" id="msg-err"></div>
+
+  <!-- Champs -->
+  <div class="fg">
+    <label class="fl" for="field-email">Adresse email</label>
+    <input class="fc" type="email" id="field-email" placeholder="votre@email.fr" autocomplete="email">
+  </div>
+  <div class="fg">
+    <label class="fl" for="field-pass">Mot de passe</label>
+    <input class="fc" type="password" id="field-pass" placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <!-- Confirmation checkbox -->
+  <label class="check-row">
+    <input type="checkbox" id="confirm-check">
+    <span class="check-lbl">Je comprends que cette action est irréversible et que toutes mes données seront supprimées.</span>
+  </label>
+
+  <!-- Bouton -->
+  <button class="btn-delete" id="btn-delete" onclick="doDelete()" disabled>
+    🗑️ Supprimer définitivement mon compte
+  </button>
+
+  <hr class="divider">
+  <div class="back-link">
+    Vous avez changé d'avis ? <a href="https://autocarnet.fr/app.html">Retourner à l'app</a>
+  </div>
+</div>
+
+<!-- Écran succès -->
+<div id="success-screen">
+  <div class="success-ico">✅</div>
+  <h2>Compte supprimé</h2>
+  <p>Votre compte et toutes vos données ont été supprimés définitivement.<br><br>Merci d'avoir utilisé AutoCarnet.</p>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="https://autocarnet.fr/politique-confidentialite.html">Politique de confidentialité</a> ·
+  <a href="https://autocarnet.fr/cgu.html">CGU</a> ·
+  <a href="mailto:contact@autocarnet.fr">Contact</a>
+  <br>© 2026 AutoCarnet · SIRET 914 511 639 00025
+</div>
+
+<script>
+const SB_URL = 'https://qhacwsklhlsfyfxwnjff.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoYWN3c2tsaGxzZnlmeHduamZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTcxMjYsImV4cCI6MjA4OTg3MzEyNn0.nFNAdccnL1GZZDOI1zSz170NbjVm0OvuElIJeRlYdgY';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+// Activer/désactiver le bouton selon les champs
+function checkReady() {
+  const email = document.getElementById('field-email').value.trim();
+  const pass  = document.getElementById('field-pass').value;
+  const chk   = document.getElementById('confirm-check').checked;
+  document.getElementById('btn-delete').disabled = !(email && pass.length >= 6 && chk);
+}
+document.getElementById('field-email').addEventListener('input', checkReady);
+document.getElementById('field-pass').addEventListener('input', checkReady);
+document.getElementById('confirm-check').addEventListener('change', checkReady);
+
+function showErr(msg) {
+  const el = document.getElementById('msg-err');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideErr() {
+  document.getElementById('msg-err').classList.remove('show');
+}
+
+async function doDelete() {
+  hideErr();
+  const email = document.getElementById('field-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('field-pass').value;
+  const btn   = document.getElementById('btn-delete');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return showErr('Veuillez saisir un email valide.');
+  }
+  if (pass.length < 6) {
+    return showErr('Mot de passe trop court.');
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Suppression en cours…';
+
+  try {
+    // 1. Connexion
+    const { data: signInData, error: signInErr } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (signInErr) {
+      btn.disabled = false;
+      btn.innerHTML = '🗑️ Supprimer définitivement mon compte';
+      checkReady();
+      if (signInErr.message.includes('Invalid login')) {
+        return showErr('Email ou mot de passe incorrect.');
+      }
+      return showErr('Erreur de connexion : ' + signInErr.message);
+    }
+
+    const token = signInData.session?.access_token;
+    if (!token) throw new Error('Session introuvable.');
+
+    // 2. Appel à la fonction Netlify de suppression
+    const res = await fetch('/.netlify/functions/delete-account', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+
+    // 3. Succès
+    document.getElementById('main-card').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+
+  } catch (e) {
+    showErr('Erreur : ' + (e.message || 'Une erreur est survenue.'));
+    btn.disabled = false;
+    btn.innerHTML = '🗑️ Supprimer définitivement mon compte';
+    checkReady();
+  }
+}
+</script>
+</body>
+</html>
