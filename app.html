@@ -1975,7 +1975,14 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
 
       <!-- ÉTAPE 1 : L'ESSENTIEL -->
       <div class="fg"><label class="fl">Véhicule</label><select class="fc" id="e-vh"></select></div>
-      <div class="fg"><label class="fl">Type d'intervention</label><select class="fc" id="e-ty" onchange="onTyChange()"></select></div>
+      <div class="fg">
+        <label class="fl">Type d'intervention</label>
+        <button type="button" class="fc" id="e-ty-btn" onclick="openTyPicker()" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:#fff;height:44px">
+          <span id="e-ty-lbl" style="color:var(--txm);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">— Type d'intervention —</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:8px;color:var(--txm)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <input type="hidden" id="e-ty">
+      </div>
       <div class="fr">
         <div class="fg">
           <label class="fl">Date de l'entretien</label>
@@ -6811,12 +6818,8 @@ function openEnt(id,forcedVid){
   selV.innerHTML=`<option value="">— Sélectionner un véhicule —</option>`+S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
   const vid=forcedVid; // Pas de pré-sélection depuis S.selVeh
   if(vid)selV.value=vid;
-  // Types groupés
-  const cats=[...new Set(TYPES.map(t=>t.cat))];
-  g('e-ty').innerHTML=`<option value="">— Type d'intervention —</option>`+cats.map(cat=>{
-    const items=TYPES.filter(t=>t.cat===cat);
-    return`<optgroup label="${cat}">${items.map(t=>`<option value="${t.id}">${t.ico} ${esc(t.label)}</option>`).join('')}</optgroup>`;
-  }).join('');
+  // Réinitialiser le picker de type (l'ancien select a été remplacé par un picker custom)
+  g('e-ty').value='';
   g('e-id').value=id||'';
   if(!id){
     // Toujours vider l'id pour forcer un INSERT
@@ -10652,6 +10655,100 @@ async function jonbSave(){
     renderJumeau();
   } else {toast('Erreur lors de la sauvegarde','e');}
 }
+
+/* ══ TYPE INTERVENTION PICKER ══ */
+function openTyPicker(){
+  renderTyList('');
+  document.getElementById('ty-search').value='';
+  document.getElementById('mo-ty-picker').classList.add('open');
+  setTimeout(()=>{
+    const s=document.getElementById('ty-search');
+    if(s)s.focus();
+  },320);
+}
+function closeTyPicker(){
+  document.getElementById('mo-ty-picker').classList.remove('open');
+}
+function filterTyList(q){
+  renderTyList(q.toLowerCase().trim());
+}
+function renderTyList(q){
+  const cats=[...new Set(TYPES.map(t=>t.cat))];
+  const cur=document.getElementById('e-ty').value;
+  let html='';
+  cats.forEach(cat=>{
+    const items=TYPES.filter(t=>t.cat===cat&&(!q||t.label.toLowerCase().includes(q)||cat.toLowerCase().includes(q)));
+    if(!items.length)return;
+    html+=`<div style="font-size:.68rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;padding:10px 10px 4px">${cat}</div>`;
+    items.forEach(t=>{
+      const sel=t.id===cur;
+      html+=`<button type="button" onclick="selectTy('${t.id}','${(t.ico+' '+t.label).replace(/'/g,'&#39;')}')"
+        style="width:100%;text-align:left;border:none;background:${sel?'var(--primary-lt)':'transparent'};color:${sel?'var(--primary)':'var(--txt)'};border-radius:10px;padding:11px 12px;font-family:inherit;font-size:.9rem;font-weight:${sel?'700':'500'};cursor:pointer;display:flex;align-items:center;gap:10px;margin-bottom:2px;transition:background .15s">
+        <span style="font-size:1.1rem;flex-shrink:0">${t.ico}</span>
+        <span style="flex:1">${t.label}</span>
+        ${sel?'<svg style="flex-shrink:0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><polyline points="20 6 9 12 4 12"/></svg>':''}
+      </button>`;
+    });
+  });
+  if(!html)html='<div style="text-align:center;padding:32px 20px;color:var(--txm);font-size:.86rem">Aucun résultat</div>';
+  document.getElementById('ty-picker-list').innerHTML=html;
+}
+function selectTy(id,label){
+  const hiddenInput=document.getElementById('e-ty');
+  hiddenInput._pickerValue=id;
+  hiddenInput.value=id;
+  const lbl=document.getElementById('e-ty-lbl');
+  if(lbl){lbl.textContent=label;lbl.style.color='var(--txt)';}
+  closeTyPicker();
+  onTyChange();
+}
+function _tyPickerSetValue(id){
+  const t=TYPES.find(x=>x.id===id)||null;
+  const lbl=document.getElementById('e-ty-lbl');
+  if(lbl){
+    lbl.textContent=t?t.ico+' '+t.label:'— Type d\'intervention —';
+    lbl.style.color=t?'var(--txt)':'var(--txm)';
+  }
+}
+// Patch: intercepter les affectations programmatiques de g('e-ty').value
+(function(){
+  function _patchETy(){
+    const el=document.getElementById('e-ty');
+    if(!el||el._patched)return;
+    el._patched=true;
+    let _v='';
+    Object.defineProperty(el,'value',{
+      get(){return _v;},
+      set(v){
+        _v=String(v||'');
+        _tyPickerSetValue(_v);
+      }
+    });
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',_patchETy);
+  } else {
+    setTimeout(_patchETy,0);
+  }
+})();
 </script>
+
+<!-- Modal Type Intervention Picker -->
+<div class="mo" id="mo-ty-picker" onclick="if(event.target===this)closeTyPicker()">
+  <div class="modal" style="max-height:88vh">
+    <div class="mhdr">
+      <div class="mtit">Type d'intervention</div>
+      <button class="mcls" onclick="closeTyPicker()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="padding:10px 16px 8px;flex-shrink:0">
+      <div style="position:relative">
+        <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="ty-search" class="fc" placeholder="Rechercher une intervention..." style="padding-left:34px" oninput="filterTyList(this.value)" autocomplete="off">
+      </div>
+    </div>
+    <div class="mbdy" id="ty-picker-list" style="padding:0 8px 16px"></div>
+  </div>
+</div>
+
 </body>
 </html>
