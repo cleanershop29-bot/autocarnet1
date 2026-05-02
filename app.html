@@ -1981,7 +1981,6 @@ body{color-scheme:light !important;font-family:-apple-system,BlinkMacSystemFont,
           <span id="e-ty-lbl" style="color:var(--txm);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">— Type d'intervention —</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:8px;color:var(--txm)"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <input type="hidden" id="e-ty">
       </div>
       <div class="fr">
         <div class="fg">
@@ -3377,7 +3376,7 @@ function updateCoutTotal(){
 }
 async function saveEnt(){
   if(!S.user?.id)return toast('Session expirée.','e');
-  const id=g('e-id').value,vehicle_id=g('e-vh').value,type=g('e-ty').value,date=g('e-dt').value;
+  const id=g('e-id').value,vehicle_id=g('e-vh').value,type=getTy(),date=g('e-dt').value;
   if(!vehicle_id)return toast('Sélectionnez un véhicule.','e');
   if(!type)return toast('Sélectionnez un type d\'intervention.','e');
   if(!date)return toast('La date est requise.','e');
@@ -3712,9 +3711,8 @@ function openEntFromSig(sig){
     if(noteEl&&sig.description) noteEl.value=sig.description;
     // Trouver le type correspondant à la catégorie
     const catToType={Mécanique:'autre',Carrosserie:'carrosserie',Pneus:'pneus_rot',Électrique:'electrique',Autre:'autre'};
-    const typeEl=g('e-ty');
-    if(typeEl&&catToType[sig.categorie]){
-      typeEl.value=catToType[sig.categorie];
+    if(catToType[sig.categorie]){
+      setTy(catToType[sig.categorie]);
     }
   },200);
 }
@@ -4914,7 +4912,7 @@ function addPhotoToList(file){
 }
 
 function getAutoPhotoName(index){
-  const type = g('e-ty')?.value || '';
+  const type = getTy();
   const label = type ? type.replace(/\//g,'-') : 'Facture';
   return `${label} — photo ${index+1}`;
 }
@@ -6818,8 +6816,8 @@ function openEnt(id,forcedVid){
   selV.innerHTML=`<option value="">— Sélectionner un véhicule —</option>`+S.vehicles.map(v=>`<option value="${v.id}">${v.emoji||'🚗'} ${esc(v.marque)} ${esc(v.modele)}</option>`).join('');
   const vid=forcedVid; // Pas de pré-sélection depuis S.selVeh
   if(vid)selV.value=vid;
-  // Réinitialiser le picker de type (l'ancien select a été remplacé par un picker custom)
-  g('e-ty').value='';
+  // Réinitialiser le picker custom
+  setTy('');
   g('e-id').value=id||'';
   if(!id){
     // Toujours vider l'id pour forcer un INSERT
@@ -6828,7 +6826,7 @@ function openEnt(id,forcedVid){
   if(id){
     const e=S.ents.find(x=>x.id===id);if(!e)return;
     g('mt-ent').textContent="Modifier l'entretien";
-    selV.value=e.vehicle_id;g('e-ty').value=e.type;
+    selV.value=e.vehicle_id;setTy(e.type);
     g('e-dt').value=e.date||'';g('e-km').value=e.km||'';
     g('e-gr').value=e.garage||'';g('e-ct').value=e.cout||'';if(g('e-mo'))g('e-mo').value='';if(g('e-total-wrap'))g('e-total-wrap').style.display='none';
     g('e-nt').value=e.note||'';g('e-rd').value=e.rappel_date||'';
@@ -6897,7 +6895,7 @@ function updateEntRappelPreview(){
   }
 }
 function onTyChange(){
-  const ti=getType(g('e-ty').value);
+  const ti=getType(getTy());
   const v=S.vehicles.find(x=>x.id===g('e-vh').value);
   // Pre-remplir echeance
   if(ti.imo){const d=new Date();d.setMonth(d.getMonth()+ti.imo);g('e-rd').value=d.toISOString().split('T')[0];updateEntRappelPreview();}
@@ -10524,8 +10522,7 @@ function juDateChoisie(dateStr){
   if(!comp||!v)return;
   openEnt(null,JU.vid);
   setTimeout(()=>{
-    const sel=document.getElementById('e-ty');
-    if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}
+    setTy(comp.types[0]);if(typeof onTyChange==='function')onTyChange();
     const dtEl=document.getElementById('e-dt');
     if(dtEl)dtEl.value=dateStr;
     const kmEl=document.getElementById('e-km');
@@ -10542,7 +10539,7 @@ function jumeauPlanifier(){
   const comp=JU_COMPOSANTS.find(c=>c.id===JU.compOpen);
   if(!comp)return;
   openEnt(null,JU.vid);
-  setTimeout(()=>{const sel=document.getElementById('e-ty');if(sel){sel.value=comp.types[0];if(typeof onTyChange==='function')onTyChange();}},350);
+  setTimeout(()=>{setTy(comp.types[0]);if(typeof onTyChange==='function')onTyChange();},350);
 }
 
 // ONBOARDING
@@ -10657,14 +10654,23 @@ async function jonbSave(){
 }
 
 /* ══ TYPE INTERVENTION PICKER ══ */
+let _entType = '';
+function getTy(){ return _entType; }
+function setTy(id){
+  _entType = id || '';
+  const t = TYPES.find(x=>x.id===_entType)||null;
+  const lbl = document.getElementById('e-ty-lbl');
+  if(lbl){
+    lbl.textContent = t ? t.ico+' '+t.label : '— Type d\'intervention —';
+    lbl.style.color = t ? 'var(--txt)' : 'var(--txm)';
+  }
+}
 function openTyPicker(){
   renderTyList('');
-  document.getElementById('ty-search').value='';
+  const s=document.getElementById('ty-search');
+  if(s)s.value='';
   document.getElementById('mo-ty-picker').classList.add('open');
-  setTimeout(()=>{
-    const s=document.getElementById('ty-search');
-    if(s)s.focus();
-  },320);
+  setTimeout(()=>{ const s=document.getElementById('ty-search');if(s)s.focus(); },320);
 }
 function closeTyPicker(){
   document.getElementById('mo-ty-picker').classList.remove('open');
@@ -10674,7 +10680,7 @@ function filterTyList(q){
 }
 function renderTyList(q){
   const cats=[...new Set(TYPES.map(t=>t.cat))];
-  const cur=document.getElementById('e-ty').value;
+  const cur=getTy();
   let html='';
   cats.forEach(cat=>{
     const items=TYPES.filter(t=>t.cat===cat&&(!q||t.label.toLowerCase().includes(q)||cat.toLowerCase().includes(q)));
@@ -10682,11 +10688,12 @@ function renderTyList(q){
     html+=`<div style="font-size:.68rem;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;padding:10px 10px 4px">${cat}</div>`;
     items.forEach(t=>{
       const sel=t.id===cur;
-      html+=`<button type="button" onclick="selectTy('${t.id}','${(t.ico+' '+t.label).replace(/'/g,'&#39;')}')"
+      const labelEsc=(t.ico+' '+t.label).replace(/'/g,'&#39;');
+      html+=`<button type="button" onclick="selectTy('${t.id}','${labelEsc}')"
         style="width:100%;text-align:left;border:none;background:${sel?'var(--primary-lt)':'transparent'};color:${sel?'var(--primary)':'var(--txt)'};border-radius:10px;padding:11px 12px;font-family:inherit;font-size:.9rem;font-weight:${sel?'700':'500'};cursor:pointer;display:flex;align-items:center;gap:10px;margin-bottom:2px;transition:background .15s">
         <span style="font-size:1.1rem;flex-shrink:0">${t.ico}</span>
         <span style="flex:1">${t.label}</span>
-        ${sel?'<svg style="flex-shrink:0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><polyline points="20 6 9 12 4 12"/></svg>':''}
+        ${sel?'<svg style="flex-shrink:0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 12 4 12"/></svg>':''}
       </button>`;
     });
   });
@@ -10694,43 +10701,10 @@ function renderTyList(q){
   document.getElementById('ty-picker-list').innerHTML=html;
 }
 function selectTy(id,label){
-  const hiddenInput=document.getElementById('e-ty');
-  hiddenInput._pickerValue=id;
-  hiddenInput.value=id;
-  const lbl=document.getElementById('e-ty-lbl');
-  if(lbl){lbl.textContent=label;lbl.style.color='var(--txt)';}
+  setTy(id);
   closeTyPicker();
   onTyChange();
 }
-function _tyPickerSetValue(id){
-  const t=TYPES.find(x=>x.id===id)||null;
-  const lbl=document.getElementById('e-ty-lbl');
-  if(lbl){
-    lbl.textContent=t?t.ico+' '+t.label:'— Type d\'intervention —';
-    lbl.style.color=t?'var(--txt)':'var(--txm)';
-  }
-}
-// Patch: intercepter les affectations programmatiques de g('e-ty').value
-(function(){
-  function _patchETy(){
-    const el=document.getElementById('e-ty');
-    if(!el||el._patched)return;
-    el._patched=true;
-    let _v='';
-    Object.defineProperty(el,'value',{
-      get(){return _v;},
-      set(v){
-        _v=String(v||'');
-        _tyPickerSetValue(_v);
-      }
-    });
-  }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',_patchETy);
-  } else {
-    setTimeout(_patchETy,0);
-  }
-})();
 </script>
 
 <!-- Modal Type Intervention Picker -->
